@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:id="@+id/reminder_scroll"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.Reminder_Fragment.reminder_fragment">
+
+    <LinearLayout
+        android:id="@+id/linear_product"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/border">
+
+                <EditText
+                    android:id="@+id/date_reminder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/ulimit"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:hint="Date"
+                    android:maxLines="1"
+                    android:paddingStart="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:singleLine="true"
+                    android:textSize="14dp"/>
+
+                <ImageView
+                    android:id="@+id/ulimit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/date" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/border">
+
+                <EditText
+                    android:id="@+id/reminder_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/tlimit"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:hint="Time"
+                    android:maxLines="1"
+                    android:paddingStart="12sp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:singleLine="true"
+                    android:textSize="15sp"/>
+
+                <ImageView
+                    android:id="@+id/tlimit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/time"
+                    app:tint="@color/blue" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/border">
+
+            <EditText
+                android:id="@+id/edt_reminderDescription"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_toEndOf="@+id/addressimg"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="Reminder Description"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapWords"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="12dp"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/addressimg"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="13dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/order"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_marginBottom="10dp"
+            android:id="@+id/save_reminder"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_fill"
+            android:layout_gravity="end"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/edit_reminder"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_fill"
+            android:layout_gravity="end"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:text="Update"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/transactionid"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/reminderid"
+            android:visibility="gone"/>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reminder Details :"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            android:layout_marginLeft="10dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:overScrollMode="never"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/reminder_rv"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

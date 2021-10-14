@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:id="@+id/banner_scroll"
+    tools:context=".ui.Banner.Banner_Fragment">
+
+    <LinearLayout
+        android:id="@+id/linear_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/branch"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toEndOf="@+id/emailimg"
+                android:background="@android:color/transparent"
+                android:hint="Select Branch"
+                android:maxLines="1"
+                android:paddingStart="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <ImageView
+                android:id="@+id/emailimg"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/branch"
+                app:tint="@color/blue"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select subtype :"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="7dp"
+            android:textSize="16sp"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/ch_admin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Admin"
+                android:buttonTint="@color/blue"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/ch_teacher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Teacher"
+                android:buttonTint="@color/blue"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/ch_student"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Student"
+                android:buttonTint="@color/blue"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <TextView
+                android:id="@+id/banner_image"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toEndOf="@+id/transprt12"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="true"
+                android:focusedByDefault="false"
+                android:hint="Upload Image"
+                android:importantForAutofill="no"
+                android:maxLines="1"
+                android:paddingStart="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="14dp"
+                tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
+                tools:targetApi="o" />
+
+
+            <ImageView
+                android:id="@+id/transprt12"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_attach"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:contentDescription="@string/app_name" />
+
+        <Button
+            android:layout_marginBottom="10dp"
+            android:id="@+id/save_banner"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_fill"
+            android:layout_gravity="end"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/edit_banner"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_fill"
+            android:layout_gravity="end"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Update"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/image"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/transactionid"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bannerid"
+            android:visibility="gone"/>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Banner Details :"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            android:layout_marginLeft="10dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/banner_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:overScrollMode="never"/>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/btn_white">
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:paddingLeft="10dp"
+            android:text="Student G.R.No."
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_marginRight="10dp"
+            android:id="@+id/gr_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:paddingLeft="10dp"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:paddingLeft="10dp"
+            android:text="Student Name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_marginRight="10dp"
+            android:id="@+id/stu_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:paddingLeft="10dp"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:paddingLeft="10dp"
+            android:text="Subject Name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_marginRight="10dp"
+            android:id="@+id/sub_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:paddingLeft="10dp"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:paddingLeft="10dp"
+            android:text="Test Marks"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_marginRight="10dp"
+            android:id="@+id/test_marks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:paddingLeft="10dp"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="3dp"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:text="Achieved Marks"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/border"
+        android:maxLines="1"
+        android:inputType="phone"
+        android:paddingLeft="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:singleLine="true"
+        android:textSize="15dp"
+        android:id="@+id/ach_marks"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="3dp"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:paddingLeft="10dp"
+            android:text="Test Remarks"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_marginRight="10dp"
+            android:id="@+id/test_remarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:paddingLeft="10dp"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_marginBottom="20dp"
+        android:id="@+id/test_marks_edit"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/blue_fill"
+        android:layout_gravity="end"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="15dp"
+        android:text="Edit"
+        android:textColor="@color/white"
+        android:textSize="14dp"
+        android:textStyle="bold"/>
+
+</LinearLayout>

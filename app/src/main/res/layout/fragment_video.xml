@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".ui.Video.VideoFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/video"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bid"
+        android:visibility="gone"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/video_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/transaction_id"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/unique_id"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <TextView
+                android:id="@+id/attachment_video"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toEndOf="@+id/transprt12"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="true"
+                android:focusedByDefault="false"
+                android:hint="Attach Video"
+                android:importantForAutofill="no"
+                android:maxLines="1"
+                android:paddingStart="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="14dp"
+                tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
+                tools:targetApi="o" />
+
+
+            <ImageView
+                android:id="@+id/transprt12"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_attach"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:contentDescription="@string/app_name" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/border">
+
+            <EditText
+                android:id="@+id/video_description"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_toEndOf="@+id/addressimg"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="Video Description"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapWords"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="12dp"
+                android:textSize="15dp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/addressimg"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="13dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/order"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+        <Button
+            android:id="@+id/save_video"
+            android:background="@drawable/blue_fill"
+            android:layout_gravity="end"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:text="Save"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:visibility="gone"
+            android:id="@+id/edit_video"
+            android:background="@drawable/blue_fill"
+            android:layout_gravity="end"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:text="Update"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:overScrollMode="never"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/video_rv"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

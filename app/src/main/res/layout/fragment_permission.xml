@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border">
+
+                    <EditText
+                        android:id="@+id/no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/tlimit11"
+                        android:background="@android:color/transparent"
+                        android:hint="No"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:maxLines="1"
+                        android:paddingLeft="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:singleLine="true"
+                        android:textSize="15dp" />
+
+
+                    <ImageView
+                        android:id="@+id/tlimit11"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:src="@drawable/sales_no"
+                        app:tint="@color/blue" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border">
+
+                    <EditText
+                        android:id="@+id/permission_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/transprt131"
+                        android:background="@android:color/transparent"
+                        android:hint="Date"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:maxLines="1"
+                        android:paddingLeft="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:singleLine="true"
+                        android:textSize="15dp" />
+
+
+                    <ImageView
+                        android:id="@+id/transprt131"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:src="@drawable/date"
+                        app:tint="@color/blue" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/border">
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_toRightOf="@+id/emailimg"
+                    android:background="@android:color/transparent"
+                    android:hint="Select User Name"
+                    android:maxLines="1"
+                    android:paddingLeft="9dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/emailimg"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:src="@drawable/user"
+                    app:tint="#0074AA" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User Rights :"
+                android:textColor="@color/blue"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:overScrollMode="never"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/userpermission_rv"/>
+
+            <Button
+                android:layout_marginBottom="10dp"
+                android:id="@+id/save_permission"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_fill"
+                android:layout_gravity="end"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/edit_permission"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_fill"
+                android:layout_gravity="end"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:text="Update"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

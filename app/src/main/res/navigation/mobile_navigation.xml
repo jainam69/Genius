@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@+id/home_frag">
+
+    <fragment
+        android:id="@+id/home_frag"
+        android:name="com.example.genius.ui.Home_Fragment.home_fragment"
+        android:label="Home"
+        tools:layout="@layout/home_fragment_fragment" />
+
+    <fragment
+        android:id="@+id/master_entry"
+        android:name="com.example.genius.ui.Masters_Fragment.MasterSelectorFragment"
+        android:label="Masters Entry"
+        tools:layout="@layout/fragment_master_selector" />
+
+    <dialog
+        android:id="@+id/logout"
+        android:name="com.example.genius.ui.MyLogoutFragment"
+        android:label="Logout"
+        tools:layout="@layout/my_dialog" />
+
+</navigation>

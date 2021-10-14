@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.Marks_Entry_Fragment.marks_entry_fragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/branch"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@+id/caddress"
+                android:background="@android:color/transparent"
+                android:hint="Select Branch"
+                android:maxLines="1"
+                android:paddingLeft="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="13dp" />
+
+            <ImageView
+                android:id="@+id/caddress"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:src="@drawable/task"
+                app:tint="@color/blue"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/standard"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@+id/gst"
+                android:background="@android:color/transparent"
+                android:hint="Select Standard"
+                android:maxLines="1"
+                android:paddingLeft="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="13dp" />
+            <ImageView
+                android:id="@+id/gst"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:src="@drawable/sales_no"
+                app:tint="@color/blue"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/batch_time"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@+id/pincodeimg111"
+                android:background="@android:color/transparent"
+                android:hint="Select Batch Time"
+                android:maxLines="1"
+                android:paddingLeft="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="13dp" />
+
+            <ImageView
+                android:id="@+id/pincodeimg111"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:src="@drawable/time"
+                app:tint="#0074AA" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/test_date"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@+id/mobile15"
+                android:background="@android:color/transparent"
+                android:hint="Test Date"
+                android:maxLines="1"
+                android:paddingLeft="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="13dp" />
+
+            <ImageView
+                android:id="@+id/mobile15"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:src="@drawable/date"
+                app:tint="#0074AA" />
+        </RelativeLayout>
+    </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border">
+
+                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                        android:id="@+id/subject"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_toRightOf="@+id/pincodeimg11"
+                        android:background="@android:color/transparent"
+                        android:hint="Select Subject"
+                        android:maxLines="1"
+                        android:paddingLeft="9dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="13dp" />
+
+                    <ImageView
+                        android:id="@+id/pincodeimg11"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:src="@drawable/sales_no"
+                        app:tint="#0074AA" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border">
+
+                    <EditText
+                        android:id="@+id/total_marks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/transprt12"
+                        android:background="@android:color/transparent"
+                        android:hint="Total Marks"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:maxLines="1"
+                        android:paddingLeft="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:singleLine="true"
+                        android:textSize="15dp" />
+
+                    <ImageView
+                        android:id="@+id/transprt12"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/task"
+                        app:tint="@color/blue"
+                        android:layout_marginLeft="12dp" />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/border">
+
+                <EditText
+                    android:id="@+id/remarks"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_toRightOf="@+id/addressimg19"
+                    android:background="@android:color/transparent"
+                    android:gravity="top"
+                    android:hint="Remarks"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:paddingLeft="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/addressimg19"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/task"
+                    app:tint="#0074AA" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="7dp"
+                android:weightSum="2">
+
+            <RelativeLayout
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/border">
+
+                <TextView
+                    android:id="@+id/upload_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_toEndOf="@+id/transprt120"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:focusedByDefault="false"
+                    android:hint="Upload Image"
+                    android:importantForAutofill="no"
+                    android:maxLines="1"
+                    android:paddingStart="9dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="15dp"
+                    tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
+                    tools:targetApi="o"
+                    android:paddingLeft="9dp"
+                    android:layout_toRightOf="@+id/transprt120" />
+
+                <ImageView
+                    android:id="@+id/transprt120"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_attach"
+                    app:tint="@color/blue"
+                    android:layout_marginLeft="12dp" />
+
+            </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="end"
+                    android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/add_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/blue_fill"
+                    android:text="Add"
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    android:textStyle="bold"/>
+                </RelativeLayout>
+
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                android:contentDescription="@string/app_name" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/linear_line"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/blue"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:overScrollMode="never"
+                android:layout_marginTop="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/marks_rv"/>
+
+            <Button
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/save_test_marks"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_fill"
+                android:layout_gravity="end"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/edit_test_marks"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_fill"
+                android:layout_gravity="end"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:text="Update"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

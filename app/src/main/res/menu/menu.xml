@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/home_frag"
+        android:title="Home"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/master_entry"
+        android:title="Masters Entry"
+        android:icon="@drawable/staff"/>
+
+    <item
+        android:id="@+id/schedule"
+        android:title="Test Schedule"
+        android:icon="@drawable/user"/>
+
+    <item
+        android:id="@+id/marks"
+        android:title="Test Marks"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/practice"
+        android:title="Practice Paper"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/homework"
+        android:title="Homework"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/gallery"
+        android:title="Gallery"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/you_video"
+        android:title="YouTube Video"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/live_video"
+        android:title="Live Video"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/task"
+        android:title="Task/Reminder"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/permission"
+        android:title="Permission"
+        android:icon="@drawable/task"/>
+
+    <item
+        android:id="@+id/library"
+        android:title="Library"
+        android:icon="@drawable/library"/>
+</menu>
