@@ -141,6 +141,7 @@ public class staff_entry_fragment extends Fragment {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOB"));
                     date_of_birth.setText("" + displaydate.format(d));
+                    ddate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -149,6 +150,7 @@ public class staff_entry_fragment extends Fragment {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOA"));
                     date_of_appo.setText("" + displaydate.format(d));
+                    apdate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -158,6 +160,7 @@ public class staff_entry_fragment extends Fragment {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOJ"));
                     date_of_join.setText("" + displaydate.format(d));
+                    jodate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -166,6 +169,7 @@ public class staff_entry_fragment extends Fragment {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOl"));
                     date_of_leaving.setText("" + displaydate.format(d));
+                    ledate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -297,20 +301,23 @@ public class staff_entry_fragment extends Fragment {
         });
 
         save_staff.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (fullname.getText().toString().equals(""))
+                if (fullname.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
-                else if (address.getText().toString().equals(""))
+                } else if (address.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
-                else if (mobile_no.getText().toString().equals(""))
+                } else if (mobile_no.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     if (status.equalsIgnoreCase("Active")) {
                         status1 = 1;
                     } else {
                         status1 = 2;
                     }
-                    progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(status1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
@@ -346,25 +353,31 @@ public class staff_entry_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_staff.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (fullname.getText().toString().equals(""))
+                if (fullname.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
-                else if (address.getText().toString().equals(""))
+                }else if (address.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
-                else if (mobile_no.getText().toString().equals(""))
+                }
+                else if (mobile_no.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
+                }
                 else {
                     if (status.equalsIgnoreCase("Active")) {
                         status1 = 1;
                     } else {
                         status1 = 2;
                     }
-                    progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(status1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
@@ -399,6 +412,7 @@ public class staff_entry_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

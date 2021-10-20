@@ -231,6 +231,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             btn_edit_no.setOnClickListener(v18 -> dialog.dismiss());
 
             btn_edit_yes.setOnClickListener(v17 -> {
+                dialog.dismiss();
                 progressBarHelper.showProgressDialog();
                 Call<HomeworkByIdData> call = apiCalling.GetHomeworkByHWID(homeworkDetails.get(position).getHomeworkID());
                 call.enqueue(new Callback<HomeworkByIdData>() {

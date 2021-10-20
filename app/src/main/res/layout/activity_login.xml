@@ -64,6 +64,7 @@
                 android:background="@android:color/transparent"
                 android:hint="UserName"
                 android:inputType="text"
+                android:text="admin"
                 android:maxLines="1"
                 android:paddingLeft="12dp"
                 android:paddingTop="12dp"
@@ -76,6 +77,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
+
                 android:src="@drawable/mobile_no"
                 app:tint="#0074AA" />
 
@@ -110,6 +112,7 @@
                 android:layout_toRightOf="@+id/pwd"
                 android:background="@android:color/transparent"
                 android:hint="Password"
+                android:text="admin"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:paddingLeft="12dp"

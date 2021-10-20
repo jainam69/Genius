@@ -49,10 +49,10 @@ import retrofit2.Response;
 public class master_schoolFragment extends Fragment {
 
     AutoCompleteTextView school_name;
-    RadioButton school_active,school_inactive;
-    Button save_school_master,edit_school_master;
+    RadioButton school_active, school_inactive;
+    Button save_school_master, edit_school_master;
     RecyclerView school_rv;
-    TextView id,id_branch,text,transaction_id;
+    TextView id, id_branch, text, transaction_id;
     List<String> schoolitem = new ArrayList<>();
     List<Integer> schoolid = new ArrayList<>();
     String[] SCHOOLITEM;
@@ -63,6 +63,7 @@ public class master_schoolFragment extends Fragment {
     OnBackPressedCallback callback;
     NestedScrollView school_scroll;
     SchoolMaster_Adapter schoolMaster_adapter;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -88,79 +89,88 @@ public class master_schoolFragment extends Fragment {
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
-save_school_master.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        progressBarHelper.showProgressDialog();
-        if(school_name.getText().toString().equals(""))
-            Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
-        else{
-            if (Function.checkNetworkConnection(context)){
-                TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                RowStatusModel rowStatusModel = new RowStatusModel(1);
-                BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                SchoolModel model = new SchoolModel(school_name.getText().toString(),transactionModel,rowStatusModel,branchModel);
-                Call<SchoolModel.SchoolData1> call = apiCalling.SchoolMaintanance(model);
-                call.enqueue(new Callback<SchoolModel.SchoolData1>() {
-                    @Override
-                    public void onResponse(Call<SchoolModel.SchoolData1> call, Response<SchoolModel.SchoolData1> response) {
-                        progressBarHelper.hideProgressDialog();
-                        if (response.isSuccessful()){
-                            SchoolModel.SchoolData1 data = response.body();
-                            if (data.isCompleted()){
-                                SchoolModel model1 = data.getData();
-                                if (model1.getSchoolID()>0){
-                                    school_name.setText("");
-                                    GetAllSchool();
-                                }
-                            }
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<SchoolModel.SchoolData1> call, Throwable t) {
-                        progressBarHelper.hideProgressDialog();
-                    }
-                });
-            }else{
-                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-});
-
-        edit_school_master.setOnClickListener(new View.OnClickListener() {
+        save_school_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(school_name.getText().toString().equals(""))
+                progressBarHelper.showProgressDialog();
+                if (school_name.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
-                else{
-                    if (Function.checkNetworkConnection(context)){
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0);
+                } else {
+                    if (Function.checkNetworkConnection(context)) {
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        SchoolModel model = new SchoolModel(Long.parseLong(id.getText().toString()),school_name.getText().toString(),transactionModel,rowStatusModel,branchModel);
+                        SchoolModel model = new SchoolModel(school_name.getText().toString(), transactionModel, rowStatusModel, branchModel);
                         Call<SchoolModel.SchoolData1> call = apiCalling.SchoolMaintanance(model);
                         call.enqueue(new Callback<SchoolModel.SchoolData1>() {
                             @Override
                             public void onResponse(Call<SchoolModel.SchoolData1> call, Response<SchoolModel.SchoolData1> response) {
                                 progressBarHelper.hideProgressDialog();
-                                if (response.isSuccessful()){
+                                if (response.isSuccessful()) {
                                     SchoolModel.SchoolData1 data = response.body();
-                                    if (data.isCompleted()){
+                                    if (data.isCompleted()) {
                                         SchoolModel model1 = data.getData();
-                                        if (model1.getSchoolID()>0){
+                                        if (model1.getSchoolID() > 0) {
                                             school_name.setText("");
                                             GetAllSchool();
                                         }
                                     }
                                 }
                             }
+
                             @Override
                             public void onFailure(Call<SchoolModel.SchoolData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
                             }
                         });
-                    }else{
+                    } else {
+                        progressBarHelper.hideProgressDialog();
+                        Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        edit_school_master.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
+                if (school_name.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (Function.checkNetworkConnection(context)) {
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        RowStatusModel rowStatusModel = new RowStatusModel(1);
+                        BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                        SchoolModel model = new SchoolModel(Long.parseLong(id.getText().toString()), school_name.getText().toString(), transactionModel, rowStatusModel, branchModel);
+                        Call<SchoolModel.SchoolData1> call = apiCalling.SchoolMaintanance(model);
+                        call.enqueue(new Callback<SchoolModel.SchoolData1>() {
+                            @Override
+                            public void onResponse(Call<SchoolModel.SchoolData1> call, Response<SchoolModel.SchoolData1> response) {
+                                progressBarHelper.hideProgressDialog();
+                                if (response.isSuccessful()) {
+                                    SchoolModel.SchoolData1 data = response.body();
+                                    if (data.isCompleted()) {
+                                        SchoolModel model1 = data.getData();
+                                        if (model1.getSchoolID() > 0) {
+                                            save_school_master.setVisibility(View.VISIBLE);
+                                            edit_school_master.setVisibility(View.GONE);
+                                            school_name.setText("");
+                                            GetAllSchool();
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<SchoolModel.SchoolData1> call, Throwable t) {
+                                progressBarHelper.hideProgressDialog();
+                            }
+                        });
+                    } else {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -180,6 +190,7 @@ save_school_master.setOnClickListener(new View.OnClickListener() {
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
         return root;
     }
+
     public void GetAllSchool() {
 
         Call<SchoolData> call = apiCalling.GetAllSchool(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -194,16 +205,16 @@ save_school_master.setOnClickListener(new View.OnClickListener() {
                             SCHOOLID = null;
                             SCHOOLITEM = null;
                             List<SchoolModel> respose = schoolData.getData();
-                            if(respose.size() >0){
+                            if (respose.size() > 0) {
                                 List<SchoolModel> list = new ArrayList<>();
                                 for (SchoolModel singleResponseModel : respose) {
 
                                     String school_name = singleResponseModel.getSchoolName();
                                     schoolitem.add(school_name);
 
-                                    int school_id =(int)singleResponseModel.getSchoolID();
+                                    int school_id = (int) singleResponseModel.getSchoolID();
                                     schoolid.add(school_id);
-                                    if (singleResponseModel.getRowStatus().getRowStatusId()==1){
+                                    if (singleResponseModel.getRowStatus().getRowStatusId() == 1) {
                                         list.add(singleResponseModel);
                                     }
                                 }
@@ -265,7 +276,7 @@ save_school_master.setOnClickListener(new View.OnClickListener() {
 
         @Override
         public void onBindViewHolder(@NonNull SchoolMaster_Adapter.ViewHolder holder, int position) {
-            if(schoolDetails.get(position).getRowStatus().getRowStatusId() ==1){
+            if (schoolDetails.get(position).getRowStatus().getRowStatusId() == 1) {
                 holder.school_name.setText(schoolDetails.get(position).getSchoolName());
                 holder.school_edit.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -303,11 +314,11 @@ save_school_master.setOnClickListener(new View.OnClickListener() {
                                 save_school_master.setVisibility(View.GONE);
                                 edit_school_master.setVisibility(View.VISIBLE);
                                 school_name.setText(schoolDetails.get(position).getSchoolName());
-                                id.setText(""+schoolDetails.get(position).getSchoolID());
-                                id_branch.setText(""+schoolDetails.get(position).getBranchInfo().getBranchID());
-                                transaction_id.setText(""+schoolDetails.get(position).getTransaction().getTransactionId());
+                                id.setText("" + schoolDetails.get(position).getSchoolID());
+                                id_branch.setText("" + schoolDetails.get(position).getBranchInfo().getBranchID());
+                                transaction_id.setText("" + schoolDetails.get(position).getTransaction().getTransactionId());
                                 school_scroll.fullScroll(View.FOCUS_UP);
-                                school_scroll.scrollTo(0,0);
+                                school_scroll.scrollTo(0, 0);
                             }
                         });
                         dialog.show();
@@ -343,17 +354,17 @@ save_school_master.setOnClickListener(new View.OnClickListener() {
                                 call.enqueue(new Callback<CommonModel>() {
                                     @Override
                                     public void onResponse(Call<CommonModel> call, Response<CommonModel> response) {
-                                        if (response.isSuccessful()){
+                                        if (response.isSuccessful()) {
                                             progressBarHelper.hideProgressDialog();
                                             CommonModel model = response.body();
-                                            if (model.isCompleted()){
-                                                if (model.isData()){
+                                            if (model.isCompleted()) {
+                                                if (model.isData()) {
                                                     schoolDetails.remove(position);
                                                     notifyItemRemoved(position);
                                                     notifyDataSetChanged();
                                                 }
                                             }
-                                        }else {
+                                        } else {
                                             progressBarHelper.hideProgressDialog();
                                         }
                                     }
@@ -379,8 +390,8 @@ save_school_master.setOnClickListener(new View.OnClickListener() {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView school_name,status;
-            ImageView school_edit,school_delete;
+            TextView school_name, status;
+            ImageView school_edit, school_delete;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);

@@ -37,6 +37,7 @@ public class MyApplication extends Application {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60,TimeUnit.SECONDS)
                 .build();
 
         retrofit = new Retrofit.Builder()

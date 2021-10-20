@@ -86,7 +86,8 @@ public class homework_fragment extends Fragment {
 
     String FilePath_URL;
     SearchableSpinner standard, batch_time, subject, branch;
-    EditText homework_date, remarks;
+    EditText remarks;
+    TextView homework_date;
     TextView attachment_homework, id, transactionid;
     ImageView imageView;
     Button save_homework, edit_homework;
@@ -227,18 +228,24 @@ public class homework_fragment extends Fragment {
         });
 
         save_homework.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (homework_date.getText().toString().equals(""))
+                if (homework_date.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Homework Date.", Toast.LENGTH_SHORT).show();
-                else if (branch.getSelectedItemId() == 0)
+                } else if (branch.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                else if (standard.getSelectedItemId() == 0)
+                } else if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (subject.getSelectedItemId() == 0)
+                } else if (subject.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                else if (attachment_homework.getText().toString().equals(""))
+                } else if (attachment_homework.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Homework.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StandardModel standardModel = new StandardModel(StandardId);
@@ -279,23 +286,30 @@ public class homework_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_homework.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (homework_date.getText().toString().equals(""))
+                if (homework_date.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Homework Date.", Toast.LENGTH_SHORT).show();
-                else if (branch.getSelectedItemId() == 0)
+                }else if (branch.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                else if (standard.getSelectedItemId() == 0)
+                }else if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (subject.getSelectedItemId() == 0)
+                }else if (subject.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                else if (attachment_homework.getText().toString().equals(""))
+                }else if (attachment_homework.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Homework.", Toast.LENGTH_SHORT).show();
-                else {
+                }else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StandardModel standardModel = new StandardModel(StandardId);
@@ -336,6 +350,7 @@ public class homework_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

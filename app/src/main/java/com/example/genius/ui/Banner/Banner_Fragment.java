@@ -206,12 +206,14 @@ public class Banner_Fragment extends Fragment {
         save_banner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
                    /* if (branch.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else */if (banner_image.getText().toString().equals(""))
+                    else */if (banner_image.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
-                    else {
+                    }else {
                         progressBarHelper.showProgressDialog();
                         List<BannerModel.BannerTypeEntity> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -261,6 +263,7 @@ public class Banner_Fragment extends Fragment {
                         });
                     }
                 } else {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -269,12 +272,14 @@ public class Banner_Fragment extends Fragment {
         edit_banner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
                     /*if (branch.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else */if (banner_image.getText().toString().equals(""))
+                    else */if (banner_image.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
-                    else {
+                    }else {
                         progressBarHelper.showProgressDialog();
                         List<BannerModel.BannerTypeEntity> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -341,6 +346,7 @@ public class Banner_Fragment extends Fragment {
                         });
                     }
                 } else {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }

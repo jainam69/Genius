@@ -49,10 +49,10 @@ import retrofit2.Response;
 public class master_standardFragment extends Fragment {
 
     AutoCompleteTextView standard;
-    RadioButton standard_active,standard_inactive;
-    Button save_standard_master,edit_standard_master;
+    RadioButton standard_active, standard_inactive;
+    Button save_standard_master, edit_standard_master;
     RecyclerView standard_rv;
-    TextView id,id_branch,text, transaction_id;
+    TextView id, id_branch, text, transaction_id;
     Context context;
     List<String> standarditem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>();
@@ -106,15 +106,17 @@ public class master_standardFragment extends Fragment {
         save_standard_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(standard.getText().toString().equals(""))
+                progressBarHelper.showProgressDialog();
+                if (standard.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Standard", Toast.LENGTH_SHORT).show();
-                else{
+                } else {
                     if (Function.checkNetworkConnection(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        StandardModel model = new StandardModel(standard.getText().toString(),transactionModel,rowStatusModel,branchModel);
+                        StandardModel model = new StandardModel(standard.getText().toString(), transactionModel, rowStatusModel, branchModel);
                         Call<StandardModel.StandardData1> call = apiCalling.StandardMaintenance(model);
                         call.enqueue(new Callback<StandardModel.StandardData1>() {
                             @Override
@@ -139,7 +141,8 @@ public class master_standardFragment extends Fragment {
                                 progressBarHelper.hideProgressDialog();
                             }
                         });
-                    }else{
+                    } else {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -148,15 +151,17 @@ public class master_standardFragment extends Fragment {
         edit_standard_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(standard.getText().toString().equals(""))
+                progressBarHelper.showProgressDialog();
+                if (standard.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Standard", Toast.LENGTH_SHORT).show();
-                else{
+                }else {
                     if (Function.checkNetworkConnection(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0);
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        StandardModel model = new StandardModel(Long.parseLong(id.getText().toString()),standard.getText().toString(),transactionModel,rowStatusModel,branchModel);
+                        StandardModel model = new StandardModel(Long.parseLong(id.getText().toString()), standard.getText().toString(), transactionModel, rowStatusModel, branchModel);
                         Call<StandardModel.StandardData1> call = apiCalling.StandardMaintenance(model);
                         call.enqueue(new Callback<StandardModel.StandardData1>() {
                             @Override
@@ -167,6 +172,8 @@ public class master_standardFragment extends Fragment {
                                     if (data.isCompleted()) {
                                         StandardModel std_model = data.getData();
                                         if (std_model.getStandardID() > 0) {
+                                            edit_standard_master.setVisibility(View.GONE);
+                                            save_standard_master.setVisibility(View.VISIBLE);
                                             standard.setText("");
                                             GetAllStandard();
                                         }
@@ -181,7 +188,8 @@ public class master_standardFragment extends Fragment {
                                 progressBarHelper.hideProgressDialog();
                             }
                         });
-                    }else{
+                    } else {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -201,16 +209,16 @@ public class master_standardFragment extends Fragment {
                     if (standardData != null) {
                         if (standardData.isCompleted()) {
                             List<StandardModel> respose = standardData.getData();
-                            if(respose.size() >0){
+                            if (respose.size() > 0) {
                                 List<StandardModel> list = new ArrayList<>();
                                 for (StandardModel singleResponseModel : respose) {
 
                                     String std = singleResponseModel.getStandard();
                                     standarditem.add(std);
 
-                                    int stdid =(int)singleResponseModel.getStandardID();
+                                    int stdid = (int) singleResponseModel.getStandardID();
                                     standardid.add(stdid);
-                                    if (singleResponseModel.getRowStatus().getRowStatusId()==1){
+                                    if (singleResponseModel.getRowStatus().getRowStatusId() == 1) {
                                         list.add(singleResponseModel);
                                     }
                                 }
@@ -270,7 +278,7 @@ public class master_standardFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull StandardMaster_Adapter.ViewHolder holder, int position) {
-            if (standardDetails.get(position).getRowStatus().getRowStatusId()==1){
+            if (standardDetails.get(position).getRowStatus().getRowStatusId() == 1) {
                 holder.standard.setText(standardDetails.get(position).getStandard());
                 holder.standard_edit.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -301,11 +309,11 @@ public class master_standardFragment extends Fragment {
                                 save_standard_master.setVisibility(View.GONE);
                                 edit_standard_master.setVisibility(View.VISIBLE);
                                 standard.setText(standardDetails.get(position).getStandard());
-                                id.setText(""+standardDetails.get(position).getStandardID());
-                                transaction_id.setText(""+standardDetails.get(position).getTransaction().getTransactionId());
-                                id_branch.setText(""+standardDetails.get(position).getBranchInfo().getBranchID());
+                                id.setText("" + standardDetails.get(position).getStandardID());
+                                transaction_id.setText("" + standardDetails.get(position).getTransaction().getTransactionId());
+                                id_branch.setText("" + standardDetails.get(position).getBranchInfo().getBranchID());
                                 standard_scroll.fullScroll(View.FOCUS_UP);
-                                standard_scroll.scrollTo(0,0);
+                                standard_scroll.scrollTo(0, 0);
                             }
                         });
                         dialog.show();
@@ -341,9 +349,9 @@ public class master_standardFragment extends Fragment {
                                 call.enqueue(new Callback<CommonModel>() {
                                     @Override
                                     public void onResponse(Call<CommonModel> call, Response<CommonModel> response) {
-                                        if (response.isSuccessful()){
+                                        if (response.isSuccessful()) {
                                             CommonModel model = response.body();
-                                            if (model.isData()){
+                                            if (model.isData()) {
                                                 standardDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();
@@ -374,8 +382,8 @@ public class master_standardFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView standard,status;
-            ImageView standard_edit,standard_delete;
+            TextView standard, status;
+            ImageView standard_edit, standard_delete;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);

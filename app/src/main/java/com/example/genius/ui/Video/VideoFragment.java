@@ -143,10 +143,12 @@ public class VideoFragment extends Fragment {
         }
 
         save_video.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (attachment_video.getText().toString().equals(""))
+                if (attachment_video.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -181,15 +183,18 @@ public class VideoFragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_video.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (attachment_video.getText().toString().equals(""))
+                if (attachment_video.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -226,6 +231,7 @@ public class VideoFragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

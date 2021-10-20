@@ -153,13 +153,16 @@ public class NotificationFragment extends Fragment {
         save_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
 
                     /*if (branch.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else */if (notification_message.getText().toString().equals(""))
+                    else */
+                    if (notification_message.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
-                    else {
+                    } else {
                         progressBarHelper.showProgressDialog();
                         List<NotificationModel.NotificationTypeModel> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -209,6 +212,7 @@ public class NotificationFragment extends Fragment {
                         });
                     }
                 } else {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -217,39 +221,42 @@ public class NotificationFragment extends Fragment {
         edit_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
                     /*if (branch.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else*/ if (notification_message.getText().toString().equals(""))
+                    else*/
+                    if (notification_message.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
-                    else {
+                    } else {
                         progressBarHelper.showProgressDialog();
                         List<NotificationModel.NotificationTypeModel> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
-                            if(adminid>0){
-                                NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel(adminid,"Admin", 1);
+                            if (adminid > 0) {
+                                NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel(adminid, "Admin", 1);
                                 typeModel.add(model1);
-                            }else{
+                            } else {
                                 NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel("Admin", 1);
                                 typeModel.add(model1);
                             }
 
                         }
                         if (check_value_teacher == 1) {
-                            if(teacherid > 0) {
-                                NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel(teacherid,"Teacher", 2);
+                            if (teacherid > 0) {
+                                NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel(teacherid, "Teacher", 2);
                                 typeModel.add(model1);
-                            }else{
+                            } else {
                                 NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel("Teacher", 2);
                                 typeModel.add(model1);
                             }
 
                         }
                         if (check_value_student == 1) {
-                            if(studentid>0){
-                                NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel(studentid,"Student", 3);
+                            if (studentid > 0) {
+                                NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel(studentid, "Student", 3);
                                 typeModel.add(model1);
-                            }else{
+                            } else {
                                 NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel("Student", 3);
                                 typeModel.add(model1);
                             }
@@ -258,7 +265,7 @@ public class NotificationFragment extends Fragment {
                         TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                        NotificationModel model = new NotificationModel(Long.parseLong(notification_id.getText().toString()),typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString());
+                        NotificationModel model = new NotificationModel(Long.parseLong(notification_id.getText().toString()), typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString());
                         Call<NotificationModel.NotificationData1> call = apiCalling.NotificationMaintanance(model);
 
                         call.enqueue(new Callback<NotificationModel.NotificationData1>() {
@@ -292,6 +299,7 @@ public class NotificationFragment extends Fragment {
                         });
                     }
                 } else {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -472,7 +480,7 @@ public class NotificationFragment extends Fragment {
                             edit_notification.setVisibility(View.VISIBLE);
                             transaction_id.setText("" + notificationDetails.get(position).getTransaction().getTransactionId());
                             id.setText("" + notificationDetails.get(position).getNotificationID());
-                            notification_id.setText(""+ notificationDetails.get(position).getNotificationID());
+                            notification_id.setText("" + notificationDetails.get(position).getNotificationID());
                             notification_message.setText(" " + notificationDetails.get(position).getNotificationMessage());
                             List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
                             for (NotificationModel.NotificationTypeModel model : notitypelist) {

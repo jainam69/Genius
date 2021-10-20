@@ -156,6 +156,8 @@ public class master_subjectFragment extends Fragment {
                                     if (data.isCompleted()){
                                         SubjectModel model1 = data.getData();
                                         if (model1.getSubjectID()>0){
+                                            save_subject_master.setVisibility(View.VISIBLE);
+                                            edit_subject_master.setVisibility(View.GONE);
                                             subject_name.setText("");
                                             GetAllSubject();
                                         }

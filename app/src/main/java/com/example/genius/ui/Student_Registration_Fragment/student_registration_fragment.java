@@ -34,6 +34,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +44,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BatchModel;
 import com.example.genius.Model.BranchModel;
@@ -62,7 +64,9 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.utils.ImageUtility;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -76,9 +80,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
@@ -95,7 +101,8 @@ public class student_registration_fragment extends Fragment {
     TextView attachment, uno;
     ImageView imageView;
     SearchableSpinner standard, school_name, school_time, batch_time;
-    EditText gr_no, addmission_date, first_name, middle_name, last_name, birth_date, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password;
+    EditText gr_no, addmission_date, first_name, middle_name, last_name, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password;
+    TextView birth_date;
     RadioButton pass, fail, active, inactive, rb1, rb2;
     RadioGroup result_rg, status_rg;
     Button save_student_regi, edit_student_regi;
@@ -403,26 +410,36 @@ public class student_registration_fragment extends Fragment {
         });
 
         save_student_regi.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (addmission_date.getText().toString().equals(""))
+                if (addmission_date.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please select Admission Date.", Toast.LENGTH_SHORT).show();
-                else if (first_name.getText().toString().equals(""))
+                } else if (first_name.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter First Name.", Toast.LENGTH_SHORT).show();
-                else if (middle_name.getText().toString().equals(""))
+                } else if (middle_name.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Middle Name.", Toast.LENGTH_SHORT).show();
-                else if (last_name.getText().toString().equals(""))
+                } else if (last_name.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Last Name.", Toast.LENGTH_SHORT).show();
-                else if (address.getText().toString().equals(""))
+                } else if (address.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Address.", Toast.LENGTH_SHORT).show();
-                else if (standard.getSelectedItemId() == 0)
+                } else if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
-                else if (batch_time.getSelectedItemId() == 0)
+                } else if (batch_time.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (parent_name.getText().toString().equals(""))
+                } else if (parent_name.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Parent Name.", Toast.LENGTH_SHORT).show();
-                else if (login_id.getText().toString().equals(""))
+                } else if (login_id.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
 //                    insertwithoutAttachment();
                     if (Result.equalsIgnoreCase("Pass")) {
@@ -444,8 +461,6 @@ public class student_registration_fragment extends Fragment {
                     StandardModel standardModel = new StandardModel(StandardId);
                     StudentModel model = new StudentModel("", first_name.getText().toString(), middle_name.getText().toString(), last_name.getText().toString(), bdate, indate, address.getText().toString(), Integer.parseInt(SchooltimeId), result1,
                             percentage.getText().toString(), class_name.getText().toString(), contact_no.getText().toString(), attach, standardModel, schoolModel, branchModel, transactionModel, rowStatusModel, batchModel, maintModel);
-
-
                     Call<StudentModel.StudentData1> call = apiCalling.StudentMaintanance(model);
                     call.enqueue(new Callback<StudentModel.StudentData1>() {
                         @Override
@@ -476,6 +491,7 @@ public class student_registration_fragment extends Fragment {
 
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -483,26 +499,36 @@ public class student_registration_fragment extends Fragment {
         edit_student_regi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
-                    if (addmission_date.getText().toString().equals(""))
+                    if (addmission_date.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please select Admission Date.", Toast.LENGTH_SHORT).show();
-                    else if (first_name.getText().toString().equals(""))
+                    } else if (first_name.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter First Name.", Toast.LENGTH_SHORT).show();
-                    else if (middle_name.getText().toString().equals(""))
+                    } else if (middle_name.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Middle Name.", Toast.LENGTH_SHORT).show();
-                    else if (last_name.getText().toString().equals(""))
+                    } else if (last_name.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Last Name.", Toast.LENGTH_SHORT).show();
-                    else if (address.getText().toString().equals(""))
+                    } else if (address.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Address.", Toast.LENGTH_SHORT).show();
-                    else if (standard.getSelectedItemId() == 0)
+                    } else if (standard.getSelectedItemId() == 0) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
-                    else if (batch_time.getSelectedItemId() == 0)
+                    } else if (batch_time.getSelectedItemId() == 0) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please select Batch Time.", Toast.LENGTH_SHORT).show();
-                    else if (parent_name.getText().toString().equals(""))
+                    } else if (parent_name.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Parent Name.", Toast.LENGTH_SHORT).show();
-                    else if (login_id.getText().toString().equals(""))
+                    } else if (login_id.getText().toString().equals("")) {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                    else {
+                    } else {
                         if (Result.equalsIgnoreCase("Pass")) {
                             result1 = 1;
                         } else {
@@ -554,24 +580,32 @@ public class student_registration_fragment extends Fragment {
 
                     }
                 } else {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                student_registration_Listfragment profileFragment = new student_registration_Listfragment();
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.nav_host_fragment, profileFragment);
-                ft.addToBackStack(null);
-                ft.commit();
-            }
-        };
+        callback = new
+                OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        student_registration_Listfragment profileFragment = new student_registration_Listfragment();
+                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, profileFragment);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                }
 
-        getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
+        ;
+
+        getActivity().
+
+                getOnBackPressedDispatcher().
+
+                addCallback(getActivity(), callback);
 
         return root;
     }

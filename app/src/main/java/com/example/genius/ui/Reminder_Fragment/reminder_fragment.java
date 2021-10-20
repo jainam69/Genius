@@ -116,14 +116,18 @@ public class reminder_fragment extends Fragment {
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
         save_reminder.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (edt_reminderDescription.getText().toString().equals(""))
+                if (edt_reminderDescription.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Description", Toast.LENGTH_SHORT).show();
-                else if (reminder_time.getText().toString().equals(""))
+                } else if (reminder_time.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Time", Toast.LENGTH_SHORT).show();
-                else if (date_reminder.getText().toString().equals(""))
+                } else if (date_reminder.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Date", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -156,19 +160,23 @@ public class reminder_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_reminder.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                if (edt_reminderDescription.getText().toString().equals(""))
+                if (edt_reminderDescription.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Description", Toast.LENGTH_SHORT).show();
-                else if (reminder_time.getText().toString().equals(""))
+                } else if (reminder_time.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Time", Toast.LENGTH_SHORT).show();
-                else if (date_reminder.getText().toString().equals(""))
+                } else if (date_reminder.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Date", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -186,6 +194,8 @@ public class reminder_fragment extends Fragment {
                                         edt_reminderDescription.setText("");
                                         reminder_time.setText("");
                                         date_reminder.setText(yesterday());
+                                        save_reminder.setVisibility(View.VISIBLE);
+                                        edit_reminder.setVisibility(View.GONE);
                                         GetReminderDetails();
                                         Toast.makeText(context, "Reminder Edited Successfully", Toast.LENGTH_SHORT).show();
                                     }
@@ -201,6 +211,7 @@ public class reminder_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

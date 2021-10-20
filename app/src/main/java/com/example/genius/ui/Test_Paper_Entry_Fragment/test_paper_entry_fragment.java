@@ -84,14 +84,14 @@ import static android.app.Activity.RESULT_OK;
 
 public class test_paper_entry_fragment extends Fragment {
 
-    SearchableSpinner standard,batch_time,subject,branch;
-    EditText test_date,start_time,end_time,total_marks,remarks,link;
-    TextView upload_test_paper,id,paper,paper_name;
-    RadioGroup rg_status,rg_type;
-    RadioButton upload_doc,upload_link,active,inactive,rb1,rb2;
-    Button save_test_paper,edit_test_paper;
-    String type,status;
-    RelativeLayout linear_doc,linear_link;
+    SearchableSpinner standard, batch_time, subject, branch;
+    EditText test_date, start_time, end_time, total_marks, remarks, link;
+    TextView upload_test_paper, id, paper, paper_name;
+    RadioGroup rg_status, rg_type;
+    RadioButton upload_doc, upload_link, active, inactive, rb1, rb2;
+    Button save_test_paper, edit_test_paper;
+    String type, status;
+    RelativeLayout linear_doc, linear_link;
     Context context;
     int select;
     private int year;
@@ -103,7 +103,7 @@ public class test_paper_entry_fragment extends Fragment {
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM;
     Integer[] STANDARDID, SUBJECTID, BRANCHID, BATCHID;
-    String StandardName, SubjectName, BatchTime, BranchName,format,Ans,upload_paper,upload_paper_name,BatchId,SubjectId,BranchID,papername,paper_ext;
+    String StandardName, SubjectName, BatchTime, BranchName, format, Ans, upload_paper, upload_paper_name, BatchId, SubjectId, BranchID, papername, paper_ext;
     int BranchId;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
@@ -147,56 +147,53 @@ public class test_paper_entry_fragment extends Fragment {
         paper_name = root.findViewById(R.id.paper_name);
 
         bundle = getArguments();
-        if (bundle != null)
-        {
+        if (bundle != null) {
             save_test_paper.setVisibility(View.GONE);
             edit_test_paper.setVisibility(View.VISIBLE);
-            if (bundle.containsKey("ID")){
-                id.setText(""+bundle.getInt("ID"));
+            if (bundle.containsKey("ID")) {
+                id.setText("" + bundle.getInt("ID"));
             }
-            if (bundle.containsKey("TestDate")){
+            if (bundle.containsKey("TestDate")) {
                 test_date.setText(bundle.getString("TestDate"));
             }
-            if (bundle.containsKey("TestMarks")){
+            if (bundle.containsKey("TestMarks")) {
                 total_marks.setText(bundle.getString("TestMarks"));
             }
-            if (bundle.containsKey("StartTime")){
+            if (bundle.containsKey("StartTime")) {
                 start_time.setText(bundle.getString("StartTime"));
             }
-            if (bundle.containsKey("EndTime")){
+            if (bundle.containsKey("EndTime")) {
                 end_time.setText(bundle.getString("EndTime"));
             }
-            if (bundle.containsKey("Type")){
+            if (bundle.containsKey("Type")) {
                 String tp = bundle.getString("Type");
-                if (tp.equals("UploadDocument"))
-                {
+                if (tp.equals("UploadDocument")) {
                     upload_doc.setChecked(true);
                     upload_link.setChecked(false);
                     linear_doc.setVisibility(View.VISIBLE);
                     linear_link.setVisibility(View.GONE);
                 }
-                if (tp.equals("UploadLink")){
+                if (tp.equals("UploadLink")) {
                     upload_doc.setChecked(false);
                     upload_link.setChecked(true);
                     linear_doc.setVisibility(View.GONE);
                     linear_link.setVisibility(View.VISIBLE);
                 }
             }
-            if (bundle.containsKey("Status")){
+            if (bundle.containsKey("Status")) {
                 String st = bundle.getString("Status");
-                if (st.equals("Active"))
-                {
+                if (st.equals("Active")) {
                     active.setChecked(true);
                     inactive.setChecked(false);
                 }
-                if (st.equals("Inactive")){
+                if (st.equals("Inactive")) {
                     active.setChecked(false);
                     inactive.setChecked(true);
                 }
             }
             if (bundle.containsKey("Paper")) {
                 String p = bundle.getString("Paper");
-                if (!(p.equals(" "))){
+                if (!(p.equals(" "))) {
                     upload_test_paper.setText("Attached");
                     upload_test_paper.setTextColor(context.getResources().getColor(R.color.black));
                 }
@@ -226,13 +223,11 @@ public class test_paper_entry_fragment extends Fragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 rb1 = root.findViewById(checkedId);
                 type = rb1.getText().toString();
-                if (type.equals("UploadDocument"))
-                {
+                if (type.equals("UploadDocument")) {
                     linear_doc.setVisibility(View.VISIBLE);
                     linear_link.setVisibility(View.GONE);
                 }
-                if (type.equals("UploadLink"))
-                {
+                if (type.equals("UploadLink")) {
                     linear_link.setVisibility(View.VISIBLE);
                     linear_doc.setVisibility(View.GONE);
                 }
@@ -314,93 +309,77 @@ public class test_paper_entry_fragment extends Fragment {
             }
         });
 
-        end_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(context,
-                        new TimePickerDialog.OnTimeSetListener() {
+        end_time.setOnClickListener(v -> {
+            Calendar mcurrentTime = Calendar.getInstance();
+            int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+            int minute = mcurrentTime.get(Calendar.MINUTE);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(context,
+                    (view, hourOfDay, minute1) -> {
+                        if (hourOfDay == 0) {
+                            hourOfDay += 12;
+                            format = "AM";
+                        } else if (hourOfDay == 12) {
+                            format = "PM";
+                        } else if (hourOfDay > 12) {
+                            hourOfDay -= 12;
+                            format = "PM";
+                        } else {
+                            format = "AM";
+                        }
+                        end_time.setText(hourOfDay + ":" + minute1 + " " + format);
+                    }, hour, minute, false);
+            timePickerDialog.show();
+        });
 
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay,
-                                                  int minute) {
-                                if (hourOfDay == 0) {
-                                    hourOfDay += 12;
-                                    format = "AM";
-                                } else if (hourOfDay == 12) {
-                                    format = "PM";
-                                } else if (hourOfDay > 12) {
-                                    hourOfDay -= 12;
-                                    format = "PM";
-                                } else {
-                                    format = "AM";
-                                }
-                                end_time.setText(hourOfDay + ":" + minute + " " + format);
-                            }
-                        }, hour, minute, false);
-                timePickerDialog.show();
+        save_test_paper.setOnClickListener(v -> {
+            if (Function.checkNetworkConnection(context)) {
+                if (branch.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
+                else if (standard.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
+                else if (batch_time.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
+                else if (subject.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
+                else if (test_date.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Select Date.", Toast.LENGTH_SHORT).show();
+                else if (total_marks.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Enter Total Marks.", Toast.LENGTH_SHORT).show();
+                else if (type.equals("UploadDocument") && upload_test_paper.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Upload Document.", Toast.LENGTH_SHORT).show();
+                else if (type.equals("UploadLink") && link.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Enter Link.", Toast.LENGTH_SHORT).show();
+                else {
+
+                }
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
-        save_test_paper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Function.checkNetworkConnection(context))
-                {
-                    if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else if (standard.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    else if (batch_time.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    else if (subject.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                    else if (test_date.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Select Date.", Toast.LENGTH_SHORT).show();
-                    else if (total_marks.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Enter Total Marks.", Toast.LENGTH_SHORT).show();
-                    else if (type.equals("UploadDocument") && upload_test_paper.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Upload Document.", Toast.LENGTH_SHORT).show();
-                    else if (type.equals("UploadLink") && link.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Enter Link.", Toast.LENGTH_SHORT).show();
-                    else {
+        edit_test_paper.setOnClickListener(v -> {
+            if (Function.checkNetworkConnection(context)) {
+                if (branch.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
+                else if (standard.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
+                else if (batch_time.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
+                else if (subject.getSelectedItemId() == 0)
+                    Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
+                else if (test_date.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Select Date.", Toast.LENGTH_SHORT).show();
+                else if (total_marks.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Enter Total Marks.", Toast.LENGTH_SHORT).show();
+                else if (type.equals("UploadDocument") && upload_test_paper.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Upload Document.", Toast.LENGTH_SHORT).show();
+                else if (type.equals("UploadLink") && link.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Enter Link.", Toast.LENGTH_SHORT).show();
+                else {
 
-                    }
-                }else {
-                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        edit_test_paper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Function.checkNetworkConnection(context))
-                {
-                    if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else if (standard.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    else if (batch_time.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    else if (subject.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                    else if (test_date.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Select Date.", Toast.LENGTH_SHORT).show();
-                    else if (total_marks.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Enter Total Marks.", Toast.LENGTH_SHORT).show();
-                    else if (type.equals("UploadDocument") && upload_test_paper.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Upload Document.", Toast.LENGTH_SHORT).show();
-                    else if (type.equals("UploadLink") && link.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Enter Link.", Toast.LENGTH_SHORT).show();
-                    else {
-
-                    }
-                }else {
-                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-                }
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -428,8 +407,7 @@ public class test_paper_entry_fragment extends Fragment {
             return "0" + c;
     }
 
-    public void GetAllBranch()
-    {
+    public void GetAllBranch() {
         branchitem.add("Select Branch");
         branchid.add(0);
 
@@ -490,8 +468,7 @@ public class test_paper_entry_fragment extends Fragment {
                     if (branch.getSelectedItem().equals("Select Branch")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                    else{
+                    } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
@@ -556,6 +533,7 @@ public class test_paper_entry_fragment extends Fragment {
         subject.setAdapter(adapter);
         subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
+
     AdapterView.OnItemSelectedListener onItemSelectedListener8 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -565,8 +543,7 @@ public class test_paper_entry_fragment extends Fragment {
                     if (subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                    else{
+                    } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
@@ -628,6 +605,7 @@ public class test_paper_entry_fragment extends Fragment {
         standard.setAdapter(adapter);
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
+
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -648,8 +626,7 @@ public class test_paper_entry_fragment extends Fragment {
                 }
             };
 
-    public void selectbatch_time()
-    {
+    public void selectbatch_time() {
         batchitem.clear();
         batchitem.add("Batch Time");
         batchid.add("0");
@@ -670,7 +647,7 @@ public class test_paper_entry_fragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         batch_time.setAdapter(adapter);
         batch_time.setOnItemSelectedListener(onItemSelectedListener77);
-        if (bundle != null){
+        if (bundle != null) {
             int a = batchid.indexOf(String.valueOf(bundle.getInt("BatchTime")));
             batch_time.setSelection(a);
         }
@@ -688,8 +665,7 @@ public class test_paper_entry_fragment extends Fragment {
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
                         } catch (Exception e) {
                         }
-                    }
-                    else{
+                    } else {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                             ((TextView) parent.getChildAt(0)).setTextSize(14);
@@ -778,7 +754,7 @@ public class test_paper_entry_fragment extends Fragment {
             e.printStackTrace();
         }
 
-        String encoded = Base64.encodeToString(bytes,Base64.NO_WRAP);
+        String encoded = Base64.encodeToString(bytes, Base64.NO_WRAP);
         return encoded;
     }
 

@@ -234,7 +234,7 @@ public interface ApiCalling {
     Call<BannerData> GetAllBannerBranch(@Query("branchID") long branchID);
 
     @GET(ApiConstant.GET_ALL_BANNER_BRANCH_TYPE)
-    Call<BannerData> GetAllBannerBranchType(@Query("branchID") long branchID, @Query("typeID") int typeID);
+    Call<BannerData> GetAllBannerBranchType(@Query("branchID") long branchID, @Query("bannerTypeID") int typeID);
 
     @GET(ApiConstant.GET_ALL_BANNER)
     Call<BannerData> GetAllBanner();

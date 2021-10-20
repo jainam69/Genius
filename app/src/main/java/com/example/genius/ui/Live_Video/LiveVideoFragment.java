@@ -115,14 +115,18 @@ public class LiveVideoFragment extends Fragment {
         transaction_id = root.findViewById(R.id.transaction_id);
         unique_id = root.findViewById(R.id.unique_id);
         save_live_video.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (standard.getSelectedItemId() == 0)
+                if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (live_url.getText().toString().equalsIgnoreCase(""))
+                } else if (live_url.getText().toString().equalsIgnoreCase("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Live Video URL", Toast.LENGTH_SHORT).show();
-                else if (video_description.getText().toString().equalsIgnoreCase(""))
+                } else if (video_description.getText().toString().equalsIgnoreCase("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Live URL Description", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     if (Function.checkNetworkConnection(context)) {
                         progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), "");
@@ -167,25 +171,29 @@ public class LiveVideoFragment extends Fragment {
                     }
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_live_video.setOnClickListener(v -> {
-
-            if (standard.getSelectedItemId() == 0)
-                Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-            else if (live_url.getText().toString().equalsIgnoreCase(""))
-                Toast.makeText(context, "Please Enter Live Video URL", Toast.LENGTH_SHORT).show();
-            else if (video_description.getText().toString().equalsIgnoreCase(""))
-                Toast.makeText(context, "Please Enter Live URL Description", Toast.LENGTH_SHORT).show();
-            else {
-                if (Function.checkNetworkConnection(context)) {
+            progressBarHelper.showProgressDialog();
+            if (Function.checkNetworkConnection(context)) {
+                if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
+                } else if (live_url.getText().toString().equalsIgnoreCase("")) {
+                    progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, "Please Enter Live Video URL", Toast.LENGTH_SHORT).show();
+                } else if (video_description.getText().toString().equalsIgnoreCase("")) {
+                    progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, "Please Enter Live URL Description", Toast.LENGTH_SHORT).show();
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    LinkModel model = new LinkModel(Long.parseLong(unique_id.getText().toString()), branchModel, StandardId, video_description.getText().toString(), live_url.getText().toString(), rowStatusModel, transactionModel,video_title.getText().toString());
+                    LinkModel model = new LinkModel(Long.parseLong(unique_id.getText().toString()), branchModel, StandardId, video_description.getText().toString(), live_url.getText().toString(), rowStatusModel, transactionModel, video_title.getText().toString());
                     Call<LinkModel.LinkData1> call = apiCalling.LiveVideoMaintenance(model);
                     call.enqueue(new Callback<LinkModel.LinkData1>() {
                         @Override
@@ -217,9 +225,10 @@ public class LiveVideoFragment extends Fragment {
                             Toast.makeText(context, "" + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-                } else {
-                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 

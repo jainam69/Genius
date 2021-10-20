@@ -2,6 +2,7 @@ package com.example.genius.ui.Test_Schedule;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -84,7 +87,7 @@ import retrofit2.Response;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-@SuppressLint({"SimpleDateFormat","SetTextI18n"})
+@SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class test_schedule_fragment extends Fragment {
 
     SearchableSpinner standard, batch_time, subject, paper_type;
@@ -318,18 +321,24 @@ public class test_schedule_fragment extends Fragment {
         });
 
         save_testschedule.setOnClickListener((View.OnClickListener) v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (standard.getSelectedItemId() == 0)
+                if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (batch_time.getSelectedItemId() == 0)
+                } else if (batch_time.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (subject.getSelectedItemId() == 0)
+                } else if (subject.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                else if (marks.getText().toString().equals(""))
+                } else if (marks.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Total Marks.", Toast.LENGTH_SHORT).show();
-                else if (test_date.getText().toString().equals(""))
+                } else if (test_date.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Test Date.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     StandardModel standardModel = new StandardModel(StandardId);
@@ -358,6 +367,7 @@ public class test_schedule_fragment extends Fragment {
                                             fragmentTransaction.commit();
                                         } else {
                                             Toast.makeText(context, "Test Schedule Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                            save_testschedule.setVisibility(View.GONE);
                                             a = notimodel.getTestID();
                                             if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                                                 linear_doc.setVisibility(View.VISIBLE);
@@ -383,23 +393,30 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_testschedule.setOnClickListener((View.OnClickListener) v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (standard.getSelectedItemId() == 0)
+                if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (batch_time.getSelectedItemId() == 0)
+                } else if (batch_time.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (subject.getSelectedItemId() == 0)
+                } else if (subject.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                else if (marks.getText().toString().equals(""))
+                } else if (marks.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Total Marks.", Toast.LENGTH_SHORT).show();
-                else if (test_date.getText().toString().equals(""))
+                } else if (test_date.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Test Date.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     StandardModel standardModel = new StandardModel(StandardId);
@@ -419,12 +436,33 @@ public class test_schedule_fragment extends Fragment {
                                     TestScheduleModel notimodel = data.getData();
                                     if (notimodel != null) {
                                         Toast.makeText(context, "Test Schedule Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                        test_Listfragment orderplace = new test_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+                                        View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
+                                        builder.setView(dialogView);
+                                        builder.setCancelable(true);
+                                        Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                                        Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                                        ImageView image = dialogView.findViewById(R.id.image);
+                                        TextView title = dialogView.findViewById(R.id.title);
+                                        TextView header_title = dialogView.findViewById(R.id.header_title);
+                                        header_title.setVisibility(View.GONE);
+                                        title.setText("Do you want to changes continue?");
+                                        image.setImageResource(R.drawable.ic_edit);
+                                        AlertDialog dialog = builder.create();
+                                        btn_edit_no.setOnClickListener(v1 -> {
+                                            dialog.dismiss();
+                                            test_Listfragment orderplace = new test_Listfragment();
+                                            FragmentManager fragmentManager = getFragmentManager();
+                                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                                            fragmentTransaction.addToBackStack(null);
+                                            fragmentTransaction.commit();
+                                        });
+                                        btn_edit_yes.setOnClickListener(v12 -> {
+                                            dialog.dismiss();
+                                            edit_testschedule.setVisibility(View.GONE);
+                                        });
+                                        dialog.show();
                                     } else {
                                         Toast.makeText(context, "Test Schedule not Updated...!", Toast.LENGTH_SHORT).show();
                                     }
@@ -441,17 +479,21 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         save_test_paper.setOnClickListener((View.OnClickListener) v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals(""))
+                if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
-                else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals(""))
+                } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -504,17 +546,21 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_test_paper.setOnClickListener((View.OnClickListener) v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals(""))
+                if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
-                else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals(""))
+                } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -539,7 +585,7 @@ public class test_schedule_fragment extends Fragment {
                                         FragmentManager fragmentManager = getFragmentManager();
                                         FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
                                         fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                            fragmentTransaction.addToBackStack(null);
+                                        fragmentTransaction.addToBackStack(null);
                                         fragmentTransaction.commit();
                                     } else {
                                         Toast.makeText(context, "Paper not Updated...!", Toast.LENGTH_SHORT).show();
@@ -557,6 +603,7 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

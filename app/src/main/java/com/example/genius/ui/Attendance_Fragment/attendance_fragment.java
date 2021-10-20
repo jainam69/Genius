@@ -277,16 +277,21 @@ public class attendance_fragment extends Fragment {
         });
 
         save_attendance.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (branch.getSelectedItemId() == 0)
+                if (branch.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                else if (standard.getSelectedItemId() == 0)
+                } else if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (batch_time.getSelectedItemId() == 0)
+                } else if (batch_time.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (attendance_date.getText().toString().equals(""))
+                } else if (attendance_date.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter attendance date.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     attandance = new ArrayList<>();
                     BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -336,11 +341,13 @@ public class attendance_fragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_attendance.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 progressBarHelper.showProgressDialog();
                 attandance_edit = new ArrayList<>();
@@ -390,6 +397,7 @@ public class attendance_fragment extends Fragment {
                     }
                 });
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

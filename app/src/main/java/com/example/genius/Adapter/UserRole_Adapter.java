@@ -21,7 +21,7 @@ import java.util.Objects;
 public class UserRole_Adapter extends RecyclerView.Adapter<UserRole_Adapter.ViewHolder> {
 
     Context context;
-    HashMap<String,Integer> permissionDetails;
+    HashMap<String, Integer> permissionDetails;
     List<RolesModel> model;
     public static List<RolesModel> permissionlist = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class UserRole_Adapter extends RecyclerView.Adapter<UserRole_Adapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.masters.setText(""+model.get(position).getRoleName());
+        holder.masters.setText("" + model.get(position).getRoleName());
         RolesModel rolesModel = new RolesModel();
         rolesModel.setPermission(model.get(position).getRoleName());
         rolesModel.setRoleID(model.get(position).getRoleID());
@@ -54,10 +54,9 @@ public class UserRole_Adapter extends RecyclerView.Adapter<UserRole_Adapter.View
         holder.masters.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (holder.masters.isChecked())
-                {
+                if (holder.masters.isChecked()) {
                     permissionlist.get(position).setHasAccess(true);
-                }else {
+                } else {
                     permissionlist.get(position).setHasAccess(false);
                 }
             }

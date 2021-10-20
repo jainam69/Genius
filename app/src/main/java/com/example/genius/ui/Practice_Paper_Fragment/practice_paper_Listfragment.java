@@ -161,18 +161,23 @@ public class practice_paper_Listfragment extends Fragment {
         }
 
         save_practice_paper.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (standard.getSelectedItemId() == 0)
+                if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (subject.getSelectedItemId() == 0)
+                } else if (subject.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 /*else if (branch.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();*/
-                else if (batch_time.getSelectedItemId() == 0)
+                } else if (batch_time.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (attach_paper.getText().toString().equals(""))
+                } else if (attach_paper.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StandardModel standardModel = new StandardModel(StandardId);
@@ -214,23 +219,29 @@ public class practice_paper_Listfragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_practice_paper.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (standard.getSelectedItemId() == 0)
+                if (standard.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (subject.getSelectedItemId() == 0)
+                } else if (subject.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 /*else if (branch.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();*/
-                else if (batch_time.getSelectedItemId() == 0)
+                } else if (batch_time.getSelectedItemId() == 0) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (attach_paper.getText().toString().equals(""))
+                } else if (attach_paper.getText().toString().equals("")) {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StandardModel standardModel = new StandardModel(StandardId);
@@ -275,6 +286,7 @@ public class practice_paper_Listfragment extends Fragment {
                     });
                 }
             } else {
+                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -338,8 +350,9 @@ public class practice_paper_Listfragment extends Fragment {
                     InputStream imageStream;
                     Uri uri = result.getData();
                     String Path = FUtils.getPath(requireContext(), uri);
-                    assert Path != null;
-                    instrumentFileDestination = new File(Path);
+                    if (Path != null) {
+                        instrumentFileDestination = new File(Path);
+                    }
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     attach_paper.setText("Attached");
                     attach_paper.setTextColor(context.getResources().getColor(R.color.black));
@@ -843,6 +856,7 @@ public class practice_paper_Listfragment extends Fragment {
                 });
                 dialog.show();
             });
+
             holder.paper_download.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);

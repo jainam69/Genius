@@ -4,8 +4,8 @@ import android.os.ParcelUuid;
 
 public class ApiConstant {
 
-        //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    public static final String BASE_URL = "http://192.168.157.181/api/";
+    public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
+    //public static final String BASE_URL = "http://192.168.255.181/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
