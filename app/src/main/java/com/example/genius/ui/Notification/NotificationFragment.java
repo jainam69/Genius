@@ -74,7 +74,6 @@ public class NotificationFragment extends Fragment {
     String BranchName, BranchID;
     Notification_Adapter notification_adapter;
 
-
     AdapterView.OnItemSelectedListener onItemSelectedListener6 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -153,14 +152,8 @@ public class NotificationFragment extends Fragment {
         save_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
-                if (Function.checkNetworkConnection(context)) {
-
-                    /*if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else */
+                if (Function.isNetworkAvailable(context)) {
                     if (notification_message.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
                     } else {
                         progressBarHelper.showProgressDialog();
@@ -191,6 +184,7 @@ public class NotificationFragment extends Fragment {
                                     if (data.isCompleted()) {
                                         NotificationModel notimodel = data.getData();
                                         if (notimodel != null) {
+                                            Toast.makeText(context, "Notification inserted successfully.", Toast.LENGTH_SHORT).show();
                                             notification_message.setText("");
                                             branch.setSelection(0);
                                             ch_admin.setChecked(false);
@@ -198,11 +192,11 @@ public class NotificationFragment extends Fragment {
                                             ch_teacher.setChecked(false);
                                             GetAllNotification();
                                         } else {
-                                            Toast.makeText(context, "Notification not Inserted...!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Notification not Inserted.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override
@@ -221,13 +215,8 @@ public class NotificationFragment extends Fragment {
         edit_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
-                    /*if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else*/
                     if (notification_message.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
                     } else {
                         progressBarHelper.showProgressDialog();
@@ -276,6 +265,7 @@ public class NotificationFragment extends Fragment {
                                     if (data.isCompleted()) {
                                         NotificationModel notimodel = data.getData();
                                         if (notimodel != null) {
+                                            Toast.makeText(context, "Notification updated successfully.", Toast.LENGTH_SHORT).show();
                                             notification_message.setText("");
                                             branch.setSelection(0);
                                             ch_admin.setChecked(false);
@@ -283,13 +273,13 @@ public class NotificationFragment extends Fragment {
                                             ch_teacher.setChecked(false);
                                             GetAllNotification();
                                         } else {
-                                            Toast.makeText(context, "Notification not Updated...!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Notification not Updated.", Toast.LENGTH_SHORT).show();
                                         }
                                         save_notification.setVisibility(View.VISIBLE);
                                         edit_notification.setVisibility(View.GONE);
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override
@@ -305,9 +295,8 @@ public class NotificationFragment extends Fragment {
             }
         });
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             GetAllNotification();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
@@ -350,8 +339,8 @@ public class NotificationFragment extends Fragment {
                             }
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
-                progressBarHelper.hideProgressDialog();
             }
 
             @Override
@@ -471,11 +460,6 @@ public class NotificationFragment extends Fragment {
                     btn_delete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            /*BranchId = Integer.parseInt(String.valueOf(notificationDetails.get(position).getBranch().getBranchID()));
-                            if(BranchId >0){
-                                int a = branchid.indexOf(BranchId);
-                                branch.setSelection(a);
-                            }*/
                             save_notification.setVisibility(View.GONE);
                             edit_notification.setVisibility(View.VISIBLE);
                             transaction_id.setText("" + notificationDetails.get(position).getTransaction().getTransactionId());
@@ -539,6 +523,7 @@ public class NotificationFragment extends Fragment {
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
+                                                Toast.makeText(context, "Notification deleted successfully.", Toast.LENGTH_SHORT).show();
                                                 notificationDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();

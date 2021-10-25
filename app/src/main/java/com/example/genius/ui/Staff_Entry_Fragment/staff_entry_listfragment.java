@@ -68,7 +68,7 @@ public class staff_entry_listfragment extends Fragment {
         clear = root.findViewById(R.id.clear);
         search = root.findViewById(R.id.search);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllStaff();
         } else {
@@ -149,7 +149,6 @@ public class staff_entry_listfragment extends Fragment {
             @Override
             public void onResponse(Call<StaffData> call, Response<StaffData> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
                     StaffData staffData = response.body();
                     if (staffData != null) {
                         if (staffData.isCompleted()) {
@@ -172,16 +171,14 @@ public class staff_entry_listfragment extends Fragment {
                             }
                         }
                     }
-
-                } else {
                     progressBarHelper.hideProgressDialog();
-
                 }
             }
 
             @Override
             public void onFailure(Call<StaffData> call, Throwable t) {
                 progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

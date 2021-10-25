@@ -84,7 +84,7 @@ public class master_subjectFragment extends Fragment {
         transaction_id = root.findViewById(R.id.transaction_id);
         subject_scroll = root.findViewById(R.id.subject_scroll);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllSubject();
         } else {
@@ -97,7 +97,7 @@ public class master_subjectFragment extends Fragment {
                 if (subject_name.getText().toString().equals(""))
                     Toast.makeText(context, "Please Enter Subject Name", Toast.LENGTH_SHORT).show();
                 else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -108,15 +108,18 @@ public class master_subjectFragment extends Fragment {
                             @Override
                             public void onResponse(Call<SubjectModel.SubjectData1> call, Response<SubjectModel.SubjectData1> response) {
                                 if (response.isSuccessful()) {
-                                    progressBarHelper.hideProgressDialog();
                                     SubjectModel.SubjectData1 data = response.body();
                                     if (data.isCompleted()){
                                         SubjectModel model1 = data.getData();
                                         if (model1.getSubjectID()>0){
+                                            Toast.makeText(context, "Subject inserted successfully.", Toast.LENGTH_SHORT).show();
                                             subject_name.setText("");
                                             GetAllSubject();
+                                        }else {
+                                            Toast.makeText(context, "Subject Already Exists.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 } else {
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -125,9 +128,11 @@ public class master_subjectFragment extends Fragment {
                             @Override
                             public void onFailure(Call<SubjectModel.SubjectData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -151,17 +156,20 @@ public class master_subjectFragment extends Fragment {
                             @Override
                             public void onResponse(Call<SubjectModel.SubjectData1> call, Response<SubjectModel.SubjectData1> response) {
                                 if (response.isSuccessful()) {
-                                    progressBarHelper.hideProgressDialog();
                                     SubjectModel.SubjectData1 data = response.body();
                                     if (data.isCompleted()){
                                         SubjectModel model1 = data.getData();
                                         if (model1.getSubjectID()>0){
+                                            Toast.makeText(context, "Subject updated successfully.", Toast.LENGTH_SHORT).show();
                                             save_subject_master.setVisibility(View.VISIBLE);
                                             edit_subject_master.setVisibility(View.GONE);
                                             subject_name.setText("");
                                             GetAllSubject();
+                                        }else {
+                                            Toast.makeText(context, "Subject Already Exists.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 } else {
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -170,9 +178,11 @@ public class master_subjectFragment extends Fragment {
                             @Override
                             public void onFailure(Call<SubjectModel.SubjectData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
+                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -199,7 +209,6 @@ public class master_subjectFragment extends Fragment {
             @Override
             public void onResponse(Call<SubjectData> call, Response<SubjectData> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
                     SubjectData standardData = response.body();
                     if (standardData != null) {
                         if (standardData.isCompleted()) {
@@ -237,6 +246,7 @@ public class master_subjectFragment extends Fragment {
                             progressBarHelper.hideProgressDialog();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -290,7 +300,6 @@ public class master_subjectFragment extends Fragment {
                         ImageView image = dialogView.findViewById(R.id.image);
                         TextView title = dialogView.findViewById(R.id.title);
                         title.setText("Are you sure that you want to Edit Subject?");
-//                image.setImageResource(R.drawable.ic_edit);
                         AlertDialog dialog = builder.create();
 
                         btn_edit_no.setOnClickListener(new View.OnClickListener() {
@@ -303,13 +312,6 @@ public class master_subjectFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
-//                                final AutoCompleteTextView sbname = ((Activity) context).findViewById(R.id.subject_name);
-//                                final Button save = ((Activity) context).findViewById(R.id.save_subject_master);
-//                                final Button edit = ((Activity) context).findViewById(R.id.edit_subject_master);
-//                                final TextView id = ((Activity) context).findViewById(R.id.id);
-//                                final TextView branchid = ((Activity) context).findViewById(R.id.id_branch);
-//                                final TextView transactionid = ((Activity) context).findViewById(R.id.transaction_id);
-//                                final NestedScrollView scroll = ((Activity) context).findViewById(R.id.subject_scroll);
                                 save_subject_master.setVisibility(View.GONE);
                                 edit_subject_master.setVisibility(View.VISIBLE);
                                 subject_name.setText(subjectDetails.get(position).getSubject());
@@ -354,21 +356,22 @@ public class master_subjectFragment extends Fragment {
                                     call.enqueue(new Callback<CommonModel>() {
                                         @Override
                                         public void onResponse(Call<CommonModel> call, Response<CommonModel> response) {
-
                                             if (response.isSuccessful()) {
                                                 CommonModel model = response.body();
                                                 if (model.isData()) {
+                                                    Toast.makeText(context, "Subject deleted successfully.", Toast.LENGTH_SHORT).show();
                                                     subjectDetails.remove(position);
                                                     notifyItemRemoved(position);
                                                     notifyDataSetChanged();
                                                 }
+                                                progressBarHelper.hideProgressDialog();
                                             }
-                                            progressBarHelper.hideProgressDialog();
                                         }
 
                                         @Override
                                         public void onFailure(Call<CommonModel> call, Throwable t) {
                                             progressBarHelper.hideProgressDialog();
+                                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 } else {

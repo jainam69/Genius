@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -99,7 +100,6 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                             bundle.putString("Email", staffDetails.get(position).getEmailID());
                             bundle.putString("Gender", staffDetails.get(position).getGender());
                             bundle.putString("MobileNo", staffDetails.get(position).getMobileNo());
-//                        bundle.putString("Password", staffDetails.get(position).());
                             bundle.putInt("Status", staffDetails.get(position).getRowStatus().getRowStatusId());
                             bundle.putLong("Branch_ID", staffDetails.get(position).getBranchInfo().getBranchID());
                             bundle.putLong("TransactionId",staffDetails.get(position).getTransaction().getTransactionId());
@@ -148,6 +148,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
+                                                Toast.makeText(context, "User deleted successfully.", Toast.LENGTH_SHORT).show();
                                                 staffDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();

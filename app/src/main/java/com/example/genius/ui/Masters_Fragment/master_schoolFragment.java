@@ -83,21 +83,21 @@ public class master_schoolFragment extends Fragment {
         text = root.findViewById(R.id.text);
         school_scroll = root.findViewById(R.id.school_scroll);
         transaction_id = root.findViewById(R.id.transaction_id);
-        if (Function.checkNetworkConnection(context)) {
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllSchool();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
         save_school_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
                 if (school_name.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -106,22 +106,26 @@ public class master_schoolFragment extends Fragment {
                         call.enqueue(new Callback<SchoolModel.SchoolData1>() {
                             @Override
                             public void onResponse(Call<SchoolModel.SchoolData1> call, Response<SchoolModel.SchoolData1> response) {
-                                progressBarHelper.hideProgressDialog();
                                 if (response.isSuccessful()) {
                                     SchoolModel.SchoolData1 data = response.body();
                                     if (data.isCompleted()) {
                                         SchoolModel model1 = data.getData();
                                         if (model1.getSchoolID() > 0) {
+                                            Toast.makeText(context, "School inserted successfully.", Toast.LENGTH_SHORT).show();
                                             school_name.setText("");
                                             GetAllSchool();
+                                        }else {
+                                            Toast.makeText(context, "School Already Exists.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<SchoolModel.SchoolData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -135,12 +139,10 @@ public class master_schoolFragment extends Fragment {
         edit_school_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
                 if (school_name.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -149,24 +151,28 @@ public class master_schoolFragment extends Fragment {
                         call.enqueue(new Callback<SchoolModel.SchoolData1>() {
                             @Override
                             public void onResponse(Call<SchoolModel.SchoolData1> call, Response<SchoolModel.SchoolData1> response) {
-                                progressBarHelper.hideProgressDialog();
                                 if (response.isSuccessful()) {
                                     SchoolModel.SchoolData1 data = response.body();
                                     if (data.isCompleted()) {
                                         SchoolModel model1 = data.getData();
                                         if (model1.getSchoolID() > 0) {
+                                            Toast.makeText(context, "School updated successfully.", Toast.LENGTH_SHORT).show();
                                             save_school_master.setVisibility(View.VISIBLE);
                                             edit_school_master.setVisibility(View.GONE);
                                             school_name.setText("");
                                             GetAllSchool();
+                                        }else {
+                                            Toast.makeText(context, "School Already Exists.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<SchoolModel.SchoolData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -198,7 +204,6 @@ public class master_schoolFragment extends Fragment {
             @Override
             public void onResponse(Call<SchoolData> call, Response<SchoolData> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
                     SchoolData schoolData = response.body();
                     if (schoolData != null) {
                         if (schoolData.isCompleted()) {
@@ -236,6 +241,7 @@ public class master_schoolFragment extends Fragment {
                             progressBarHelper.hideProgressDialog();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -304,13 +310,6 @@ public class master_schoolFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
-//                                final AutoCompleteTextView sname = ((Activity) context).findViewById(R.id.school_name);
-//                                final Button save = ((Activity) context).findViewById(R.id.save_school_master);
-//                                final Button edit = ((Activity) context).findViewById(R.id.edit_school_master);
-//                                final TextView id = ((Activity) context).findViewById(R.id.id);
-//                                final TextView branchid = ((Activity) context).findViewById(R.id.id_branch);
-//                                final TextView transaction_id = ((Activity) context).findViewById(R.id.transaction_id);
-//                                final NestedScrollView scroll = ((Activity) context).findViewById(R.id.school_scroll);
                                 save_school_master.setVisibility(View.GONE);
                                 edit_school_master.setVisibility(View.VISIBLE);
                                 school_name.setText(schoolDetails.get(position).getSchoolName());
@@ -359,6 +358,7 @@ public class master_schoolFragment extends Fragment {
                                             CommonModel model = response.body();
                                             if (model.isCompleted()) {
                                                 if (model.isData()) {
+                                                    Toast.makeText(context, "School deleted successfully.", Toast.LENGTH_SHORT).show();
                                                     schoolDetails.remove(position);
                                                     notifyItemRemoved(position);
                                                     notifyDataSetChanged();

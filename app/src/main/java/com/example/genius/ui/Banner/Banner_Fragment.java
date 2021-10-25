@@ -98,12 +98,11 @@ import static android.app.Activity.RESULT_OK;
 public class Banner_Fragment extends Fragment {
 
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
-    public static final int REQUEST_CODE_TAKE_PICTURE = 0x2;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
-    Boolean a, selectfile = false;
-    String FilePath_URL, BranchName, BranchID, attach = "";
+    Boolean selectfile = false;
+    String BranchID, attach = "";
     SearchableSpinner branch;
     CheckBox ch_admin, ch_teacher, ch_student;
     TextView banner_image, text, id, image, transactionid, bannerid;
@@ -117,7 +116,7 @@ public class Banner_Fragment extends Fragment {
     List<Integer> branchid = new ArrayList<>();
     String[] BRANCHITEM;
     Integer[] BRANCHID;
-    int BranchId, flag = 0, check_value_admin, check_value_teacher, check_value_student;
+    int flag = 0, check_value_admin, check_value_teacher, check_value_student;
     byte[] imageVal;
     Bitmap bitmap;
     File instrumentFileDestination;
@@ -128,7 +127,7 @@ public class Banner_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Banner");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Banner Master");
         View root = inflater.inflate(R.layout.fragment_banner, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -206,12 +205,8 @@ public class Banner_Fragment extends Fragment {
         save_banner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
-                if (Function.checkNetworkConnection(context)) {
-                   /* if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else */if (banner_image.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
+                if (Function.isNetworkAvailable(context)) {
+                   if (banner_image.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
@@ -241,7 +236,7 @@ public class Banner_Fragment extends Fragment {
                                     if (data.isCompleted()) {
                                         BannerModel notimodel = data.getData();
                                         if (notimodel != null) {
-                                            Toast.makeText(context, "Banner Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Banner inserted successfully.", Toast.LENGTH_SHORT).show();
                                             banner_image.setText("");
                                             branch.setSelection(0);
                                             ch_admin.setChecked(false);
@@ -249,21 +244,21 @@ public class Banner_Fragment extends Fragment {
                                             ch_teacher.setChecked(false);
                                             GetBannerDetails();
                                         } else {
-                                            Toast.makeText(context, "Banner not Inserted...!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Banner not inserted.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override
                             public void onFailure(@NotNull Call<BannerModel.BannerlData1> call, @NotNull Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } else {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -272,12 +267,8 @@ public class Banner_Fragment extends Fragment {
         edit_banner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
-                if (Function.checkNetworkConnection(context)) {
-                    /*if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else */if (banner_image.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
+                if (Function.isNetworkAvailable(context)) {
+                    if (banner_image.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
@@ -322,7 +313,7 @@ public class Banner_Fragment extends Fragment {
                                     if (data.isCompleted()) {
                                         BannerModel bannerModel = data.getData();
                                         if (bannerModel != null) {
-                                            Toast.makeText(context, "Banner Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Banner updated successfully.", Toast.LENGTH_SHORT).show();
                                             banner_image.setText("");
                                             branch.setSelection(0);
                                             ch_admin.setChecked(false);
@@ -332,29 +323,28 @@ public class Banner_Fragment extends Fragment {
                                             edit_banner.setVisibility(View.GONE);
                                             GetBannerDetails();
                                         } else {
-                                            Toast.makeText(context, "Banner not Updated...!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Banner not updated.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override
                             public void onFailure(Call<BannerModel.BannerlData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } else {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             GetBannerDetails();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
@@ -581,7 +571,6 @@ public class Banner_Fragment extends Fragment {
             @Override
             public void onResponse(@NotNull Call<BannerData> call, @NotNull Response<BannerData> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
                     BannerData bannerData = response.body();
                     if (bannerData.isCompleted()) {
                         List<BannerModel> bannerDataList = bannerData.getData();
@@ -602,6 +591,7 @@ public class Banner_Fragment extends Fragment {
                             }
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -635,7 +625,6 @@ public class Banner_Fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
             List<BannerModel.BannerTypeEntity> notitypelist = bannerDetails.get(position).getBannerType();
             String a = null;
             for (BannerModel.BannerTypeEntity model : notitypelist) {
@@ -645,7 +634,6 @@ public class Banner_Fragment extends Fragment {
                     a = model.getTypeText();
                 }
             }
-            //holder.branch_name.setText("" + bannerDetails.get(position).getBranch().getBranchName());
             holder.sub_type.setText("" + a);
             attach = bannerDetails.get(position).getBannerImageText();
             imageVal = Base64.decode(attach, Base64.DEFAULT);
@@ -671,11 +659,6 @@ public class Banner_Fragment extends Fragment {
                     final NestedScrollView scroll = ((Activity) context).findViewById(R.id.banner_scroll);
                     save_banner.setVisibility(View.GONE);
                     edit_banner.setVisibility(View.VISIBLE);
-                    /*BranchId = Integer.parseInt(String.valueOf(bannerDetails.get(position).getBranch().getBranchID()));
-                    if (BranchId > 0) {
-                        int a1 = branchid.indexOf(BranchId);
-                        branch.setSelection(a1);
-                    }*/
                     transactionid.setText("" + bannerDetails.get(position).getTransaction().getTransactionId());
                     bannerid.setText("" + bannerDetails.get(position).getBannerID());
                     banner_image.setText("Attached");
@@ -733,13 +716,14 @@ public class Banner_Fragment extends Fragment {
                                     CommonModel model = response.body();
                                     if (model.isCompleted()) {
                                         if (model.isData()) {
+                                            Toast.makeText(context, "Banner deleted successfully.", Toast.LENGTH_SHORT).show();
                                             bannerDetails.remove(position);
                                             notifyItemRemoved(position);
                                             notifyDataSetChanged();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override

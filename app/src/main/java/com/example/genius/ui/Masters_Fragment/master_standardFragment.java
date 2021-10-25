@@ -83,14 +83,15 @@ public class master_standardFragment extends Fragment {
         transaction_id = root.findViewById(R.id.transaction_id);
         id_branch = root.findViewById(R.id.id_branch);
         text = root.findViewById(R.id.text);
-
         standard_scroll = root.findViewById(R.id.standard_scroll);
-        if (Function.checkNetworkConnection(context)) {
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllStandard();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
         callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -103,15 +104,14 @@ public class master_standardFragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
+
         save_standard_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
                 if (standard.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Standard", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -122,15 +122,18 @@ public class master_standardFragment extends Fragment {
                             @Override
                             public void onResponse(Call<StandardModel.StandardData1> call, Response<StandardModel.StandardData1> response) {
                                 if (response.isSuccessful()) {
-                                    progressBarHelper.hideProgressDialog();
                                     StandardModel.StandardData1 data = response.body();
                                     if (data.isCompleted()) {
                                         StandardModel std_model = data.getData();
                                         if (std_model.getStandardID() > 0) {
+                                            Toast.makeText(context, "Standard inserted successfully.", Toast.LENGTH_SHORT).show();
                                             standard.setText("");
                                             GetAllStandard();
+                                        }else {
+                                            Toast.makeText(context, "Standard Already Exists.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 } else {
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -139,6 +142,7 @@ public class master_standardFragment extends Fragment {
                             @Override
                             public void onFailure(Call<StandardModel.StandardData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -148,15 +152,14 @@ public class master_standardFragment extends Fragment {
                 }
             }
         });
+
         edit_standard_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
                 if (standard.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Enter Standard", Toast.LENGTH_SHORT).show();
                 }else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
@@ -167,17 +170,20 @@ public class master_standardFragment extends Fragment {
                             @Override
                             public void onResponse(Call<StandardModel.StandardData1> call, Response<StandardModel.StandardData1> response) {
                                 if (response.isSuccessful()) {
-                                    progressBarHelper.hideProgressDialog();
                                     StandardModel.StandardData1 data = response.body();
                                     if (data.isCompleted()) {
                                         StandardModel std_model = data.getData();
                                         if (std_model.getStandardID() > 0) {
+                                            Toast.makeText(context, "Standard updated successfully.", Toast.LENGTH_SHORT).show();
                                             edit_standard_master.setVisibility(View.GONE);
                                             save_standard_master.setVisibility(View.VISIBLE);
                                             standard.setText("");
                                             GetAllStandard();
+                                        }else {
+                                            Toast.makeText(context, "Standard Already Exists.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 } else {
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -186,6 +192,7 @@ public class master_standardFragment extends Fragment {
                             @Override
                             public void onFailure(Call<StandardModel.StandardData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -204,7 +211,6 @@ public class master_standardFragment extends Fragment {
             @Override
             public void onResponse(Call<StandardData> call, Response<StandardData> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
                     StandardData standardData = response.body();
                     if (standardData != null) {
                         if (standardData.isCompleted()) {
@@ -240,6 +246,7 @@ public class master_standardFragment extends Fragment {
                             progressBarHelper.hideProgressDialog();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -352,6 +359,7 @@ public class master_standardFragment extends Fragment {
                                         if (response.isSuccessful()) {
                                             CommonModel model = response.body();
                                             if (model.isData()) {
+                                                Toast.makeText(context, "Standard deleted successfully.", Toast.LENGTH_SHORT).show();
                                                 standardDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();

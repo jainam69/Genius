@@ -118,6 +118,7 @@ public class staff_entry_fragment extends Fragment {
         id_branch = root.findViewById(R.id.id_branch);
         transaction_id = root.findViewById(R.id.transaction_id);
         GetStaffRole();
+
         bundle = getArguments();
         if (bundle != null) {
             save_staff.setVisibility(View.GONE);
@@ -181,12 +182,11 @@ public class staff_entry_fragment extends Fragment {
                 email.setText(bundle.getString("Email"));
             }
             if (bundle.containsKey("Gender")) {
-                int gndr = bundle.getInt("Gender");
-                if (gndr == 1) {
+                String gndr = bundle.getString("Gender");
+                if (gndr.equals("1")) {
                     male.setChecked(true);
                     female.setChecked(false);
-                }
-                if (gndr == 2) {
+                }else {
                     male.setChecked(false);
                     female.setChecked(true);
                 }
@@ -209,13 +209,6 @@ public class staff_entry_fragment extends Fragment {
                 }
             }
         }
-        /*if (Function.checkNetworkConnection(context))
-        {
-            progressBarHelper.showProgressDialog();
-            GetAllBranch();
-        }else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }*/
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         gender_rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
@@ -301,85 +294,73 @@ public class staff_entry_fragment extends Fragment {
         });
 
         save_staff.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (fullname.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
                 } else if (address.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
                 } else if (mobile_no.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
+                }else if (email.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (status.equalsIgnoreCase("Active")) {
-                        status1 = 1;
-                    } else {
-                        status1 = 2;
-                    }
+                    progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(status1);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(fullname.getText().toString()
                             , education_qua.getText().toString(), ddate, gender, address.getText().toString(), apdate, jodate
                             , ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel);
-
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
                         public void onResponse(@NotNull Call<StaffModel.StaffData1> call, @NotNull Response<StaffModel.StaffData1> response) {
-                            progressBarHelper.hideProgressDialog();
                             if (response.isSuccessful()) {
                                 StaffModel.StaffData1 data = response.body();
                                 if (data.isCompleted()) {
                                     StaffModel staffModel = data.getData();
                                     if (staffModel.getStaffID() > 0) {
+                                        Toast.makeText(context, "User inserted successfully.", Toast.LENGTH_SHORT).show();
                                         staff_entry_listfragment profileFragment = new staff_entry_listfragment();
                                         FragmentManager fm = getActivity().getSupportFragmentManager();
                                         FragmentTransaction ft = fm.beginTransaction();
                                         ft.replace(R.id.nav_host_fragment, profileFragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
+                                    }else {
+                                        Toast.makeText(context, "User Already Exists.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
                         }
 
                         @Override
                         public void onFailure(@NotNull Call<StaffModel.StaffData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_staff.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (fullname.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
                 }else if (address.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
-                }
-                else if (mobile_no.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
+                }else if (mobile_no.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    if (status.equalsIgnoreCase("Active")) {
-                        status1 = 1;
-                    } else {
-                        status1 = 2;
-                    }
+                }else if (email.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(status1);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(Long.parseLong(id_reg.getText().toString())
                             , fullname.getText().toString(), education_qua.getText().toString(), ddate, gender, address.getText().toString()
@@ -388,31 +369,34 @@ public class staff_entry_fragment extends Fragment {
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
                         public void onResponse(@NotNull Call<StaffModel.StaffData1> call, @NotNull Response<StaffModel.StaffData1> response) {
-                            progressBarHelper.hideProgressDialog();
                             if (response.isSuccessful()) {
                                 StaffModel.StaffData1 data = response.body();
                                 if (data.isCompleted()) {
                                     StaffModel staffModel = data.getData();
                                     if (staffModel.getStaffID() > 0) {
+                                        Toast.makeText(context, "User Updated Successfully.", Toast.LENGTH_SHORT).show();
                                         staff_entry_listfragment profileFragment = new staff_entry_listfragment();
                                         FragmentManager fm = getActivity().getSupportFragmentManager();
                                         FragmentTransaction ft = fm.beginTransaction();
                                         ft.replace(R.id.nav_host_fragment, profileFragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
+                                    }else {
+                                        Toast.makeText(context, "User Already Exists.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
                         }
 
                         @Override
                         public void onFailure(@NotNull Call<StaffModel.StaffData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
