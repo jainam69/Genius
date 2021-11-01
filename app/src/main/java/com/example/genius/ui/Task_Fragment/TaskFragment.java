@@ -504,8 +504,8 @@ public class TaskFragment extends Fragment {
         useritem.add("Select User");
         userid.add(0);
         //progressBarHelper.hideProgressDialog();
-        Call<UserData1> call = apiCalling.GetAllUsers(branch);
-        //Call<UserData1> call = apiCalling.GetAllUsers(20);
+        //Call<UserData1> call = apiCalling.GetAllUsers(branch);
+        Call<UserData1> call = apiCalling.GetAllUsersddl(branch);
         call.enqueue(new Callback<UserData1>() {
             @Override
             public void onResponse(@NotNull Call<UserData1> call, @NotNull Response<UserData1> response) {

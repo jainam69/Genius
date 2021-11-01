@@ -3,42 +3,33 @@ package com.example.genius.Model;
 public class LibraryModel {
 
     long LibraryID;
-    long BranchID;
-    String ThumbImageName;
-    String ThumbDocName;
-    int Type;
-    long StandardID;
-    long SubjectID;
-    String Description;
-    RowStatusModel RowStatus;
-    TransactionModel Transaction;
-    LibraryDataEntity LibraryData;
+    long LibraryDetailID;
+    long Type;
+    public String Title;
+    public byte[] FileContent;
+    public String link;
+    public String FileName;
+    public String FilePath;
+    public String Description;
+    public RowStatusModel RowStatus;
+    public TransactionModel Transaction;
+    public BranchModel BranchInfo;
+    public CategoryModel CategoryInfo;
 
-    public LibraryModel(long libraryID, long branchID, String thumbImageName, String thumbDocName, int type, long standardID, long subjectID, String description, RowStatusModel rowStatus, TransactionModel transaction, LibraryDataEntity libraryData) {
+    public LibraryModel(long libraryID, long libraryDetailID, long type, String title, byte[] fileContent, String link, String fileName, String filePath, String description, RowStatusModel rowStatus, TransactionModel transaction, BranchModel branchInfo, CategoryModel categoryInfo) {
         LibraryID = libraryID;
-        BranchID = branchID;
-        ThumbImageName = thumbImageName;
-        ThumbDocName = thumbDocName;
+        LibraryDetailID = libraryDetailID;
         Type = type;
-        StandardID = standardID;
-        SubjectID = subjectID;
+        Title = title;
+        FileContent = fileContent;
+        this.link = link;
+        FileName = fileName;
+        FilePath = filePath;
         Description = description;
         RowStatus = rowStatus;
         Transaction = transaction;
-        LibraryData = libraryData;
-    }
-
-    public LibraryModel(long branchID, String thumbImageName, String thumbDocName, int type, long standardID, long subjectID, String description, RowStatusModel rowStatus, TransactionModel transaction, LibraryDataEntity libraryData) {
-        BranchID = branchID;
-        ThumbImageName = thumbImageName;
-        ThumbDocName = thumbDocName;
-        Type = type;
-        StandardID = standardID;
-        SubjectID = subjectID;
-        Description = description;
-        RowStatus = rowStatus;
-        Transaction = transaction;
-        LibraryData = libraryData;
+        BranchInfo = branchInfo;
+        CategoryInfo = categoryInfo;
     }
 
     public long getLibraryID() {
@@ -49,52 +40,60 @@ public class LibraryModel {
         LibraryID = libraryID;
     }
 
-    public long getBranchID() {
-        return BranchID;
+    public long getLibraryDetailID() {
+        return LibraryDetailID;
     }
 
-    public void setBranchID(long branchID) {
-        BranchID = branchID;
+    public void setLibraryDetailID(long libraryDetailID) {
+        LibraryDetailID = libraryDetailID;
     }
 
-    public String getThumbImageName() {
-        return ThumbImageName;
-    }
-
-    public void setThumbImageName(String thumbImageName) {
-        ThumbImageName = thumbImageName;
-    }
-
-    public String getThumbDocName() {
-        return ThumbDocName;
-    }
-
-    public void setThumbDocName(String thumbDocName) {
-        ThumbDocName = thumbDocName;
-    }
-
-    public int getType() {
+    public long getType() {
         return Type;
     }
 
-    public void setType(int type) {
+    public void setType(long type) {
         Type = type;
     }
 
-    public long getStandardID() {
-        return StandardID;
+    public String getTitle() {
+        return Title;
     }
 
-    public void setStandardID(long standardID) {
-        StandardID = standardID;
+    public void setTitle(String title) {
+        Title = title;
     }
 
-    public long getSubjectID() {
-        return SubjectID;
+    public byte[] getFileContent() {
+        return FileContent;
     }
 
-    public void setSubjectID(long subjectID) {
-        SubjectID = subjectID;
+    public void setFileContent(byte[] fileContent) {
+        FileContent = fileContent;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getFileName() {
+        return FileName;
+    }
+
+    public void setFileName(String fileName) {
+        FileName = fileName;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
     }
 
     public String getDescription() {
@@ -121,129 +120,20 @@ public class LibraryModel {
         Transaction = transaction;
     }
 
-    public LibraryDataEntity getLibraryData() {
-        return LibraryData;
+    public BranchModel getBranchInfo() {
+        return BranchInfo;
     }
 
-    public void setLibraryData(LibraryDataEntity libraryData) {
-        LibraryData = libraryData;
+    public void setBranchInfo(BranchModel branchInfo) {
+        BranchInfo = branchInfo;
     }
 
-    public static class LibraryDataEntity{
-
-        long UniqueID;
-        long LibraryID;
-        String ThumbImageContentText;
-        String ThumbImageExt;
-        String ThumbImageFileName;
-        String DocContentText;
-        String DocContentFileName;
-        String DocContentExt;
-
-        public LibraryDataEntity(long uniqueID, long libraryID, String thumbImageContentText, String thumbImageExt, String thumbImageFileName, String docContentText, String docContentFileName, String docContentExt) {
-            UniqueID = uniqueID;
-            LibraryID = libraryID;
-            ThumbImageContentText = thumbImageContentText;
-            ThumbImageExt = thumbImageExt;
-            ThumbImageFileName = thumbImageFileName;
-            DocContentText = docContentText;
-            DocContentFileName = docContentFileName;
-            DocContentExt = docContentExt;
-        }
-
-        public LibraryDataEntity(String thumbImageContentText, String thumbImageExt, String thumbImageFileName, String docContentText, String docContentFileName, String docContentExt) {
-            ThumbImageContentText = thumbImageContentText;
-            ThumbImageExt = thumbImageExt;
-            ThumbImageFileName = thumbImageFileName;
-            DocContentText = docContentText;
-            DocContentFileName = docContentFileName;
-            DocContentExt = docContentExt;
-        }
-
-        public long getUniqueID() {
-            return UniqueID;
-        }
-
-        public void setUniqueID(long uniqueID) {
-            UniqueID = uniqueID;
-        }
-
-        public long getLibraryID() {
-            return LibraryID;
-        }
-
-        public void setLibraryID(long libraryID) {
-            LibraryID = libraryID;
-        }
-
-        public String getThumbImageContentText() {
-            return ThumbImageContentText;
-        }
-
-        public void setThumbImageContentText(String thumbImageContentText) {
-            ThumbImageContentText = thumbImageContentText;
-        }
-
-        public String getThumbImageExt() {
-            return ThumbImageExt;
-        }
-
-        public void setThumbImageExt(String thumbImageExt) {
-            ThumbImageExt = thumbImageExt;
-        }
-
-        public String getThumbImageFileName() {
-            return ThumbImageFileName;
-        }
-
-        public void setThumbImageFileName(String thumbImageFileName) {
-            ThumbImageFileName = thumbImageFileName;
-        }
-
-        public String getDocContentText() {
-            return DocContentText;
-        }
-
-        public void setDocContentText(String docContentText) {
-            DocContentText = docContentText;
-        }
-
-        public String getDocContentFileName() {
-            return DocContentFileName;
-        }
-
-        public void setDocContentFileName(String docContentFileName) {
-            DocContentFileName = docContentFileName;
-        }
-
-        public String getDocContentExt() {
-            return DocContentExt;
-        }
-
-        public void setDocContentExt(String docContentExt) {
-            DocContentExt = docContentExt;
-        }
+    public CategoryModel getCategoryInfo() {
+        return CategoryInfo;
     }
 
-    public static class LibraryData1{
-
-        boolean Completed;
-        LibraryModel Data;
-
-        public boolean isCompleted() {
-            return Completed;
-        }
-
-        public void setCompleted(boolean completed) {
-            Completed = completed;
-        }
-
-        public LibraryModel getData() {
-            return Data;
-        }
-
-        public void setData(LibraryModel data) {
-            Data = data;
-        }
+    public void setCategoryInfo(CategoryModel categoryInfo) {
+        CategoryInfo = categoryInfo;
     }
+
 }

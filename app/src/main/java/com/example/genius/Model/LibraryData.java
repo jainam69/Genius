@@ -22,4 +22,6 @@ public class LibraryData {
     public void setData(List<LibraryModel> data) {
         Data = data;
     }
+
 }
+

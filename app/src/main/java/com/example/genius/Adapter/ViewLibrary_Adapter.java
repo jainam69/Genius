@@ -51,7 +51,7 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.description.setText(manageDetails.get(position).getDescription());
+        /*holder.description.setText(manageDetails.get(position).getDescription());
         imageVal = Base64.decode(manageDetails.get(position).getLibraryData().getThumbImageContentText(),Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);
         Glide.with(context).load(decodedByte).into(holder.lib_image);
@@ -119,7 +119,7 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
                 });
                 dialog.show();
             }
-        });
+        });*/
     }
 
     @Override

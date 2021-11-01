@@ -12,6 +12,7 @@ public class StaffModel {
     String LeavingDT;
     String EmailID;
     String MobileNo;
+    String Userrole;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
     BranchModel BranchInfo;
@@ -19,7 +20,7 @@ public class StaffModel {
     public StaffModel() {
     }
 
-    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo) {
+    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole) {
         StaffID = staffID;
         Name = name;
         Education = education;
@@ -34,9 +35,10 @@ public class StaffModel {
         Transaction = transaction;
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
+        Userrole = Userrole;
     }
 
-    public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo) {
+    public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole) {
         Name = name;
         Education = education;
         this.DOB = DOB;
@@ -50,6 +52,7 @@ public class StaffModel {
         Transaction = transaction;
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
+        Userrole = Userrole;
     }
 
     public long getStaffID() {

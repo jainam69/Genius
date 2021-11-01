@@ -22,7 +22,7 @@ import com.example.genius.ui.Home_Fragment.home_fragment;
 
 public class LibrarySelectorFragment extends Fragment {
 
-    LinearLayout linear_create_library,linear_show_library;
+    LinearLayout linear_create_library, linear_show_library;
     CardView linear_manage_library;
     OnBackPressedCallback callback = new OnBackPressedCallback(true) {
         @Override
@@ -54,7 +54,7 @@ public class LibrarySelectorFragment extends Fragment {
 //            linear_manage_library.setVisibility(View.GONE);
 //        }
 
-        linear_create_library.setOnClickListener(v->{
+        linear_create_library.setOnClickListener(v -> {
             library_Listfragment orderplace = new library_Listfragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -63,25 +63,22 @@ public class LibrarySelectorFragment extends Fragment {
             fragmentTransaction.commit();
         });
 
-        linear_show_library.setOnClickListener(v->{
-            ShowLibraryFragment fragment = new ShowLibraryFragment();
+        linear_show_library.setOnClickListener(v -> {
+            LibraryImageFragment fragment = new LibraryImageFragment();
             FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = ((FragmentManager)fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment,fragment);
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, fragment);
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });
 
-        linear_manage_library.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                manage_library_fragment fragment = new manage_library_fragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager)fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment,fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+        linear_manage_library.setOnClickListener((View.OnClickListener) v -> {
+            LibraryVideoLinkFragment fragment = new LibraryVideoLinkFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, fragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
 
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);

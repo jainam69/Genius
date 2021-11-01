@@ -4,8 +4,8 @@ import android.os.ParcelUuid;
 
 public class ApiConstant {
 
-    public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    //public static final String BASE_URL = "http://192.168.255.181/api/";
+    //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
+    public static final String BASE_URL = "http://192.168.91.181/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
@@ -70,6 +70,7 @@ public class ApiConstant {
     public static final String GET_ALL_VIDEO_BRANCH = "gallery/v1/GetAllGalleryVideoByBranch";
 
 	public static final String GET_ALL_USER = "user/v1/GetAllUsers";
+    public static final String GET_ALL_USER_DDL = "user/v1/GetAllUsersddl";
     public static final String USER_ROLE_MANAGEMENT = "user/v1/UserRoleManagement";
     public static final String GET_USER_ROLE_LIST = "user/v1/GetUserRoleList";
     public static final String GET_USER_ROLE = "user/v1/GetUserRole";
@@ -117,4 +118,14 @@ public class ApiConstant {
     public static final String GET_TODO_BY_ID = "todo/v1/GetToDoByHWID";
     public static final String REMOVE_TODO = "todo/v1/RemoveToDo";
 
+    public static final String FEES_MAINTENANCE = "FeesStructure/v1/FeesMaintenance";
+    public static final String GET_ALL_FEES_BRANCH = "FeesStructure/v1/GetFeesByBranchID";
+    public static final String REMOVE_FEES = "FeesStructure/v1/RemoveFees";
+
+    public static final String GET_ALL_CATEGORY_BRANCH = "NewLibrary/v1/GetAllCategory";
+
+    public static final String LibraryMaintenance = "NewLibrary/v1/LibraryMaintenance";
+    public static final String GET_ALL_LIBRARY_BRANCH = "NewLibrary/v1/GetAllLibrary";
+    public static final String REMOVE_NEW_LIBRARY = "NewLibrary/v1/RemoveLibrary";
+    public static final String LibraryLinkMaintenance = "NewLibrary/v1/LibraryLinkMaintenance";
 }

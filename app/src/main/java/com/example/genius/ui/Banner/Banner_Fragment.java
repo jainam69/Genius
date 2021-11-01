@@ -206,9 +206,9 @@ public class Banner_Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                   if (banner_image.getText().toString().equals("")) {
+                    if (banner_image.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         progressBarHelper.showProgressDialog();
                         List<BannerModel.BannerTypeEntity> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -270,7 +270,7 @@ public class Banner_Fragment extends Fragment {
                 if (Function.isNetworkAvailable(context)) {
                     if (banner_image.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         progressBarHelper.showProgressDialog();
                         List<BannerModel.BannerTypeEntity> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -436,7 +436,6 @@ public class Banner_Fragment extends Fragment {
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             };
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -6,7 +6,10 @@ import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
 import com.example.genius.Model.BranchModel;
+import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.FeeStructureData;
+import com.example.genius.Model.FeeStructureSingleData;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
 import com.example.genius.Model.HomeworkByIdData;
@@ -14,6 +17,7 @@ import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
+import com.example.genius.Model.LibrarySingleData;
 import com.example.genius.Model.LinkData;
 import com.example.genius.Model.LinkModel;
 import com.example.genius.Model.NotificationData;
@@ -48,10 +52,14 @@ import com.example.genius.Model.UserRolesModel;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiCalling {
@@ -112,6 +120,9 @@ public interface ApiCalling {
 
     @POST(ApiConstant.GET_ALL_USER)
     Call<UserData1> GetAllUsers(@Query("branchID") long BranchID);
+
+    @POST(ApiConstant.GET_ALL_USER_DDL)
+    Call<UserData1> GetAllUsersddl(@Query("branchID") long BranchID);
 
     @GET(ApiConstant.GET_ALL_REMINDER_BY_BRANCH)
     Call<ReminderData> GetAllReminderByBranch(@Query("branchID") long BranchID);
@@ -245,8 +256,8 @@ public interface ApiCalling {
     @POST(ApiConstant.PRACTICE_PAPER_MAINTENANCE)
     Call<PaperModel.PaperData1> PaperMaintenance(@Body PaperModel paperModel);
 
-    @POST(ApiConstant.LIBRARY_MAINTENANCE)
-    Call<LibraryModel.LibraryData1> LibraryMaintenance(@Body LibraryModel libraryModel);
+    /*@POST(ApiConstant.LIBRARY_MAINTENANCE)
+    Call<LibraryModel> LibraryMaintenance(@Body LibraryModel libraryModel);*/
 
     @GET(ApiConstant.GET_ALL_LIBRARY)
     Call<LibraryData> GetAllLibrary();
@@ -319,5 +330,47 @@ public interface ApiCalling {
 
     @POST(ApiConstant.REMOVE_TEST_SCHEDULE_PAPER)
     Call<CommonModel> RemoveTest(@Query("testID") long testID, @Query("lastupdatedby") String lastupdatedby, @Query("removePaper") Boolean removePaper);
+
+    @Multipart
+    @POST(ApiConstant.FEES_MAINTENANCE + "/{FeesID}"
+            + "/{FeesDetailsID}" + "/{StandardID}" + "/{branchID}" + "/{Remark}" + "/{SubmitDate}"
+            + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
+    Call<FeeStructureSingleData> FeesMaintenance(@Path("FeesID") long FeesID,
+                                                 @Path("FeesDetailsID") long FeesDetailsID, @Path("StandardID") long StandardID,
+                                                 @Path("branchID") long branchID, @Path("Remark") String Remark, @Path("SubmitDate") String SubmitDate,
+                                                 @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy,
+                                                 @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
+                                                 @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+
+    @GET(ApiConstant.GET_ALL_FEES_BRANCH)
+    Call<FeeStructureData> GetFeesByBranchID(@Query("branchID") long branchID);
+
+    @POST(ApiConstant.REMOVE_FEES)
+    Call<CommonModel> RemoveFees(@Query("FeesID") long FeesID, @Query("lastupdatedby") String lastupdatedby);
+
+    @GET(ApiConstant.GET_ALL_CATEGORY_BRANCH)
+    Call<CategoryData> GetAllCategory(@Query("BranchID") long BranchID);
+
+    @Multipart
+    @POST(ApiConstant.LibraryMaintenance + "/{LibraryID}"
+            + "/{LibraryDetailID}" + "/{Title}" + "/{link}" + "/{FileName}" + "/{Extension}" + "/{Description}" + "/{BranchID}" + "/{CategoryID}"
+            + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{HasFile}" + "/{Type}")
+    Call<LibrarySingleData> LibraryMaintenance(@Path("LibraryID") long LibraryID,
+                                               @Path("LibraryDetailID") long LibraryDetailID, @Path("Title") String Title,
+                                               @Path("link") String link, @Path("FileName") String FileName, @Path("Extension") String Extension,
+                                               @Path("Description") String Description, @Path("BranchID") long BranchID,
+                                               @Path("CategoryID") long CategoryID, @Path("CreateId") int CreateId,
+                                               @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
+                                               @Path("HasFile") Boolean HasFile, @Path("Type") int Type, @Part MultipartBody.Part image);
+
+    @GET(ApiConstant.GET_ALL_LIBRARY_BRANCH)
+    Call<LibraryData> GetAllLibrary(@Query("Type") int Type, @Query("branchID") long branchID);
+
+    @POST(ApiConstant.REMOVE_NEW_LIBRARY)
+    Call<CommonModel> RemoveNewLibrary(@Query("libraryID") long FeesID, @Query("lastupdatedby") String lastupdatedby);
+
+    @POST(ApiConstant.LibraryLinkMaintenance)
+    Call<LibrarySingleData> LibraryLinkMaintenance(@Body LibraryModel libraryModel);
+
 
 }

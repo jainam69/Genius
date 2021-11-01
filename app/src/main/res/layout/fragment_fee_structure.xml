@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/banner_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".ui.Banner.Banner_Fragment">
+
+    <LinearLayout
+        android:id="@+id/linear_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/border"
+            android:visibility="gone">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/branch"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toEndOf="@+id/emailimg"
+                android:background="@android:color/transparent"
+                android:hint="Select Branch"
+                android:maxLines="1"
+                android:paddingStart="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <ImageView
+                android:id="@+id/emailimg"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/branch"
+                app:tint="@color/blue"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/standard"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toEndOf="@+id/emailimg1"
+                android:background="@android:color/transparent"
+                android:hint="Select Branch"
+                android:maxLines="1"
+                android:paddingStart="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText,RtlSymmetry" />
+
+            <ImageView
+                android:id="@+id/emailimg1"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/branch"
+                app:tint="@color/blue"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <TextView
+                android:id="@+id/banner_image"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toEndOf="@+id/transprt12"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="true"
+                android:focusedByDefault="false"
+                android:hint="Upload Image"
+                android:importantForAutofill="no"
+                android:maxLines="1"
+                android:paddingStart="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="14dp"
+                tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
+                tools:targetApi="o" />
+
+
+            <ImageView
+                android:id="@+id/transprt12"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_attach"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_name"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/border">
+
+            <EditText
+                android:id="@+id/remarks"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_toEndOf="@+id/addressimg"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="Remarks"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapWords"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="12dp"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/addressimg"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="13dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/order"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/save_banner"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/blue_fill"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/edit_banner"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/blue_fill"
+            android:text="Update"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/transactionid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/bannerid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Banner Details :"
+            android:textColor="@color/blue"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/banner_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:overScrollMode="never" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

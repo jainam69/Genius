@@ -304,135 +304,137 @@ public class library_fragment extends Fragment {
             }
         });
 
-        save_library.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Function.checkNetworkConnection(context))
-                {
-                    progressBarHelper.showProgressDialog();
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    LibraryModel.LibraryDataEntity libraryDataEntity = new LibraryModel.LibraryDataEntity(attach,thumb_ext,thunm_name,attach_doc,doc_name,doc_ext);
-                    if (Branch.equals("All") && Type.equals("Standard"))
-                    {
-                        libraryModel = new LibraryModel(0,instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
-                                2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    else if (Branch.equals("All") && Type.equals("General"))
-                    {
-                        libraryModel = new LibraryModel(0,instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
-                                1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("Standard"))
-                    {
-                        libraryModel = new LibraryModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
-                                2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("General"))
-                    {
-                        libraryModel = new LibraryModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
-                                1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    Call<LibraryModel.LibraryData1> call = apiCalling.LibraryMaintenance(libraryModel);
-                    call.enqueue(new Callback<LibraryModel.LibraryData1>() {
-                        @Override
-                        public void onResponse(Call<LibraryModel.LibraryData1> call, Response<LibraryModel.LibraryData1> response) {
-                            if (response.isSuccessful()) {
-                                LibraryModel.LibraryData1 data = response.body();
-                                if (data.isCompleted()) {
-                                    LibraryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, "Books Inserted Successfully...", Toast.LENGTH_SHORT).show();
-                                        library_Listfragment contact = new library_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, contact);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
-                                    } else {
-                                        Toast.makeText(context, "Books not Inserted...!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+        /*
+                save_library.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Function.checkNetworkConnection(context))
+                        {
+                            progressBarHelper.showProgressDialog();
+                            RowStatusModel rowStatusModel = new RowStatusModel(1);
+                            TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                            LibraryModel.LibraryDataEntity libraryDataEntity = new LibraryModel.LibraryDataEntity(attach,thumb_ext,thunm_name,attach_doc,doc_name,doc_ext);
+                            if (Branch.equals("All") && Type.equals("Standard"))
+                            {
+                                libraryModel = new LibraryModel(0,instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
+                                        2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
                             }
-                            progressBarHelper.hideProgressDialog();
-                        }
-
-                        @Override
-                        public void onFailure(Call<LibraryModel.LibraryData1> call, Throwable t) {
-                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    });
-
-                }else {
-                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        edit_library.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Function.checkNetworkConnection(context)) {
-                    progressBarHelper.showProgressDialog();
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    LibraryModel.LibraryDataEntity libraryDataEntity = new LibraryModel.LibraryDataEntity(Long.parseLong(uniqid.getText().toString()),Long.parseLong(libraryid.getText().toString()),attach,thumb_ext,thunm_name,attach_doc,doc_name,doc_ext);
-                    if (Branch.equals("All") && Type.equals("Standard"))
-                    {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),0,thunm_name,doc_name,
-                                2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    else if (Branch.equals("All") && Type.equals("General"))
-                    {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),0,thunm_name,doc_name,
-                                1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("Standard"))
-                    {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),thunm_name,doc_name,
-                                2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("General"))
-                    {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),thunm_name,doc_name,
-                                1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
-                    }
-                    Call<LibraryModel.LibraryData1> call = apiCalling.LibraryMaintenance(libraryModel);
-                    call.enqueue(new Callback<LibraryModel.LibraryData1>() {
-                        @Override
-                        public void onResponse(Call<LibraryModel.LibraryData1> call, Response<LibraryModel.LibraryData1> response) {
-                            if (response.isSuccessful()) {
-                                LibraryModel.LibraryData1 data = response.body();
-                                if (data.isCompleted()) {
-                                    LibraryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, "Books Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                        library_Listfragment contact = new library_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, contact);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
-                                    } else {
-                                        Toast.makeText(context, "Books not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+                            else if (Branch.equals("All") && Type.equals("General"))
+                            {
+                                libraryModel = new LibraryModel(0,instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
+                                        1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
                             }
-                            progressBarHelper.hideProgressDialog();
-                        }
+                            else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("Standard"))
+                            {
+                                libraryModel = new LibraryModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
+                                        2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
+                            }
+                            else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("General"))
+                            {
+                                libraryModel = new LibraryModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),instrumentFileDestination.getName(),instrumentFileDestination1.getName(),
+                                        1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
+                            }
+                            Call<LibraryModel.LibraryData1> call = apiCalling.LibraryMaintenance(libraryModel);
+                            call.enqueue(new Callback<LibraryModel.LibraryData1>() {
+                                @Override
+                                public void onResponse(Call<LibraryModel.LibraryData1> call, Response<LibraryModel.LibraryData1> response) {
+                                    if (response.isSuccessful()) {
+                                        LibraryModel.LibraryData1 data = response.body();
+                                        if (data.isCompleted()) {
+                                            LibraryModel notimodel = data.getData();
+                                            if (notimodel != null) {
+                                                Toast.makeText(context, "Books Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                                library_Listfragment contact = new library_Listfragment();
+                                                FragmentManager fragmentManager = getFragmentManager();
+                                                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                                                fragmentTransaction.replace(R.id.nav_host_fragment, contact);
+                                                fragmentTransaction.addToBackStack(null);
+                                                fragmentTransaction.commit();
+                                            } else {
+                                                Toast.makeText(context, "Books not Inserted...!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                    progressBarHelper.hideProgressDialog();
+                                }
 
-                        @Override
-                        public void onFailure(Call<LibraryModel.LibraryData1> call, Throwable t) {
-                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                            progressBarHelper.hideProgressDialog();
+                                @Override
+                                public void onFailure(Call<LibraryModel.LibraryData1> call, Throwable t) {
+                                    Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                                    progressBarHelper.hideProgressDialog();
+                                }
+                            });
+
+                        }else {
+                            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                }else {
-                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                    }
+                });
+
+                edit_library.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Function.checkNetworkConnection(context)) {
+                            progressBarHelper.showProgressDialog();
+                            RowStatusModel rowStatusModel = new RowStatusModel(1);
+                            TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                            LibraryModel.LibraryDataEntity libraryDataEntity = new LibraryModel.LibraryDataEntity(Long.parseLong(uniqid.getText().toString()),Long.parseLong(libraryid.getText().toString()),attach,thumb_ext,thunm_name,attach_doc,doc_name,doc_ext);
+                            if (Branch.equals("All") && Type.equals("Standard"))
+                            {
+                                libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),0,thunm_name,doc_name,
+                                        2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
+                            }
+                            else if (Branch.equals("All") && Type.equals("General"))
+                            {
+                                libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),0,thunm_name,doc_name,
+                                        1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
+                            }
+                            else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("Standard"))
+                            {
+                                libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),thunm_name,doc_name,
+                                        2,StandardId,Long.parseLong(SubjectId),library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
+                            }
+                            else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("General"))
+                            {
+                                libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),thunm_name,doc_name,
+                                        1,0,0,library_description.getText().toString(),rowStatusModel,transactionModel,libraryDataEntity);
+                            }
+                            Call<LibraryModel.LibraryData1> call = apiCalling.LibraryMaintenance(libraryModel);
+                            call.enqueue(new Callback<LibraryModel.LibraryData1>() {
+                                @Override
+                                public void onResponse(Call<LibraryModel.LibraryData1> call, Response<LibraryModel.LibraryData1> response) {
+                                    if (response.isSuccessful()) {
+                                        LibraryModel.LibraryData1 data = response.body();
+                                        if (data.isCompleted()) {
+                                            LibraryModel notimodel = data.getData();
+                                            if (notimodel != null) {
+                                                Toast.makeText(context, "Books Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                                library_Listfragment contact = new library_Listfragment();
+                                                FragmentManager fragmentManager = getFragmentManager();
+                                                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                                                fragmentTransaction.replace(R.id.nav_host_fragment, contact);
+                                                fragmentTransaction.addToBackStack(null);
+                                                fragmentTransaction.commit();
+                                            } else {
+                                                Toast.makeText(context, "Books not Updated...!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                    progressBarHelper.hideProgressDialog();
+                                }
+
+                                @Override
+                                public void onFailure(Call<LibraryModel.LibraryData1> call, Throwable t) {
+                                    Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                                    progressBarHelper.hideProgressDialog();
+                                }
+                            });
+                        }else {
+                            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        */
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -671,6 +673,7 @@ public class library_fragment extends Fragment {
         } catch (ActivityNotFoundException ignored) {
         }
     }
+
     private void pickImage1() {
         try {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

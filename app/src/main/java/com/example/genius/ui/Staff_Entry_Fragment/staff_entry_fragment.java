@@ -186,7 +186,7 @@ public class staff_entry_fragment extends Fragment {
                 if (gndr.equals("1")) {
                     male.setChecked(true);
                     female.setChecked(false);
-                }else {
+                } else {
                     male.setChecked(false);
                     female.setChecked(true);
                 }
@@ -301,7 +301,7 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
                 } else if (mobile_no.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
-                }else if (email.getText().toString().equals("")) {
+                } else if (email.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -310,7 +310,7 @@ public class staff_entry_fragment extends Fragment {
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(fullname.getText().toString()
                             , education_qua.getText().toString(), ddate, gender, address.getText().toString(), apdate, jodate
-                            , ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel);
+                            , ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, "Staff");
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
@@ -327,7 +327,7 @@ public class staff_entry_fragment extends Fragment {
                                         ft.replace(R.id.nav_host_fragment, profileFragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
-                                    }else {
+                                    } else {
                                         Toast.makeText(context, "User Already Exists.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -351,11 +351,11 @@ public class staff_entry_fragment extends Fragment {
             if (Function.isNetworkAvailable(context)) {
                 if (fullname.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
-                }else if (address.getText().toString().equals("")) {
+                } else if (address.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
-                }else if (mobile_no.getText().toString().equals("")) {
+                } else if (mobile_no.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
-                }else if (email.getText().toString().equals("")) {
+                } else if (email.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -364,7 +364,7 @@ public class staff_entry_fragment extends Fragment {
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(Long.parseLong(id_reg.getText().toString())
                             , fullname.getText().toString(), education_qua.getText().toString(), ddate, gender, address.getText().toString()
-                            , apdate, jodate, ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel);
+                            , apdate, jodate, ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, "Staff");
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
@@ -381,7 +381,7 @@ public class staff_entry_fragment extends Fragment {
                                         ft.replace(R.id.nav_host_fragment, profileFragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
-                                    }else {
+                                    } else {
                                         Toast.makeText(context, "User Already Exists.", Toast.LENGTH_SHORT).show();
                                     }
                                 }

@@ -107,7 +107,8 @@ public class PermissionListFragment extends Fragment {
     }
 
     public void GetPermissionDetails() {
-        Call<UserData1> call = apiCalling.GetAllUsers(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+//        Call<UserData1> call = apiCalling.GetAllUsers(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        Call<UserData1> call = apiCalling.GetAllUsersddl(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<UserData1>() {
             @Override
             public void onResponse(Call<UserData1> call, Response<UserData1> response) {

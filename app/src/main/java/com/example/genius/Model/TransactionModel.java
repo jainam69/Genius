@@ -10,6 +10,14 @@ public class TransactionModel {
     String LastUpdateBy;
     long LastUpdateId;
 
+    public TransactionModel(long transactionId, String createdBy, long createdId, String lastUpdateBy, long lastUpdateId) {
+        TransactionId = transactionId;
+        CreatedBy = createdBy;
+        CreatedId = createdId;
+        LastUpdateBy = lastUpdateBy;
+        LastUpdateId = lastUpdateId;
+    }
+
     public TransactionModel() {
     }
 
@@ -24,7 +32,6 @@ public class TransactionModel {
         CreatedId = createdId;
         LastUpdateDate = lastUpdateDate;
     }
-
 
 
     public long getTransactionId() {

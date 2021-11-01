@@ -33,6 +33,7 @@ import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Attendance_Fragment.attendance_Listfragment;
+import com.example.genius.ui.FeeStructure.FeeStructureFragment;
 import com.example.genius.ui.Gallery.GallerySelectorFragment;
 import com.example.genius.ui.Homework_Fragment.HomeworkSelectorFragment;
 import com.example.genius.ui.Homework_Fragment.homework_Listfragment;
@@ -77,7 +78,7 @@ public class home_fragment extends Fragment {
     NestedScrollView home_scroll;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    LinearLayout linear_masters, linear_students, linear_attendance, linear_test_schedule, linear_test_marks, linear_practice_papers,
+    LinearLayout linear_masters, linear_students, linear_attendance, linear_test_schedule, linear_test_marks, linear_practice_papers, linear_fees_structure,
             linear_homework, linear_gallery, linear_youtube_video, linear_live_video, linear_task, linear_reminder, linear_permission, linear_library;
 
     @Override
@@ -101,6 +102,7 @@ public class home_fragment extends Fragment {
         linear_test_marks = root.findViewById(R.id.linear_test_marks);
         linear_task = root.findViewById(R.id.linear_task);
         linear_permission = root.findViewById(R.id.linear_permission);
+        linear_fees_structure = root.findViewById(R.id.linear_fees_structure);
         viewPager = root.findViewById(R.id.viewpager);
         circlePageIndicator = root.findViewById(R.id.circlepagerindicator);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
@@ -235,6 +237,14 @@ public class home_fragment extends Fragment {
         });
         linear_permission.setOnClickListener(v -> {
             PermissionListFragment orderplace = new PermissionListFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        });
+        linear_fees_structure.setOnClickListener(view -> {
+            FeeStructureFragment orderplace = new FeeStructureFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
