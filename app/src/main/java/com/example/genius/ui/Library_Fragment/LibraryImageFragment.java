@@ -222,6 +222,7 @@ public class LibraryImageFragment extends Fragment {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
+
         edit_image.setOnClickListener(view -> {
             progressBarHelper.showProgressDialog();
             if (Function.isNetworkAvailable(context)) {
@@ -243,12 +244,14 @@ public class LibraryImageFragment extends Fragment {
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
                                 TransactionId, true, 2, uploadfile);
                     } else {
+                        RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                         call = apiCalling.LibraryMaintenance(LibraryID, LibraryDetailID, title.getText().toString()
                                 , "0", FileName, Extension, description.getText().toString()
                                 , Long.parseLong(BranchID), categoryid
                                 , (int) Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                TransactionId, false, 2, null);
+                                TransactionId, false, 2, uploadfile);
                     }
                     call.enqueue(new Callback<LibrarySingleData>() {
                         @Override
@@ -599,7 +602,7 @@ public class LibraryImageFragment extends Fragment {
                     title.setText(bannerDetails.get(position).getTitle());
                     description.setText(bannerDetails.get(position).getDescription());
                     imageView.setVisibility(View.VISIBLE);
-                    Glide.with(context).load("http://192.168.91.181/" + bannerDetails.get(position).getFilePath()).into(imageView);
+                    Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(imageView);
                     scroll.scrollTo(0, 0);
                     scroll.fullScroll(View.FOCUS_UP);
                 });

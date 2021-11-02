@@ -104,6 +104,7 @@ public class GalleryModel {
     public static class GallaryData1{
         boolean Completed;
         GalleryModel Data;
+        String Message;
 
         public boolean isCompleted() {
             return Completed;
@@ -119,6 +120,14 @@ public class GalleryModel {
 
         public void setData(GalleryModel data) {
             Data = data;
+        }
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
         }
     }
 }

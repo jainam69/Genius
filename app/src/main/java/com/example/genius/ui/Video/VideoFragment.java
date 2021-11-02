@@ -91,7 +91,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class VideoFragment extends Fragment {
 
-    TextView attachment_video, bid, video, text, transaction_id, unique_id;
+    TextView attachment_video, bid, video, transaction_id, unique_id;
     ImageView imageView;
     EditText video_description;
     Button save_video, edit_video;
@@ -99,17 +99,15 @@ public class VideoFragment extends Fragment {
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String Ans;
     int flag = 0;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
-    Boolean a, b;
     OnBackPressedCallback callback;
     NestedScrollView video_scroll;
     String videoData;
     ByteArrayOutputStream byteBuffer;
-    byte[] imageVal;
+    String FileName, Extension;
     VideoMaster_Adapter videoMaster_adapter;
 
     @Override
@@ -150,11 +148,11 @@ public class VideoFragment extends Fragment {
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    GalleryModel gl = new GalleryModel(branchModel, videoData, video_description.getText().toString(), rowStatusModel, transactionModel);
-                    Call<GalleryModel.GallaryData1> call = apiCalling.GalaryVideoMaintenance(gl);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                    Call<GalleryModel.GallaryData1> call = apiCalling.GalleryImageMaintenance(0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), video_description.getText().toString()
+                            , 2, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0
+                            , "0", "0",true,uploadfile);
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
@@ -163,7 +161,7 @@ public class VideoFragment extends Fragment {
                                 if (data != null && data.isCompleted()) {
                                     GalleryModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Video Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         video_description.setText("");
                                         attachment_video.setText("");
                                         imageView.setVisibility(View.GONE);
@@ -179,6 +177,7 @@ public class VideoFragment extends Fragment {
                         @Override
                         public void onFailure(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -191,16 +190,20 @@ public class VideoFragment extends Fragment {
         edit_video.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (attachment_video.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
-                } else {
-                    progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    GalleryModel gl = new GalleryModel(Long.parseLong(unique_id.getText().toString()), branchModel, videoData, video_description.getText().toString(), rowStatusModel, transactionModel);
-                    Call<GalleryModel.GallaryData1> call = apiCalling.GalaryVideoMaintenance(gl);
+                Call<GalleryModel.GallaryData1> call;
+                if (instrumentFileDestination != null) {
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                    call = apiCalling.GalleryImageMaintenance(Long.parseLong(unique_id.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), video_description.getText().toString()
+                            , 2, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transaction_id.getText().toString())
+                            , FileName, Extension, true, uploadfile);
+                }else {
+                    RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                    call = apiCalling.GalleryImageMaintenance(Long.parseLong(unique_id.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), video_description.getText().toString()
+                            , 2, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transaction_id.getText().toString())
+                            , FileName, Extension, false, uploadfile);
+                }
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
@@ -211,7 +214,7 @@ public class VideoFragment extends Fragment {
                                     if (notimodel != null) {
                                         save_video.setVisibility(View.VISIBLE);
                                         edit_video.setVisibility(View.GONE);
-                                        Toast.makeText(context, "Video Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                         video_description.setText("");
                                         attachment_video.setText("");
                                         imageView.setVisibility(View.GONE);
@@ -227,15 +230,13 @@ public class VideoFragment extends Fragment {
                         @Override
                         public void onFailure(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
-                }
-            } else {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                }else {
+                Toast.makeText(context, "Please check your internet connectivity.", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -439,6 +440,12 @@ public class VideoFragment extends Fragment {
                     dialog.dismiss();
                     save_video.setVisibility(View.GONE);
                     edit_video.setVisibility(View.VISIBLE);
+                    if (galleryDetails.get(position).getFilePath().contains(".") && galleryDetails.get(position).getFilePath().contains("/")) {
+                        Extension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf(".") + 1);
+                        String FileNameWithExtension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf("/") + 1);
+                        String[] FileNameArray = FileNameWithExtension.split("\\.");
+                        FileName = FileNameArray[0];
+                    }
                     attachment_video.setText("Attached");
                     attachment_video.setTextColor(context.getResources().getColor(R.color.black));
                     video_description.setText(galleryDetails.get(position).getRemarks());

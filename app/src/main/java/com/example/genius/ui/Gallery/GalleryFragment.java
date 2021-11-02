@@ -50,6 +50,7 @@ import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
+import com.example.genius.Model.LibrarySingleData;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.Model.TransactionModel;
@@ -118,6 +119,7 @@ public class GalleryFragment extends Fragment {
     byte[] imageVal;
     Bitmap bitmap;
     GalleryMaster_Adapter galleryMaster_adapter;
+    String FileName, Extension;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -167,11 +169,11 @@ public class GalleryFragment extends Fragment {
                     Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    GalleryModel gl = new GalleryModel(branchModel, attach, gallery_description.getText().toString(), rowStatusModel, transactionModel);
-                    Call<GalleryModel.GallaryData1> call = apiCalling.GalaryImageMaintenance(gl);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                    Call<GalleryModel.GallaryData1> call = apiCalling.GalleryImageMaintenance(0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), gallery_description.getText().toString()
+                            , 1, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0
+                            , "0", "0",true,uploadfile);
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
@@ -180,7 +182,7 @@ public class GalleryFragment extends Fragment {
                                 if (data != null && data.isCompleted()) {
                                     GalleryModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Image Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         gallery_description.setText("");
                                         attachment_gallery.setText("");
                                         imageView.setVisibility(View.GONE);
@@ -210,48 +212,51 @@ public class GalleryFragment extends Fragment {
         edit_gallery.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (attachment_gallery.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
+                Call<GalleryModel.GallaryData1> call;
+                if (instrumentFileDestination != null) {
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                    call = apiCalling.GalleryImageMaintenance(Long.parseLong(bid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), gallery_description.getText().toString()
+                            , 1, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
+                            , FileName, Extension, true, uploadfile);
                 } else {
-                    progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    GalleryModel gl = new GalleryModel(Long.parseLong(bid.getText().toString()), branchModel, attach, gallery_description.getText().toString(), rowStatusModel, transactionModel);
-                    Call<GalleryModel.GallaryData1> call = apiCalling.GalaryImageMaintenance(gl);
-                    call.enqueue(new Callback<GalleryModel.GallaryData1>() {
-                        @Override
-                        public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
-                            if (response.isSuccessful()) {
-                                GalleryModel.GallaryData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    GalleryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, "Image Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                        gallery_description.setText("");
-                                        attachment_gallery.setText("");
-                                        imageView.setVisibility(View.GONE);
-                                        save_gallery.setVisibility(View.VISIBLE);
-                                        edit_gallery.setVisibility(View.GONE);
-                                        GetGalleryDetails();
-                                    } else {
-                                        Toast.makeText(context, "Image not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
+                    RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                    call = apiCalling.GalleryImageMaintenance(Long.parseLong(bid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), gallery_description.getText().toString()
+                            , 1, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
+                            , FileName, Extension, false, uploadfile);
+                }
+                call.enqueue(new Callback<GalleryModel.GallaryData1>() {
+                    @Override
+                    public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
+                        if (response.isSuccessful()) {
+                            GalleryModel.GallaryData1 data = response.body();
+                            if (data != null && data.isCompleted()) {
+                                GalleryModel notimodel = data.getData();
+                                if (notimodel != null) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    gallery_description.setText("");
+                                    attachment_gallery.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    save_gallery.setVisibility(View.VISIBLE);
+                                    edit_gallery.setVisibility(View.GONE);
+                                    GetGalleryDetails();
+                                } else {
+                                    Toast.makeText(context, "Image not Updated...!", Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
                         }
+                    }
 
-                        @Override
-                        public void onFailure(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Throwable t) {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    });
-                }
+                    @Override
+                    public void onFailure(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Throwable t) {
+                        progressBarHelper.hideProgressDialog();
+                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Please check your internet connectivity.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -641,8 +646,16 @@ public class GalleryFragment extends Fragment {
                     dialog.dismiss();
                     save_gallery.setVisibility(View.GONE);
                     edit_gallery.setVisibility(View.VISIBLE);
+                    if (galleryDetails.get(position).getFilePath().contains(".") && galleryDetails.get(position).getFilePath().contains("/")) {
+                        Extension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf(".") + 1);
+                        String FileNameWithExtension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf("/") + 1);
+                        String[] FileNameArray = FileNameWithExtension.split("\\.");
+                        FileName = FileNameArray[0];
+                    }
+                    imageView.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(imageView);
                     attachment_gallery.setText("Attached");
-                    attach = galleryDetails.get(position).getFileEncoded();
+                    attach = galleryDetails.get(position).getFilePath();
                     attachment_gallery.setTextColor(context.getResources().getColor(R.color.black));
                     gallery_description.setText(galleryDetails.get(position).getRemarks());
                     bid.setText("" + galleryDetails.get(position).getUniqueID());
