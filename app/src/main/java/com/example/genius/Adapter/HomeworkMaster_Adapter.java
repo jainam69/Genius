@@ -232,50 +232,22 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
 
             btn_edit_yes.setOnClickListener(v17 -> {
                 dialog.dismiss();
-                progressBarHelper.showProgressDialog();
-                Call<HomeworkByIdData> call = apiCalling.GetHomeworkByHWID(homeworkDetails.get(position).getHomeworkID());
-                call.enqueue(new Callback<HomeworkByIdData>() {
-                    @Override
-                    public void onResponse(@NotNull Call<HomeworkByIdData> call, @NotNull Response<HomeworkByIdData> response) {
-                        if (response.isSuccessful()) {
-                            progressBarHelper.hideProgressDialog();
-                            HomeworkByIdData paperData = response.body();
-                            if (paperData != null && paperData.Completed) {
-                                HomeworkModel paperModelList = paperData.Data;
-                                if (paperModelList != null) {
-                                    Toast.makeText(context, "Download Start", Toast.LENGTH_SHORT).show();
-                                    String a1 = paperModelList.getHomeworkContentText();
-                                    imageVal = Base64.decode(a1, Base64.DEFAULT);
-                                    try {
-                                        FileOutputStream out = new FileOutputStream(
-                                                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                                        + "/" + paperModelList.getHomeworkContentFileName());
-                                        out.write(imageVal);
-                                        out.close();
-                                    } catch (Exception e) {
-                                        // TODO: handle exception
-                                        Log.e("Error", e.toString());
-                                    }
-                                    String z = paperModelList.getHomeworkContentFileName();
-                                    String FileName;
-                                    if (z.contains("/")) {
-                                        FileName = z.substring(z.lastIndexOf("/"));
-                                    } else {
-                                        FileName = z;
-                                    }
-                                    String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + FileName;
-                                    Toast.makeText(context, "File Stored in " + path, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-                    }
+                String filetype = homeworkDetails.get(position).getFilePath();
+                String filetyp = filetype.substring(filetype.lastIndexOf("."));
+                Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                Uri uri = Uri.parse(filetype);
+                DownloadManager.Request request = new DownloadManager.Request(uri);
+                if (homeworkDetails.get(position).getSubjectInfo().getSubject() != null) {
+                    Name = "Homework" + "_" + homeworkDetails.get(position).getSubjectInfo().getSubject() + filetyp;
+                } else {
+                    Name = "Homework" + filetyp;
+                }
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                    @Override
-                    public void onFailure(@NotNull Call<HomeworkByIdData> call, @NotNull Throwable t) {
-                        Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show();
-                        progressBarHelper.hideProgressDialog();
-                    }
-                });
+                downloadID = dm.enqueue(request);
+                context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
             });
             dialog.show();
         });
@@ -310,9 +282,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context1, Intent intent) {
-            //Fetching the download id received with the broadcast
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-            //Checking if the received broadcast is for our enqueued download by matching download id
             if (downloadID == id) {
                 Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
             }

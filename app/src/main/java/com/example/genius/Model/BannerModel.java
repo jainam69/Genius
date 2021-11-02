@@ -10,6 +10,8 @@ public class BannerModel {
     BranchModel Branch;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
+    String FilePath;
+    String FileName;
 
     public BannerModel(long bannerID, List<BannerTypeEntity> bannerType, BranchModel branchModel,RowStatusModel rowStatus, TransactionModel transaction,String bannerImageText) {
         BannerID = bannerID;
@@ -26,6 +28,22 @@ public class BannerModel {
         this.Branch = branchModel;
         Transaction = transaction;
         RowStatus = rowStatus;
+    }
+
+    public String getFileName() {
+        return FileName;
+    }
+
+    public void setFileName(String fileName) {
+        FileName = fileName;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
     }
 
     public BranchModel getBranch() {

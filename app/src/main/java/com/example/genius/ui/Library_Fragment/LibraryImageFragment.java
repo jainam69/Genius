@@ -561,7 +561,7 @@ public class LibraryImageFragment extends Fragment {
             holder.category.setText(bannerDetails.get(position).getCategoryInfo().getCategory());
             holder.title.setText(bannerDetails.get(position).getTitle());
             holder.description.setText(bannerDetails.get(position).getDescription());
-            Glide.with(context).load("http://192.168.91.181/" + bannerDetails.get(position).getFilePath()).into(holder.banner_image);
+            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
             holder.banner_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);

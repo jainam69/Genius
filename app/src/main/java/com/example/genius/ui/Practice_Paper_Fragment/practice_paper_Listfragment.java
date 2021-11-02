@@ -716,6 +716,8 @@ public class practice_paper_Listfragment extends Fragment {
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
         byte[] imageVal;
+        long downloadID;
+        String Name;
 
         public PracticePaperMaster_Adapter(Context context, List<PaperModel> paperModels) {
             this.context = context;
@@ -874,50 +876,22 @@ public class practice_paper_Listfragment extends Fragment {
 
                 btn_edit_yes.setOnClickListener(v12 -> {
                     dialog.dismiss();
-                    progressBarHelper.showProgressDialog();
-                    Call<PaperByIdData> call = apiCalling.GetPaperByPaperID(paperModels.get(position).getPaperID());
-                    call.enqueue(new Callback<PaperByIdData>() {
-                        @Override
-                        public void onResponse(@NotNull Call<PaperByIdData> call, @NotNull Response<PaperByIdData> response) {
-                            if (response.isSuccessful()) {
-                                progressBarHelper.hideProgressDialog();
-                                PaperByIdData paperData = response.body();
-                                if (paperData != null && paperData.Completed) {
-                                    PaperModel paperModelList = paperData.Data;
-                                    if (paperModelList != null) {
-                                        Toast.makeText(context, "Download Start", Toast.LENGTH_SHORT).show();
-                                        String a1 = paperModelList.getPaperData().getPaperContentText();
-                                        imageVal = Base64.decode(a1, Base64.DEFAULT);
-                                        try {
-                                            FileOutputStream out = new FileOutputStream(
-                                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                                            + "/" + paperModels.get(position).getPaperData().getPaperPath());
-                                            out.write(imageVal);
-                                            out.close();
-                                        } catch (Exception e) {
-                                            // TODO: handle exception
-                                            Log.e("Error", e.toString());
-                                        }
-                                        String z = paperModels.get(position).getPaperData().getPaperPath();
-                                        String FileName;
-                                        if (z.contains("/")) {
-                                            FileName = z.substring(z.lastIndexOf("/"));
-                                        } else {
-                                            FileName = z;
-                                        }
-                                        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + FileName;
-                                        Toast.makeText(context, "File Stored in " + path, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        }
+                    String filetype = paperModels.get(position).getPaperData().getFilePath();
+                    String filetyp = filetype.substring(filetype.lastIndexOf("."));
+                    Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                    Uri uri = Uri.parse(filetype);
+                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                    if (paperModels.get(position).getSubject().getSubject() != null) {
+                        Name = "Practice_Paper" + "_" + paperModels.get(position).getSubject().getSubject() + filetyp;
+                    } else {
+                        Name = "Practice_Paper" + filetyp;
+                    }
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                        @Override
-                        public void onFailure(@NotNull Call<PaperByIdData> call, @NotNull Throwable t) {
-                            Toast.makeText(getActivity(), t.toString(), Toast.LENGTH_LONG).show();
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    });
+                    downloadID = dm.enqueue(request);
+                    context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                 });
                 dialog.show();
             });
@@ -946,6 +920,15 @@ public class practice_paper_Listfragment extends Fragment {
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }
         }
-    }
 
+        private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context1, Intent intent) {
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (downloadID == id) {
+                    Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+    }
 }

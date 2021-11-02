@@ -9,6 +9,8 @@ public class GalleryModel {
     RowStatusModel RowStatus;
     TransactionModel Transaction;
     int GalleryType;
+    String FilePath;
+    String FileName;
 
     public GalleryModel(long uniqueID, BranchModel branch, String fileEncoded, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
         UniqueID = uniqueID;
@@ -25,6 +27,22 @@ public class GalleryModel {
         Remarks = remarks;
         RowStatus = rowStatus;
         Transaction = transaction;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
+    }
+
+    public String getFileName() {
+        return FileName;
+    }
+
+    public void setFileName(String fileName) {
+        FileName = fileName;
     }
 
     public long getUniqueID() {

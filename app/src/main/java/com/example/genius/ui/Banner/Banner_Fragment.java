@@ -635,9 +635,9 @@ public class Banner_Fragment extends Fragment {
             }
             holder.sub_type.setText("" + a);
             attach = bannerDetails.get(position).getBannerImageText();
-            imageVal = Base64.decode(attach, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);
-            Glide.with(context).load(decodedByte).into(holder.banner_image);
+            /*imageVal = Base64.decode(attach, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);*/
+            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
             holder.banner_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);

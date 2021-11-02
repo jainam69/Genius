@@ -572,7 +572,7 @@ public class FeeStructureFragment extends Fragment {
             Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);*/
             holder.remark.setText(bannerDetails.get(position).getRemark());
             holder.standard.setText(bannerDetails.get(position).getStandardInfo().getStandard());
-            Glide.with(context).load("http://192.168.91.181/" + bannerDetails.get(position).getFilePath()).into(holder.banner_image);
+            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
             holder.banner_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);

@@ -14,6 +14,7 @@ public class HomeworkModel {
     String HomeworkContentFileName;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
+    String FilePath;
 
     public HomeworkModel(long homeworkID, BranchModel branchInfo, String homeworkDate, StandardModel standardInfo, SubjectModel subjectInfo, int batchTimeID, String batchTimeText, String remarks, String homeworkContentText, String homeworkContentFileName, TransactionModel transaction, RowStatusModel rowStatus) {
         HomeworkID = homeworkID;
@@ -42,6 +43,14 @@ public class HomeworkModel {
         HomeworkContentFileName = homeworkContentFileName;
         Transaction = transaction;
         RowStatus = rowStatus;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
     }
 
     public long getHomeworkID() {

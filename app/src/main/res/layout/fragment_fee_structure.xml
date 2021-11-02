@@ -230,7 +230,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Banner Details :"
+            android:text="Fee Details :"
             android:textColor="@color/blue"
             android:textSize="16dp"
             android:textStyle="bold"

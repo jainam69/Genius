@@ -619,9 +619,9 @@ public class GalleryFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             holder.description.setText(galleryDetails.get(position).getRemarks());
             attach = galleryDetails.get(position).getFileEncoded();
-            imageVal = Base64.decode(attach, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);
-            Glide.with(context).load(decodedByte).into(holder.gallery_image);
+            /*imageVal = Base64.decode(attach, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);*/
+            Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(holder.gallery_image);
             holder.gallery_edit.setOnClickListener(v -> {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);

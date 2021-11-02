@@ -8,6 +8,7 @@ public class PaperData {
     long PaperID;
     String PaperPath;
     String PaperContentText;
+    String FilePath;
     boolean Completed;
     List<PaperModel> Data;
 
@@ -21,6 +22,14 @@ public class PaperData {
     public PaperData(String paperPath, String paperContentText) {
         PaperPath = paperPath;
         PaperContentText = paperContentText;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
     }
 
     public long getUniqueID() {
