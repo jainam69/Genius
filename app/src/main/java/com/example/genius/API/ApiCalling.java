@@ -372,5 +372,38 @@ public interface ApiCalling {
     @POST(ApiConstant.LibraryLinkMaintenance)
     Call<LibrarySingleData> LibraryLinkMaintenance(@Body LibraryModel libraryModel);
 
+    @Multipart
+    @POST(ApiConstant.NEW_HOMEWORK_MAINTENANCE + "/{HomeworkID}"
+            + "/{Homework_Date}" + "/{BranchID}" + "/{StandardID}" + "/{SubjectID}" + "/{Batch_TimeID}" + "/{Remark}" + "/{CreateId}" + "/{CreateBy}"
+            + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
+    Call<HomeworkModel.HomeworkData1> HomeworkMaintenance(@Path("HomeworkID") long HomeworkID,
+                                                          @Path("Homework_Date") String Homework_Date, @Path("BranchID") long BranchID,
+                                                          @Path("StandardID") long StandardID, @Path("SubjectID") long SubjectID, @Path("Batch_TimeID") int Batch_TimeID,
+                                                          @Path("Remark") String Remark, @Path("CreateId") long CreateId,
+                                                          @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
+                                                          @Path("FileName") String FileName, @Path("Extension") String Extension,
+                                                          @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
+    @POST(ApiConstant.NEW_UPLOAD_PAPER_MAINTENANCE + "/{TestID}"
+            + "/{TestPaperID}" + "/{Paper_Type}" + "/{Doc_Link}" + "/{Paper_Remark}" + "/{CreateId}" + "/{CreateBy}"
+            + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
+    Call<UploadPaperModel.UploadPaperData1> TestPaperMaintenance(@Path("TestID") long TestID,
+                                                                 @Path("TestPaperID") long TestPaperID, @Path("Paper_Type") int Paper_Type,
+                                                                 @Path("Doc_Link") String Doc_Link, @Path("Paper_Remark") String Paper_Remark,
+                                                                 @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy,
+                                                                 @Path("TransactionId") long TransactionId,
+                                                                 @Path("FileName") String FileName, @Path("Extension") String Extension,
+                                                                 @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+
+    @Multipart
+    @POST(ApiConstant.GALLRY_IMAGE_MAINTENANCE + "/{UniqID}/{BranchID}/{Remark}/{UploadType}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
+    Call<GalleryModel.GallaryData1> GalleryImageMaintenance(@Path("UniqID") long UniqID, @Path("BranchID") long BranchID, @Path("Remark") String Remark, @Path("UploadType") int UploadType,
+                                                            @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
+                                                            @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+
+    @Multipart
+    @POST(ApiConstant.PRACTICE_PAPER_MAINTENANCE + "/{PaperID}/{UniqID}/{BranchID}/{StandardID}/{SubjectID}/{Batch_TimeID}/{Remark}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
+    Call<PaperModel.PaperData1> PaperMaintenance(@Path("PaperID") long PaperID, @Path("UniqID") long UniqID, @Path("BranchID") long BranchID, @Path("StandardID") long StandardID, @Path("SubjectID") long SubjectID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Remark") String Remark,
+                                                 @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
+                                                 @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 }

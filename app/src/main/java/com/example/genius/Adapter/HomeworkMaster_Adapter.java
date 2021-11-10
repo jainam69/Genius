@@ -128,6 +128,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                 bundle.putString("HomeworkContentText", homeworkDetails.get(position).getHomeworkContentText());
                 bundle.putString("HomeworkContentFileName", homeworkDetails.get(position).getHomeworkContentFileName());
                 bundle.putLong("TransactionId", homeworkDetails.get(position).getTransaction().getTransactionId());
+                bundle.putString("FilePath", homeworkDetails.get(position).getFilePath());
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

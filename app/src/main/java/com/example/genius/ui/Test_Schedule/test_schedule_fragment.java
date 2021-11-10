@@ -80,6 +80,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -127,6 +130,7 @@ public class test_schedule_fragment extends Fragment {
     UploadPaperModel uploadPaperModel;
     UploadPaperModel uploadPaperModel_update;
     List<UploadPaperModel> studentModelList;
+    String FileName = "none", Extension = "none";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -217,6 +221,12 @@ public class test_schedule_fragment extends Fragment {
                                             edit_test_paper.setVisibility(View.VISIBLE);
                                             save_test_paper.setVisibility(View.GONE);
                                             paper_remarks.setText(studentModelList.get(0).getRemarks());
+                                            if (studentModelList.get(0).getFilePath().contains(".") && studentModelList.get(0).getFilePath().contains("/")) {
+                                                Extension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf(".") + 1);
+                                                String FileNameWithExtension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf("/") + 1);
+                                                String[] FileNameArray = FileNameWithExtension.split("\\.");
+                                                FileName = FileNameArray[0];
+                                            }
                                         }
                                         GetPaperType();
                                     }
@@ -245,22 +255,18 @@ public class test_schedule_fragment extends Fragment {
             day = c.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog picker = new DatePickerDialog(getActivity(),
-                    new DatePickerDialog.OnDateSetListener() {
-
-                        @Override
-                        public void onDateSet(DatePicker view, int year2, int monthOfYear, int dayOfMonth) {
-                            year = year2;
-                            month = monthOfYear;
-                            day = dayOfMonth;
-                            test_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
-                            String as = test_date.getText().toString();
-                            Date dt = null;
-                            try {
-                                dt = displaydate.parse(as);
-                                indate = actualdate.format(dt);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                    (view, year2, monthOfYear, dayOfMonth) -> {
+                        year = year2;
+                        month = monthOfYear;
+                        day = dayOfMonth;
+                        test_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        String as = test_date.getText().toString();
+                        Date dt = null;
+                        try {
+                            dt = displaydate.parse(as);
+                            indate = actualdate.format(dt);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
                     }, year, month, day);
             picker.show();
@@ -271,24 +277,19 @@ public class test_schedule_fragment extends Fragment {
             int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
             int minute = mcurrentTime.get(Calendar.MINUTE);
             TimePickerDialog timePickerDialog = new TimePickerDialog(context,
-                    new TimePickerDialog.OnTimeSetListener() {
-
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay,
-                                              int minute) {
-                            if (hourOfDay == 0) {
-                                hourOfDay += 12;
-                                format = "AM";
-                            } else if (hourOfDay == 12) {
-                                format = "PM";
-                            } else if (hourOfDay > 12) {
-                                hourOfDay -= 12;
-                                format = "PM";
-                            } else {
-                                format = "AM";
-                            }
-                            start_time.setText(hourOfDay + ":" + minute + " " + format);
+                    (view, hourOfDay, minute1) -> {
+                        if (hourOfDay == 0) {
+                            hourOfDay += 12;
+                            format = "AM";
+                        } else if (hourOfDay == 12) {
+                            format = "PM";
+                        } else if (hourOfDay > 12) {
+                            hourOfDay -= 12;
+                            format = "PM";
+                        } else {
+                            format = "AM";
                         }
+                        start_time.setText(hourOfDay + ":" + minute1 + " " + format);
                     }, hour, minute, false);
             timePickerDialog.show();
         });
@@ -320,7 +321,7 @@ public class test_schedule_fragment extends Fragment {
             timePickerDialog.show();
         });
 
-        save_testschedule.setOnClickListener((View.OnClickListener) v -> {
+        save_testschedule.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (standard.getSelectedItemId() == 0) {
@@ -398,7 +399,7 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        edit_testschedule.setOnClickListener((View.OnClickListener) v -> {
+        edit_testschedule.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (standard.getSelectedItemId() == 0) {
@@ -484,10 +485,10 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        save_test_paper.setOnClickListener((View.OnClickListener) v -> {
+        save_test_paper.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
+                if (PaperType_Name.equals("UploadDocument") && instrumentFileDestination != null) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
                 } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
@@ -495,26 +496,47 @@ public class test_schedule_fragment extends Fragment {
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    Call<UploadPaperModel.UploadPaperData1> call;
+                    /*TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);*/
                     if (bundle != null) {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                            uploadPaperModel = new UploadPaperModel(Long.parseLong(id.getText().toString()), "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);
+                            /*uploadPaperModel = new UploadPaperModel(Long.parseLong(id.getText().toString()), "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
+                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
+                            call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id), "none"
+                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", true
+                                    , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                            , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
-                            uploadPaperModel = new UploadPaperModel(Long.parseLong(id.getText().toString()), "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);
+                            /*uploadPaperModel = new UploadPaperModel(Long.parseLong(id.getText().toString()), "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
+                                    " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
+                            call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id)
+                                    , upload_link.getText().toString(), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
+                                    , MultipartBody.Part.createFormData("attachment", ""
+                                            , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     } else {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                            uploadPaperModel = new UploadPaperModel(a, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);
+                            /*uploadPaperModel = new UploadPaperModel(a, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
+                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
+                            call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id), "none"
+                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", true
+                                    , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                            , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
-                            uploadPaperModel = new UploadPaperModel(a, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);
+                            /*uploadPaperModel = new UploadPaperModel(a, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
+                                    " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
+                            call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id)
+                                    , upload_link.getText().toString(), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
+                                    , MultipartBody.Part.createFormData("attachment", ""
+                                            , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     }
-                    Call<UploadPaperModel.UploadPaperData1> call = apiCalling.TestPaperMaintenance(uploadPaperModel);
+                    /*Call<UploadPaperModel.UploadPaperData1> call = apiCalling.TestPaperMaintenance(uploadPaperModel);*/
                     call.enqueue(new Callback<UploadPaperModel.UploadPaperData1>() {
                         @Override
                         public void onResponse(@NotNull Call<UploadPaperModel.UploadPaperData1> call, @NotNull Response<UploadPaperModel.UploadPaperData1> response) {
@@ -551,7 +573,7 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        edit_test_paper.setOnClickListener((View.OnClickListener) v -> {
+        edit_test_paper.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
@@ -562,16 +584,34 @@ public class test_schedule_fragment extends Fragment {
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    /*TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);*/
+                    Call<UploadPaperModel.UploadPaperData1> call;
                     if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                        uploadPaperModel_update = new UploadPaperModel(b, c, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);
+                        if (instrumentFileDestination != null) {
+                            /*uploadPaperModel_update = new UploadPaperModel(b, c, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
+                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
+                            call = apiCalling.TestPaperMaintenance(b, c, Integer.parseInt(PaperType_Id), "none"
+                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, true
+                                    , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                            , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
+                        } else {
+                            call = apiCalling.TestPaperMaintenance(b, c, Integer.parseInt(PaperType_Id), "none"
+                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, false
+                                    , MultipartBody.Part.createFormData("attachment", ""
+                                            , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
+                        }
                     } else {
-                        uploadPaperModel_update = new UploadPaperModel(b, c, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);
+                        /*uploadPaperModel_update = new UploadPaperModel(b, c, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
+                                " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
+                        call = apiCalling.TestPaperMaintenance(b, c, Integer.parseInt(PaperType_Id)
+                                , upload_link.getText().toString(), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, false
+                                , MultipartBody.Part.createFormData("attachment", ""
+                                        , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
-                    Call<UploadPaperModel.UploadPaperData1> call = apiCalling.TestPaperMaintenance(uploadPaperModel_update);
                     call.enqueue(new Callback<UploadPaperModel.UploadPaperData1>() {
                         @Override
                         public void onResponse(@NotNull Call<UploadPaperModel.UploadPaperData1> call, @NotNull Response<UploadPaperModel.UploadPaperData1> response) {

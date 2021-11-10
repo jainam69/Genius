@@ -50,7 +50,7 @@ public class Test_Paper_Listfragment extends Fragment {
     String[] BRANCHITEM;
     Integer[] BRANCHID;
     SearchableSpinner branch;
-    String BranchName,BranchID;
+    String BranchName, BranchID;
     int BranchId;
     OnBackPressedCallback callback;
 
@@ -66,11 +66,10 @@ public class Test_Paper_Listfragment extends Fragment {
         paper_reg_rv = root.findViewById(R.id.paper_reg_rv);
         branch = root.findViewById(R.id.branch);
 
-        if (Function.checkNetworkConnection(context))
-        {
+        if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
             GetAllBranch();
-        }else {
+        } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
@@ -102,8 +101,7 @@ public class Test_Paper_Listfragment extends Fragment {
         return root;
     }
 
-    public void GetAllBranch()
-    {
+    public void GetAllBranch() {
         branchitem.add("Select Branch");
         branchid.add(0);
 
@@ -164,8 +162,7 @@ public class Test_Paper_Listfragment extends Fragment {
                     if (branch.getSelectedItem().equals("Select Branch")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                    else{
+                    } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }

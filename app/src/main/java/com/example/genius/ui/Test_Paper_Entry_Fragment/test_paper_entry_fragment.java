@@ -113,6 +113,7 @@ public class test_paper_entry_fragment extends Fragment {
     Bundle bundle;
     OnBackPressedCallback callback;
     Long StandardId;
+    String FileName = "none", Extension = "jpg";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -479,7 +480,6 @@ public class test_paper_entry_fragment extends Fragment {
                 }
             };
 
-
     public void GetAllSubject() {
         subjectitem.add("Select Subject");
         subjectid.add(0);
@@ -679,7 +679,6 @@ public class test_paper_entry_fragment extends Fragment {
                 }
 
             };
-
 
     private void requestPermissionForAll() {
 

@@ -182,14 +182,13 @@ public class LibraryImageFragment extends Fragment {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 } else {
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
-                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                     Call<LibrarySingleData> call = apiCalling.LibraryMaintenance(0, 0, title.getText().toString()
-                            , "0", "0", "0", description.getText().toString()
+                            , "0", "none", "jpg", description.getText().toString()
                             , Long.parseLong(BranchID), categoryid
                             , (int) Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                             , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                            0, true, 2, uploadfile);
+                            0, true, 2, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                    , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     call.enqueue(new Callback<LibrarySingleData>() {
                         @Override
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
@@ -235,23 +234,21 @@ public class LibraryImageFragment extends Fragment {
                 } else {
                     Call<LibrarySingleData> call;
                     if (instrumentFileDestination != null) {
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
-                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                         call = apiCalling.LibraryMaintenance(LibraryID, LibraryDetailID, title.getText().toString()
                                 , "0", FileName, Extension, description.getText().toString()
                                 , Long.parseLong(BranchID), categoryid
                                 , (int) Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                TransactionId, true, 2, uploadfile);
+                                TransactionId, true, 2, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                        , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
-                        RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
-                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                         call = apiCalling.LibraryMaintenance(LibraryID, LibraryDetailID, title.getText().toString()
                                 , "0", FileName, Extension, description.getText().toString()
                                 , Long.parseLong(BranchID), categoryid
                                 , (int) Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                TransactionId, false, 2, uploadfile);
+                                TransactionId, false, 2, MultipartBody.Part.createFormData("attachment", ""
+                                        , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
                     call.enqueue(new Callback<LibrarySingleData>() {
                         @Override
@@ -564,7 +561,7 @@ public class LibraryImageFragment extends Fragment {
             holder.category.setText(bannerDetails.get(position).getCategoryInfo().getCategory());
             holder.title.setText(bannerDetails.get(position).getTitle());
             holder.description.setText(bannerDetails.get(position).getDescription());
-            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
+            Glide.with(context).load("http://192.168.91.181/" + bannerDetails.get(position).getFilePath()).into(holder.banner_image);
             holder.banner_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);

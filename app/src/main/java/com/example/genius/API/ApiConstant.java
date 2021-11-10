@@ -94,6 +94,7 @@ public class ApiConstant {
     public static final String TESTSCHEDULE_MAINTENANCE = "test/v1/TestMaintenance";
     public static final String GET_TESTSCHEDULE_BY_BRANCH = "test/v1/GetAllTestByBranch";
     public static final String UPLOAD_PAPER_MAINTENANCE = "test/v1/TestPaperMaintenance";
+    public static final String NEW_UPLOAD_PAPER_MAINTENANCE = "test/v1/TestPaperMaintenance";
     public static final String REMOVE_TEST_SCHEDULE_PAPER = "test/v1/RemoveTest";
     public static final String GET_EDIT_PAPER_DATA = "test/v1/GetAllTestPapaerByTest";
     public static final String GET_ANSWERSHEET = "test/v1/GetAllAnsSheetByTest";
@@ -103,6 +104,8 @@ public class ApiConstant {
     public static final String GET_ALL_HOMEWORK_WITHOUT_CONTENT = "homework/v1/GetAllHomeworkWithoutContentByBranch";
     public static final String GET_ALL_HOMEWORK_BY_ID = "homework/v1/GetHomeworkByHWID";
     public static final String REMOVE_HOMEWORK = "homework/v1/RemoveHomework";
+    public static final String NEW_HOMEWORK_MAINTENANCE = "homework/v1/HomeworkMaintenance";
+
 
 	public static final String REMINDER_MAINTENANCE = "reminder/v1/ReminderMaintenance";
     public static final String GET_ALL_REMINDER_BY_BRANCH = "reminder/v1/GetAllReminderByBranch";
@@ -128,4 +131,6 @@ public class ApiConstant {
     public static final String GET_ALL_LIBRARY_BRANCH = "NewLibrary/v1/GetAllLibrary";
     public static final String REMOVE_NEW_LIBRARY = "NewLibrary/v1/RemoveLibrary";
     public static final String LibraryLinkMaintenance = "NewLibrary/v1/LibraryLinkMaintenance";
+
+
 }

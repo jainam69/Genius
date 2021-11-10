@@ -194,13 +194,12 @@ public class FeeStructureFragment extends Fragment {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 } else {
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
-                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                     Call<FeeStructureSingleData> call = apiCalling.FeesMaintenance(0, 0, studentid
                             , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
                             , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                             , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                            0, "none", "jpg", true, uploadfile);
+                            0, "none", "jpg", true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                    , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     call.enqueue(new Callback<FeeStructureSingleData>() {
                         @Override
                         public void onResponse(@NotNull Call<FeeStructureSingleData> call, @NotNull Response<FeeStructureSingleData> response) {
@@ -209,6 +208,8 @@ public class FeeStructureFragment extends Fragment {
                                 if (data.isCompleted()) {
                                     FeeStructureModel notimodel = data.getData();
                                     if (notimodel != null) {
+                                        standard.setSelection(0);
+                                        remarks.setText("");
                                         banner_image.setText("");
                                         branch.setSelection(0);
                                         GetBannerDetails();
@@ -241,19 +242,19 @@ public class FeeStructureFragment extends Fragment {
                 } else {
                     Call<FeeStructureSingleData> call;
                     if (instrumentFileDestination != null) {
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
-                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                         call = apiCalling.FeesMaintenance(FeesId, FeesDetailId, studentid
                                 , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
                                 , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , TransactionId, FileName, Extension, true, uploadfile);
+                                , TransactionId, FileName, Extension, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                        , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
                         call = apiCalling.FeesMaintenance(FeesId, FeesDetailId, studentid
                                 , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
                                 , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , TransactionId, FileName, Extension, false, null);
+                                , TransactionId, FileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
+                                        , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
                     call.enqueue(new Callback<FeeStructureSingleData>() {
                         @Override
@@ -263,6 +264,8 @@ public class FeeStructureFragment extends Fragment {
                                 if (data.isCompleted()) {
                                     FeeStructureModel notimodel = data.getData();
                                     if (notimodel != null) {
+                                        standard.setSelection(0);
+                                        remarks.setText("");
                                         banner_image.setText("");
                                         branch.setSelection(0);
                                         GetBannerDetails();
@@ -599,7 +602,7 @@ public class FeeStructureFragment extends Fragment {
                         Extension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf(".") + 1);
                         String FileNameWithExtension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf("/") + 1);
                         String[] FileNameArray = FileNameWithExtension.split("\\.");
-                        FileName = FileNameArray[1];
+                        FileName = FileNameArray[0];
                     }
                     TransactionId = bannerDetails.get(position).getTransaction().getTransactionId();
                     FileName = bannerDetails.get(position).getFileName();

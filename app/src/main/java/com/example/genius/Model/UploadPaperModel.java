@@ -12,6 +12,16 @@ public class UploadPaperModel {
     String PaperType;
     String DocContentText;
     String FileName;
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
+    }
+
+    String FilePath;
     String DocLink;
     String Remarks;
     RowStatusModel RowStatus;

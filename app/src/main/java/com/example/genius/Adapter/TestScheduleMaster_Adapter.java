@@ -82,7 +82,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
         holder.subject.setText(testScheduleDetails.get(position).getSubject().getSubject());
         holder.total_marks.setText("" + testScheduleDetails.get(position).getMarks());
 
-        holder.testschedule_edit.setOnClickListener((View.OnClickListener) v -> {
+        holder.testschedule_edit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
@@ -97,7 +97,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
 
             btn_edit_no.setOnClickListener(v1 -> dialog.dismiss());
 
-            btn_edit_yes.setOnClickListener((View.OnClickListener) v12 -> {
+            btn_edit_yes.setOnClickListener(v12 -> {
                 dialog.dismiss();
                 test_schedule_fragment orderplace = new test_schedule_fragment();
                 Bundle bundle = new Bundle();
@@ -121,6 +121,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             });
             dialog.show();
         });
+
         holder.testschedule_delete.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
@@ -166,7 +167,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             dialog.show();
         });
 
-        holder.paper_view.setOnClickListener((View.OnClickListener) v -> {
+        holder.paper_view.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
@@ -181,14 +182,14 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
 
             btn_edit_no.setOnClickListener(v15 -> dialog.dismiss());
 
-            btn_edit_yes.setOnClickListener((View.OnClickListener) v16 -> {
+            btn_edit_yes.setOnClickListener(v16 -> {
                 dialog.dismiss();
                 Test_Paper_Checking_fragment orderplace = new Test_Paper_Checking_fragment();
                 Bundle bundle = new Bundle();
                 bundle.putLong("TestID", testScheduleDetails.get(position).getTestID());
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
