@@ -19,13 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.genius.API.ApiCalling;
-import com.example.genius.Adapter.TestScheduleMaster_Adapter;
 import com.example.genius.Adapter.UploadPaperChecking_Adapter;
 import com.example.genius.Model.AnswerSheetData;
 import com.example.genius.Model.AnswerSheetModel;
-import com.example.genius.Model.TestScheduleData;
-import com.example.genius.Model.TestScheduleModel;
-import com.example.genius.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -34,7 +30,6 @@ import com.example.genius.ui.Test_Schedule.test_Listfragment;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;

@@ -26,11 +26,11 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.MainActivity">
 
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".Activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".VideoViewActivity"
+            android:name=".Activity.VideoViewActivity"
             android:screenOrientation="landscape" />
     </application>
 

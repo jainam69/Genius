@@ -1,8 +1,7 @@
-package com.example.genius;
+package com.example.genius.Activity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
@@ -16,17 +15,13 @@ import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.genius.helper.Preferences;
+import com.example.genius.R;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 
 public class VideoViewActivity extends AppCompatActivity {
 

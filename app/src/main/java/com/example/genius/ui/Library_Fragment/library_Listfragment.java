@@ -1,16 +1,12 @@
 package com.example.genius.ui.Library_Fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -27,20 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.LibraryMaster_Adapter;
-import com.example.genius.Adapter.StudentMaster_Adapter;
-import com.example.genius.Model.BannerModel;
-import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
-import com.example.genius.Model.StudentData;
-import com.example.genius.Model.StudentModel;
-import com.example.genius.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
 import java.util.List;

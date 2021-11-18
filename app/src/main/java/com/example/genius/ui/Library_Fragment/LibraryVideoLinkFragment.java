@@ -1,27 +1,9 @@
 package com.example.genius.ui.Library_Fragment;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
-import android.text.style.UnderlineSpan;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -48,7 +29,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CategoryData;
@@ -59,35 +39,21 @@ import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.LibrarySingleData;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
-import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
-import com.example.genius.utils.ImageUtility;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 
 public class LibraryVideoLinkFragment extends Fragment {
 

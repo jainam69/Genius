@@ -1,4 +1,4 @@
-package com.example.genius;
+package com.example.genius.helper;
 
 import android.content.Context;
 import android.view.GestureDetector;

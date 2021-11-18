@@ -24,7 +24,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.TaskRegister_Adapter;
 import com.example.genius.Model.TodoData;
 import com.example.genius.Model.TodoModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;

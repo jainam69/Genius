@@ -45,17 +45,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.MarksEnterAdapter;
-import com.example.genius.Adapter.StaffMaster_Adapter;
 import com.example.genius.Model.*;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,21 +65,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;

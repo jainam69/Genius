@@ -1,9 +1,12 @@
-package com.example.genius;
+package com.example.genius.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.genius.helper.Preferences;
+import com.example.genius.R;
 
 public class SplashActivity extends AppCompatActivity {
 

@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,50 +38,35 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
-import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
-import com.example.genius.Model.RowStatusModel;
-import com.example.genius.Model.TransactionModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
-import com.example.genius.VideoViewActivity;
+import com.example.genius.Activity.VideoViewActivity;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
-import com.example.genius.ui.Gallery.GalleryFragment;
 import com.example.genius.ui.Gallery.GallerySelectorFragment;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;

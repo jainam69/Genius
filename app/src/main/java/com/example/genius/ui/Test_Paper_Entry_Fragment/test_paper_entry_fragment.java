@@ -1,7 +1,6 @@
 package com.example.genius.ui.Test_Paper_Entry_Fragment;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -44,15 +43,13 @@ import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -63,21 +60,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;

@@ -1,20 +1,17 @@
 package com.example.genius.ui.Library_Fragment;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.FileUtils;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -27,7 +24,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,16 +37,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 
 import com.example.genius.API.ApiCalling;
-import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.LibraryModel;
-import com.example.genius.Model.PaperModel;
-import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
-import com.example.genius.Model.TransactionModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
@@ -59,33 +51,19 @@ import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.utils.ImageUtility;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;

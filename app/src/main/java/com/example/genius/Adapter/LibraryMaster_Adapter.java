@@ -1,49 +1,25 @@
 package com.example.genius.Adapter;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
+
 import com.example.genius.API.ApiCalling;
-import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.LibraryModel;
-import com.example.genius.Preferences;
 import com.example.genius.R;
-import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
-import com.example.genius.ui.Library_Fragment.library_fragment;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Adapter.ViewHolder> {
 

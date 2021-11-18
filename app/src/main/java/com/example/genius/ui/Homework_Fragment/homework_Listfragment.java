@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -21,19 +20,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.HomeworkMaster_Adapter;
-import com.example.genius.Adapter.LibraryMaster_Adapter;
 import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
-import com.example.genius.Model.LibraryData;
-import com.example.genius.Model.LibraryModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;

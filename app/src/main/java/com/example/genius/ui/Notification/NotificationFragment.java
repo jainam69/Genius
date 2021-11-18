@@ -35,7 +35,7 @@ import com.example.genius.Model.NotificationData;
 import com.example.genius.Model.NotificationModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;

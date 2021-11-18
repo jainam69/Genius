@@ -1,4 +1,4 @@
-package com.example.genius;
+package com.example.genius.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -13,9 +13,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.genius.Model.CommonModel;
-
-import retrofit2.Callback;
+import com.example.genius.helper.Preferences;
+import com.example.genius.R;
 
 public class MainActivity extends AppCompatActivity {
 

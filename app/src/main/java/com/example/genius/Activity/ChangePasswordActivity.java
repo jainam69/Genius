@@ -1,7 +1,6 @@
-package com.example.genius;
+package com.example.genius.Activity;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.helper.Preferences;
+import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 

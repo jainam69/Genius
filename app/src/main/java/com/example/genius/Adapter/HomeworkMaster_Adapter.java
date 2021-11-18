@@ -10,8 +10,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +27,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
-import com.example.genius.Model.HomeworkByIdData;
 import com.example.genius.Model.HomeworkModel;
-import com.example.genius.Model.PaperByIdData;
-import com.example.genius.Model.PaperModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -43,7 +38,6 @@ import com.example.genius.ui.Homework_Fragment.homework_fragment;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

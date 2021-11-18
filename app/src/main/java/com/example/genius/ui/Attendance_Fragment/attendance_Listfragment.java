@@ -1,6 +1,5 @@
 package com.example.genius.ui.Attendance_Fragment;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,16 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.AttendanceEntry_Adapter;
-import com.example.genius.Adapter.AttendanceMaster_Adapter;
 import com.example.genius.Model.AttendanceData;
 import com.example.genius.Model.AttendanceModel;
-import com.example.genius.Model.BannerModel;
 import com.example.genius.Model.BranchModel;
-import com.example.genius.Model.StandardData;
-import com.example.genius.Model.StandardModel;
-import com.example.genius.Model.StudentData;
-import com.example.genius.Model.StudentModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -45,10 +36,7 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;

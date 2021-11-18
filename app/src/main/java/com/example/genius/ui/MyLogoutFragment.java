@@ -9,8 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.genius.LoginActivity;
-import com.example.genius.Preferences;
+import com.example.genius.Activity.LoginActivity;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 public class MyLogoutFragment extends DialogFragment {
 

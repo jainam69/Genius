@@ -96,19 +96,19 @@
         </RadioGroup>
     </LinearLayout>
 
-    <Button
-        android:layout_marginBottom="10dp"
-        android:id="@+id/save_role_master"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/blue_fill"
-        android:layout_gravity="end"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:text="Save"
-        android:textColor="@color/white"
-        android:textSize="14dp"
-        android:textStyle="bold"/>
+            <Button
+                android:id="@+id/save_role_master"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/blue_fill"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold" />
 
             <Button
                 android:visibility="gone"

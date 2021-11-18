@@ -47,17 +47,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
-import com.example.genius.Model.BatchModel;
-import com.example.genius.Model.BranchModel;
-import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.SchoolData;
 import com.example.genius.Model.SchoolModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.StudentByIdData;
 import com.example.genius.Model.StudentModel;
-import com.example.genius.Model.TransactionModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;

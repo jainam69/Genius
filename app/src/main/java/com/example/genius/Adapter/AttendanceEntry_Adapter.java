@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,28 +21,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.AttendanceModel;
-import com.example.genius.Model.BannerModel;
-import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
-import com.example.genius.Model.RowStatusModel;
-import com.example.genius.Model.StandardModel;
-import com.example.genius.Model.StudentModel;
-import com.example.genius.Model.TransactionModel;
-import com.example.genius.Preferences;
+import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
-import com.example.genius.ui.Attendance_Fragment.attendance_Listfragment;
 import com.example.genius.ui.Attendance_Fragment.attendance_fragment;
-import com.example.genius.ui.Library_Fragment.library_fragment;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
