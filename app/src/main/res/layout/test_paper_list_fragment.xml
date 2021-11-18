@@ -38,12 +38,13 @@
             app:tint="#0074AA" />
 
     </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/paper_reg_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/rv1"
-        android:layout_marginTop="10dp"
-        android:id="@+id/paper_reg_rv"/>
+        android:layout_marginTop="10dp" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/MyFabOverlay"
         android:id="@+id/fab_contact"

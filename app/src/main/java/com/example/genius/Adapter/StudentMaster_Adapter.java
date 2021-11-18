@@ -129,7 +129,8 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
                         bundle.putLong("StudentID", studentDetails.get(position).getStudentID());
 //                        bundle.putString("UniqNo", studentDetails.get(position).);
                         bundle.putInt("Percentage", studentDetails.get(position).getLastYearResult());
-                        bundle.putString("Image", studentDetails.get(position).getStudImage());
+                        bundle.putString("FileName", studentDetails.get(position).getFileName());
+                        bundle.putString("FilePath", studentDetails.get(position).getFilePath());
                         orderplace.setArguments(bundle);
                         FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                         FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();

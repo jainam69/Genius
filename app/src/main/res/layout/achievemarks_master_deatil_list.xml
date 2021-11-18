@@ -26,30 +26,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:paddingLeft="10dp"
-                    android:text="Student G.R.No."
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/gr_no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:paddingLeft="10dp"
-                    android:textSize="14dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
@@ -62,7 +38,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/stu_name"
+                    android:id="@+id/student_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.8"

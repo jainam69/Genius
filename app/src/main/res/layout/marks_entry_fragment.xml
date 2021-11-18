@@ -24,42 +24,9 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="7dp"
             android:layout_marginRight="5dp"
-            android:background="@drawable/border">
-
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                android:id="@+id/branch"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_toRightOf="@+id/caddress"
-                android:background="@android:color/transparent"
-                android:hint="Select Branch"
-                android:maxLines="1"
-                android:paddingLeft="9dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textSize="13dp" />
-
-            <ImageView
-                android:id="@+id/caddress"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="12dp"
-                android:src="@drawable/task"
-                app:tint="@color/blue"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:background="@drawable/border">
 
@@ -84,19 +51,13 @@
                 android:src="@drawable/sales_no"
                 app:tint="@color/blue"/>
         </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="7dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:background="@drawable/border">
 
@@ -123,13 +84,19 @@
                 app:tint="#0074AA" />
 
         </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="7dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:background="@drawable/border">
 
@@ -155,6 +122,39 @@
                 android:src="@drawable/date"
                 app:tint="#0074AA" />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/border">
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/subject"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@+id/pincodeimg11"
+                android:background="@android:color/transparent"
+                android:hint="Select Subject"
+                android:maxLines="1"
+                android:paddingLeft="9dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="13dp" />
+
+            <ImageView
+                android:id="@+id/pincodeimg11"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:src="@drawable/sales_no"
+                app:tint="#0074AA" />
+
+        </RelativeLayout>
     </LinearLayout>
 
             <LinearLayout
@@ -171,50 +171,17 @@
                     android:layout_weight="1"
                     android:background="@drawable/border">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        android:id="@+id/subject"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:layout_toRightOf="@+id/pincodeimg11"
-                        android:background="@android:color/transparent"
-                        android:hint="Select Subject"
-                        android:maxLines="1"
-                        android:paddingLeft="9dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:textSize="13dp" />
-
-                    <ImageView
-                        android:id="@+id/pincodeimg11"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:src="@drawable/sales_no"
-                        app:tint="#0074AA" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/border">
-
                     <EditText
                         android:id="@+id/total_marks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@+id/transprt12"
                         android:background="@android:color/transparent"
-                        android:hint="Total Marks"
                         android:clickable="false"
                         android:cursorVisible="false"
                         android:editable="false"
                         android:focusable="false"
+                        android:hint="Total Marks"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
@@ -234,14 +201,59 @@
                         android:layout_marginLeft="12dp" />
 
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border">
+
+                    <TextView
+                        android:id="@+id/upload_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_toEndOf="@+id/transprt120"
+                        android:layout_toRightOf="@+id/transprt120"
+                        android:background="@android:color/transparent"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:focusable="true"
+                        android:focusedByDefault="false"
+                        android:hint="Upload Image"
+                        android:importantForAutofill="no"
+                        android:maxLines="1"
+                        android:paddingStart="9dp"
+                        android:paddingLeft="9dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="15dp"
+                        tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
+                        tools:targetApi="o" />
+
+                    <ImageView
+                        android:id="@+id/transprt120"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginLeft="12dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_attach"
+                        app:tint="@color/blue" />
+
+                </RelativeLayout>
             </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="70dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginRight="10dp"
+                android:layout_weight="1"
                 android:background="@drawable/border">
 
                 <EditText
@@ -250,12 +262,12 @@
                     android:layout_height="70dp"
                     android:layout_toRightOf="@+id/addressimg19"
                     android:background="@android:color/transparent"
-                    android:gravity="top"
-                    android:hint="Remarks"
                     android:clickable="false"
                     android:cursorVisible="false"
                     android:editable="false"
                     android:focusable="false"
+                    android:gravity="top"
+                    android:hint="Remarks"
                     android:paddingLeft="12dp"
                     android:paddingTop="12dp"
                     android:paddingRight="5dp"
@@ -279,51 +291,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="7dp"
-                android:weightSum="2">
-
-            <RelativeLayout
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/border">
-
-                <TextView
-                    android:id="@+id/upload_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="45dp"
-                    android:layout_toEndOf="@+id/transprt120"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:editable="false"
-                    android:focusable="true"
-                    android:focusedByDefault="false"
-                    android:hint="Upload Image"
-                    android:importantForAutofill="no"
-                    android:maxLines="1"
-                    android:paddingStart="9dp"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:textSize="15dp"
-                    tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
-                    tools:targetApi="o"
-                    android:paddingLeft="9dp"
-                    android:layout_toRightOf="@+id/transprt120" />
-
-                <ImageView
-                    android:id="@+id/transprt120"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="12dp"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_attach"
-                    app:tint="@color/blue"
-                    android:layout_marginLeft="12dp" />
-
-            </RelativeLayout>
+                android:layout_marginTop="7dp">
 
                 <RelativeLayout
                     android:layout_width="110dp"
@@ -333,15 +301,15 @@
                     android:gravity="end"
                     android:layout_weight="1">
 
-                <Button
-                    android:id="@+id/add_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/blue_fill"
-                    android:text="Add"
-                    android:textColor="@color/white"
-                    android:textSize="14dp"
-                    android:textStyle="bold"/>
+                    <Button
+                        android:id="@+id/btnsearch_student"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/blue_fill"
+                        android:text="Search"
+                        android:textColor="@color/white"
+                        android:textSize="14dp"
+                        android:textStyle="bold" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -370,6 +338,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/marks_rv"/>
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Data Found"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:id="@+id/txt_nodata"
+                android:layout_marginTop="50dp"/>
 
             <Button
                 android:visibility="gone"

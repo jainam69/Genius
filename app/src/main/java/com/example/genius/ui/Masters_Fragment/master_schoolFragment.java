@@ -98,6 +98,7 @@ public class master_schoolFragment extends Fragment {
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
                 } else {
                     if (Function.isNetworkAvailable(context)) {
+                        progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -143,6 +144,7 @@ public class master_schoolFragment extends Fragment {
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
                 } else {
                     if (Function.isNetworkAvailable(context)) {
+                        progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -199,6 +201,8 @@ public class master_schoolFragment extends Fragment {
 
     public void GetAllSchool() {
 
+        schoolitem.clear();
+        schoolid.clear();
         Call<SchoolData> call = apiCalling.GetAllSchool(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<SchoolData>() {
             @Override

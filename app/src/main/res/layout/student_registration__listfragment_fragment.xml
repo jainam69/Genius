@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -127,11 +126,28 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/student_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/buttonLinear"
-        android:layout_marginTop="10dp"
-        android:id="@+id/student_rv"/>
+        android:layout_marginTop="10dp" />
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:id="@+id/txt_nodata"
+        android:layout_below="@id/buttonLinear">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Data Found"
+        android:textColor="@color/black"/>
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/MyFabOverlay"
         android:id="@+id/fab_contact"

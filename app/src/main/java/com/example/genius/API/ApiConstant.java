@@ -5,7 +5,7 @@ import android.os.ParcelUuid;
 public class ApiConstant {
 
     //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    public static final String BASE_URL = "http://192.168.91.181/api/";
+    public static final String BASE_URL = "http://192.168.29.212/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
@@ -97,7 +97,7 @@ public class ApiConstant {
     public static final String NEW_UPLOAD_PAPER_MAINTENANCE = "test/v1/TestPaperMaintenance";
     public static final String REMOVE_TEST_SCHEDULE_PAPER = "test/v1/RemoveTest";
     public static final String GET_EDIT_PAPER_DATA = "test/v1/GetAllTestPapaerByTest";
-    public static final String GET_ANSWERSHEET = "test/v1/GetAllAnsSheetByTest";
+    public static final String GET_ANSWERSHEET = "test/v1/GetAnswerSheetdata";
 
     public static final String HOMEWORK_MAINTENANCE = "homework/v1/HomeworkMaintenance";
     public static final String GET_ALL_HOMEWORK = "homework/v1/GetAllHomeworkByBranch";
@@ -132,5 +132,11 @@ public class ApiConstant {
     public static final String REMOVE_NEW_LIBRARY = "NewLibrary/v1/RemoveLibrary";
     public static final String LibraryLinkMaintenance = "NewLibrary/v1/LibraryLinkMaintenance";
 
-
+    public static final String GET_TEST_MARKS_DATE = "Marks/v1/GetTestDatesByBatch";
+    public static final String UPDATE_HOMEWORK_CHECKING = "homework/v1/Updatehomeworkdetails";
+    public static final String GET_HOMEWORK_CHECKING_LIST = "homework/v1/GetStudentHomeworkChecking";
+    public static final String UPDATE_TEST_PAPER_CHECKING = "test/v1/UpdateAnsdetails";
+    public static final String GET_TEST_DETAILS = "Marks/v1/GetTestDetails";
+    public static final String GET_STUDENT_DEATILS = "Marks/v1/GetStudentByStd";
+    public static final String MARKS_MAITENANCE = "Marks/v1/MarksMaintenance";
 }

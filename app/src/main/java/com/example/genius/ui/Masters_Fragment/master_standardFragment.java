@@ -108,6 +108,7 @@ public class master_standardFragment extends Fragment {
         save_standard_master.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Function.hideKeyPad(context,standard);
                 if (standard.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Enter Standard", Toast.LENGTH_SHORT).show();
                 } else {
@@ -206,6 +207,8 @@ public class master_standardFragment extends Fragment {
     }
 
     public void GetAllStandard() {
+        standarditem.clear();
+        standardid.clear();
         Call<StandardData> call = apiCalling.GetAllStandard(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<StandardData>() {
             @Override

@@ -69,6 +69,7 @@ public class YoutubeVideoFragment extends Fragment {
     NestedScrollView you_scroll;
     Long StandardId;
     YoutubeVideo_Adapter youtubeVideo_adapter;
+
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -145,10 +146,9 @@ public class YoutubeVideoFragment extends Fragment {
                                             LinkModel model1 = data1.getData();
                                             if (model1 != null) {
                                                 if (model1.getUniqueID() > 0) {
-                                                    Toast.makeText(context, "Youtube Video URL inserted successfully...!!!", Toast.LENGTH_SHORT).show();
-
+                                                    Toast.makeText(context, "Youtube Video URL inserted successfully.", Toast.LENGTH_SHORT).show();
                                                 } else {
-                                                    Toast.makeText(context, "Youtube Video URL Not Inserted..!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Youtube Video URL Not Inserted.", Toast.LENGTH_SHORT).show();
                                                 }
                                                 GetAllYoutubeVideos();
                                                 youtube_link.setText("");
@@ -438,6 +438,7 @@ public class YoutubeVideoFragment extends Fragment {
                                         if (response.isSuccessful()) {
                                             CommonModel model = response.body();
                                             if (model.isData()) {
+                                                Toast.makeText(context, "YouTube Video Deleted Successfully.", Toast.LENGTH_SHORT).show();
                                                 linkdetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();

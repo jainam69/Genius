@@ -67,6 +67,44 @@
                     android:layout_weight="1">
 
                     <LinearLayout
+                        android:id="@+id/linear_school"
+                        android:layout_width="match_parent"
+                        android:layout_height="130dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/school" />
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:text="SCHOOL MASTER"
+                            android:textColor="@color/blue"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_weight="1">
+
+                    <LinearLayout
                         android:id="@+id/linear_standard"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
@@ -99,6 +137,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:orientation="horizontal">
@@ -112,7 +151,6 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/linear_school"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
                         android:gravity="center"
@@ -141,6 +179,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
                     android:layout_marginLeft="10dp"

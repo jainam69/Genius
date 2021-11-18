@@ -49,7 +49,7 @@ public class Test_Paper_Checking_fragment extends Fragment {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Context context;
-    TextView id, no_content;
+    TextView id, txt_nodata;
     Bundle bundle;
     OnBackPressedCallback callback;
 
@@ -64,7 +64,7 @@ public class Test_Paper_Checking_fragment extends Fragment {
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         id = root.findViewById(R.id.id);
-        no_content = root.findViewById(R.id.no_content);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -106,20 +106,17 @@ public class Test_Paper_Checking_fragment extends Fragment {
                     AnswerSheetData data = response.body();
                     if (data.isCompleted()) {
                         List<AnswerSheetModel> studentModelList = data.getData();
-                        if (studentModelList != null) {
-                            if (studentModelList.size() > 0) {
-                                List<AnswerSheetModel> list = new ArrayList<>();
-                                for (AnswerSheetModel singlemodel : studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                paper_checking_rv.setLayoutManager(linearLayoutManager);
-                                uploadPaperChecking_adapter = new UploadPaperChecking_Adapter(context, list);
-                                uploadPaperChecking_adapter.notifyDataSetChanged();
-                                paper_checking_rv.setAdapter(uploadPaperChecking_adapter);
-                            }
+                        if (studentModelList != null && studentModelList.size() > 0) {
+                            paper_checking_rv.setVisibility(View.VISIBLE);
+                            txt_nodata.setVisibility(View.GONE);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                            paper_checking_rv.setLayoutManager(linearLayoutManager);
+                            uploadPaperChecking_adapter = new UploadPaperChecking_Adapter(context, studentModelList);
+                            uploadPaperChecking_adapter.notifyDataSetChanged();
+                            paper_checking_rv.setAdapter(uploadPaperChecking_adapter);
+                        }else {
+                            paper_checking_rv.setVisibility(View.GONE);
+                            txt_nodata.setVisibility(View.VISIBLE);
                         }
                     }
                 }

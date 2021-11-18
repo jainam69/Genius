@@ -5,7 +5,16 @@ import java.util.List;
 public class AnswerSheetData {
 
     boolean Completed;
+    String Message;
     List<AnswerSheetModel> Data;
+
+    public String getMessage() {
+        return Message;
+    }
+
+    public void setMessage(String message) {
+        Message = message;
+    }
 
     public boolean isCompleted() {
         return Completed;

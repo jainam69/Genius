@@ -87,8 +87,6 @@ import static android.app.Activity.RESULT_OK;
 
 @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class homework_fragment extends Fragment {
-
-    String FilePath_URL;
     SearchableSpinner standard, batch_time, subject, branch;
     EditText remarks;
     TextView homework_date;
@@ -205,7 +203,9 @@ public class homework_fragment extends Fragment {
                 Extension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf(".") + 1);
                 String FileNameWithExtension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf("/") + 1);
                 String[] FileNameArray = FileNameWithExtension.split("\\.");
-                FileName = FileNameArray[0];
+            }
+            if (bundle.containsKey("FileName")){
+                FileName = bundle.getString("FileName");
             }
         }
 
@@ -258,18 +258,11 @@ public class homework_fragment extends Fragment {
                     Toast.makeText(context, "Please Upload Homework.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    /*BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StandardModel standardModel = new StandardModel(StandardId);
-                    SubjectModel subjectModel = new SubjectModel(Long.parseLong(SubjectId));
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    HomeworkModel homeworkModel = new HomeworkModel(branchModel, indate, standardModel, subjectModel, Integer.parseInt(BatchId), BatchTime,
-                            remarks.getText().toString(), attach, filename, transactionModel, rowStatusModel);*/
                     Call<HomeworkModel.HomeworkData1> call = apiCalling.HomeworkMaintenance(0
-                            , homework_date.getText().toString(), Long.parseLong(BranchID)
+                            , indate, Long.parseLong(BranchID)
                             , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId), remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                             , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, "none", "jpg", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                            , 0, "0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
                         @Override
@@ -279,7 +272,7 @@ public class homework_fragment extends Fragment {
                                 if (data != null && data.isCompleted()) {
                                     HomeworkModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Homework Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                         homework_Listfragment orderplace = new homework_Listfragment();
                                         FragmentManager fragmentManager = getFragmentManager();
                                         FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -290,8 +283,8 @@ public class homework_fragment extends Fragment {
                                         Toast.makeText(context, "Homework not Inserted...!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
-                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
@@ -322,31 +315,23 @@ public class homework_fragment extends Fragment {
                 } else if (subject.getSelectedItemId() == 0) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                } else if (instrumentFileDestination == null) {
+                } else if (attachment_homework.getText().toString().equals("")) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Homework.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    /*BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StandardModel standardModel = new StandardModel(StandardId);
-                    SubjectModel subjectModel = new SubjectModel(Long.parseLong(SubjectId));
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    HomeworkModel homeworkModel = new HomeworkModel(Long.parseLong(id.getText().toString()), branchModel, indate, standardModel, subjectModel, Integer.parseInt(BatchId), BatchTime,
-                            remarks.getText().toString(), attach, filename, transactionModel, rowStatusModel);
-                    Call<HomeworkModel.HomeworkData1> call = apiCalling.HomeworkMaintenance(homeworkModel);*/
                     Call<HomeworkModel.HomeworkData1> call;
                     if (instrumentFileDestination != null) {
                         call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
-                                , homework_date.getText().toString(), Long.parseLong(BranchID)
+                                , indate, Long.parseLong(BranchID)
                                 , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId)
                                 , remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , Long.parseLong(transactionid.getText().toString()), FileName, Extension, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                , Long.parseLong(transactionid.getText().toString()), "0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
                         call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
-                                , homework_date.getText().toString(), Long.parseLong(BranchID)
+                                , indate, Long.parseLong(BranchID)
                                 , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId)
                                 , remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
@@ -361,7 +346,7 @@ public class homework_fragment extends Fragment {
                                 if (data != null && data.isCompleted()) {
                                     HomeworkModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Homework Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         homework_Listfragment orderplace = new homework_Listfragment();
                                         FragmentManager fragmentManager = getFragmentManager();
                                         FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();

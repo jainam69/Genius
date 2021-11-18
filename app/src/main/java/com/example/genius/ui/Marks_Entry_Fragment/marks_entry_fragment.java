@@ -44,6 +44,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Adapter.MarksEnterAdapter;
+import com.example.genius.Adapter.StaffMaster_Adapter;
 import com.example.genius.Model.*;
 import com.example.genius.Preferences;
 import com.example.genius.R;
@@ -61,6 +63,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -88,9 +91,9 @@ public class marks_entry_fragment extends Fragment {
 
     SearchableSpinner standard, batch_time, subject, branch, test_date;
     EditText remarks, total_marks;
-    TextView upload_image;
+    TextView upload_image,txt_nodata;
     RecyclerView marks_rv;
-    Button save_test_marks, edit_test_marks, add_image;
+    Button save_test_marks, edit_test_marks, btnsearch_student;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -98,13 +101,12 @@ public class marks_entry_fragment extends Fragment {
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(), dateid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM, DATEITEM;
     Integer[] STANDARDID, SUBJECTID, BRANCHID, BATCHID, DATEID;
-    String StandardName, SubjectName, BatchTime, BranchName, DateName, marks, rm,Ans,BranchID,SubjectId,BatchId;
-    Long StandardId;
+    String StandardName, SubjectName, BatchTime, BranchName,BranchID,SubjectId,BatchId,TestDate;
+    Long StandardId,TestID;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
     int flag = 0;
-    Boolean a;
     LinearLayout linear_line;
     OnBackPressedCallback callback;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
@@ -112,7 +114,11 @@ public class marks_entry_fragment extends Fragment {
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     byte[] imageVal;
     Bitmap bitmap;
-    String pictureFilePath;
+    String pictureFilePath,Achieve_Marks = "",StudentID = "";
+    boolean marksentered;
+    MarksEnterAdapter marksEnterAdapter;
+    DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -132,9 +138,20 @@ public class marks_entry_fragment extends Fragment {
         save_test_marks = root.findViewById(R.id.save_test_marks);
         edit_test_marks = root.findViewById(R.id.edit_test_marks);
         branch = root.findViewById(R.id.branch);
-        add_image = root.findViewById(R.id.add_image);
+        btnsearch_student = root.findViewById(R.id.btnsearch_student);
         marks_rv = root.findViewById(R.id.marks_rv);
         linear_line = root.findViewById(R.id.linear_line);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
+
+        if (Function.checkNetworkConnection(context)) {
+            progressBarHelper.showProgressDialog();
+            GetAllStandard();
+            SelectTestDate();
+            SelectSubject();
+            selectbatch_time();
+        } else {
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+        }
 
         upload_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,21 +176,57 @@ public class marks_entry_fragment extends Fragment {
             }
         });
 
-        add_image.setOnClickListener(new View.OnClickListener() {
+        btnsearch_student.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.checkNetworkConnection(context)) {
-                    if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else if (standard.getSelectedItemId() == 0)
+                    if (standard.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                     else if (batch_time.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                     else if (test_date.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
-                    else if (upload_image.getText().toString().equals(""))
-                        Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
+                    else if (subject.getSelectedItemId() == 0)
+                        Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                     else {
+                        if (marksentered){
+                            Toast.makeText(context, "Marks Already inserted for this Test !", Toast.LENGTH_LONG).show();
+                        }else {
+                            progressBarHelper.showProgressDialog();
+                            Call<StudentModel.StudentDataList> call = apiCalling.Get_Student_Details(StandardId,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(BatchId));
+                            call.enqueue(new Callback<StudentModel.StudentDataList>() {
+                                @Override
+                                public void onResponse(Call<StudentModel.StudentDataList> call, Response<StudentModel.StudentDataList> response) {
+                                    if (response.isSuccessful()){
+                                        StudentModel.StudentDataList data = response.body();
+                                        if (data.isCompleted()){
+                                            List<StudentModel> list = data.getData();
+                                            if (list != null && list.size() > 0){
+                                                marks_rv.setVisibility(View.VISIBLE);
+                                                txt_nodata.setVisibility(View.GONE);
+                                                save_test_marks.setVisibility(View.VISIBLE);
+                                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                                                marks_rv.setLayoutManager(linearLayoutManager);
+                                                marksEnterAdapter = new MarksEnterAdapter(context, list);
+                                                marksEnterAdapter.notifyDataSetChanged();
+                                                marks_rv.setAdapter(marksEnterAdapter);
+                                            }else {
+                                                marks_rv.setVisibility(View.GONE);
+                                                txt_nodata.setVisibility(View.VISIBLE);
+                                                save_test_marks.setVisibility(View.GONE);
+                                            }
+                                        }
+                                        progressBarHelper.hideProgressDialog();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<StudentModel.StudentDataList> call, Throwable t) {
+                                    progressBarHelper.hideProgressDialog();
+                                    Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
                 } else {
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
@@ -185,34 +238,55 @@ public class marks_entry_fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (Function.checkNetworkConnection(context)) {
-                    if (branch.getSelectedItemId() == 0)
-                        Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                    else if (standard.getSelectedItemId() == 0)
+                    if (standard.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                     else if (batch_time.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                     else if (test_date.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
+                    else if (upload_image.getText().toString().isEmpty())
+                        Toast.makeText(context, "Please Upload Solution Image.", Toast.LENGTH_SHORT).show();
                     else {
+                        progressBarHelper.showProgressDialog();
+                        if (MarksEnterAdapter.studentModels.size() > 0){
+                            for (int i = 0; i < MarksEnterAdapter.studentModels.size(); i++){
+                                String id = String.valueOf(MarksEnterAdapter.studentModels.get(i).getStudentID());
+                                String mks = MarksEnterAdapter.studentModels.get(i).getAchieveMarks();
+                                StudentID = StudentID + "," + id;
+                                Achieve_Marks = Achieve_Marks + "," + mks;
+                            }
+                        }
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                        Call<MarksModel.MarksData> call = apiCalling.MarksMaintenance(0,"",TestID,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                                , "","", Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                                "0","0",true,uploadfile);
+                        call.enqueue(new Callback<MarksModel.MarksData>() {
+                            @Override
+                            public void onResponse(Call<MarksModel.MarksData> call, Response<MarksModel.MarksData> response) {
+                                if (response.isSuccessful()){
+                                    MarksModel.MarksData data = response.body();
+                                    if (data.isCompleted()){
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    progressBarHelper.hideProgressDialog();
+                                }
+                            }
 
+                            @Override
+                            public void onFailure(Call<MarksModel.MarksData> call, Throwable t) {
+                                progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 } else {
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        if (Function.checkNetworkConnection(context)) {
-            progressBarHelper.showProgressDialog();
-            GetAllBranch();
-            GetAllStandard();
-            GetAllSubject();
-            selectbatch_time();
-        } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }
-
-
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -504,6 +578,8 @@ public class marks_entry_fragment extends Fragment {
 
 
     public void GetAllSubject() {
+        subjectitem.clear();
+        subjectid.clear();
         subjectitem.add("Select Subject");
         subjectid.add(0);
         Call<SubjectData> call = apiCalling.GetAllSubject(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -570,12 +646,42 @@ public class marks_entry_fragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
+                    if (subject.getSelectedItemId() != 0){
+                        GetTestDetails();
+                    }
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             };
+
+    public void GetTestDetails()
+    {
+        progressBarHelper.showProgressDialog();
+        Call<TestScheduleModel.TestScheduleData1> call = apiCalling.Get_Test_Details(TestID,Long.parseLong(SubjectId));
+        call.enqueue(new Callback<TestScheduleModel.TestScheduleData1>() {
+            @Override
+            public void onResponse(Call<TestScheduleModel.TestScheduleData1> call, Response<TestScheduleModel.TestScheduleData1> response) {
+                if (response.isSuccessful()){
+                    TestScheduleModel.TestScheduleData1 data = response.body();
+                    if (data.isCompleted()){
+                        TestScheduleModel model = data.getData();
+                        total_marks.setText(""+model.getMarks());
+                        remarks.setText(model.getRemarks());
+                        marksentered = model.isMarksentered();
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TestScheduleModel.TestScheduleData1> call, Throwable t) {
+                progressBarHelper.showProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     public void GetAllStandard() {
         standarditem.add("Select Standard");
@@ -651,6 +757,7 @@ public class marks_entry_fragment extends Fragment {
     public void selectbatch_time()
     {
         batchitem.clear();
+        batchid.clear();
         batchitem.add("Batch Time");
         batchid.add("0");
         batchitem.add("Morning");
@@ -693,12 +800,90 @@ public class marks_entry_fragment extends Fragment {
                         } catch (Exception e) {
                         }
                     }
+                    if (batch_time.getSelectedItemId() != 0){
+                        GetTestDates();
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void GetTestDates()
+    {
+        progressBarHelper.showProgressDialog();
+        dateitem.clear();
+        dateid.clear();
+        dateitem.add("Test Date");
+        dateid.add(0);
+        Call<MarksModel.MarksData> call = apiCalling.Get_Test_Marks(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,Integer.parseInt(BatchId));
+        call.enqueue(new Callback<MarksModel.MarksData>() {
+            @Override
+            public void onResponse(Call<MarksModel.MarksData> call, Response<MarksModel.MarksData> response) {
+                if (response.isSuccessful()){
+                    MarksModel.MarksData data = response.body();
+                    if (data.isCompleted() && data != null){
+                        List<MarksModel> model = data.getData();
+                        for (MarksModel marksModel : model) {
+
+                            String testdate = marksModel.getTestDate();
+                            try {
+                                Date d = actualdate.parse(testdate);
+                                String date = displaydate.format(d);
+                                dateitem.add(date);
+                            }catch (Exception e){
+
+                            }
+
+                            int id = (int) marksModel.getTestID();
+                            dateid.add(id);
+                        }
+
+                        DATEITEM = new String[dateitem.size()];
+                        DATEITEM = dateitem.toArray(DATEITEM);
+
+                        DATEID = new Integer[dateid.size()];
+                        DATEID = dateid.toArray(DATEID);
+
+                        bindDate();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MarksModel.MarksData> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void bindDate() {
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, DATEITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        test_date.setAdapter(adapter);
+        test_date.setOnItemSelectedListener(onItemSelectedListenerdate);
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListenerdate =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    TestDate = dateitem.get(position);
+                    TestID = Long.parseLong(dateid.get(position).toString());
+                    if (test_date.getSelectedItem().equals("Test Date")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                    GetAllSubject();
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
-
             };
 
     public void userCancelled() {
@@ -782,5 +967,65 @@ public class marks_entry_fragment extends Fragment {
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
+    public void SelectTestDate()
+    {
+        dateitem.clear();
+        dateitem.add("Test Date");
 
+        DATEITEM = new String[dateitem.size()];
+        DATEITEM = dateitem.toArray(DATEITEM);
+
+        bindTestDate();
+    }
+
+    public void bindTestDate() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, DATEITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        test_date.setAdapter(adapter);
+        test_date.setOnItemSelectedListener(onItemSelectedListener80);
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener80 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                    ((TextView) parent.getChildAt(0)).setTextSize(13);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void SelectSubject()
+    {
+        subjectitem.clear();
+        subjectitem.add("Select Subject");
+
+        SUBJECTITEM = new String[subjectitem.size()];
+        SUBJECTITEM = subjectitem.toArray(SUBJECTITEM);
+
+        bindselectsubject();
+    }
+
+    public void bindselectsubject() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subject.setAdapter(adapter);
+        subject.setOnItemSelectedListener(onItemSelectedListener90);
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener90 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                    ((TextView) parent.getChildAt(0)).setTextSize(13);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 }

@@ -128,107 +128,6 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
                         fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
-//                        View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_attendance, null);
-//                        builder.setView(dialogView);
-//                        builder.setCancelable(true);
-//                        Button edit = dialogView.findViewById(R.id.attendance_edit);
-//                        RadioGroup rg = dialogView.findViewById(R.id.rg);
-//                        RadioButton pr = dialogView.findViewById(R.id.present);
-//                        RadioButton ab = dialogView.findViewById(R.id.absent);
-//                        AlertDialog dialog = builder.create();
-//                        List<AttendanceModel.AttendanceDetailEntity> notitypelist = attendanceDetails.get(position).getAttendanceDetail();
-//                        for (AttendanceModel.AttendanceDetailEntity model : notitypelist) {
-//                            present1 = model.isPresent();
-//                            detailid = model.getDetailID();
-//                            headerid = model.getHeaderID();
-//                            studentid = model.getStudent().getStudentID();
-//                            remarks = model.getRemarks();
-//                        }
-//                        if (present1)
-//                        {
-//                            pr.setChecked(true);
-//                            ab.setChecked(false);
-//                        }else {
-//                            pr.setChecked(false);
-//                            ab.setChecked(true);
-//                        }
-//                        BranchID = attendanceDetails.get(position).getBranch().getBranchID();
-//                        StandardId = attendanceDetails.get(position).getStandard().getStandardID();
-//                        transactionid = attendanceDetails.get(position).getTransaction().getTransactionId();
-//                        indate = attendanceDetails.get(position).getAttendanceDate().replace("T00:00:00","");
-//                        BatchId = attendanceDetails.get(position).getBatchTypeID();
-//                        BatchTime = attendanceDetails.get(position).getBatchTypeText();
-//                        attenid = attendanceDetails.get(position).getAttendanceID();
-//                        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//                            @Override
-//                            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                                holder.rb1 = dialogView.findViewById(checkedId);
-//                                present_absent = holder.rb1.getText().toString();
-//                                if (present_absent.equals("Present"))
-//                                {
-//                                    prst = true;
-//                                    absnt = false;
-//                                }else {
-//                                    prst = false;
-//                                    absnt = true;
-//                                }
-//                            }
-//                        });
-//                        select = rg.getCheckedRadioButtonId();
-//                        holder.rb1 = dialogView.findViewById(select);
-//                        present_absent = holder.rb1.getText().toString();
-//                        if (present_absent.equals("Present"))
-//                        {
-//                            prst = true;
-//                            absnt = false;
-//                        }else {
-//                            prst = false;
-//                            absnt = true;
-//                        }
-//
-//                        dialog.show();
-//                        edit.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                progressBarHelper.showProgressDialog();
-//                                attendance = new ArrayList<>();
-//                                BranchModel branchModel = new BranchModel(BranchID);
-//                                StandardModel standardModel = new StandardModel(StandardId);
-//                                TransactionModel transactionModel = new TransactionModel(transactionid, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-//                                RowStatusModel rowStatusModel = new RowStatusModel(1);
-//                                StudentModel studentModel = new StudentModel(studentid);
-//                                AttendanceModel.AttendanceDetailEntity at = new AttendanceModel.AttendanceDetailEntity(headerid,studentModel,
-//                                        absnt,prst,remarks);
-//                                attendance.add(at);
-//                                AttendanceModel attendanceModel = new AttendanceModel(attenid,branchModel,standardModel,BatchId,BatchTime,indate,transactionModel,rowStatusModel,attendance);
-//                                Call<AttendanceModel.AttendanceData1> call = apiCalling.AttendanceMaintenance(attendanceModel);
-//                                call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
-//                                    @Override
-//                                    public void onResponse(Call<AttendanceModel.AttendanceData1> call, Response<AttendanceModel.AttendanceData1> response) {
-//                                        if (response.isSuccessful()) {
-//                                            AttendanceModel.AttendanceData1 data = response.body();
-//                                            if (data.isCompleted()) {
-//                                                AttendanceModel notimodel = data.getData();
-//                                                if (notimodel != null) {
-//                                                    Toast.makeText(context, "Attendance Updated Successfully...", Toast.LENGTH_SHORT).show();
-//                                                    dialog.dismiss();
-//                                                } else {
-//                                                    Toast.makeText(context, "Attendance not Updated...!", Toast.LENGTH_SHORT).show();
-//                                                }
-//                                            }
-//                                        }
-//                                        progressBarHelper.hideProgressDialog();
-//                                    }
-//
-//                                    @Override
-//                                    public void onFailure(Call<AttendanceModel.AttendanceData1> call, Throwable t) {
-//                                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-//                                        progressBarHelper.hideProgressDialog();
-//                                    }
-//                                });
-//                            }
-//                        });
                     }
                 });
                 dialog.show();
@@ -271,6 +170,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
+                                                Toast.makeText(context, "Attendance deleted successfully.", Toast.LENGTH_SHORT).show();
                                                 attendanceDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();

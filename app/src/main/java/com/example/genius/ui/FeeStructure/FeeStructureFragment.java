@@ -198,7 +198,7 @@ public class FeeStructureFragment extends Fragment {
                             , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
                             , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                             , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                            0, "none", "jpg", true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                            0, "0", "0", true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     call.enqueue(new Callback<FeeStructureSingleData>() {
                         @Override
@@ -208,6 +208,7 @@ public class FeeStructureFragment extends Fragment {
                                 if (data.isCompleted()) {
                                     FeeStructureModel notimodel = data.getData();
                                     if (notimodel != null) {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         standard.setSelection(0);
                                         remarks.setText("");
                                         banner_image.setText("");
@@ -264,6 +265,7 @@ public class FeeStructureFragment extends Fragment {
                                 if (data.isCompleted()) {
                                     FeeStructureModel notimodel = data.getData();
                                     if (notimodel != null) {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         standard.setSelection(0);
                                         remarks.setText("");
                                         banner_image.setText("");

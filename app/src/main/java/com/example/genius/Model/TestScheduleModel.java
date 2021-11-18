@@ -16,6 +16,7 @@ public class TestScheduleModel {
     String Remarks;
     RowStatusModel RowStatus;
     TransactionModel Transaction;
+    boolean marksentered;
 
     public TestScheduleModel(long testID, String testName, BranchModel branch, StandardModel standard, SubjectModel subject, int batchTimeID, String batchTimeText, double marks, String testDate, String testStartTime, String testEndTime, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
         TestID = testID;
@@ -48,6 +49,14 @@ public class TestScheduleModel {
         Remarks = remarks;
         RowStatus = rowStatus;
         Transaction = transaction;
+    }
+
+    public boolean isMarksentered() {
+        return marksentered;
+    }
+
+    public void setMarksentered(boolean marksentered) {
+        this.marksentered = marksentered;
     }
 
     public long getTestID() {

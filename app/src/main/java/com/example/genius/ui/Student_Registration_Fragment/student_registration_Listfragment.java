@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -51,6 +52,7 @@ public class student_registration_Listfragment extends Fragment {
     Button clear, search, active, inactive;
     OnBackPressedCallback callback;
     StudentMaster_Adapter studentMaster_adapter;
+    LinearLayout txt_nodata;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -67,6 +69,8 @@ public class student_registration_Listfragment extends Fragment {
         clear = root.findViewById(R.id.clear);
         active = root.findViewById(R.id.active);
         inactive = root.findViewById(R.id.inactive);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
+
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
             GetAllStudent();
@@ -122,11 +126,16 @@ public class student_registration_Listfragment extends Fragment {
                         List<StudentModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                student_rv.setVisibility(View.VISIBLE);
+                                txt_nodata.setVisibility(View.GONE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 student_rv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
                                 studentMaster_adapter.notifyDataSetChanged();
                                 student_rv.setAdapter(studentMaster_adapter);
+                            }else {
+                                student_rv.setVisibility(View.GONE);
+                                txt_nodata.setVisibility(View.VISIBLE);
                             }
                         }
                     }

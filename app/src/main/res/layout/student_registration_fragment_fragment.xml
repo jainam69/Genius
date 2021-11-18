@@ -78,6 +78,7 @@
                         android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
+
                     <EditText
                         android:id="@+id/addmission_date"
                         android:layout_width="match_parent"
@@ -246,6 +247,7 @@
                         android:paddingBottom="12dp"
                         android:singleLine="true"
                         android:textSize="15sp"
+                        android:textColor="@color/black"
                         tools:ignore="Autofill,HardcodedText,RtlSymmetry,TextFields" />
 
                     <ImageView
@@ -557,11 +559,11 @@
                         android:background="@android:color/transparent"
                         android:hint="Percentage"
                         android:inputType="number"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -592,12 +594,12 @@
                         android:background="@android:color/transparent"
                         android:hint="Contact No./Form No"
                         android:inputType="phone"
-                        android:singleLine="true"
                         android:maxLength="10"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -626,8 +628,8 @@
                     android:layout_toRightOf="@+id/company1"
                     android:background="@android:color/transparent"
                     android:hint="Class Name of Last Year"
-                    android:maxLines="1"
                     android:inputType="textCapWords"
+                    android:maxLines="1"
                     android:paddingLeft="12dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
@@ -693,6 +695,38 @@
                 </RadioGroup>
             </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/border">
+
+                <EditText
+                    android:id="@+id/student_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/company12"
+                    android:background="@android:color/transparent"
+                    android:hint="Student Password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingLeft="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:singleLine="true"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/company12"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:src="@drawable/password"
+                    app:tint="#0074AA" />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -762,11 +796,11 @@
                         android:hint="Con. No(Login ID)"
                         android:inputType="phone"
                         android:maxLength="10"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -835,11 +869,11 @@
                         android:background="@android:color/transparent"
                         android:hint="Father's Occu."
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -887,6 +921,40 @@
                         app:tint="#0074AA" />
                 </RelativeLayout>
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/border">
+
+                <EditText
+                    android:id="@+id/parent_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/company13"
+                    android:background="@android:color/transparent"
+                    android:hint="Parent Password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingLeft="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:singleLine="true"
+                    android:textSize="15dp" />
+
+                <ImageView
+                    android:id="@+id/company13"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:src="@drawable/password"
+                    app:tint="#0074AA" />
+
+            </RelativeLayout>
 
             <Button
                 android:layout_marginBottom="10dp"

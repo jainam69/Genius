@@ -3,6 +3,7 @@ package com.example.genius.Model;
 import java.util.List;
 
 public class TodoModel {
+
      long ToDoID;
      String ToDoDate;
      BranchModel BranchInfo;
@@ -11,29 +12,15 @@ public class TodoModel {
      String ToDoContentText;
      String ToDoFileName;
      RowStatusModel RowStatus;
-   TransactionModel Transaction;
+     TransactionModel Transaction;
+     String FilePath;
 
-    public TodoModel(long toDoID, String toDoDate, BranchModel branchInfo, UserModel userInfo, String toDoDescription, String toDoContentText, String toDoFileName, RowStatusModel rowStatus, TransactionModel transaction) {
-        ToDoID = toDoID;
-        ToDoDate = toDoDate;
-        BranchInfo = branchInfo;
-        UserInfo = userInfo;
-        ToDoDescription = toDoDescription;
-        ToDoContentText = toDoContentText;
-        ToDoFileName = toDoFileName;
-        RowStatus = rowStatus;
-        Transaction = transaction;
+    public String getFilePath() {
+        return FilePath;
     }
 
-    public TodoModel(String toDoDate, BranchModel branchInfo, UserModel userInfo, String toDoDescription, String toDoContentText, String toDoFileName, RowStatusModel rowStatus, TransactionModel transaction) {
-        ToDoDate = toDoDate;
-        BranchInfo = branchInfo;
-        UserInfo = userInfo;
-        ToDoDescription = toDoDescription;
-        ToDoContentText = toDoContentText;
-        ToDoFileName = toDoFileName;
-        RowStatus = rowStatus;
-        Transaction = transaction;
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
     }
 
     public long getToDoID() {
@@ -111,8 +98,17 @@ public class TodoModel {
     public class TodoData1{
        boolean Completed;
        TodoModel Data;
+       String Message;
 
-       public boolean isCompleted() {
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
+
+        public boolean isCompleted() {
            return Completed;
        }
 

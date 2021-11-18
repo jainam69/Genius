@@ -111,11 +111,11 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/testschedule_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/buttonLinear"
-        android:layout_marginTop="10dp"
-        android:id="@+id/testschedule_rv"/>
+        android:layout_marginTop="10dp" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/MyFabOverlay"
         android:id="@+id/fab_contact"

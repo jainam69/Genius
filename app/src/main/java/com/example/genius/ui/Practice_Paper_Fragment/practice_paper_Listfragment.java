@@ -120,7 +120,7 @@ public class practice_paper_Listfragment extends Fragment {
     Long StandardId;
     OnBackPressedCallback callback;
     NestedScrollView paper_scroll;
-    String attach = "", path = "";
+    String attach = "", path = "",FileName, Extension;
     EditText remarks;
 
     @Override
@@ -169,8 +169,6 @@ public class practice_paper_Listfragment extends Fragment {
                 } else if (subject.getSelectedItemId() == 0) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                /*else if (branch.getSelectedItemId() == 0)
-                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();*/
                 } else if (batch_time.getSelectedItemId() == 0) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
@@ -179,14 +177,11 @@ public class practice_paper_Listfragment extends Fragment {
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StandardModel standardModel = new StandardModel(StandardId);
-                    SubjectModel subjectModel = new SubjectModel(Long.parseLong(SubjectId));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    PaperData paperData = new PaperData(path, attach);
-                    PaperModel pm = new PaperModel(branchModel, standardModel, subjectModel, Integer.parseInt(BatchId), BatchTime, remarks.getText().toString(), rowStatusModel, transactionModel, paperData);
-                    Call<PaperModel.PaperData1> call = apiCalling.PaperMaintenance(pm);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                    Call<PaperModel.PaperData1> call = apiCalling.PaperMaintenance(0,0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,
+                            Long.parseLong(SubjectId),Integer.parseInt(BatchId),remarks.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                            "0","0",true,uploadfile);
                     call.enqueue(new Callback<PaperModel.PaperData1>() {
                         @Override
                         public void onResponse(@NotNull Call<PaperModel.PaperData1> call, @NotNull Response<PaperModel.PaperData1> response) {
@@ -195,7 +190,7 @@ public class practice_paper_Listfragment extends Fragment {
                                 if (data != null && data.isCompleted()) {
                                     PaperModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Practice Paper Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         GetPracticePaperDetails();
                                         subject.setSelection(0);
                                         branch.setSelection(0);
@@ -233,8 +228,6 @@ public class practice_paper_Listfragment extends Fragment {
                 } else if (subject.getSelectedItemId() == 0) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                /*else if (branch.getSelectedItemId() == 0)
-                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();*/
                 } else if (batch_time.getSelectedItemId() == 0) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
@@ -243,15 +236,20 @@ public class practice_paper_Listfragment extends Fragment {
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StandardModel standardModel = new StandardModel(StandardId);
-                    SubjectModel subjectModel = new SubjectModel(Long.parseLong(SubjectId));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    PaperData paperData = new PaperData(Long.parseLong(uniq_id.getText().toString()), Long.parseLong(paper_id.getText().toString()), path, attach);
-                    PaperModel pm = new PaperModel(Long.parseLong(paper_id.getText().toString()), branchModel, standardModel, subjectModel, Integer.parseInt(BatchId), BatchTime, remarks.getText().toString()
-                            , rowStatusModel, transactionModel, paperData);
-                    Call<PaperModel.PaperData1> call = apiCalling.PaperMaintenance(pm);
+                    Call<PaperModel.PaperData1> call;
+                    if (instrumentFileDestination != null) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                        call = apiCalling.PaperMaintenance(Long.parseLong(paper_id.getText().toString()),Long.parseLong(uniq_id.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,
+                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),remarks.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                                "0","0",true,uploadfile);
+                    }else {
+                        RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                        call = apiCalling.PaperMaintenance(Long.parseLong(paper_id.getText().toString()),Long.parseLong(uniq_id.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,
+                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),remarks.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                                FileName,Extension,false,uploadfile);
+                    }
                     call.enqueue(new Callback<PaperModel.PaperData1>() {
                         @Override
                         public void onResponse(@NotNull Call<PaperModel.PaperData1> call, @NotNull Response<PaperModel.PaperData1> response) {
@@ -260,7 +258,7 @@ public class practice_paper_Listfragment extends Fragment {
                                 if (data != null && data.isCompleted()) {
                                     PaperModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Practice Paper Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         GetPracticePaperDetails();
                                         subject.setSelection(0);
                                         branch.setSelection(0);
@@ -788,6 +786,12 @@ public class practice_paper_Listfragment extends Fragment {
                                         attach = paperModelList.getPaperData().getPaperContentText();
                                         path = paperModels.get(position).getPaperData().getPaperPath();
                                         attach_paper.setText("Attached");
+                                        if (paperModels.get(position).getPaperData().getFilePath().contains(".") && paperModels.get(position).getPaperData().getFilePath().contains("/")) {
+                                            Extension = paperModels.get(position).getPaperData().getFilePath().substring(paperModels.get(position).getPaperData().getFilePath().lastIndexOf(".") + 1);
+                                            String FileNameWithExtension = paperModels.get(position).getPaperData().getFilePath().substring(paperModels.get(position).getPaperData().getFilePath().lastIndexOf("/") + 1);
+                                            String[] FileNameArray = FileNameWithExtension.split("\\.");
+                                            FileName = paperModels.get(position).getPaperData().getPaperPath();
+                                        }
                                         attach_paper.setTextColor(context.getResources().getColor(R.color.black));
                                         uniq_id.setText("" + paperModels.get(position).getPaperData().getUniqueID());
                                         paper_id.setText("" + paperModels.get(position).getPaperID());
@@ -837,6 +841,7 @@ public class practice_paper_Listfragment extends Fragment {
                                     CommonModel model = response.body();
                                     if (model != null && model.isCompleted()) {
                                         if (model.isData()) {
+                                            Toast.makeText(context, "Practice Paper deleted Successfully.", Toast.LENGTH_SHORT).show();
                                             paperModels.remove(position);
                                             notifyItemRemoved(position);
                                             notifyDataSetChanged();

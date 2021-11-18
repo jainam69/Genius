@@ -102,7 +102,7 @@ public class Banner_Fragment extends Fragment {
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     Boolean selectfile = false;
-    String BranchID, attach = "";
+    String BranchID, attach = "",FileName, Extension;
     SearchableSpinner branch;
     CheckBox ch_admin, ch_teacher, ch_student;
     TextView banner_image, text, id, image, transactionid, bannerid;
@@ -119,6 +119,7 @@ public class Banner_Fragment extends Fragment {
     int flag = 0, check_value_admin, check_value_teacher, check_value_student;
     byte[] imageVal;
     Bitmap bitmap;
+    Boolean isAdmin = false,isTeacher = false,isStudent = false;
     File instrumentFileDestination;
     OnBackPressedCallback callback;
     NestedScrollView banner_scroll;
@@ -152,9 +153,9 @@ public class Banner_Fragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    check_value_admin = 1;
-                } else {
-                    check_value_admin = 0;
+                    isAdmin = true;
+                }else {
+                    isAdmin = false;
                 }
             }
         });
@@ -162,9 +163,9 @@ public class Banner_Fragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    check_value_teacher = 1;
-                } else {
-                    check_value_teacher = 0;
+                    isTeacher = true;
+                }else {
+                    isTeacher = false;
                 }
             }
         });
@@ -172,9 +173,9 @@ public class Banner_Fragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    check_value_student = 1;
-                } else {
-                    check_value_student = 0;
+                    isStudent = true;
+                }else {
+                    isStudent = false;
                 }
             }
         });
@@ -207,27 +208,14 @@ public class Banner_Fragment extends Fragment {
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
                     if (banner_image.getText().toString().equals("")) {
-                        Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Please Upload Banner Image.", Toast.LENGTH_SHORT).show();
                     } else {
                         progressBarHelper.showProgressDialog();
-                        List<BannerModel.BannerTypeEntity> typeModel = new ArrayList<>();
-                        if (check_value_admin == 1) {
-                            BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity("Admin", 1);
-                            typeModel.add(model1);
-                        }
-                        if (check_value_teacher == 1) {
-                            BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity("Teacher", 2);
-                            typeModel.add(model1);
-                        }
-                        if (check_value_student == 1) {
-                            BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity("Student", 3);
-                            typeModel.add(model1);
-                        }
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                        RowStatusModel rowStatusModel = new RowStatusModel(1);
-                        BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                        BannerModel model = new BannerModel(typeModel, branchModel, rowStatusModel, transactionModel, attach);
-                        Call<BannerModel.BannerlData1> call = apiCalling.BannerMaintenance(model);
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                        Call<BannerModel.BannerlData1> call = apiCalling.BannerMaintenance(0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
+                                isAdmin,isTeacher,isStudent,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                                "0","0",true,uploadfile);
                         call.enqueue(new Callback<BannerModel.BannerlData1>() {
                             @Override
                             public void onResponse(@NotNull Call<BannerModel.BannerlData1> call, @NotNull Response<BannerModel.BannerlData1> response) {
@@ -236,7 +224,7 @@ public class Banner_Fragment extends Fragment {
                                     if (data.isCompleted()) {
                                         BannerModel notimodel = data.getData();
                                         if (notimodel != null) {
-                                            Toast.makeText(context, "Banner inserted successfully.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                             banner_image.setText("");
                                             branch.setSelection(0);
                                             ch_admin.setChecked(false);
@@ -264,47 +252,28 @@ public class Banner_Fragment extends Fragment {
             }
         });
 
-        edit_banner.setOnClickListener(new View.OnClickListener() {
+       edit_banner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
                     if (banner_image.getText().toString().equals("")) {
-                        Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Please Upload Banner Image.", Toast.LENGTH_SHORT).show();
                     } else {
                         progressBarHelper.showProgressDialog();
-                        List<BannerModel.BannerTypeEntity> typeModel = new ArrayList<>();
-                        if (check_value_admin == 1) {
-                            if (adminid > 0) {
-                                BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity(adminid, "Admin", 1);
-                                typeModel.add(model1);
-                            } else {
-                                BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity("Admin", 1);
-                                typeModel.add(model1);
-                            }
+                        Call<BannerModel.BannerlData1> call;
+                        if (instrumentFileDestination != null) {
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                            MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                            call = apiCalling.BannerMaintenance(Long.parseLong(bannerid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), isAdmin,isTeacher,isStudent
+                                    ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
+                                    , "0", "0", true, uploadfile);
+                        }else {
+                            RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                            MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                            call = apiCalling.BannerMaintenance(Long.parseLong(bannerid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), isAdmin,isTeacher,isStudent
+                                    ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
+                                    , FileName, Extension, false, uploadfile);
                         }
-                        if (check_value_teacher == 1) {
-                            if (teacherid > 0) {
-                                BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity(teacherid, "Teacher", 2);
-                                typeModel.add(model1);
-                            } else {
-                                BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity("Teacher", 2);
-                                typeModel.add(model1);
-                            }
-                        }
-                        if (check_value_student == 1) {
-                            if (studentid > 0) {
-                                BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity(studentid, "Student", 3);
-                                typeModel.add(model1);
-                            } else {
-                                BannerModel.BannerTypeEntity model1 = new BannerModel.BannerTypeEntity("Student", 3);
-                                typeModel.add(model1);
-                            }
-                        }
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                        RowStatusModel rowStatusModel = new RowStatusModel(1);
-                        BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                        BannerModel model = new BannerModel(Long.parseLong(bannerid.getText().toString()), typeModel, branchModel, rowStatusModel, transactionModel, attach);
-                        Call<BannerModel.BannerlData1> call = apiCalling.BannerMaintenance(model);
                         call.enqueue(new Callback<BannerModel.BannerlData1>() {
                             @Override
                             public void onResponse(Call<BannerModel.BannerlData1> call, Response<BannerModel.BannerlData1> response) {
@@ -313,7 +282,7 @@ public class Banner_Fragment extends Fragment {
                                     if (data.isCompleted()) {
                                         BannerModel bannerModel = data.getData();
                                         if (bannerModel != null) {
-                                            Toast.makeText(context, "Banner updated successfully.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                             banner_image.setText("");
                                             branch.setSelection(0);
                                             ch_admin.setChecked(false);
@@ -662,19 +631,25 @@ public class Banner_Fragment extends Fragment {
                     bannerid.setText("" + bannerDetails.get(position).getBannerID());
                     banner_image.setText("Attached");
                     banner_image.setTextColor(context.getResources().getColor(R.color.black));
+                    if (bannerDetails.get(position).getFilePath().contains(".") && bannerDetails.get(position).getFilePath().contains("/")) {
+                        Extension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf(".") + 1);
+                        String FileNameWithExtension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf("/") + 1);
+                        String[] FileNameArray = FileNameWithExtension.split("\\.");
+                        FileName = bannerDetails.get(position).getFileName();
+                    }
                     List<BannerModel.BannerTypeEntity> notitypelist1 = bannerDetails.get(position).getBannerType();
                     for (BannerModel.BannerTypeEntity model : notitypelist1) {
                         if (model.getTypeID() == 1) {
                             ch_admin.setChecked(true);
-                            adminid = model.getID();
+                            isAdmin = true;
                         }
                         if (model.getTypeID() == 2) {
                             ch_teacher.setChecked(true);
-                            teacherid = model.getID();
+                            isTeacher = true;
                         }
                         if (model.getTypeID() == 3) {
                             ch_student.setChecked(true);
-                            studentid = model.getID();
+                            isStudent = true;
                         }
                     }
                     scroll.scrollTo(0, 0);

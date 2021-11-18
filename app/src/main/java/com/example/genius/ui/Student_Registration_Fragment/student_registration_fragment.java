@@ -45,6 +45,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BatchModel;
 import com.example.genius.Model.BranchModel;
@@ -81,6 +82,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,12 +100,11 @@ public class student_registration_fragment extends Fragment {
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
-    Boolean a, selectfile = false;
-    String FilePath_URL;
+    Boolean selectfile = false;
     TextView attachment, uno;
     ImageView imageView;
     SearchableSpinner standard, school_name, school_time, batch_time;
-    EditText gr_no, addmission_date, first_name, middle_name, last_name, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password;
+    EditText gr_no, addmission_date, first_name, middle_name, last_name, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password, student_password,parent_password;
     TextView birth_date;
     RadioButton pass, fail, active, inactive, rb1, rb2;
     RadioGroup result_rg, status_rg;
@@ -109,7 +112,7 @@ public class student_registration_fragment extends Fragment {
     Context context;
     byte[] imageVal;
     Bitmap bitmap;
-    File instrumentFileDestination, photofile;
+    File instrumentFileDestination;
     List<String> standarditem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>();
     String[] STANDARDITEM;
@@ -122,14 +125,16 @@ public class student_registration_fragment extends Fragment {
     String[] SCHOOLTITEM, SCHOOLTID;
     List<String> batchitem = new ArrayList<>(), batchid = new ArrayList<>();
     String[] BATCHITEM, BATCHID;
-    String indate, StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, photo, BatchId, SchooltimeId, bdate;
+    String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001",grade = "none",classname = "none",student_contact_no = "none", father_occupation = "none", mother_occupation = "none",Name,
+    FileName = "none",Extension = "none",Address;
     int select, flag = 0;
-    long SchoolId, StandardId, TransactionID, StudentID, ParentID;
+    long SchoolId = -1, StandardId, TransactionID, StudentID, ParentID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Bundle bundle;
     OnBackPressedCallback callback;
     String pictureFilePath, attach = "";
+
     AdapterView.OnItemSelectedListener onItemSelectedListener6 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -171,7 +176,7 @@ public class student_registration_fragment extends Fragment {
     private int year;
     private int month;
     private int day;
-    int result1, status1;
+    int result1 = -1, status1;
 
     private static String pad(int c) {
         if (c >= 10)
@@ -221,6 +226,8 @@ public class student_registration_fragment extends Fragment {
         result_rg = root.findViewById(R.id.result_rg);
         status_rg = root.findViewById(R.id.status_rg);
         uno = root.findViewById(R.id.uno);
+        student_password = root.findViewById(R.id.student_password);
+        parent_password = root.findViewById(R.id.parent_password);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -269,6 +276,23 @@ public class student_registration_fragment extends Fragment {
             }
             if (bundle.containsKey("Percentage")) {
                 percentage.setText("" + bundle.getInt("Percentage"));
+            }
+            if (bundle.containsKey("FileName")){
+                FileName = bundle.getString("FileName");
+            }
+            if (bundle.containsKey("FilePath")){
+                String Path = bundle.getString("FilePath");
+                if (Path != null || Path != ""){
+                    imageView.setVisibility(View.VISIBLE);
+                    attachment.setText("attached");
+                    Glide.with(context).load(Path).into(imageView);
+                }else {
+                    imageView.setVisibility(View.GONE);
+                    attachment.setText("");
+                }
+                if (bundle.getString("FilePath").contains(".") && bundle.getString("FilePath").contains("/")) {
+                    Extension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf(".") + 1);
+                }
             }
             if (bundle.containsKey("AdmissionDate")) {
                 try {
@@ -328,8 +352,8 @@ public class student_registration_fragment extends Fragment {
                 });
             }
         } else {
-            addmission_date.setText("" + displaydate.format(Calendar.getInstance().getTime()));
-            indate = actualdate.format(Calendar.getInstance().getTime());
+            /*addmission_date.setText("" + displaydate.format(Calendar.getInstance().getTime()));
+            indate = actualdate.format(Calendar.getInstance().getTime());*/
         }
 
         if (Function.checkNetworkConnection(context)) {
@@ -367,7 +391,7 @@ public class student_registration_fragment extends Fragment {
                         year = year2;
                         month = monthOfYear;
                         day = dayOfMonth;
-                        indate = pad(month + 1) + "/" + pad(day) + "/" + year;
+                        indate = year + "-" + pad(month + 1) + "-" + pad(day);
                         addmission_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                     }, year, month, day);
             picker.show();
@@ -383,7 +407,7 @@ public class student_registration_fragment extends Fragment {
                         year = year2;
                         month = monthOfYear;
                         day = dayOfMonth;
-                        bdate = pad(month + 1) + "/" + pad(day) + "/" + year;
+                        bdate = year + "-" + pad(month + 1) + "-" + pad(day);
                         birth_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                     }, year, month, day);
             picker.show();
@@ -410,38 +434,30 @@ public class student_registration_fragment extends Fragment {
         });
 
         save_student_regi.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (addmission_date.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please select Admission Date.", Toast.LENGTH_SHORT).show();
-                } else if (first_name.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
+                if (first_name.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter First Name.", Toast.LENGTH_SHORT).show();
                 } else if (middle_name.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Middle Name.", Toast.LENGTH_SHORT).show();
                 } else if (last_name.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Last Name.", Toast.LENGTH_SHORT).show();
                 } else if (address.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Address.", Toast.LENGTH_SHORT).show();
                 } else if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please select Batch Time.", Toast.LENGTH_SHORT).show();
                 } else if (parent_name.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Parent Name.", Toast.LENGTH_SHORT).show();
                 } else if (login_id.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                } else {
+                }else if (student_password.getText().toString().isEmpty())
+                    Toast.makeText(context, "Please enter Student Password.", Toast.LENGTH_SHORT).show();
+                else if (parent_password.getText().toString().isEmpty())
+                    Toast.makeText(context, "Please enter Parent Password.", Toast.LENGTH_SHORT).show();
+                else {
+                    Call<StudentModel.StudentData1> call;
                     progressBarHelper.showProgressDialog();
-//                    insertwithoutAttachment();
                     if (Result.equalsIgnoreCase("Pass")) {
                         result1 = 1;
                     } else {
@@ -452,46 +468,65 @@ public class student_registration_fragment extends Fragment {
                     } else {
                         status1 = 2;
                     }
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(status1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    StudentModel.StudentMaintModel maintModel = new StudentModel.StudentMaintModel(parent_name.getText().toString(), father_occu.getText().toString(), mother_occu.getText().toString(), login_id.getText().toString());
-                    BatchModel batchModel = new BatchModel(BatchTime);
-                    SchoolModel schoolModel = new SchoolModel(SchoolId);
-                    StandardModel standardModel = new StandardModel(StandardId);
-                    StudentModel model = new StudentModel("", first_name.getText().toString(), middle_name.getText().toString(), last_name.getText().toString(), bdate, indate, address.getText().toString(), Integer.parseInt(SchooltimeId), result1,
-                            percentage.getText().toString(), class_name.getText().toString(), contact_no.getText().toString(), attach, standardModel, schoolModel, branchModel, transactionModel, rowStatusModel, batchModel, maintModel);
-                    Call<StudentModel.StudentData1> call = apiCalling.StudentMaintanance(model);
+                    if (!percentage.getText().toString().equals("")){
+                        grade = percentage.getText().toString();
+                    }
+                    if (!class_name.getText().toString().equals("")){
+                        classname = class_name.getText().toString().replaceAll("\\s","");
+                    }
+                    if (!contact_no.getText().toString().equals("")){
+                        student_contact_no = contact_no.getText().toString();
+                    }
+                    if (!father_occu.getText().toString().equals("")){
+                        father_occupation = father_occu.getText().toString();
+                    }
+                    if (!mother_occu.getText().toString().equals("")){
+                        mother_occupation = mother_occu.getText().toString();
+                    }
+                    Address = address.getText().toString().replaceAll("\\s","");
+                    Name = first_name.getText().toString().replaceAll("\\s","") + "," + middle_name.getText().toString().replaceAll("\\s","") + "," +last_name.getText().toString().replaceAll("\\s","");
+                    if (instrumentFileDestination != null){
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                        call = apiCalling.StudentMaintenance(0,0,"1",Name,bdate,Address,
+                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
+                                Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString().replaceAll("\\s",""),father_occupation,mother_occupation,login_id.getText().toString(),
+                                Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,student_password.getText().toString(),parent_password.getText().toString(),"0","0",true,uploadfile);
+                    }else {
+                        RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                        call = apiCalling.StudentMaintenance(0,0,"1",Name,bdate,Address,
+                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
+                                Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString().replaceAll("\\s",""),father_occupation,mother_occupation,login_id.getText().toString(),
+                                Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,student_password.getText().toString(),parent_password.getText().toString(),FileName,Extension,false,uploadfile);
+                    }
                     call.enqueue(new Callback<StudentModel.StudentData1>() {
                         @Override
                         public void onResponse(@NotNull Call<StudentModel.StudentData1> call, @NotNull Response<StudentModel.StudentData1> response) {
-
                             if (response.isSuccessful()) {
                                 StudentModel.StudentData1 data = response.body();
                                 if (data.isCompleted()) {
-                                    StudentModel studentModel = data.getData();
-                                    if (studentModel.getStudentID() > 0) {
-                                        student_registration_Listfragment profileFragment = new student_registration_Listfragment();
-                                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                                        FragmentTransaction ft = fm.beginTransaction();
-                                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                                        ft.addToBackStack(null);
-                                        ft.commit();
-                                    }
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    student_registration_Listfragment profileFragment = new student_registration_Listfragment();
+                                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                                    FragmentTransaction ft = fm.beginTransaction();
+                                    ft.replace(R.id.nav_host_fragment, profileFragment);
+                                    ft.addToBackStack(null);
+                                    ft.commit();
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
-                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
                         public void onFailure(@NotNull Call<StudentModel.StudentData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
 
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -499,36 +534,30 @@ public class student_registration_fragment extends Fragment {
         edit_student_regi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBarHelper.showProgressDialog();
                 if (Function.checkNetworkConnection(context)) {
-                    if (addmission_date.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
-                        Toast.makeText(context, "Please select Admission Date.", Toast.LENGTH_SHORT).show();
-                    } else if (first_name.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
+                    if (first_name.getText().toString().equals("")) {
                         Toast.makeText(context, "Please enter First Name.", Toast.LENGTH_SHORT).show();
                     } else if (middle_name.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Middle Name.", Toast.LENGTH_SHORT).show();
                     } else if (last_name.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Last Name.", Toast.LENGTH_SHORT).show();
                     } else if (address.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Address.", Toast.LENGTH_SHORT).show();
                     } else if (standard.getSelectedItemId() == 0) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
                     } else if (batch_time.getSelectedItemId() == 0) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please select Batch Time.", Toast.LENGTH_SHORT).show();
                     } else if (parent_name.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Parent Name.", Toast.LENGTH_SHORT).show();
                     } else if (login_id.getText().toString().equals("")) {
-                        progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }else if (student_password.getText().toString().isEmpty())
+                        Toast.makeText(context, "Please enter Student Password.", Toast.LENGTH_SHORT).show();
+                    else if (parent_password.getText().toString().isEmpty())
+                        Toast.makeText(context, "Please enter Parent Password.", Toast.LENGTH_SHORT).show();
+                    else {
+                        Call<StudentModel.StudentData1> call;
+                        progressBarHelper.showProgressDialog();
                         if (Result.equalsIgnoreCase("Pass")) {
                             result1 = 1;
                         } else {
@@ -539,55 +568,72 @@ public class student_registration_fragment extends Fragment {
                         } else {
                             status1 = 2;
                         }
-                        progressBarHelper.showProgressDialog();
-//                    insertwithoutAttachment();
-                        TransactionModel transactionModel = new TransactionModel(TransactionID, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                        RowStatusModel rowStatusModel = new RowStatusModel(status1);
-                        BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        StudentModel.StudentMaintModel maintModel = new StudentModel.StudentMaintModel(StudentID, parent_name.getText().toString(), father_occu.getText().toString(), mother_occu.getText().toString(), login_id.getText().toString(), ParentID);
-                        BatchModel batchModel = new BatchModel(BatchTime);
-                        SchoolModel schoolModel = new SchoolModel(SchoolId);
-                        StandardModel standardModel = new StandardModel(StandardId);
-                        StudentModel model = new StudentModel(StudentID, "", first_name.getText().toString(), middle_name.getText().toString(), last_name.getText().toString(), bdate, indate, address.getText().toString(), Integer.parseInt(SchooltimeId), result1,
-                                percentage.getText().toString(), class_name.getText().toString(), contact_no.getText().toString(), attach, standardModel, schoolModel, branchModel, transactionModel, rowStatusModel, batchModel, maintModel);
-                        Call<StudentModel.StudentData1> call = apiCalling.StudentMaintanance(model);
+                        if (!percentage.getText().toString().equals("")){
+                            grade = percentage.getText().toString();
+                        }
+                        if (!class_name.getText().toString().equals("")){
+                            classname = class_name.getText().toString();
+                        }
+                        if (!contact_no.getText().toString().equals("")){
+                            student_contact_no = contact_no.getText().toString();
+                        }
+                        if (!father_occu.getText().toString().equals("")){
+                            father_occupation = father_occu.getText().toString();
+                        }
+                        if (!mother_occu.getText().toString().equals("")){
+                            mother_occupation = mother_occu.getText().toString();
+                        }
+                        Address = address.getText().toString().replaceAll("\\s","");
+                        Name = first_name.getText().toString().replaceAll("\\s","") + "," + middle_name.getText().toString().replaceAll("\\s","") + "," +last_name.getText().toString().replaceAll("\\s","");
+                        if (instrumentFileDestination != null)
+                        {
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                            MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                            call = apiCalling.StudentMaintenance(StudentID,ParentID,"1",Name,bdate,Address,
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
+                                    Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString(),father_occupation,mother_occupation,login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),"0","0",true,uploadfile);
+                        }else {
+                            RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                            MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                            call = apiCalling.StudentMaintenance(StudentID,ParentID,"1",Name,bdate,address.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
+                                    Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString(),father_occupation,mother_occupation,login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),FileName,Extension,false,uploadfile);
+                        }
                         call.enqueue(new Callback<StudentModel.StudentData1>() {
                             @Override
                             public void onResponse(@NotNull Call<StudentModel.StudentData1> call, @NotNull Response<StudentModel.StudentData1> response) {
-
                                 if (response.isSuccessful()) {
                                     StudentModel.StudentData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        StudentModel studentModel = data.getData();
-                                        if (studentModel.getStudentID() > 0) {
-                                            student_registration_Listfragment profileFragment = new student_registration_Listfragment();
-                                            FragmentManager fm = getActivity().getSupportFragmentManager();
-                                            FragmentTransaction ft = fm.beginTransaction();
-                                            ft.replace(R.id.nav_host_fragment, profileFragment);
-                                            ft.addToBackStack(null);
-                                            ft.commit();
-                                        }
+                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        student_registration_Listfragment profileFragment = new student_registration_Listfragment();
+                                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                                        FragmentTransaction ft = fm.beginTransaction();
+                                        ft.replace(R.id.nav_host_fragment, profileFragment);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override
                             public void onFailure(@NotNull Call<StudentModel.StudentData1> call, @NotNull Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
 
                     }
                 } else {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        callback = new
-                OnBackPressedCallback(true) {
+        callback = new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
                         student_registration_Listfragment profileFragment = new student_registration_Listfragment();
@@ -670,8 +716,8 @@ public class student_registration_fragment extends Fragment {
                     attachment.setText("Attached");
                     attachment.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
-                    imageVal = ImageUtility.using(context).toBase64(instrumentFileDestination.getPath());
-                    attach = Base64.encodeToString(imageVal, android.util.Base64.DEFAULT);
+                    //imageVal = ImageUtility.using(context).toBase64(instrumentFileDestination.getPath());
+                    //attach = Base64.encodeToString(imageVal, android.util.Base64.DEFAULT);
                     try {
                         imageView.setImageURI(Uri.fromFile(instrumentFileDestination));
                     } catch (Exception ignored) {
@@ -707,7 +753,7 @@ public class student_registration_fragment extends Fragment {
                     imageView.setImageBitmap(bitmap);
                     attachment.setText("Attached");
                     attachment.setTextColor(context.getResources().getColor(R.color.black));
-                    attach = onGalleryImageResultInstrument(result);
+                    //attach = onGalleryImageResultInstrument(result);
                 } catch (Exception e) {
                     errored();
                 }

@@ -1,5 +1,7 @@
 package com.example.genius.Model;
 
+import java.util.List;
+
 public class HomeworkModel {
 
     long HomeworkID;
@@ -15,6 +17,8 @@ public class HomeworkModel {
     TransactionModel Transaction;
     RowStatusModel RowStatus;
     String FilePath;
+    StudentModel StudentInfo;
+    int Status;
 
     public HomeworkModel(long homeworkID, BranchModel branchInfo, String homeworkDate, StandardModel standardInfo, SubjectModel subjectInfo, int batchTimeID, String batchTimeText, String remarks, String homeworkContentText, String homeworkContentFileName, TransactionModel transaction, RowStatusModel rowStatus) {
         HomeworkID = homeworkID;
@@ -43,6 +47,22 @@ public class HomeworkModel {
         HomeworkContentFileName = homeworkContentFileName;
         Transaction = transaction;
         RowStatus = rowStatus;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int status) {
+        Status = status;
+    }
+
+    public StudentModel getStudentInfo() {
+        return StudentInfo;
+    }
+
+    public void setStudentInfo(StudentModel studentInfo) {
+        StudentInfo = studentInfo;
     }
 
     public String getFilePath() {
@@ -150,8 +170,18 @@ public class HomeworkModel {
     }
 
     public static class HomeworkData1{
+
         boolean Completed;
         HomeworkModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;
@@ -166,6 +196,37 @@ public class HomeworkModel {
         }
 
         public void setData(HomeworkModel data) {
+            Data = data;
+        }
+    }
+
+    public static class HomeworkDetailData
+    {
+        boolean Completed;
+        String Message;
+        List<HomeworkModel> Data;
+
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
+
+        public List<HomeworkModel> getData() {
+            return Data;
+        }
+
+        public void setData(List<HomeworkModel> data) {
             Data = data;
         }
     }

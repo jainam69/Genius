@@ -1,6 +1,9 @@
 package com.example.genius.Model;
 
+import java.util.List;
+
 public class StudentModel {
+
     long StudentID;
     String GrNo;
     String FirstName;
@@ -22,6 +25,28 @@ public class StudentModel {
     RowStatusModel RowStatus;
     BatchModel BatchInfo;
     StudentMaintModel StudentMaint;
+    String FileName;
+    String FilePath;
+    String StudentPassword;
+    String StudentPassword2;
+    String Name;
+    String AchieveMarks;
+
+    public String getAchieveMarks() {
+        return AchieveMarks;
+    }
+
+    public void setAchieveMarks(String achieveMarks) {
+        AchieveMarks = achieveMarks;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
 
     public StudentModel(long studentID) {
         StudentID = studentID;
@@ -77,6 +102,37 @@ public class StudentModel {
     public StudentModel() {
     }
 
+    public String getStudentPassword() {
+        return StudentPassword;
+    }
+
+    public void setStudentPassword(String studentPassword) {
+        StudentPassword = studentPassword;
+    }
+
+    public String getStudentPassword2() {
+        return StudentPassword2;
+    }
+
+    public void setStudentPassword2(String studentPassword2) {
+        StudentPassword2 = studentPassword2;
+    }
+
+    public String getFileName() {
+        return FileName;
+    }
+
+    public void setFileName(String fileName) {
+        FileName = fileName;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        FilePath = filePath;
+    }
 
     public String getAdmissionDate() {
         return AdmissionDate;
@@ -253,6 +309,8 @@ public class StudentModel {
         public String MotherOccupation;
         public String ContactNo;
         long ParentID;
+        String ParentPassword;
+        String ParentPassword2;
 
         public StudentMaintModel() {
         }
@@ -271,6 +329,22 @@ public class StudentModel {
             MotherOccupation = motherOccupation;
             ContactNo = contactNo;
             ParentID = parentID;
+        }
+
+        public String getParentPassword() {
+            return ParentPassword;
+        }
+
+        public void setParentPassword(String parentPassword) {
+            ParentPassword = parentPassword;
+        }
+
+        public String getParentPassword2() {
+            return ParentPassword2;
+        }
+
+        public void setParentPassword2(String parentPassword2) {
+            ParentPassword2 = parentPassword2;
         }
 
         public long getParentID() {
@@ -323,8 +397,18 @@ public class StudentModel {
     }
 
     public static class StudentData1 {
+
         boolean Completed;
         StudentModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;
@@ -340,6 +424,37 @@ public class StudentModel {
 
         public void setData(StudentModel data) {
             Data = data;
+        }
+    }
+
+    public static class StudentDataList
+    {
+        boolean Completed;
+        List<StudentModel> Data;
+        String Message;
+
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
+
+        public List<StudentModel> getData() {
+            return Data;
+        }
+
+        public void setData(List<StudentModel> data) {
+            Data = data;
+        }
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
         }
     }
 }

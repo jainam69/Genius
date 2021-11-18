@@ -136,8 +136,18 @@ public class UserModel {
     }
 
     public static class UserData {
+
         boolean Completed;
         UserModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

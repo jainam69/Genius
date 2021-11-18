@@ -129,6 +129,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                 bundle.putString("HomeworkContentFileName", homeworkDetails.get(position).getHomeworkContentFileName());
                 bundle.putLong("TransactionId", homeworkDetails.get(position).getTransaction().getTransactionId());
                 bundle.putString("FilePath", homeworkDetails.get(position).getFilePath());
+                bundle.putString("FileName", homeworkDetails.get(position).getHomeworkContentFileName());
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -166,6 +167,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                                 CommonModel model = response.body();
                                 if (model != null && model.isCompleted()) {
                                     if (model.isData()) {
+                                        Toast.makeText(context, "Homework deleted Successfully.", Toast.LENGTH_SHORT).show();
                                         homeworkDetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();

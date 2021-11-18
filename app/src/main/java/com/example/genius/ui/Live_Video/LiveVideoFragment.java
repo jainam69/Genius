@@ -74,6 +74,7 @@ public class LiveVideoFragment extends Fragment {
     NestedScrollView live_scroll;
     LiveVideo_Adapter liveVideo_adapter;
     Long StandardId;
+
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -114,6 +115,7 @@ public class LiveVideoFragment extends Fragment {
         live_scroll = root.findViewById(R.id.live_scroll);
         transaction_id = root.findViewById(R.id.transaction_id);
         unique_id = root.findViewById(R.id.unique_id);
+
         save_live_video.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
@@ -144,14 +146,14 @@ public class LiveVideoFragment extends Fragment {
                                             LinkModel model1 = data1.getData();
                                             if (model1 != null) {
                                                 if (model1.getUniqueID() > 0) {
-                                                    Toast.makeText(context, "Live Video URL inserted successfully...!!!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Live Video URL inserted successfully.", Toast.LENGTH_SHORT).show();
                                                     video_title.setText("");
                                                     video_description.setText("");
                                                     live_url.setText("");
                                                     standard.setSelection(0);
                                                     GetAllLiveVideo();
                                                 } else {
-                                                    Toast.makeText(context, "Live Video URL Not Inserted..!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Live Video URL Not Inserted.", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }
@@ -426,6 +428,7 @@ public class LiveVideoFragment extends Fragment {
                                 if (response.isSuccessful()) {
                                     CommonModel model = response.body();
                                     if (model != null && model.isData()) {
+                                        Toast.makeText(context, "Live Video Deleted Successfully.", Toast.LENGTH_SHORT).show();
                                         linkdetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();

@@ -50,6 +50,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BannerModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.GalleryModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.ToDoByIdData;
 import com.example.genius.Model.TodoData;
@@ -59,6 +60,7 @@ import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
 import com.example.genius.Preferences;
 import com.example.genius.R;
+import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
@@ -81,6 +83,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,7 +100,7 @@ public class TaskFragment extends Fragment {
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
-    Boolean a, selectfile = false;
+    File instrumentFileDestination;
     OnBackPressedCallback callback;
     View root;
     Context context;
@@ -118,9 +123,9 @@ public class TaskFragment extends Fragment {
     String[] STATUSITEM;
     String StatusName = "Pending";
     NestedScrollView scroll;
-    String attach, date, filename = "task";
+    String attach, date, filename ,Extension;
     int branchid1, userid1 = 0;
-    ByteArrayOutputStream byteBuffer;
+
     AdapterView.OnItemSelectedListener onItemSelectedListener61 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -159,7 +164,7 @@ public class TaskFragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
                 }
 
@@ -252,32 +257,28 @@ public class TaskFragment extends Fragment {
         scroll = root.findViewById(R.id.scroll);
         no_content = root.findViewById(R.id.no_content);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+
         if (Function.checkNetworkConnection(context)) {
-            //progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             selectstatus();
             GetAllTask();
             GetAllUser(Long.parseLong(BranchID));
-//            GetTaskDetails();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
         save_task.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                /*if (branch.getSelectedItemId() == 0)
-                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                else */
                 if (user.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select User.", Toast.LENGTH_SHORT).show();
+                else if(attachment.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), "");
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    UserModel userModel = new UserModel(Long.parseLong(UserId));
-                    TodoModel todoModel = new TodoModel(date, branchModel, userModel, edt_taskDescription.getText().toString(), attach, filename, rowStatusModel, transactionModel);
-                    Call<TodoModel.TodoData1> call = apiCalling.TodoMaintenance(todoModel);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                    Call<TodoModel.TodoData1> call = apiCalling.ToDoMaintenance(0,date,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(UserId),
+                            edt_taskDescription.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0
+                            , "0", "0",true,uploadfile);
                     call.enqueue(new Callback<TodoModel.TodoData1>() {
                         @Override
                         public void onResponse(@NotNull Call<TodoModel.TodoData1> call, @NotNull Response<TodoModel.TodoData1> response) {
@@ -286,16 +287,15 @@ public class TaskFragment extends Fragment {
                                 if (data1.isCompleted()) {
                                     TodoModel model = data1.getData();
                                     if (model != null) {
-                                        if (model.getToDoID() > 0) {
-                                            edt_taskDescription.setText("");
-                                            date_task.setText("");
-                                            attachment.setText("");
-                                            filename = "";
-                                            attach = "";
-                                            branch.setSelection(0);
-                                            user.setSelection(0);
-                                            GetAllTask();
-                                        }
+                                        Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                        edt_taskDescription.setText("");
+                                        date_task.setText("");
+                                        attachment.setText("");
+                                        filename = "";
+                                        attach = "";
+                                        branch.setSelection(0);
+                                        user.setSelection(0);
+                                        GetAllTask();
                                     }
                                 }
                             }
@@ -315,19 +315,26 @@ public class TaskFragment extends Fragment {
 
         edit_task.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                /*if (branch.getSelectedItemId() == 0)
-                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                else */
                 if (user.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select User.", Toast.LENGTH_SHORT).show();
+                else if(attachment.getText().toString().equals(""))
+                    Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    UserModel userModel = new UserModel(Long.parseLong(UserId));
-                    TodoModel todoModel = new TodoModel(Long.parseLong(todoid.getText().toString()), date, branchModel, userModel, edt_taskDescription.getText().toString(), attach, filename, rowStatusModel, transactionModel);
-                    Call<TodoModel.TodoData1> call = apiCalling.TodoMaintenance(todoModel);
+                    Call<TodoModel.TodoData1> call;
+                    if (instrumentFileDestination != null) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                        call = apiCalling.ToDoMaintenance(Long.parseLong(todoid.getText().toString()),date,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(UserId),
+                                edt_taskDescription.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
+                                , "0", "0",true,uploadfile);
+                    }else {
+                        RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                        call = apiCalling.ToDoMaintenance(Long.parseLong(todoid.getText().toString()),date, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(UserId),
+                                edt_taskDescription.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
+                                , filename, Extension, false, uploadfile);
+                    }
                     call.enqueue(new Callback<TodoModel.TodoData1>() {
                         @Override
                         public void onResponse(@NotNull Call<TodoModel.TodoData1> call, @NotNull Response<TodoModel.TodoData1> response) {
@@ -336,17 +343,16 @@ public class TaskFragment extends Fragment {
                                 if (data1.isCompleted()) {
                                     TodoModel model = data1.getData();
                                     if (model != null) {
-                                        if (model.getToDoID() > 0) {
-                                            edt_taskDescription.setText("");
-                                            date_task.setText("");
-                                            attachment.setText("");
-                                            filename = "";
-                                            attach = "";
-                                            userid1 = 0;
-                                            branch.setSelection(0);
-                                            user.setSelection(0);
-                                            GetAllTask();
-                                        }
+                                        Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                        edt_taskDescription.setText("");
+                                        date_task.setText("");
+                                        attachment.setText("");
+                                        filename = "";
+                                        attach = "";
+                                        userid1 = 0;
+                                        branch.setSelection(0);
+                                        user.setSelection(0);
+                                        GetAllTask();
                                     }
                                 }
                             }
@@ -495,16 +501,10 @@ public class TaskFragment extends Fragment {
 
     public void GetAllUser(long branch) {
         progressBarHelper.showProgressDialog();
-        if (useritem != null) {
-            useritem.clear();
-        }
-        if (userid != null) {
-            userid.clear();
-        }
+        useritem.clear();
+        userid.clear();
         useritem.add("Select User");
         userid.add(0);
-        //progressBarHelper.hideProgressDialog();
-        //Call<UserData1> call = apiCalling.GetAllUsers(branch);
         Call<UserData1> call = apiCalling.GetAllUsersddl(branch);
         call.enqueue(new Callback<UserData1>() {
             @Override
@@ -551,9 +551,9 @@ public class TaskFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user.setAdapter(adapter);
         user.setOnItemSelectedListener(UserItemListener);
-        if (userid1 > 0) {
+       /* if (userid1 > 0) {
             user.setSelection(userid1);
-        }
+        }*/
     }
 
     @Override
@@ -565,6 +565,7 @@ public class TaskFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent result) {
         super.onActivityResult(requestCode, resultCode, result);
@@ -572,54 +573,16 @@ public class TaskFragment extends Fragment {
             if (resultCode == RESULT_CANCELED) {
                 userCancelled();
             } else if (resultCode == RESULT_OK) {
+                Uri image = result.getData();
                 try {
-                    progressBarHelper.showProgressDialog();
-                    selectfile = true;
                     flag = 1;
-                    imageVal = null;
                     InputStream imageStream;
                     Uri uri = result.getData();
+                    String Path = FUtils.getPath(requireContext(), uri);
+                    instrumentFileDestination = new File(Objects.requireNonNull(Path));
                     attachment.setText("Attached");
-                    InputStream inputStream = null;
-// Converting the video in to the bytes
-                    try {
-                        inputStream = context.getContentResolver().openInputStream(uri);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    int bufferSize = 1024;
-                    byte[] buffer = new byte[bufferSize];
-                    byteBuffer = new ByteArrayOutputStream();
-                    int len = 0;
-                    try {
-                        while ((len = inputStream.read(buffer)) != -1) {
-                            byteBuffer.write(buffer, 0, len);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("converted!");
-
-                    //Converting bytes into base64
-                    attach = Base64.encodeToString(byteBuffer.toByteArray(), Base64.DEFAULT);
-//                    Log.d("VideoData**>  " , videoData);
-                    progressBarHelper.hideProgressDialog();
-                    attachment.setTextColor(getResources().getColor(R.color.black));
-                    String scheme = uri.getScheme();
-                    if (scheme.equals("file")) {
-                        filename = uri.getLastPathSegment();
-                    } else if (scheme.equals("content")) {
-                        String[] proj = {MediaStore.MediaColumns.DISPLAY_NAME};
-                        Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
-                        if (cursor != null && cursor.getCount() != 0) {
-                            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
-                            cursor.moveToFirst();
-                            filename = cursor.getString(columnIndex);
-                        }
-                        if (cursor != null) {
-                            cursor.close();
-                        }
-                    }
+                    attachment.setTextColor(context.getResources().getColor(R.color.black));
+                    filename = instrumentFileDestination.getName();
                 } catch (Exception e) {
                     errored();
                 }
@@ -715,6 +678,7 @@ public class TaskFragment extends Fragment {
             holder.branch_name.setText("" + todoModels.get(position).getBranchInfo().getBranchName());
             holder.staff_name.setText("" + todoModels.get(position).getUserInfo().getUsername());
             attach = todoModels.get(position).getToDoContentText();
+
             holder.task_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -745,22 +709,21 @@ public class TaskFragment extends Fragment {
                                     if (paperModelList != null) {
                                         save_task.setVisibility(View.GONE);
                                         edit_task.setVisibility(View.VISIBLE);
-                                        /*branchid1 = Integer.parseInt(String.valueOf(todoModels.get(position).getBranchInfo().getBranchID()));
-                                        if (branchid1 > 0) {
-                                            int a = branchid.indexOf(branchid1);
-                                            branch.setSelection(a);
-                                        }*/
                                         int az = Integer.parseInt(String.valueOf(todoModels.get(position).getUserInfo().getUserID()));
                                         if (az > 0) {
                                             userid1 = userid.indexOf(az);
                                             user.setSelection(userid1);
                                         }
-                                        filename = todoModels.get(position).getToDoFileName();
+                                        if (todoModels.get(position).getFilePath().contains(".") && todoModels.get(position).getFilePath().contains("/")) {
+                                            Extension = todoModels.get(position).getFilePath().substring(todoModels.get(position).getFilePath().lastIndexOf(".") + 1);
+                                            String FileNameWithExtension = todoModels.get(position).getFilePath().substring(todoModels.get(position).getFilePath().lastIndexOf("/") + 1);
+                                            String[] FileNameArray = FileNameWithExtension.split("\\.");
+                                            filename = todoModels.get(position).getToDoFileName();
+                                        }
                                         transactionid.setText("" + todoModels.get(position).getTransaction().getTransactionId());
                                         todoid.setText("" + todoModels.get(position).getToDoID());
                                         edt_taskDescription.setText("" + todoModels.get(position).getToDoDescription());
                                         attachment.setText("Attached");
-                                        attach = paperModelList.getToDoContentText();
                                         attachment.setTextColor(context.getResources().getColor(R.color.black));
                                         String a = todoModels.get(position).getToDoDate().replace("T00:00:00", "");
                                         try {

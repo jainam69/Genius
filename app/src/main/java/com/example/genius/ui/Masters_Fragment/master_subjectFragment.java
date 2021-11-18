@@ -204,6 +204,8 @@ public class master_subjectFragment extends Fragment {
     }
 
     public void GetAllSubject() {
+        subjectitem.clear();
+        subjectid.clear();
         Call<SubjectData> call = apiCalling.GetAllSubject(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<SubjectData>() {
             @Override

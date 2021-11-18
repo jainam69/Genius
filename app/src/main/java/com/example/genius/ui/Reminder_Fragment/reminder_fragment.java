@@ -115,6 +115,7 @@ public class reminder_fragment extends Fragment {
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
+
         save_reminder.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
@@ -146,7 +147,7 @@ public class reminder_fragment extends Fragment {
                                         reminder_time.setText("");
                                         date_reminder.setText(yesterday());
                                         GetReminderDetails();
-                                        Toast.makeText(context, "Reminder Added Successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Reminder Added Successfully.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -197,7 +198,7 @@ public class reminder_fragment extends Fragment {
                                         save_reminder.setVisibility(View.VISIBLE);
                                         edit_reminder.setVisibility(View.GONE);
                                         GetReminderDetails();
-                                        Toast.makeText(context, "Reminder Edited Successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Reminder Edited Successfully.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -419,6 +420,7 @@ public class reminder_fragment extends Fragment {
                                 CommonModel model = response.body();
                                 if (model.isCompleted()) {
                                     if (model.isData()) {
+                                        Toast.makeText(context, "Reminder Deleted Successfully.", Toast.LENGTH_SHORT).show();
                                         reminderModels.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();

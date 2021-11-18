@@ -137,8 +137,18 @@ public class BannerModel {
     }
 
     public static class BannerlData1 {
+
         boolean Completed;
         BannerModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;
