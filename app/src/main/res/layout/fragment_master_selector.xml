@@ -316,7 +316,7 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/linear_banner"
+                        android:id="@+id/linear_branch_course"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
                         android:gravity="center"
@@ -354,7 +354,7 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/linear_nitification"
+                        android:id="@+id/linear__branch_class"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
                         android:gravity="center"
@@ -399,7 +399,7 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/linear_banner"
+                        android:id="@+id/linear_branch_subject"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
                         android:gravity="center"
