@@ -41,75 +41,60 @@ public class MasterSelectorFragment extends Fragment {
         linear_banner = root.findViewById(R.id.linear_banner);
         linear_notification = root.findViewById(R.id.linear_nitification);
 
-        linear_user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                staff_entry_listfragment orderplace = new staff_entry_listfragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+        linear_user.setOnClickListener((View.OnClickListener) v -> {
+            staff_entry_listfragment orderplace = new staff_entry_listfragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
 
-        linear_standard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                master_standardFragment orderplace = new master_standardFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+        linear_standard.setOnClickListener((View.OnClickListener) v -> {
+            master_standardFragment orderplace = new master_standardFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
 
-        linear_school.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                master_schoolFragment orderplace = new master_schoolFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+        linear_school.setOnClickListener((View.OnClickListener) v -> {
+            master_schoolFragment orderplace = new master_schoolFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
 
-        linear_subject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                master_subjectFragment orderplace = new master_subjectFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+        linear_subject.setOnClickListener((View.OnClickListener) v -> {
+            master_subjectFragment orderplace = new master_subjectFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
-        linear_banner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Banner_Fragment orderplace = new Banner_Fragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+
+        linear_banner.setOnClickListener((View.OnClickListener) v -> {
+            Banner_Fragment orderplace = new Banner_Fragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
-        linear_notification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NotificationFragment orderplace = new NotificationFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
+
+        linear_notification.setOnClickListener((View.OnClickListener) v -> {
+            NotificationFragment orderplace = new NotificationFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
+
         callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -121,7 +106,9 @@ public class MasterSelectorFragment extends Fragment {
                 ft.commit();
             }
         };
+
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
+
         return root;
     }
 }
