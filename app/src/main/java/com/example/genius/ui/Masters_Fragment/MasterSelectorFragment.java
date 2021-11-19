@@ -15,6 +15,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.genius.R;
 import com.example.genius.ui.Banner.Banner_Fragment;
+import com.example.genius.ui.BranchClass.BranchClassFragment;
+import com.example.genius.ui.BranchCource.BranchCourseFragment;
+import com.example.genius.ui.BranchSubject.BranchSubjectFragment;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.example.genius.ui.Notification.NotificationFragment;
 import com.example.genius.ui.Staff_Entry_Fragment.staff_entry_listfragment;
@@ -24,7 +27,7 @@ public class MasterSelectorFragment extends Fragment {
 
     View root;
     Context context;
-    LinearLayout linear_user, linear_standard, linear_school, linear_subject, linear_banner, linear_notification;
+    LinearLayout linear_user, linear_standard, linear_school, linear_subject, linear_banner, linear_notification, linear_branch_course, linear__branch_class, linear_branch_subject;
     OnBackPressedCallback callback;
 
     @Override
@@ -40,6 +43,9 @@ public class MasterSelectorFragment extends Fragment {
         linear_subject = root.findViewById(R.id.linear_subject);
         linear_banner = root.findViewById(R.id.linear_banner);
         linear_notification = root.findViewById(R.id.linear_nitification);
+        linear_branch_course = root.findViewById(R.id.linear_branch_course);
+        linear__branch_class = root.findViewById(R.id.linear__branch_class);
+        linear_branch_subject = root.findViewById(R.id.linear_branch_subject);
 
         linear_user.setOnClickListener((View.OnClickListener) v -> {
             staff_entry_listfragment orderplace = new staff_entry_listfragment();
@@ -88,6 +94,33 @@ public class MasterSelectorFragment extends Fragment {
 
         linear_notification.setOnClickListener((View.OnClickListener) v -> {
             NotificationFragment orderplace = new NotificationFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        });
+
+        linear__branch_class.setOnClickListener((View.OnClickListener) view -> {
+            BranchCourseFragment orderplace = new BranchCourseFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        });
+
+        linear_branch_course.setOnClickListener((View.OnClickListener) view -> {
+            BranchClassFragment orderplace = new BranchClassFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        });
+
+        linear_branch_subject.setOnClickListener((View.OnClickListener) view -> {
+            BranchSubjectFragment orderplace = new BranchSubjectFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
