@@ -17,9 +17,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Adapter.MarksEnterAdapter;
+import com.example.genius.Adapter.MarksRegisterAdapter;
 import com.example.genius.Model.*;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -33,6 +36,7 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -53,11 +57,12 @@ public class marks_entry_Listfragment extends Fragment {
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(),dateid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM,DATEITEM;
     Integer[] STANDARDID, SUBJECTID, BRANCHID;
-    String StandardName, SubjectName, BatchTime, BranchName, BranchID, BatchId, SubjectId,TestDate;
+    String StandardName, SubjectName, BatchTime, BranchName, BranchID, BatchId, SubjectId,TestDate,Subject_Date;
     OnBackPressedCallback callback;
     Long StandardId;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+    MarksRegisterAdapter marksRegisterAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,8 +126,47 @@ public class marks_entry_Listfragment extends Fragment {
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                     else if (test_date.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
+                    else if (subject.getSelectedItemId() == 0)
+                        Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                     else {
+                        progressBarHelper.showProgressDialog();
+                        try {
+                            Date d = displaydate.parse(TestDate);
+                            Subject_Date = actualdate.format(d);
+                        }catch (Exception e){
+                        }
+                        Call<MarksModel.MarksData> call = apiCalling.GetAllStudentAchieveMarks(StandardId,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
+                                Long.parseLong(BatchId),Long.parseLong(SubjectId),Subject_Date);
+                        call.enqueue(new Callback<MarksModel.MarksData>() {
+                            @Override
+                            public void onResponse(Call<MarksModel.MarksData> call, Response<MarksModel.MarksData> response) {
+                                if (response.isSuccessful()){
+                                    MarksModel.MarksData data = response.body();
+                                    if (data.isCompleted()){
+                                        List<MarksModel> list = data.getData();
+                                        if (list != null && list.size() > 0){
+                                            no_content.setVisibility(View.GONE);
+                                            marks_entry_rv.setVisibility(View.VISIBLE);
+                                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                                            marks_entry_rv.setLayoutManager(linearLayoutManager);
+                                            marksRegisterAdapter = new MarksRegisterAdapter(context, list);
+                                            marksRegisterAdapter.notifyDataSetChanged();
+                                            marks_entry_rv.setAdapter(marksRegisterAdapter);
+                                        }else {
+                                            no_content.setVisibility(View.VISIBLE);
+                                            marks_entry_rv.setVisibility(View.GONE);
+                                        }
+                                    }
+                                    progressBarHelper.hideProgressDialog();
+                                }
+                            }
 
+                            @Override
+                            public void onFailure(Call<MarksModel.MarksData> call, Throwable t) {
+                                progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 } else {
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
@@ -219,9 +263,18 @@ public class marks_entry_Listfragment extends Fragment {
 
 
     public void GetAllSubject() {
+        progressBarHelper.showProgressDialog();
+        subjectitem.clear();
+        subjectid.clear();
         subjectitem.add("Select Subject");
         subjectid.add(0);
-        Call<SubjectData> call = apiCalling.GetAllSubject(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        try {
+            Date d = displaydate.parse(TestDate);
+            Subject_Date = actualdate.format(d);
+        }catch (Exception e){
+
+        }
+        Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date);
         call.enqueue(new Callback<SubjectData>() {
             @Override
             public void onResponse(Call<SubjectData> call, Response<SubjectData> response) {
@@ -376,8 +429,14 @@ public class marks_entry_Listfragment extends Fragment {
                         List<MarksModel> model = data.getData();
                         for (MarksModel marksModel : model) {
 
-                            String date = marksModel.getTestDate();
-                            dateitem.add(date);
+                            String testdate = marksModel.getTestDate();
+                            try {
+                                Date d = actualdate.parse(testdate);
+                                String date = displaydate.format(d);
+                                dateitem.add(date);
+                            }catch (Exception e){
+
+                            }
 
                             int id = (int) marksModel.getTestID();
                             dateid.add(id);
@@ -388,6 +447,7 @@ public class marks_entry_Listfragment extends Fragment {
 
                         bindDate();
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -418,7 +478,9 @@ public class marks_entry_Listfragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    GetAllSubject();
+                    if (test_date.getSelectedItemId() != 0){
+                        GetAllSubject();
+                    }
                 }
 
                 @Override

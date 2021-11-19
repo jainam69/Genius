@@ -52,6 +52,7 @@ import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.example.genius.ui.Staff_Entry_Fragment.staff_entry_listfragment;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
@@ -103,7 +104,7 @@ public class marks_entry_fragment extends Fragment {
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     byte[] imageVal;
     Bitmap bitmap;
-    String pictureFilePath,Achieve_Marks = "",StudentID = "";
+    String pictureFilePath,Achieve_Marks = "",StudentID = "",Subject_Date,Marks_Date;
     boolean marksentered;
     MarksEnterAdapter marksEnterAdapter;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -245,10 +246,18 @@ public class marks_entry_fragment extends Fragment {
                                 Achieve_Marks = Achieve_Marks + "," + mks;
                             }
                         }
+                        StudentID = StudentID.substring(1);
+                        Achieve_Marks = Achieve_Marks.substring(1);
+                        try {
+                            Date d = displaydate.parse(TestDate);
+                            Marks_Date = actualdate.format(d);
+                        }catch (Exception e){
+
+                        }
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        Call<MarksModel.MarksData> call = apiCalling.MarksMaintenance(0,"",TestID,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                                , "","", Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                        Call<MarksModel.MarksData> call = apiCalling.MarksMaintenance(0,Marks_Date,TestID,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                                , StudentID,Achieve_Marks,Integer.parseInt(BatchId),Long.parseLong(SubjectId),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
                                 "0","0",true,uploadfile);
                         call.enqueue(new Callback<MarksModel.MarksData>() {
                             @Override
@@ -257,6 +266,12 @@ public class marks_entry_fragment extends Fragment {
                                     MarksModel.MarksData data = response.body();
                                     if (data.isCompleted()){
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        marks_entry_Listfragment profileFragment = new marks_entry_Listfragment();
+                                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                                        FragmentTransaction ft = fm.beginTransaction();
+                                        ft.replace(R.id.nav_host_fragment, profileFragment);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -567,11 +582,18 @@ public class marks_entry_fragment extends Fragment {
 
 
     public void GetAllSubject() {
+        progressBarHelper.showProgressDialog();
         subjectitem.clear();
         subjectid.clear();
         subjectitem.add("Select Subject");
         subjectid.add(0);
-        Call<SubjectData> call = apiCalling.GetAllSubject(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        try {
+            Date d = displaydate.parse(TestDate);
+            Subject_Date = actualdate.format(d);
+        }catch (Exception e){
+
+        }
+        Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date);
         call.enqueue(new Callback<SubjectData>() {
             @Override
             public void onResponse(Call<SubjectData> call, Response<SubjectData> response) {
@@ -836,6 +858,7 @@ public class marks_entry_fragment extends Fragment {
 
                         bindDate();
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -867,7 +890,9 @@ public class marks_entry_fragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    GetAllSubject();
+                    if (test_date.getSelectedItemId() != 0){
+                        GetAllSubject();
+                    }
                 }
 
                 @Override

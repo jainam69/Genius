@@ -5,7 +5,7 @@ import android.os.ParcelUuid;
 public class ApiConstant {
 
     //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    public static final String BASE_URL = "http://192.168.29.212/api/";
+    public static final String BASE_URL = "http://192.168.29.202:45455/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
@@ -139,4 +139,30 @@ public class ApiConstant {
     public static final String GET_TEST_DETAILS = "Marks/v1/GetTestDetails";
     public static final String GET_STUDENT_DEATILS = "Marks/v1/GetStudentByStd";
     public static final String MARKS_MAITENANCE = "Marks/v1/MarksMaintenance";
+    public static final String GET_ALL_SUBJECT_BY_TESTDATE = "subject/v1/GetAllSubjectsByTestDate";
+    public static final String GET_ALL_STUDENT_ACHIEVE_MARK = "Marks/v1/GetAllAchieveMarks";
+    public static final String UPDATE_ACHIEVE_MARKS = "Marks/v1/UpdateMarksDetails";
+
+    //Branch Class
+    public static final String BRANCH_CLASS_MAITENANCE = "branchclass/v1/BranchClassMaintenance";
+    public static final String GET_BRANCH_CLASS_BRANCHCLASS_BY_ID = "branchclass/v1/GetBranchClassByBranchClassID";
+    public static final String GET_BRANCH_CLASS_BRANCHID = "branchclass/v1/GetAllBranchClassByBranchID";
+    public static final String GET_BRANCH_CLASS_BRANCHID_COURSE_ID = "branchclass/v1/GetAllBranchClassByBranchIDAndCourseID";
+    public static final String GET_BRANCH_CLASS_ALL = "branchclass/v1/GetAllClass";
+    public static final String BRANCH_CLASS_REMOVE = "branchclass/v1/RemoveClassDetail";
+
+    //Branch Course
+    public static final String BRANCH_COURCE_MAITENANCE = "branchcource/v1/BranchCourseMaintenance";
+    public static final String GET_BRANCH_COURCE_BRANCHCOURCE_BY_ID = "branchcource/v1/GetBranchCourseByBranchCourseID";
+    public static final String GET_BRANCH_COURCE_BRANCHID = "branchcource/v1/GetAllBranchCourseByBranchID";
+    public static final String GET_BRANCH_COURCE_ALL = "branchcource/v1/GetAllCourse";
+    public static final String BRANCH_COURCE_REMOVE = "branchcource/v1/RemoveBranchCourse";
+
+    //Branch Subject
+    public static final String BRANCH_SUBJECT_MAITENANCE = "branchsubject/v1/BranchSubjectMaintenance";
+    public static final String GET_BRANCH_SUBJECT_BRANCHSUBJECT_BY_ID = "branchsubject/v1/GetBranchSubjectByBranchSubjectID";
+    public static final String GET_BRANCH_SUBJECT_BRANCHID = "branchsubject/v1/GetAllBranchSubjectByBranchID";
+    public static final String GET_BRANCH_SUBJECT_ALL = "branchsubject/v1/GetAllSubject";
+    public static final String BRANCH_SUBJECT_REMOVE = "branchsubject/v1/RemoveSubjectDetail";
+
 }

@@ -7,13 +7,22 @@ public class MarksModel {
     long MarksID;
     StudentModel student;
     BranchModel branch;
+    SubjectModel SubjectInfo;
     String MarksDate;
     String AchieveMarks;
     String MarksContentFileName;
     String MarksFilepath;
-    TestScheduleModel testmodel;
+    TestScheduleModel testEntityInfo;
     long TestID;
     String TestDate;
+
+    public SubjectModel getSubjectInfo() {
+        return SubjectInfo;
+    }
+
+    public void setSubjectInfo(SubjectModel subjectInfo) {
+        SubjectInfo = subjectInfo;
+    }
 
     public long getTestID() {
         return TestID;
@@ -87,12 +96,12 @@ public class MarksModel {
         MarksFilepath = marksFilepath;
     }
 
-    public TestScheduleModel getTestmodel() {
-        return testmodel;
+    public TestScheduleModel getTestEntityInfo() {
+        return testEntityInfo;
     }
 
-    public void setTestmodel(TestScheduleModel testmodel) {
-        this.testmodel = testmodel;
+    public void setTestEntityInfo(TestScheduleModel testEntityInfo) {
+        this.testEntityInfo = testEntityInfo;
     }
 
     public static class MarksData

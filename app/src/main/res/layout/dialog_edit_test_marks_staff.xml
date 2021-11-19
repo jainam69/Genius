@@ -144,7 +144,7 @@
         android:paddingBottom="12dp"
         android:singleLine="true"
         android:textSize="15dp"
-        android:id="@+id/ach_marks"/>
+        android:id="@+id/achieve_marks"/>
 
     <LinearLayout
         android:visibility="gone"

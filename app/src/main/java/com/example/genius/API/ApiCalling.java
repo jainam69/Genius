@@ -5,9 +5,12 @@ import com.example.genius.Model.AttendanceData;
 import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
+import com.example.genius.Model.BranchCourseModel;
+import com.example.genius.Model.BranchCourseSingleModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.CourceModel;
 import com.example.genius.Model.FeeStructureData;
 import com.example.genius.Model.FeeStructureSingleData;
 import com.example.genius.Model.GalleryData;
@@ -438,9 +441,70 @@ public interface ApiCalling {
     Call<StudentModel.StudentDataList> Get_Student_Details(@Query("Std") long Std, @Query("Branch") long Branch, @Query("BatchTime") long BatchTime);
 
     @Multipart
-    @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
+    @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{BatchtimeID}/{SubjectID}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
     Call<MarksModel.MarksData> MarksMaintenance(@Path("MarksID") long MarksID,@Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
                                                @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
-                                               @Path("CreateId") long CreateId,@Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,@Query("FileName") String FileName, @Query("Extension") String Extension,
+                                                @Path("BatchtimeID") int BatchtimeID, @Path("SubjectID") long SubjectID,
+                                               @Path("CreateId") long CreateId,@Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,@Path("FileName") String FileName, @Path("Extension") String Extension,
                                                @Path("HasFile") Boolean HasFile,@Part MultipartBody.Part image);
+
+    @GET(ApiConstant.GET_ALL_SUBJECT_BY_TESTDATE)
+    Call<SubjectData> GetAllSubjectByTestDate(@Query("TestDate") String TestDate);
+
+    @POST(ApiConstant.GET_ALL_STUDENT_ACHIEVE_MARK)
+    Call<MarksModel.MarksData> GetAllStudentAchieveMarks(@Query("Std") long Std,@Query("Branch") long Branch,@Query("Batch") long Batch,@Query("MarksID") long MarksID,@Query("TestDate") String TestDate);
+
+    @POST(ApiConstant.UPDATE_ACHIEVE_MARKS)
+    Call<MarksModel.MarksData> Update_Achieve_Marks(@Query("MarksID") long MarksID,@Query("StudentID") long StudentID,@Query("AchieveMarks") String AchieveMarks,@Query("CreatedId") long CreatedId,@Query("CreatedBy") String CreatedBy,@Query("TransactionId") long TransactionId);
+
+    //Branch Course
+    @POST(ApiConstant.BRANCH_COURCE_MAITENANCE)
+    Call<BranchCourseSingleModel> BranchCourseMaintenance(@Body BranchCourseSingleModel.BranchClassData libraryModel);
+
+    @POST(ApiConstant.GET_BRANCH_COURCE_BRANCHCOURCE_BY_ID)
+    Call<BranchCourseModel> GetBranchCourseByBranchCourseID(@Query("ClassID") long ClassID, @Query("branchID") long branchID);
+
+    @POST(ApiConstant.GET_BRANCH_COURCE_BRANCHID)
+    Call<BranchCourseModel> GetAllBranchCourseByBranchID(@Query("branchID") long branchID);
+
+    @GET(ApiConstant.GET_BRANCH_COURCE_ALL)
+    Call<CourceModel> GetAllCourse();
+
+    @POST(ApiConstant.BRANCH_COURCE_REMOVE)
+    Call<BranchCourseModel> RemoveBranchCourse(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+
+    //Branch Class
+    @POST(ApiConstant.BRANCH_CLASS_MAITENANCE)
+    Call<LibrarySingleData> BranchClassMaintenance(@Body LibraryModel libraryModel);
+
+    @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHCLASS_BY_ID)
+    Call<TestScheduleModel.TestScheduleData1> GetBranchClassByBranchClassID(@Query("ClassID") long ClassID, @Query("branchID") long branchID);
+
+    @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID)
+    Call<TestScheduleModel.TestScheduleData1> GetAllBranchClassByBranchID(@Query("branchID") long branchID);
+
+    @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID_COURSE_ID)
+    Call<TestScheduleModel.TestScheduleData1> GetAllBranchClassByBranchIDAndCourseID(@Query("BranchID") long BranchID, @Query("CourseID") long CourseID);
+
+    @GET(ApiConstant.GET_BRANCH_CLASS_ALL)
+    Call<TestScheduleModel.TestScheduleData1> GetAllClass();
+
+    @POST(ApiConstant.BRANCH_CLASS_REMOVE)
+    Call<TestScheduleModel.TestScheduleData1> RemoveClassDetail(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+
+    //Branch Subject
+    @POST(ApiConstant.BRANCH_SUBJECT_MAITENANCE)
+    Call<LibrarySingleData> BranchSubjectMaintenance(@Body LibraryModel libraryModel);
+
+    @POST(ApiConstant.GET_BRANCH_SUBJECT_BRANCHSUBJECT_BY_ID)
+    Call<TestScheduleModel.TestScheduleData1> GetBranchSubjectByBranchSubjectID(@Query("SubjectID") long SubjectID, @Query("branchID") long branchID, @Query("ClassID") long ClassID);
+
+    @POST(ApiConstant.GET_BRANCH_SUBJECT_BRANCHID)
+    Call<TestScheduleModel.TestScheduleData1> GetAllBranchSubjectByBranchID(@Query("branchID") long branchID);
+
+    @GET(ApiConstant.GET_BRANCH_SUBJECT_ALL)
+    Call<TestScheduleModel.TestScheduleData1> GetAllSubject();
+
+    @POST(ApiConstant.BRANCH_SUBJECT_REMOVE)
+    Call<TestScheduleModel.TestScheduleData1> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
 }
