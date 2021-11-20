@@ -16,7 +16,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.genius.R;
 import com.example.genius.ui.Banner.Banner_Fragment;
 import com.example.genius.ui.BranchClass.BranchClassFragment;
+import com.example.genius.ui.BranchClass.BranchClassListFragment;
 import com.example.genius.ui.BranchCource.BranchCourseFragment;
+import com.example.genius.ui.BranchCource.BranchCourseListFragment;
 import com.example.genius.ui.BranchSubject.BranchSubjectFragment;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.example.genius.ui.Notification.NotificationFragment;
@@ -101,8 +103,8 @@ public class MasterSelectorFragment extends Fragment {
             fragmentTransaction.commit();
         });
 
-        linear__branch_class.setOnClickListener((View.OnClickListener) view -> {
-            BranchCourseFragment orderplace = new BranchCourseFragment();
+        linear_branch_course.setOnClickListener((View.OnClickListener) view -> {
+            BranchCourseListFragment orderplace = new BranchCourseListFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
@@ -110,8 +112,8 @@ public class MasterSelectorFragment extends Fragment {
             fragmentTransaction.commit();
         });
 
-        linear_branch_course.setOnClickListener((View.OnClickListener) view -> {
-            BranchClassFragment orderplace = new BranchClassFragment();
+        linear__branch_class.setOnClickListener((View.OnClickListener) view -> {
+            BranchClassListFragment orderplace = new BranchClassListFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
