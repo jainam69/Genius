@@ -5,6 +5,9 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.AnswerSheetData;
 import com.example.genius.Model.AnswerSheetModel;
+import com.example.genius.Model.HomeworkModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
@@ -47,8 +51,7 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     long downloadID;
-    String Name;
-    String pending_done,remarks,created_by;
+    String pending_done,remarks,created_by,classname,homework,student,Name;
     int select,status;
     long testID,StdID,created_id;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -76,7 +79,12 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
         }
         holder.standard.setText(answerSheetModels.get(position).getTestInfo().getStandard().getStandard());
         holder.stu_name.setText(answerSheetModels.get(position).getStudentInfo().getName());
-        holder.status.setText(answerSheetModels.get(position).getStatusText());
+        int st = answerSheetModels.get(position).getStatus();
+        if (st == 2){
+            holder.status.setText("Pending");
+        }else {
+            holder.status.setText("Done");
+        }
         holder.remarks.setText(answerSheetModels.get(position).getRemarks());
 
         holder.homework_checking_edit.setOnClickListener(new View.OnClickListener() {
@@ -115,13 +123,13 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
                         RadioButton done = dialogView.findViewById(R.id.done);
                         EditText rm = dialogView.findViewById(R.id.remarks);
                         AlertDialog dialog = builder.create();
-                        String rb = answerSheetModels.get(position).getStatusText();
-                        if (rb.equals("Pending"))
+                        int rb = answerSheetModels.get(position).getStatus();
+                        if (rb == 2)
                         {
                             pending.setChecked(true);
                             done.setChecked(false);
                         }
-                        if (rb.equals("Done"))
+                        if (rb == 1)
                         {
                             pending.setChecked(false);
                             done.setChecked(true);
@@ -194,33 +202,42 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
         holder.homework_checking_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
-                View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
-                builder.setView(dialogView);
-                builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
-                ImageView image = dialogView.findViewById(R.id.image);
-                TextView title = dialogView.findViewById(R.id.title);
-                title.setText("Are you sure that you want to Download Test Paper?");
-                image.setImageResource(R.drawable.download);
-                AlertDialog dialog = builder.create();
-
-                btn_edit_no.setOnClickListener(new View.OnClickListener() {
+                progressBarHelper.showProgressDialog();
+                homework = answerSheetModels.get(position).getSubmitDate().replace("T00:00:00", "");
+                student = answerSheetModels.get(position).getStudentInfo().getName().replaceAll("\\s","");
+                classname = answerSheetModels.get(position).getTestInfo().getStandard().getStandard().replaceAll("\\s","");
+                Call<HomeworkModel.HomeworkData1> call = apiCalling.Download_Student_Homework(answerSheetModels.get(position).getTestInfo().getTestID(),
+                        answerSheetModels.get(position).getStudentInfo().getStudentID(),homework,student,classname);
+                call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
                     @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
+                    public void onResponse(Call<HomeworkModel.HomeworkData1> call, Response<HomeworkModel.HomeworkData1> response) {
+                        if (response.isSuccessful()){
+                            progressBarHelper.hideProgressDialog();
+                            HomeworkModel.HomeworkData1 data = response.body();
+                            if (data.isCompleted()){
+                                HomeworkModel model = data.getData();
+                                String filetype = model.getFilePath();
+                                String filetyp = filetype.substring(filetype.lastIndexOf("."));
+                                Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                                Uri uri = Uri.parse(filetype);
+                                DownloadManager.Request request = new DownloadManager.Request(uri);
+                                Name = homework + " " + student + " " + classname + filetyp;
+                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                downloadID = dm.enqueue(request);
+                                context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<HomeworkModel.HomeworkData1> call, Throwable t) {
+                        progressBarHelper.hideProgressDialog();
+                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
-                btn_edit_yes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-
-                    }
-                });
-                dialog.show();
             }
         });
     }
@@ -254,9 +271,7 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
     private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context1, Intent intent) {
-            //Fetching the download id received with the broadcast
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-            //Checking if the received broadcast is for our enqueued download by matching download id
             if (downloadID == id) {
                 Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
             }

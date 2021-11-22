@@ -5,14 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".ui.BranchCource.BranchCourseFragment">
 
     <LinearLayout
+        android:layout_marginTop="7dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <LinearLayout
+            android:layout_marginLeft="40dp"
             android:layout_width="80dp"
             android:layout_height="50dp"
             android:gravity="center"
@@ -59,8 +62,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:gravity="center"
+        android:layout_gravity="center"
         android:layout_marginTop="-60dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
@@ -70,12 +72,10 @@
             android:id="@+id/save_course"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="-10dp"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/blue_fill"
             android:text="Save"
+            android:layout_marginRight="10dp"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -85,12 +85,10 @@
             android:id="@+id/delete_course"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="-10dp"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/blue_fill"
             android:text="Cancel"
+            android:layout_marginLeft="10dp"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"

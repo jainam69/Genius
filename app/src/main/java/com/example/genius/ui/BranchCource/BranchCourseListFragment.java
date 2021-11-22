@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,10 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Adapter.BranchCourseList_Adapter;
 import com.example.genius.Adapter.HomeworkMaster_Adapter;
+import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.R;
@@ -41,27 +45,27 @@ import retrofit2.Response;
 public class BranchCourseListFragment extends Fragment {
 
     View view;
-    View root;
     FloatingActionButton fab_contact;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    RecyclerView homework_rv;
+    RecyclerView course_list_rv;
+    TextView branch_name;
+    BranchCourseList_Adapter branchCourseListFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Course List");
         view = inflater.inflate(R.layout.fragment_branch_cource_list, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        homework_rv = root.findViewById(R.id.homework_rv);
+        fab_contact = view.findViewById(R.id.fab_contact);
+        course_list_rv = view.findViewById(R.id.course_list_rv);
 
         if (Function.checkNetworkConnection(context)) {
-            progressBarHelper.showProgressDialog();
             GetAllCource();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
@@ -93,29 +97,27 @@ public class BranchCourseListFragment extends Fragment {
     }
 
     public void GetAllCource() {
-        /*Call<HomeworkData> call = apiCalling.GetAllBranchClassByBranchID(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<HomeworkData>() {
+        progressBarHelper.showProgressDialog();
+        Call<BranchCourseModel> call = apiCalling.GetBranchCourseByBranchCourseID(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<BranchCourseModel>() {
             @Override
-            public void onResponse(@NotNull Call<HomeworkData> call, @NotNull Response<HomeworkData> response) {
+            public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
                 if (response.isSuccessful()) {
-                    HomeworkData data = response.body();
-                    if (data != null && data.isCompleted()) {
-                        List<HomeworkModel> studentModelList = data.getData();
-                        if (studentModelList != null) {
-                            if (studentModelList.size() > 0) {
-                                List<HomeworkModel> list = new ArrayList<>();
-                                for (HomeworkModel singlemodel : studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
+                    BranchCourseModel data = response.body();
+                    if (data.isCompleted()) {
+                        List<BranchCourseModel.BranchCourceData> list = data.getData();
+                        if (list != null && list.size() > 0) {
+                            List<BranchCourseModel.BranchCourceData> list1 = new ArrayList<>();
+                            for (int i = 0; i < list.size(); i++) {
+                                if (list.get(i).getIscourse()) {
+                                    list1.add(list.get(i));
                                 }
-                                homeworkfilter = studentModelList;
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                homework_rv.setLayoutManager(linearLayoutManager);
-                                homeworkMaster_adapter = new HomeworkMaster_Adapter(context, list);
-                                homeworkMaster_adapter.notifyDataSetChanged();
-                                homework_rv.setAdapter(homeworkMaster_adapter);
                             }
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                            course_list_rv.setLayoutManager(linearLayoutManager);
+                            branchCourseListFragment = new BranchCourseList_Adapter(context, list1);
+                            branchCourseListFragment.notifyDataSetChanged();
+                            course_list_rv.setAdapter(branchCourseListFragment);
                         }
                     }
                     progressBarHelper.hideProgressDialog();
@@ -123,11 +125,11 @@ public class BranchCourseListFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NotNull Call<HomeworkData> call, @NotNull Throwable t) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<BranchCourseModel> call, Throwable t) {
                 progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
     }
 
 }

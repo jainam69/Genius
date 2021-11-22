@@ -202,6 +202,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                 dialog.dismiss();
                 HomeWorkCheckingFragment orderplace = new HomeWorkCheckingFragment();
                 Bundle bundle = new Bundle();
+                bundle.putLong("ID", homeworkDetails.get(position).getHomeworkID());
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

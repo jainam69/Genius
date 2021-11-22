@@ -6,16 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.CourceModel;
 import com.example.genius.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 @SuppressLint("SetTextI18n")
@@ -23,6 +27,7 @@ public class BranchCourseAdapter extends RecyclerView.Adapter<BranchCourseAdapte
 
     Context context;
     public List<CourceModel.CourceData> CourceDataList;
+    public static List<BranchCourseModel.BranchCourceData> branchCourceData = new ArrayList<>();
     boolean isSelectedAll;
 
     public BranchCourseAdapter(Context context, List<CourceModel.CourceData> courceDataList) {
@@ -39,7 +44,25 @@ public class BranchCourseAdapter extends RecyclerView.Adapter<BranchCourseAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.course_name.setText(CourceDataList.get(position).getCourseName());
-        holder.chk_line.setChecked(isSelectedAll);
+        if (CourceDataList.get(position).getIscourse() != null){
+            holder.chk_line.setChecked(true);
+        }else {
+            holder.chk_line.setChecked(false);
+        }
+        BranchCourseModel.BranchCourceData model = new BranchCourseModel.BranchCourceData();
+        model.setIscourse(false);
+        model.setCourse(new CourceModel.CourceData(CourceDataList.get(position).getCourseID()));
+        branchCourceData.add(model);
+        holder.chk_line.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (holder.chk_line.isChecked()){
+                    model.setIscourse(true);
+                }else{
+                    model.setIscourse(true);
+                }
+            }
+        });
     }
 
     @Override

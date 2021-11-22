@@ -1,7 +1,13 @@
 package com.example.genius.Adapter;
 
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +44,9 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
 
     List<HomeworkModel> homeworkModels;
     Context context;
-    String pending_done,remarks,created_by;
+    String pending_done,remarks,created_by,classname,homework,student,Name;
     int select,status;
-    long hwID,StdID,created_id;
+    long hwID,StdID,created_id,downloadID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -189,6 +195,46 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
                 dialog.show();
             }
         });
+        holder.img_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBarHelper.showProgressDialog();
+                homework = homeworkModels.get(position).getHomeworkDate().replace("T00:00:00", "");
+                student = homeworkModels.get(position).getStudentInfo().getName().replaceAll("\\s","");
+                classname = homeworkModels.get(position).getStandardInfo().getStandard().replaceAll("\\s","");
+                Call<HomeworkModel.HomeworkData1> call = apiCalling.Download_Student_Homework(homeworkModels.get(position).getHomeworkID(),
+                        homeworkModels.get(position).getStudentInfo().getStudentID(),homework,student,classname);
+                call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
+                    @Override
+                    public void onResponse(Call<HomeworkModel.HomeworkData1> call, Response<HomeworkModel.HomeworkData1> response) {
+                        if (response.isSuccessful()){
+                            progressBarHelper.hideProgressDialog();
+                            HomeworkModel.HomeworkData1 data = response.body();
+                            if (data.isCompleted()){
+                                HomeworkModel model = data.getData();
+                                String filetype = model.getFilePath();
+                                String filetyp = filetype.substring(filetype.lastIndexOf("."));
+                                Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                                Uri uri = Uri.parse(filetype);
+                                DownloadManager.Request request = new DownloadManager.Request(uri);
+                                Name = homework + " " + student + " " + classname + filetyp;
+                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                downloadID = dm.enqueue(request);
+                                context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<HomeworkModel.HomeworkData1> call, Throwable t) {
+                        progressBarHelper.hideProgressDialog();
+                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -216,4 +262,14 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
     }
+
+    private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context1, Intent intent) {
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+            if (downloadID == id) {
+                Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 }

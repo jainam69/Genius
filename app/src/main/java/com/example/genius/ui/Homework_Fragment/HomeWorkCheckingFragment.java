@@ -63,7 +63,7 @@ public class HomeWorkCheckingFragment extends Fragment {
         {
             if (bundle.containsKey("ID"))
             {
-                id.setText(""+bundle.getInt("ID"));
+                id.setText(""+bundle.getLong("ID"));
             }
         }
 

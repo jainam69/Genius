@@ -4,15 +4,15 @@ import java.util.List;
 
 public class BranchCourseSingleModel {
 
-    private BranchClassData Data;
+    private BranchCourseModel.BranchCourceData Data;
     private String Message;
     private Boolean Completed;
 
-    public BranchClassData getData() {
+    public BranchCourseModel.BranchCourceData getData() {
         return Data;
     }
 
-    public void setData(BranchClassData data) {
+    public void setData(BranchCourseModel.BranchCourceData data) {
         Data = data;
     }
 
@@ -30,16 +30,6 @@ public class BranchCourseSingleModel {
 
     public void setCompleted(Boolean completed) {
         Completed = completed;
-    }
-
-    public static class BranchClassData {
-        private long course_dtl_id;
-        private BranchModel branch;
-        private BranchCourseModel.BranchCourceData course;
-        private TransactionModel Transaction;
-        private RowStatusModel RowStatus;
-        private List<BranchCourseModel.BranchCourceData> BranchCourseData;
-        private List<CourceModel> CourseData;
     }
 
 }

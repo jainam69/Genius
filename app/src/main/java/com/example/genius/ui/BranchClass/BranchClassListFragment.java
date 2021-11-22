@@ -2,6 +2,7 @@ package com.example.genius.ui.BranchClass;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -17,7 +18,7 @@ public class BranchClassListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Branch Class Master");
         view = inflater.inflate(R.layout.fragment_branch_class_list, container, false);
         return view;
     }
