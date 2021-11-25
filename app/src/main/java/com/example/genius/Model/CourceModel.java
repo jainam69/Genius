@@ -36,10 +36,23 @@ public class CourceModel {
 
         public long CourseID;
         public String CourseName;
-        Boolean iscourse;
+        Boolean iscourse = false;
+
+        public CourceData() {
+        }
+
+        public CourceData(long courseID) {
+            CourseID = courseID;
+        }
 
         public CourceData(Boolean iscourse) {
             this.iscourse = iscourse;
+        }
+
+        public CourceData(long courseID, String courseName, Boolean iscourse) {
+            this.iscourse = iscourse;
+            this.CourseID = courseID;
+            this.CourseName = courseName;
         }
 
         public Boolean getIscourse() {
@@ -48,10 +61,6 @@ public class CourceModel {
 
         public void setIscourse(Boolean iscourse) {
             this.iscourse = iscourse;
-        }
-
-        public CourceData(long courseID) {
-            CourseID = courseID;
         }
 
         public long getCourseID() {

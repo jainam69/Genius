@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".ui.BranchClass.BranchClassFragment">
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="7dp"
         android:layout_marginRight="10dp"
@@ -17,26 +18,28 @@
         android:background="@drawable/border">
 
         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-            android:id="@+id/coursename"
+            android:id="@+id/spinner_course"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_toRightOf="@+id/caddress"
+            android:layout_toEndOf="@+id/caddress"
             android:background="@android:color/transparent"
             android:hint="Select Course"
             android:maxLines="1"
-            android:paddingLeft="9dp"
+            android:paddingStart="9dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:textSize="15dp" />
+            android:textSize="15sp"
+            tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry" />
 
         <ImageView
             android:id="@+id/caddress"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
             android:src="@drawable/standard"
-            app:tint="@color/blue" />
+            app:tint="@color/blue"
+            tools:ignore="ContentDescription,RtlSymmetry" />
 
     </RelativeLayout>
 
@@ -46,9 +49,10 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="80dp"
+            android:layout_width="70dp"
             android:layout_height="50dp"
-            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
@@ -73,12 +77,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:gravity="center|start"
+            android:paddingStart="10dp"
             android:text="Class Name"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
     </LinearLayout>
 
@@ -87,13 +92,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="70dp"/>
+        android:layout_marginBottom="70dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_gravity="end"
         android:layout_marginTop="-60dp"
+        android:layout_marginEnd="10dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
         android:weightSum="2">
@@ -102,8 +108,8 @@
             android:id="@+id/save_course"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
             android:background="@drawable/blue_fill"
             android:text="Save"
             android:textColor="@color/white"
@@ -115,8 +121,8 @@
             android:id="@+id/delete_course"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
             android:background="@drawable/blue_fill"
             android:text="Cancel"
             android:textColor="@color/white"

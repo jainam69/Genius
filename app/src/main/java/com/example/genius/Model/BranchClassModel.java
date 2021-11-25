@@ -1,73 +1,35 @@
 package com.example.genius.Model;
-import androidx.annotation.NonNull;
-
-import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class BranchClassModel {
 
-    long Class_dtl_id;
-    BranchModel branch;
-    @SerializedName("Class")
-    ClassModel classModel;
-    BranchCourseModel.BranchCourceData BranchCourse;
-    TransactionModel Transaction;
-    RowStatusModel RowStatus;
+    List<BranchClassSingleModel.BranchClassData> Data;
+    private String Message;
+    private Boolean Completed;
 
-    public ClassModel getClassModel() {
-        return classModel;
+    public List<BranchClassSingleModel.BranchClassData> getData() {
+        return Data;
     }
 
-    public void setClassModel(ClassModel classModel) {
-        this.classModel = classModel;
+    public void setData(List<BranchClassSingleModel.BranchClassData> data) {
+        Data = data;
     }
 
-    public long getClass_dtl_id() {
-        return Class_dtl_id;
+    public String getMessage() {
+        return Message;
     }
 
-    public void setClass_dtl_id(long class_dtl_id) {
-        Class_dtl_id = class_dtl_id;
+    public void setMessage(String message) {
+        Message = message;
     }
 
-    public BranchModel getBranch() {
-        return branch;
+    public Boolean getCompleted() {
+        return Completed;
     }
 
-    public void setBranch(BranchModel branch) {
-        this.branch = branch;
-    }
-
-    public BranchCourseModel.BranchCourceData getBranchCourse() {
-        return BranchCourse;
-    }
-
-    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
-        BranchCourse = branchCourse;
-    }
-
-    public TransactionModel getTransaction() {
-        return Transaction;
-    }
-
-    public void setTransaction(TransactionModel transaction) {
-        Transaction = transaction;
-    }
-
-    public RowStatusModel getRowStatus() {
-        return RowStatus;
-    }
-
-    public void setRowStatus(RowStatusModel rowStatus) {
-        RowStatus = rowStatus;
-    }
-
-    public static class BranchClassData
-    {
-        BranchModel branch;
-        BranchCourseModel.BranchCourceData BranchCourse;
-
+    public void setCompleted(Boolean completed) {
+        Completed = completed;
     }
 
 }

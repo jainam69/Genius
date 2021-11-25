@@ -13,6 +13,11 @@ public class RowStatusModel {
         RowStatusId = rowStatusId;
     }
 
+    public RowStatusModel(int rowStatusId, String RowStatusText) {
+        RowStatusId = rowStatusId;
+        this.RowStatusText = RowStatusText;
+    }
+
     public int getRowStatusId() {
         return RowStatusId;
     }

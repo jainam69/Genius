@@ -23,7 +23,7 @@
         android:id="@+id/class_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center|start"
+        android:gravity="start|center"
         android:paddingStart="10dp"
         android:textColor="@color/black"
         android:textSize="16sp"

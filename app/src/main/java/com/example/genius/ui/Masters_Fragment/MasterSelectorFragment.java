@@ -20,6 +20,7 @@ import com.example.genius.ui.BranchClass.BranchClassListFragment;
 import com.example.genius.ui.BranchCource.BranchCourseFragment;
 import com.example.genius.ui.BranchCource.BranchCourseListFragment;
 import com.example.genius.ui.BranchSubject.BranchSubjectFragment;
+import com.example.genius.ui.BranchSubject.BranchSubjectListFragment;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.example.genius.ui.Notification.NotificationFragment;
 import com.example.genius.ui.Staff_Entry_Fragment.staff_entry_listfragment;
@@ -122,7 +123,7 @@ public class MasterSelectorFragment extends Fragment {
         });
 
         linear_branch_subject.setOnClickListener((View.OnClickListener) view -> {
-            BranchSubjectFragment orderplace = new BranchSubjectFragment();
+            BranchSubjectListFragment orderplace = new BranchSubjectListFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);

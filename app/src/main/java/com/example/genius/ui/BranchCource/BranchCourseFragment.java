@@ -1,9 +1,11 @@
 package com.example.genius.ui.BranchCource;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -57,9 +59,11 @@ public class BranchCourseFragment extends Fragment {
     BranchCourseAdapter branchCourceAdapter;
     CheckBox checkall;
     List<BranchCourseModel.BranchCourceData> list;
-    Bundle bundle;
+    List<BranchCourseModel.BranchCourceData> listForBundle;
+    Bundle bundle = null;
     BranchCourseModel.BranchCourceData model;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,26 +76,28 @@ public class BranchCourseFragment extends Fragment {
         checkall = root.findViewById(R.id.chk_all);
 
         bundle = getArguments();
-        if (bundle != null){
-            list = (List<BranchCourseModel.BranchCourceData>) bundle.getSerializable("COURSE_DTL");
-            /*if (list.size() > 0){
+        if (bundle != null) {
+            listForBundle = (List<BranchCourseModel.BranchCourceData>) bundle.getSerializable("COURSE_DTL");
+            if (listForBundle.size() > 0) {
                 List<CourceModel.CourceData> data = new ArrayList<>();
-                for (int i = 0; i< list.size();i++){
-                    list.get(i).setCourse(new CourceModel.CourceData(true));
-                    data.add(list.get(i).getCourse());
+                for (int i = 0; i < listForBundle.size(); i++) {
+                    listForBundle.get(i).setCourse(new CourceModel.CourceData(listForBundle.get(i).getCourse().getCourseID()
+                            , listForBundle.get(i).getCourse().getCourseName()
+                            , listForBundle.get(i).getIscourse()));
+                    data.add(listForBundle.get(i).getCourse());
                 }
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 course_rv.setLayoutManager(linearLayoutManager);
                 branchCourceAdapter = new BranchCourseAdapter(context, data);
                 branchCourceAdapter.notifyDataSetChanged();
                 course_rv.setAdapter(branchCourceAdapter);
-            }*/
-        }
-
-        if (Function.checkNetworkConnection(context)) {
-            GetAllCourse();
+            }
         } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+            if (Function.checkNetworkConnection(context)) {
+                GetAllCourse();
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+            }
         }
 
         checkall.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -106,29 +112,41 @@ public class BranchCourseFragment extends Fragment {
         save_course.setOnClickListener(view -> {
             progressBarHelper.showProgressDialog();
             list = new ArrayList<>();
-            if (BranchCourseAdapter.branchCourceData.size() > 0) {
+            if (BranchCourseAdapter.CourceDataList.size() > 0) {
                 TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                RowStatusModel rowStatusModel = new RowStatusModel(1);
+                RowStatusModel rowStatusModel = new RowStatusModel(1, "Active");
                 BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                long[] longs = {4, 5, 6};
-                for (int i = 0; i < BranchCourseAdapter.branchCourceData.size(); i++) {
-                    BranchCourseModel.BranchCourceData model = new BranchCourseModel.BranchCourceData(longs[i], branchModel, BranchCourseAdapter.branchCourceData.get(i).getCourse(),
-                            transactionModel, rowStatusModel, BranchCourseAdapter.branchCourceData.get(i).getIscourse());
-                    list.add(model);
+                if (bundle == null) {
+                    for (int i = 0; i < BranchCourseAdapter.CourceDataList.size(); i++) {
+                        BranchCourseModel.BranchCourceData model = new BranchCourseModel.BranchCourceData(0, branchModel, BranchCourseAdapter.CourceDataList.get(i),
+                                transactionModel, rowStatusModel, BranchCourseAdapter.CourceDataList.get(i).getIscourse());
+                        list.add(model);
+                    }
+                } else {
+                    for (int i = 0; i < BranchCourseAdapter.CourceDataList.size(); i++) {
+                        BranchCourseModel.BranchCourceData model = new BranchCourseModel.BranchCourceData(listForBundle.get(i).getCourse_dtl_id(), branchModel, BranchCourseAdapter.CourceDataList.get(i),
+                                transactionModel, rowStatusModel, BranchCourseAdapter.CourceDataList.get(i).getIscourse());
+                        list.add(model);
+                    }
                 }
                 BranchCourseModel.BranchCourceData branch = new BranchCourseModel.BranchCourceData(list);
                 Call<BranchCourseSingleModel> call = apiCalling.BranchCourseMaintenance(branch);
                 call.enqueue(new Callback<BranchCourseSingleModel>() {
                     @Override
-                    public void onResponse(Call<BranchCourseSingleModel> call, Response<BranchCourseSingleModel> response) {
+                    public void onResponse(@NotNull Call<BranchCourseSingleModel> call, @NotNull Response<BranchCourseSingleModel> response) {
                         if (response.isSuccessful()) {
                             BranchCourseSingleModel data = response.body();
-                            if (data.getCompleted()) {
-                                BranchCourseModel.BranchCourceData model = data.getData();
-                                if (model.getCourse_dtl_id() >= 0) {
-                                    Toast.makeText(context, "Course Created Successfully.", Toast.LENGTH_SHORT).show();
+                            if (data != null) {
+                                if (data.getCompleted()) {
+                                    Function.showToast(context, data.getMessage());
+                                    BranchCourseListFragment profileFragment = new BranchCourseListFragment();
+                                    FragmentManager fm = requireActivity().getSupportFragmentManager();
+                                    FragmentTransaction ft = fm.beginTransaction();
+                                    ft.replace(R.id.nav_host_fragment, profileFragment);
+                                    ft.addToBackStack(null);
+                                    ft.commit();
                                 } else {
-                                    Toast.makeText(context, "Course Already Exists!", Toast.LENGTH_SHORT).show();
+                                    Function.showToast(context, data.getMessage());
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -136,7 +154,7 @@ public class BranchCourseFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<BranchCourseSingleModel> call, Throwable t) {
+                    public void onFailure(@NotNull Call<BranchCourseSingleModel> call, @NotNull Throwable t) {
                         progressBarHelper.hideProgressDialog();
                         Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                     }
@@ -146,7 +164,12 @@ public class BranchCourseFragment extends Fragment {
 
         delete_course = root.findViewById(R.id.delete_course);
         delete_course.setOnClickListener(view -> {
-
+            BranchCourseListFragment profileFragment = new BranchCourseListFragment();
+            FragmentManager fm = requireActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.nav_host_fragment, profileFragment);
+            ft.addToBackStack(null);
+            ft.commit();
         });
 
         callback = new OnBackPressedCallback(true) {
@@ -177,13 +200,6 @@ public class BranchCourseFragment extends Fragment {
                         List<CourceModel.CourceData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                if (bundle != null && list.size() >0)
-                                {
-                                    for (int i = 0; i < list.size(); i++){
-                                        list.get(i).setCourse(new CourceModel.CourceData(true));
-                                        studentModelList.add(list.get(i).getCourse());
-                                    }
-                                }
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 course_rv.setLayoutManager(linearLayoutManager);
                                 branchCourceAdapter = new BranchCourseAdapter(context, studentModelList);

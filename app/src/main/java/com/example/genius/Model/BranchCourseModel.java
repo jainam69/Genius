@@ -48,7 +48,11 @@ public class BranchCourseModel {
 
         }
 
-        public BranchCourceData(long course_dtl_id,BranchModel branch, CourceModel.CourceData course, TransactionModel transaction, RowStatusModel rowStatus, Boolean iscourse) {
+        public BranchCourceData(long course_dtl_id) {
+            this.course_dtl_id = course_dtl_id;
+        }
+
+        public BranchCourceData(long course_dtl_id, BranchModel branch, CourceModel.CourceData course, TransactionModel transaction, RowStatusModel rowStatus, Boolean iscourse) {
             this.course_dtl_id = course_dtl_id;
             this.branch = branch;
             this.course = course;
@@ -60,8 +64,6 @@ public class BranchCourseModel {
         public BranchCourceData(List<BranchCourceData> branchCourseData) {
             BranchCourseData = branchCourseData;
         }
-
-
 
         public Boolean getIscourse() {
             return iscourse;

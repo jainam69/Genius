@@ -101,21 +101,15 @@ public class BranchCourseListFragment extends Fragment {
         Call<BranchCourseModel> call = apiCalling.GetBranchCourseByBranchCourseID(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<BranchCourseModel>() {
             @Override
-            public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
+            public void onResponse(@NotNull Call<BranchCourseModel> call, @NotNull Response<BranchCourseModel> response) {
                 if (response.isSuccessful()) {
                     BranchCourseModel data = response.body();
-                    if (data.isCompleted()) {
+                    if (data != null && data.isCompleted()) {
                         List<BranchCourseModel.BranchCourceData> list = data.getData();
                         if (list != null && list.size() > 0) {
-                            List<BranchCourseModel.BranchCourceData> list1 = new ArrayList<>();
-                            for (int i = 0; i < list.size(); i++) {
-                                if (list.get(i).getIscourse()) {
-                                    list1.add(list.get(i));
-                                }
-                            }
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             course_list_rv.setLayoutManager(linearLayoutManager);
-                            branchCourseListFragment = new BranchCourseList_Adapter(context, list1);
+                            branchCourseListFragment = new BranchCourseList_Adapter(context, data);
                             branchCourseListFragment.notifyDataSetChanged();
                             course_list_rv.setAdapter(branchCourseListFragment);
                         }
@@ -125,7 +119,7 @@ public class BranchCourseListFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<BranchCourseModel> call, Throwable t) {
+            public void onFailure(@NotNull Call<BranchCourseModel> call, @NotNull Throwable t) {
                 progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
             }

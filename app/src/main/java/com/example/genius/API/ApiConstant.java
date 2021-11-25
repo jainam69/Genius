@@ -1,7 +1,5 @@
 package com.example.genius.API;
 
-import android.os.ParcelUuid;
-
 public class ApiConstant {
 
     //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
@@ -142,13 +140,15 @@ public class ApiConstant {
     public static final String GET_ALL_SUBJECT_BY_TESTDATE = "subject/v1/GetAllSubjectsByTestDate";
     public static final String GET_ALL_STUDENT_ACHIEVE_MARK = "Marks/v1/GetAllAchieveMarks";
     public static final String UPDATE_ACHIEVE_MARKS = "Marks/v1/UpdateMarksDetails";
+    public static final String DOWNLOAD_STUDENT_HOMEWORK = "homework/v1/DownloadZipFile";
+    public static final String DOWNLOAD_STUDENT_TEST_PAPER = "test/v1/DownloadZipFile";
 
     //Branch Class
     public static final String BRANCH_CLASS_MAITENANCE = "branchclass/v1/BranchClassMaintenance";
     public static final String GET_BRANCH_CLASS_BRANCHCLASS_BY_ID = "branchclass/v1/GetBranchClassByBranchClassID";
-    public static final String GET_BRANCH_CLASS_BRANCHID = "branchclass/v1/GetAllBranchClassByBranchID";
     public static final String GET_BRANCH_CLASS_BRANCHID_COURSE_ID = "branchclass/v1/GetAllBranchClassByBranchIDAndCourseID";
     public static final String GET_BRANCH_CLASS_ALL = "branchclass/v1/GetAllClass";
+    public static final String GET_BRANCH_CLASS_BRANCHID = "branchclass/v1/GetAllBranchClassByBranchID";
     public static final String BRANCH_CLASS_REMOVE = "branchclass/v1/RemoveClassDetail";
 
     //Branch Course

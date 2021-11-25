@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,53 +21,53 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
-import com.example.genius.Model.BranchCourseModel;
+import com.example.genius.Model.BranchClassSingleModel;
+import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
-import com.example.genius.ui.BranchCource.BranchCourseFragment;
-import com.example.genius.ui.Staff_Entry_Fragment.staff_entry_fragment;
-import com.google.gson.Gson;
+import com.example.genius.ui.BranchClass.BranchClassFragment;
+import com.example.genius.ui.BranchSubject.BranchSubjectFragment;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseList_Adapter.ViewHolder> {
+public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectListAapter.ViewHolder> {
 
     Context context;
-    //List<BranchCourseModel.BranchCourceData> branchCourceData;
-    BranchCourseModel branchCourceData;
+    public List<BranchSubjectModel.BranchSubjectData> CourceDataList;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
 
-    public BranchCourseList_Adapter(Context context, BranchCourseModel branchCourceData) {
+    public BranchSubjectListAapter(Context context, List<BranchSubjectModel.BranchSubjectData> courceDataList) {
         this.context = context;
-        this.branchCourceData = branchCourceData;
+        CourceDataList = courceDataList;
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
     }
 
-    @NonNull
+    @NotNull
     @Override
-    public BranchCourseList_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_branch_course_list_line, parent, false));
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_branch_subject_list_line, parent, false));
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull BranchCourseList_Adapter.ViewHolder holder, int position) {
-        holder.branch_name.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
-        holder.course_sublist_rv.setLayoutManager(new LinearLayoutManager(context));
-        holder.course_sublist_rv.setAdapter(new BranchCourseSubList_Adapter(context, branchCourceData.getData()));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.txt_branch_name.setText(CourceDataList.get(position).branch.getBranchName());
+        holder.txt_course_name.setText(CourceDataList.get(position).BranchCourse.getCourse().getCourseName());
+        holder.txt_class_name.setText(CourceDataList.get(position).getClassModel().getClassName());
+        holder.subject_sublist_rv.setLayoutManager(new LinearLayoutManager(context));
+        holder.subject_sublist_rv.setAdapter(new BranchSubjectSublistAapter(context, CourceDataList.get(position).BranchSubjectData));
         holder.img_edit.setOnClickListener((View.OnClickListener) v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -78,7 +77,7 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
             Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
-            title.setText("Are you sure that you want to Edit Course?");
+            title.setText("Are you sure that you want to Edit Class?");
             image.setImageResource(R.drawable.ic_edit);
             AlertDialog dialog = builder.create();
 
@@ -86,10 +85,11 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
 
             btn_edit_yes.setOnClickListener((View.OnClickListener) v12 -> {
                 dialog.dismiss();
-                BranchCourseFragment orderplace = new BranchCourseFragment();
+                BranchSubjectFragment orderplace = new BranchSubjectFragment();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("COURSE_DTL", (Serializable) branchCourceData.getData());
-                //bundle.putSerializable("COURSE_DTL", new Gson().toJson(branchCourceData));
+                bundle.putSerializable("COURSE_DTL", (Serializable) CourceDataList.get(position).BranchSubjectData);
+                bundle.putSerializable("COURSE_NAME", CourceDataList.get(position).BranchCourse.getCourse().getCourseName());
+                bundle.putSerializable("CLASS_NAME", CourceDataList.get(position).getClassModel().getClassName());
                 //bundle.putParcelable("COURSE_DTL_PARSE", (Parcelable) branchCourceData.get(position));
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
@@ -117,7 +117,9 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
 
             btn_delete.setOnClickListener(v14 -> {
                 progressBarHelper.showProgressDialog();
-                Call<CommonModel> call = apiCalling.RemoveBranchCourse(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                Call<CommonModel> call = apiCalling.RemoveClassDetail(CourceDataList.get(position).BranchCourse.getCourse_dtl_id()
+                        , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                        , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID));
                 call.enqueue(new Callback<CommonModel>() {
                     @Override
                     public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
@@ -148,24 +150,26 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
 
     @Override
     public int getItemCount() {
-        return 1;
+        return CourceDataList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView branch_name;
+        TextView txt_branch_name, txt_course_name, txt_class_name;
+        RecyclerView subject_sublist_rv;
         ImageView img_edit, img_delete;
-        RecyclerView course_sublist_rv;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            branch_name = itemView.findViewById(R.id.branch_name);
-            course_sublist_rv = itemView.findViewById(R.id.course_sublist_rv);
+            txt_branch_name = itemView.findViewById(R.id.txt_branch_name);
+            txt_course_name = itemView.findViewById(R.id.txt_course_name);
+            subject_sublist_rv = itemView.findViewById(R.id.subject_sublist_rv);
+            txt_class_name = itemView.findViewById(R.id.txt_class_name);
             img_edit = itemView.findViewById(R.id.img_edit);
             img_delete = itemView.findViewById(R.id.img_delete);
 
         }
     }
+
 }

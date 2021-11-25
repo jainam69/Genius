@@ -1,23 +1,89 @@
 package com.example.genius.Model;
 
+import java.util.List;
+
 public class ClassModel {
 
-    long ClassID;
-    String ClassName;
+    private String Message;
+    private Boolean Completed;
 
-    public long getClassID() {
-        return ClassID;
+    private List<ClassData> Data;
+
+    public List<ClassData> getData() {
+        return Data;
     }
 
-    public void setClassID(long classID) {
-        ClassID = classID;
+    public void setData(List<ClassData> data) {
+        Data = data;
     }
 
-    public String getClassName() {
-        return ClassName;
+    public String getMessage() {
+        return Message;
     }
 
-    public void setClassName(String className) {
-        ClassName = className;
+    public void setMessage(String message) {
+        Message = message;
+    }
+
+    public Boolean getCompleted() {
+        return Completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        Completed = completed;
+    }
+
+    public static class ClassData {
+
+        long ClassID;
+        String ClassName;
+        Boolean iscourse = false;
+
+        public ClassData() {
+        }
+
+        public ClassData(long courseID) {
+            ClassID = courseID;
+        }
+
+        public ClassData(Boolean iscourse) {
+            this.iscourse = iscourse;
+        }
+
+        public ClassData(long courseID, String courseName, Boolean iscourse) {
+            this.iscourse = iscourse;
+            this.ClassID = courseID;
+            this.ClassName = courseName;
+        }
+
+        public ClassData(long classID, String className) {
+            ClassID = classID;
+            ClassName = className;
+        }
+
+        public Boolean getIscourse() {
+            return iscourse;
+        }
+
+        public void setIscourse(Boolean iscourse) {
+            this.iscourse = iscourse;
+        }
+
+        public long getClassID() {
+            return ClassID;
+        }
+
+        public void setClassID(long classID) {
+            ClassID = classID;
+        }
+
+        public String getClassName() {
+            return ClassName;
+        }
+
+        public void setClassName(String className) {
+            ClassName = className;
+        }
+
     }
 }

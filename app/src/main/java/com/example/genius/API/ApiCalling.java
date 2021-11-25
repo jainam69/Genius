@@ -5,10 +5,14 @@ import com.example.genius.Model.AttendanceData;
 import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
+import com.example.genius.Model.BranchClassModel;
+import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.BranchCourseSingleModel;
 import com.example.genius.Model.BranchModel;
+import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.CategoryData;
+import com.example.genius.Model.ClassModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.CourceModel;
 import com.example.genius.Model.FeeStructureData;
@@ -43,6 +47,7 @@ import com.example.genius.Model.StudentData;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
+import com.example.genius.Model.SuperAdminSubjectModel;
 import com.example.genius.Model.TestScheduleData;
 import com.example.genius.Model.TestScheduleModel;
 import com.example.genius.Model.ToDoByIdData;
@@ -404,35 +409,35 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.BANNER_MAINTENANCE + "/{BannerID}/{BranchID}/{isAdmin}/{isTeacher}/{isStudent}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
-    Call<BannerModel.BannerlData1> BannerMaintenance(@Path("BannerID") long BannerID, @Path("BranchID") long BranchID, @Path("isAdmin") Boolean isAdmin, @Path("isTeacher") Boolean isTeacher,@Path("isStudent") Boolean isStudent,
-                                                            @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
-                                                            @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+    Call<BannerModel.BannerlData1> BannerMaintenance(@Path("BannerID") long BannerID, @Path("BranchID") long BranchID, @Path("isAdmin") Boolean isAdmin, @Path("isTeacher") Boolean isTeacher, @Path("isStudent") Boolean isStudent,
+                                                     @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
+                                                     @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @Multipart
     @POST(ApiConstant.TODO_MAINTENANCE + "/{ToDoID}/{ToDo_Date}/{BranchID}/{UserID}/{ToDo_Description}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
     Call<TodoModel.TodoData1> ToDoMaintenance(@Path("ToDoID") long ToDoID, @Path("ToDo_Date") String ToDo_Date, @Path("BranchID") long BranchID, @Path("UserID") long UserID, @Path("ToDo_Description") String ToDo_Description,
-                                                @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
-                                                @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+                                              @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
+                                              @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @POST(ApiConstant.GET_TEST_MARKS_DATE)
     Call<MarksModel.MarksData> Get_Test_Marks(@Query("BranchID") long BranchID, @Query("stdID") long stdID, @Query("BatchType") int BatchType);
 
     @Multipart
     @POST(ApiConstant.STUDENT_MAINTENANCE + "/{StudentID}/{ParentID}/{Gr_No}/{Name}/{Birth_Date}/{Address}/{BranchID}/{StandardID}/{SchoolID}/{School_TimeID}/{Batch_TimeID}/{Last_Year_Result}/{Grade}/{Class_Name}/{Student_Contact_No}/{Admission_Date}/{Parent_Name}/{Father_Occupation}/{Mother_Occupation}/{Parent_Contact_No}/{CreateId}/{CreateBy}/{TransactionId}/{std_pwd}/{parent_pwd}/{FileName}/{Extension}/{HasFile}")
-    Call<StudentModel.StudentData1> StudentMaintenance(@Path("StudentID") long StudentID, @Path("ParentID") long ParentID, @Path("Gr_No") String Gr_No, @Path("Name") String Name,@Path("Birth_Date") String Birth_Date,@Path("Address") String Address,@Path("BranchID") long BranchID,@Path("StandardID") long StandardID, @Path("SchoolID") long SchoolID,
-                                                    @Path("School_TimeID") int School_TimeID,@Path("Batch_TimeID") int Batch_TimeID,@Path("Last_Year_Result") int Last_Year_Result,@Path("Grade") String Grade,@Path("Class_Name") String Class_Name,
-                                                    @Path("Student_Contact_No") String Student_Contact_No,@Path("Admission_Date") String Admission_Date,@Path("Parent_Name") String Parent_Name,@Path("Father_Occupation") String Father_Occupation,@Path("Mother_Occupation") String Mother_Occupation,
-                                                    @Path("Parent_Contact_No") String Parent_Contact_No,@Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,@Path("std_pwd") String std_pwd,@Path("parent_pwd") String parent_pwd, @Path("FileName") String FileName,
-                                                    @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+    Call<StudentModel.StudentData1> StudentMaintenance(@Path("StudentID") long StudentID, @Path("ParentID") long ParentID, @Path("Gr_No") String Gr_No, @Path("Name") String Name, @Path("Birth_Date") String Birth_Date, @Path("Address") String Address, @Path("BranchID") long BranchID, @Path("StandardID") long StandardID, @Path("SchoolID") long SchoolID,
+                                                       @Path("School_TimeID") int School_TimeID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Last_Year_Result") int Last_Year_Result, @Path("Grade") String Grade, @Path("Class_Name") String Class_Name,
+                                                       @Path("Student_Contact_No") String Student_Contact_No, @Path("Admission_Date") String Admission_Date, @Path("Parent_Name") String Parent_Name, @Path("Father_Occupation") String Father_Occupation, @Path("Mother_Occupation") String Mother_Occupation,
+                                                       @Path("Parent_Contact_No") String Parent_Contact_No, @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("std_pwd") String std_pwd, @Path("parent_pwd") String parent_pwd, @Path("FileName") String FileName,
+                                                       @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @GET(ApiConstant.UPDATE_HOMEWORK_CHECKING)
-    Call<HomeworkModel.HomeworkDetailData> Update_Homework_Checking(@Query("HomeworkID") long HomeworkID, @Query("StudentID") long StudentID, @Query("Remark") String Remark, @Query("Status") int Status,@Query("CreatedBy") String CreatedBy,@Query("CreatedId") long CreatedId);
+    Call<HomeworkModel.HomeworkDetailData> Update_Homework_Checking(@Query("HomeworkID") long HomeworkID, @Query("StudentID") long StudentID, @Query("Remark") String Remark, @Query("Status") int Status, @Query("CreatedBy") String CreatedBy, @Query("CreatedId") long CreatedId);
 
     @GET(ApiConstant.GET_HOMEWORK_CHECKING_LIST)
     Call<HomeworkModel.HomeworkDetailData> Get_Homework_Checking_List(@Query("hwID") long hwID);
 
     @GET(ApiConstant.UPDATE_TEST_PAPER_CHECKING)
-    Call<AnswerSheetData> Update_Test_Paper_Checking(@Query("TestID") long TestID, @Query("StudentID") long StudentID, @Query("Remark") String Remark, @Query("Status") int Status,@Query("CreatedBy") String CreatedBy,@Query("CreatedId") long CreatedId);
+    Call<AnswerSheetData> Update_Test_Paper_Checking(@Query("TestID") long TestID, @Query("StudentID") long StudentID, @Query("Remark") String Remark, @Query("Status") int Status, @Query("CreatedBy") String CreatedBy, @Query("CreatedId") long CreatedId);
 
     @POST(ApiConstant.GET_TEST_DETAILS)
     Call<TestScheduleModel.TestScheduleData1> Get_Test_Details(@Query("TestID") long TestID, @Query("SubjectID") long SubjectID);
@@ -442,27 +447,27 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{BatchtimeID}/{SubjectID}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
-    Call<MarksModel.MarksData> MarksMaintenance(@Path("MarksID") long MarksID,@Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
-                                               @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
+    Call<MarksModel.MarksData> MarksMaintenance(@Path("MarksID") long MarksID, @Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
+                                                @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
                                                 @Path("BatchtimeID") int BatchtimeID, @Path("SubjectID") long SubjectID,
-                                               @Path("CreateId") long CreateId,@Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,@Path("FileName") String FileName, @Path("Extension") String Extension,
-                                               @Path("HasFile") Boolean HasFile,@Part MultipartBody.Part image);
+                                                @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
+                                                @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @GET(ApiConstant.GET_ALL_SUBJECT_BY_TESTDATE)
     Call<SubjectData> GetAllSubjectByTestDate(@Query("TestDate") String TestDate);
 
     @POST(ApiConstant.GET_ALL_STUDENT_ACHIEVE_MARK)
-    Call<MarksModel.MarksData> GetAllStudentAchieveMarks(@Query("Std") long Std,@Query("Branch") long Branch,@Query("Batch") long Batch,@Query("MarksID") long MarksID,@Query("TestDate") String TestDate);
+    Call<MarksModel.MarksData> GetAllStudentAchieveMarks(@Query("Std") long Std, @Query("Branch") long Branch, @Query("Batch") long Batch, @Query("MarksID") long MarksID, @Query("TestDate") String TestDate);
 
     @POST(ApiConstant.UPDATE_ACHIEVE_MARKS)
-    Call<MarksModel.MarksData> Update_Achieve_Marks(@Query("MarksID") long MarksID,@Query("StudentID") long StudentID,@Query("AchieveMarks") String AchieveMarks,@Query("CreatedId") long CreatedId,@Query("CreatedBy") String CreatedBy,@Query("TransactionId") long TransactionId);
+    Call<MarksModel.MarksData> Update_Achieve_Marks(@Query("MarksID") long MarksID, @Query("StudentID") long StudentID, @Query("AchieveMarks") String AchieveMarks, @Query("CreatedId") long CreatedId, @Query("CreatedBy") String CreatedBy, @Query("TransactionId") long TransactionId);
 
     //Branch Course
     @POST(ApiConstant.BRANCH_COURCE_MAITENANCE)
-    Call<BranchCourseSingleModel> BranchCourseMaintenance(@Body BranchCourseSingleModel.BranchClassData libraryModel);
+    Call<BranchCourseSingleModel> BranchCourseMaintenance(@Body BranchCourseModel.BranchCourceData libraryModel);
 
     @POST(ApiConstant.GET_BRANCH_COURCE_BRANCHCOURCE_BY_ID)
-    Call<BranchCourseModel> GetBranchCourseByBranchCourseID(@Query("ClassID") long ClassID, @Query("branchID") long branchID);
+    Call<BranchCourseModel> GetBranchCourseByBranchCourseID(@Query("BranchCourseID") long BranchCourseID);
 
     @POST(ApiConstant.GET_BRANCH_COURCE_BRANCHID)
     Call<BranchCourseModel> GetAllBranchCourseByBranchID(@Query("branchID") long branchID);
@@ -471,40 +476,49 @@ public interface ApiCalling {
     Call<CourceModel> GetAllCourse();
 
     @POST(ApiConstant.BRANCH_COURCE_REMOVE)
-    Call<BranchCourseModel> RemoveBranchCourse(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+    Call<CommonModel> RemoveBranchCourse(@Query("BranchCourseID") long BranchCourseID, @Query("lastupdatedby") String lastupdatedby);
 
     //Branch Class
     @POST(ApiConstant.BRANCH_CLASS_MAITENANCE)
-    Call<LibrarySingleData> BranchClassMaintenance(@Body LibraryModel libraryModel);
+    Call<BranchClassSingleModel> BranchClassMaintenance(@Body BranchClassSingleModel.BranchClassData libraryModel);
 
     @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHCLASS_BY_ID)
-    Call<TestScheduleModel.TestScheduleData1> GetBranchClassByBranchClassID(@Query("ClassID") long ClassID, @Query("branchID") long branchID);
-
-    @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID)
-    Call<TestScheduleModel.TestScheduleData1> GetAllBranchClassByBranchID(@Query("branchID") long branchID);
+    Call<BranchClassModel> GetBranchClassByBranchClassID(@Query("ClassID") long ClassID, @Query("branchID") long branchID);
 
     @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID_COURSE_ID)
-    Call<TestScheduleModel.TestScheduleData1> GetAllBranchClassByBranchIDAndCourseID(@Query("BranchID") long BranchID, @Query("CourseID") long CourseID);
+    Call<BranchClassModel> GetAllBranchClassByBranchIDAndCourseID(@Query("branchID") long branchID, @Query("CourseID") long CourseID);
 
     @GET(ApiConstant.GET_BRANCH_CLASS_ALL)
-    Call<TestScheduleModel.TestScheduleData1> GetAllClass();
+    Call<ClassModel> GetAllClass();
+
+    @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID)
+    Call<BranchClassModel> GetAllBranchClassByBranchID(@Query("BranchID") long BranchID);
 
     @POST(ApiConstant.BRANCH_CLASS_REMOVE)
-    Call<TestScheduleModel.TestScheduleData1> RemoveClassDetail(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+    Call<CommonModel> RemoveClassDetail(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
 
     //Branch Subject
     @POST(ApiConstant.BRANCH_SUBJECT_MAITENANCE)
-    Call<LibrarySingleData> BranchSubjectMaintenance(@Body LibraryModel libraryModel);
+    Call<BranchSubjectModel> BranchSubjectMaintenance(@Body BranchSubjectModel.BranchSubjectData libraryModel);
 
     @POST(ApiConstant.GET_BRANCH_SUBJECT_BRANCHSUBJECT_BY_ID)
     Call<TestScheduleModel.TestScheduleData1> GetBranchSubjectByBranchSubjectID(@Query("SubjectID") long SubjectID, @Query("branchID") long branchID, @Query("ClassID") long ClassID);
 
     @POST(ApiConstant.GET_BRANCH_SUBJECT_BRANCHID)
-    Call<TestScheduleModel.TestScheduleData1> GetAllBranchSubjectByBranchID(@Query("branchID") long branchID);
+    Call<BranchSubjectModel> GetAllBranchSubjectByBranchID(@Query("branchID") long branchID);
 
     @GET(ApiConstant.GET_BRANCH_SUBJECT_ALL)
-    Call<TestScheduleModel.TestScheduleData1> GetAllSubject();
+    Call<SuperAdminSubjectModel> GetAllSubject();
 
     @POST(ApiConstant.BRANCH_SUBJECT_REMOVE)
     Call<TestScheduleModel.TestScheduleData1> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+
+    @GET(ApiConstant.DOWNLOAD_STUDENT_HOMEWORK + "/{HomeworkID}/{StudentID}/{Homework}/{Student}/{Class}")
+    Call<HomeworkModel.HomeworkData1> Download_Student_Homework(@Path("HomeworkID") long HomeworkID, @Path("StudentID") long StudentID, @Path("Homework") String Homework,
+                                                                @Path("Student") String Student, @Path("Class") String Class);
+
+    @GET(ApiConstant.DOWNLOAD_STUDENT_TEST_PAPER + "/{TestID}/{StudentID}/{Homework}/{Student}/{Class}")
+    Call<HomeworkModel.HomeworkData1> Download_Student_Test_Paper(@Path("TestID") long TestID, @Path("StudentID") long StudentID, @Path("Homework") String Homework,
+                                                                  @Path("Student") String Student, @Path("Class") String Class);
+
 }

@@ -3,70 +3,88 @@ package com.example.genius.Model;
 import java.util.List;
 
 public class SuperAdminSubjectModel {
-    public long SubjectID;
-    public String SubjectName;
-    public TransactionModel Transaction;
-    public RowStatusModel RowStatus;
 
-    public long getSubjectID() {
-        return SubjectID;
+    boolean Completed;
+    List<SuperAdminSubjectData> Data;
+    String Message;
+
+    public boolean isCompleted() {
+        return Completed;
     }
 
-    public void setSubjectID(long subjectID) {
-        SubjectID = subjectID;
+    public void setCompleted(boolean completed) {
+        Completed = completed;
     }
 
-    public String getSubjectName() {
-        return SubjectName;
+    public List<SuperAdminSubjectData> getData() {
+        return Data;
     }
 
-    public void setSubjectName(String subjectName) {
-        SubjectName = subjectName;
+    public void setData(List<SuperAdminSubjectData> data) {
+        Data = data;
     }
 
-    public TransactionModel getTransaction() {
-        return Transaction;
+    public String getMessage() {
+        return Message;
     }
 
-    public void setTransaction(TransactionModel transaction) {
-        Transaction = transaction;
+    public void setMessage(String message) {
+        Message = message;
     }
 
-    public RowStatusModel getRowStatus() {
-        return RowStatus;
-    }
+    public static class SuperAdminSubjectData{
 
-    public void setRowStatus(RowStatusModel rowStatus) {
-        RowStatus = rowStatus;
-    }
+        public long SubjectID;
+        public String SubjectName;
+        public TransactionModel Transaction;
+        public RowStatusModel RowStatus;
+        public boolean isSubject;
 
-    public class SuperAdminSubjectData{
-        boolean Completed;
-        List<SuperAdminSubjectModel> Data;
-        String Message;
-
-        public boolean isCompleted() {
-            return Completed;
+        public SuperAdminSubjectData(long subjectID, String subjectName, boolean isSubject) {
+            SubjectID = subjectID;
+            SubjectName = subjectName;
+            this.isSubject = isSubject;
         }
 
-        public void setCompleted(boolean completed) {
-            Completed = completed;
+        public boolean isSubject() {
+            return isSubject;
         }
 
-        public List<SuperAdminSubjectModel> getData() {
-            return Data;
+        public void setSubject(boolean subject) {
+            isSubject = subject;
         }
 
-        public void setData(List<SuperAdminSubjectModel> data) {
-            Data = data;
+        public long getSubjectID() {
+            return SubjectID;
         }
 
-        public String getMessage() {
-            return Message;
+        public void setSubjectID(long subjectID) {
+            SubjectID = subjectID;
         }
 
-        public void setMessage(String message) {
-            Message = message;
+        public String getSubjectName() {
+            return SubjectName;
         }
+
+        public void setSubjectName(String subjectName) {
+            SubjectName = subjectName;
+        }
+
+        public TransactionModel getTransaction() {
+            return Transaction;
+        }
+
+        public void setTransaction(TransactionModel transaction) {
+            Transaction = transaction;
+        }
+
+        public RowStatusModel getRowStatus() {
+            return RowStatus;
+        }
+
+        public void setRowStatus(RowStatusModel rowStatus) {
+            RowStatus = rowStatus;
+        }
+
     }
 }
