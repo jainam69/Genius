@@ -37,6 +37,7 @@ public class CourceModel {
         public long CourseID;
         public String CourseName;
         Boolean iscourse = false;
+        public long course_dtl_id;
 
         public CourceData() {
         }
@@ -53,6 +54,14 @@ public class CourceModel {
             this.iscourse = iscourse;
             this.CourseID = courseID;
             this.CourseName = courseName;
+        }
+
+        public long getCourse_dtl_id() {
+            return course_dtl_id;
+        }
+
+        public void setCourse_dtl_id(long course_dtl_id) {
+            this.course_dtl_id = course_dtl_id;
         }
 
         public Boolean getIscourse() {

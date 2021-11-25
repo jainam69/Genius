@@ -48,6 +48,86 @@ public class BranchClassSingleModel {
         public List<ClassModel.ClassData> ClassData;
         public boolean isClass;
 
+        public long getClass_dtl_id() {
+            return Class_dtl_id;
+        }
+
+        public void setClass_dtl_id(long class_dtl_id) {
+            Class_dtl_id = class_dtl_id;
+        }
+
+        public BranchModel getBranch() {
+            return branch;
+        }
+
+        public void setBranch(BranchModel branch) {
+            this.branch = branch;
+        }
+
+        public BranchClassSingleModel.BranchClassData getBranchClass() {
+            return branchClass;
+        }
+
+        public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+            this.branchClass = branchClass;
+        }
+
+        public BranchCourseModel.BranchCourceData getBranchCourse() {
+            return BranchCourse;
+        }
+
+        public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+            BranchCourse = branchCourse;
+        }
+
+        public TransactionModel getTransaction() {
+            return Transaction;
+        }
+
+        public void setTransaction(TransactionModel transaction) {
+            Transaction = transaction;
+        }
+
+        public RowStatusModel getRowStatus() {
+            return RowStatus;
+        }
+
+        public void setRowStatus(RowStatusModel rowStatus) {
+            RowStatus = rowStatus;
+        }
+
+        public List<BranchClassSingleModel.BranchClassData> getBranchClassData() {
+            return BranchClassData;
+        }
+
+        public void setBranchClassData(List<BranchClassSingleModel.BranchClassData> branchClassData) {
+            BranchClassData = branchClassData;
+        }
+
+        public List<BranchCourseModel.BranchCourceData> getBranchClassList() {
+            return BranchClassList;
+        }
+
+        public void setBranchClassList(List<BranchCourseModel.BranchCourceData> branchClassList) {
+            BranchClassList = branchClassList;
+        }
+
+        public List<ClassModel.ClassData> getClassData() {
+            return ClassData;
+        }
+
+        public void setClassData(List<ClassModel.ClassData> classData) {
+            ClassData = classData;
+        }
+
+        public boolean isClass() {
+            return isClass;
+        }
+
+        public void setClass(boolean aClass) {
+            isClass = aClass;
+        }
+
         public ClassModel.ClassData getClassModel() {
             return classModel;
         }

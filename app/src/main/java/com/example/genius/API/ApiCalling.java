@@ -475,6 +475,12 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_BRANCH_COURCE_ALL)
     Call<CourceModel> GetAllCourse();
 
+    @GET(ApiConstant.GET_BRANCH_COURSE_SPINNER)
+    Call<BranchCourseModel> Get_Course_Spinner(@Query("BranchID") long BranchID);
+
+    @GET(ApiConstant.GET_BRANCH_CLASS_SPINNER)
+    Call<BranchClassModel> Get_Class_Spinner(@Query("BranchID") long BranchID,@Query("CourseID") long CourseID);
+
     @POST(ApiConstant.BRANCH_COURCE_REMOVE)
     Call<CommonModel> RemoveBranchCourse(@Query("BranchCourseID") long BranchCourseID, @Query("lastupdatedby") String lastupdatedby);
 

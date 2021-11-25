@@ -197,7 +197,7 @@ public class BranchSubjectFragment extends Fragment {
                             }
                         }
                     }
-                    GetAllClass();
+                    GetAllCourse();
                 }
             }
 
@@ -209,95 +209,23 @@ public class BranchSubjectFragment extends Fragment {
         });
     }
 
-    public void GetAllClass() {
-        classitem.clear();
-        classiditem.clear();
-        classitem.add("Select Class");
-        classiditem.add((long) 0);
-        Call<ClassModel> call = apiCalling.GetAllClass();
-        call.enqueue(new Callback<ClassModel>() {
-            @Override
-            public void onResponse(@NotNull Call<ClassModel> call, @NotNull Response<ClassModel> response) {
-                if (response.isSuccessful()) {
-                    ClassModel data = response.body();
-                    if (data != null && data.getCompleted()) {
-                        List<ClassModel.ClassData> studentModelList = data.getData();
-                        if (studentModelList != null) {
-                            for (ClassModel.ClassData singleResponseModel : studentModelList) {
-                                long code = singleResponseModel.getClassID();
-                                String desc = singleResponseModel.getClassName();
-                                classiditem.add(code);
-                                classitem.add(desc);
-                            }
-                            CLASSITEM = new String[classitem.size()];
-                            CLASSITEM = classitem.toArray(CLASSITEM);
-
-                            CLASSID = new Long[classiditem.size()];
-                            CLASSID = classiditem.toArray(CLASSID);
-                            bindClass();
-                        }
-                    }
-                    GetAllCourse();
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<ClassModel> call, @NotNull Throwable t) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                progressBarHelper.hideProgressDialog();
-            }
-        });
-    }
-
-    public void bindClass() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_class.setAdapter(adapter);
-        spinner_class.setOnItemSelectedListener(reportareaListener1);
-        if (bundle != null) {
-            selectSpinnerValue(spinner_course, bundle.getString("CLASS_NAME"));
-        }
-    }
-
-    AdapterView.OnItemSelectedListener reportareaListener1 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (spinner_class.getSelectedItem().toString().equals("Select Class")) {
-                        class_name = "";
-                        classid = 0;
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(16);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(16);
-                        class_name = couseitem.get(position);
-                        classid = couseiditem.get(position);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
     public void GetAllCourse() {
         couseitem.clear();
         couseiditem.clear();
         couseitem.add("Select Course");
         couseiditem.add((long) 0);
-        Call<CourceModel> call = apiCalling.GetAllCourse();
-        call.enqueue(new Callback<CourceModel>() {
+        Call<BranchCourseModel> call = apiCalling.Get_Course_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<BranchCourseModel>() {
             @Override
-            public void onResponse(@NotNull Call<CourceModel> call, @NotNull Response<CourceModel> response) {
+            public void onResponse(@NotNull Call<BranchCourseModel> call, @NotNull Response<BranchCourseModel> response) {
                 if (response.isSuccessful()) {
-                    CourceModel data = response.body();
-                    if (data != null && data.getCompleted()) {
-                        List<CourceModel.CourceData> studentModelList = data.getData();
+                    BranchCourseModel data = response.body();
+                    if (data != null && data.isCompleted()) {
+                        List<BranchCourseModel.BranchCourceData> studentModelList = data.getData();
                         if (studentModelList != null) {
-                            for (CourceModel.CourceData singleResponseModel : studentModelList) {
-                                long code = singleResponseModel.getCourseID();
-                                String desc = singleResponseModel.getCourseName();
+                            for (BranchCourseModel.BranchCourceData singleResponseModel : studentModelList) {
+                                long code = singleResponseModel.getCourse_dtl_id();
+                                String desc = singleResponseModel.getCourse().getCourseName();
                                 couseiditem.add(code);
                                 couseitem.add(desc);
                             }
@@ -314,7 +242,7 @@ public class BranchSubjectFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NotNull Call<CourceModel> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<BranchCourseModel> call, @NotNull Throwable t) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                 progressBarHelper.hideProgressDialog();
             }
@@ -345,6 +273,82 @@ public class BranchSubjectFragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextSize(16);
                         course = couseitem.get(position);
                         courseid = couseiditem.get(position);
+                    }
+                    if (spinner_course.getSelectedItemId() != 0){
+                        GetAllClass();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void GetAllClass() {
+        progressBarHelper.showProgressDialog();
+        classitem.clear();
+        classiditem.clear();
+        classitem.add("Select Class");
+        classiditem.add((long) 0);
+        Call<BranchClassModel> call = apiCalling.Get_Class_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseid);
+        call.enqueue(new Callback<BranchClassModel>() {
+            @Override
+            public void onResponse(@NotNull Call<BranchClassModel> call, @NotNull Response<BranchClassModel> response) {
+                if (response.isSuccessful()) {
+                    BranchClassModel data = response.body();
+                    if (data != null && data.getCompleted()) {
+                        List<BranchClassSingleModel.BranchClassData> studentModelList = data.getData();
+                        if (studentModelList != null) {
+                            for (BranchClassSingleModel.BranchClassData singleResponseModel : studentModelList) {
+                                long code = singleResponseModel.getClass_dtl_id();
+                                String desc = singleResponseModel.getClassModel().getClassName();
+                                classiditem.add(code);
+                                classitem.add(desc);
+                            }
+                            CLASSITEM = new String[classitem.size()];
+                            CLASSITEM = classitem.toArray(CLASSITEM);
+
+                            CLASSID = new Long[classiditem.size()];
+                            CLASSID = classiditem.toArray(CLASSID);
+                            bindClass();
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<BranchClassModel> call, @NotNull Throwable t) {
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                progressBarHelper.hideProgressDialog();
+            }
+        });
+    }
+
+    public void bindClass() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_class.setAdapter(adapter);
+        spinner_class.setOnItemSelectedListener(reportareaListener1);
+        if (bundle != null) {
+            selectSpinnerValue(spinner_course, bundle.getString("CLASS_NAME"));
+        }
+    }
+
+    AdapterView.OnItemSelectedListener reportareaListener1 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (spinner_class.getSelectedItem().toString().equals("Select Class")) {
+                        class_name = "";
+                        classid = 0;
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(16);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(16);
+                        class_name = couseitem.get(position);
+                        classid = couseiditem.get(position);
                     }
                 }
 

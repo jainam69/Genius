@@ -196,19 +196,19 @@ public class BranchClassFragment extends Fragment {
         couseitem.clear();
         couseiditem.clear();
         couseitem.add("Select Course");
-        couseiditem.add((long) 0);
-        Call<CourceModel> call = apiCalling.GetAllCourse();
-        call.enqueue(new Callback<CourceModel>() {
+        couseiditem.add(0L);
+        Call<BranchCourseModel> call = apiCalling.Get_Course_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<BranchCourseModel>() {
             @Override
-            public void onResponse(@NotNull Call<CourceModel> call, @NotNull Response<CourceModel> response) {
+            public void onResponse(@NotNull Call<BranchCourseModel> call, @NotNull Response<BranchCourseModel> response) {
                 if (response.isSuccessful()) {
-                    CourceModel data = response.body();
-                    if (data != null && data.getCompleted()) {
-                        List<CourceModel.CourceData> studentModelList = data.getData();
+                    BranchCourseModel data = response.body();
+                    if (data != null && data.isCompleted()) {
+                        List<BranchCourseModel.BranchCourceData> studentModelList = data.getData();
                         if (studentModelList != null) {
-                            for (CourceModel.CourceData singleResponseModel : studentModelList) {
-                                long code = singleResponseModel.getCourseID();
-                                String desc = singleResponseModel.getCourseName();
+                            for (BranchCourseModel.BranchCourceData singleResponseModel : studentModelList) {
+                                long code = singleResponseModel.getCourse_dtl_id();
+                                String desc = singleResponseModel.getCourse().getCourseName();
                                 couseiditem.add(code);
                                 couseitem.add(desc);
                             }
@@ -225,7 +225,7 @@ public class BranchClassFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NotNull Call<CourceModel> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<BranchCourseModel> call, @NotNull Throwable t) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                 progressBarHelper.hideProgressDialog();
             }

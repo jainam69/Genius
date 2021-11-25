@@ -3,7 +3,8 @@ package com.example.genius.API;
 public class ApiConstant {
 
     //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    public static final String BASE_URL = "http://192.168.29.202:45455/api/";
+    //public static final String BASE_URL = "http://192.168.29.202:45455/api/";
+    public static final String BASE_URL = "http://192.168.29.212/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
@@ -150,6 +151,7 @@ public class ApiConstant {
     public static final String GET_BRANCH_CLASS_ALL = "branchclass/v1/GetAllClass";
     public static final String GET_BRANCH_CLASS_BRANCHID = "branchclass/v1/GetAllBranchClassByBranchID";
     public static final String BRANCH_CLASS_REMOVE = "branchclass/v1/RemoveClassDetail";
+    public static final String GET_BRANCH_CLASS_SPINNER = "branchclass/v1/GetAllClassDDL";
 
     //Branch Course
     public static final String BRANCH_COURCE_MAITENANCE = "branchcource/v1/BranchCourseMaintenance";
@@ -157,6 +159,7 @@ public class ApiConstant {
     public static final String GET_BRANCH_COURCE_BRANCHID = "branchcource/v1/GetAllBranchCourseByBranchID";
     public static final String GET_BRANCH_COURCE_ALL = "branchcource/v1/GetAllCourse";
     public static final String BRANCH_COURCE_REMOVE = "branchcource/v1/RemoveBranchCourse";
+    public static final String GET_BRANCH_COURSE_SPINNER = "branchcource/v1/GetAllCourseDDL";
 
     //Branch Subject
     public static final String BRANCH_SUBJECT_MAITENANCE = "branchsubject/v1/BranchSubjectMaintenance";
