@@ -363,6 +363,22 @@ public interface ApiCalling {
                                                @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
                                                @Path("HasFile") Boolean HasFile, @Path("Type") int Type, @Part MultipartBody.Part image);
 
+    @Multipart
+    @POST(ApiConstant.OldLibraryMaintenance + "/{LibraryID}"
+            + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{StandardID}" + "/{BranchID}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
+            + "/{SubjectID}" + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{ThumbnailFileName}" + "/{ThumbnailFileExtension}" + "/{DocFileName}"
+            + "/{DocFileExtension}" + "/{HasThumbnailFile}" + "/{HasDocFile}")
+    Call<LibrarySingleData> OldLibraryMaintenance(@Path("LibraryID") long LibraryID,
+                                                  @Path("LibraryDetailID") long LibraryDetailID, @Path("LibraryTitle") String LibraryTitle,
+                                                  @Path("CategoryID") long CategoryID, @Path("StandardID") long StandardID, @Path("BranchID") long BranchID,
+                                                  @Path("Type") int Type, @Path("Library_Type") int Library_Type,
+                                                  @Path("Description") String Description, @Path("SubjectID") long SubjectID, @Path("CreateId") int CreateId,
+                                                  @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
+                                                  @Path("ThumbnailFileName") String ThumbnailFileName, @Path("ThumbnailFileExtension") String ThumbnailFileExtension,
+                                                  @Path("DocFileName") String DocFileName, @Path("DocFileExtension") String DocFileExtension,
+                                                  @Path("HasThumbnailFile") Boolean HasThumbnailFile, @Path("HasDocFile") Boolean HasDocFile,
+                                                  @Part MultipartBody.Part Thumbnail, @Part MultipartBody.Part Document);
+
     @GET(ApiConstant.GET_ALL_LIBRARY_BRANCH)
     Call<LibraryData> GetAllLibrary(@Query("Type") int Type, @Query("branchID") long branchID);
 
@@ -479,7 +495,7 @@ public interface ApiCalling {
     Call<BranchCourseModel> Get_Course_Spinner(@Query("BranchID") long BranchID);
 
     @GET(ApiConstant.GET_BRANCH_CLASS_SPINNER)
-    Call<BranchClassModel> Get_Class_Spinner(@Query("BranchID") long BranchID,@Query("CourseID") long CourseID);
+    Call<BranchClassModel> Get_Class_Spinner(@Query("BranchID") long BranchID, @Query("CourseID") long CourseID);
 
     @POST(ApiConstant.BRANCH_COURCE_REMOVE)
     Call<CommonModel> RemoveBranchCourse(@Query("BranchCourseID") long BranchCourseID, @Query("lastupdatedby") String lastupdatedby);
