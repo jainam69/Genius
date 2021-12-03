@@ -42,18 +42,17 @@ import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CategoryModel;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.LibrarySingleData;
-import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
-import com.example.genius.Model.TransactionModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.example.genius.ui.MultiSelectionSpinner;
 import com.example.genius.utils.ImageUtility;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -80,12 +79,13 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 @SuppressLint("SetTextI18n")
-public class library_fragment extends Fragment {
+public class library_fragment extends Fragment implements MultiSelectionSpinner.OnMultipleItemsSelectedListener {
 
     RadioGroup rg, rg1;
     RadioButton all, branch_1, rb_general, rb_standard, rb1, rb2;
     TextView attach_thumbnail, attach_document, master_id, lib_id, uniqid, libraryid, transactionid;
-    SearchableSpinner standard, subject;
+    SearchableSpinner subject;
+    MultiSelectionSpinner standard;
     EditText library_description, library_title;
     Button save_library, edit_library;
     Context context;
@@ -96,7 +96,7 @@ public class library_fragment extends Fragment {
     int select, type;
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>();
-    String[] STANDARDITEM, SUBJECTITEM, CATEGORYITEM;
+    String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM;
     Integer[] STANDARDID, SUBJECTID, CATEGORYID;
     String StandardName, SubjectName, attach = "", attach_doc = "", thumb_ext, doc_ext;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
@@ -109,11 +109,11 @@ public class library_fragment extends Fragment {
     Bundle bundle;
     OnBackPressedCallback callback;
     Long StandardId, SubjectId, categoryid;
-    LibraryModel libraryModel;
     SearchableSpinner category;
     List<String> categoryitem = new ArrayList<>();
     List<Integer> categoryId = new ArrayList<>();
     String BranchID;
+    String StandardIDs;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -285,19 +285,19 @@ public class library_fragment extends Fragment {
             }
         });
 
-        save_library.setOnClickListener((View.OnClickListener) v -> {
+        save_library.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
                 progressBarHelper.showProgressDialog();
                 Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
-                        , categoryid, StandardId, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                        , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                         , rb_general.isChecked() ? 1 : 2, 2
                         , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                        , 0, "", "", "", ""
+                        , 0, "none", "none", "none", "none"
                         , true, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                 , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination))
                         , MultipartBody.Part.createFormData("", instrumentFileDestination1.getName()
                                 , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination1)));
-                /*call.enqueue(new Callback<LibrarySingleData>() {
+                call.enqueue(new Callback<LibrarySingleData>() {
                     @Override
                     public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                         if (response.isSuccessful()) {
@@ -319,8 +319,7 @@ public class library_fragment extends Fragment {
                         Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         progressBarHelper.hideProgressDialog();
                     }
-                });*/
-                progressBarHelper.hideProgressDialog();
+                });
             } else {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
@@ -522,10 +521,12 @@ public class library_fragment extends Fragment {
     }
 
     public void bindstandard() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
+        /*ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
+        standard.setItems(STANDARDITEM);
+        standard.setListener(this);
+        standard.hasNoneOption(true);
+        standard.setSelection(new int[]{0});
         if (bundle != null) {
             int b = standardid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("StandardID"))));
             standard.setSelection(b);
@@ -796,4 +797,18 @@ public class library_fragment extends Fragment {
                 }
             };
 
+    @Override
+    public void selectedIndices(List<Integer> indices) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < indices.size(); i++) {
+            sb.append(standardid.get(indices.get(i)));
+            sb.append(",");
+        }
+        StandardIDs = sb.toString().substring(0, sb.length() - 1);
+    }
+
+    @Override
+    public void selectedStrings(List<String> strings) {
+
+    }
 }

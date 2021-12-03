@@ -370,7 +370,7 @@ public interface ApiCalling {
             + "/{DocFileExtension}" + "/{HasThumbnailFile}" + "/{HasDocFile}")
     Call<LibrarySingleData> OldLibraryMaintenance(@Path("LibraryID") long LibraryID,
                                                   @Path("LibraryDetailID") long LibraryDetailID, @Path("LibraryTitle") String LibraryTitle,
-                                                  @Path("CategoryID") long CategoryID, @Path("StandardID") long StandardID, @Path("BranchID") long BranchID,
+                                                  @Path("CategoryID") long CategoryID, @Path("StandardID") String StandardID, @Path("BranchID") long BranchID,
                                                   @Path("Type") int Type, @Path("Library_Type") int Library_Type,
                                                   @Path("Description") String Description, @Path("SubjectID") long SubjectID, @Path("CreateId") int CreateId,
                                                   @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
