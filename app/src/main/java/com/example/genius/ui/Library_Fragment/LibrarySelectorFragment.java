@@ -64,7 +64,7 @@ public class LibrarySelectorFragment extends Fragment {
         });
 
         linear_show_library.setOnClickListener(v -> {
-            library_fragment fragment = new library_fragment();
+            library_Listfragment fragment = new library_Listfragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
             fragmentTransaction.replace(R.id.nav_host_fragment, fragment);
