@@ -8,78 +8,7 @@
     android:background="@drawable/btn_white">
 
     <LinearLayout
-        android:layout_marginTop="15dp"
-        android:id="@+id/linear_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/border">
-
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                android:id="@+id/standard"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_toRightOf="@+id/caddress"
-                android:background="@android:color/transparent"
-                android:hint="Select Standard"
-                android:maxLines="1"
-                android:paddingLeft="9dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textSize="13dp" />
-
-            <ImageView
-                android:id="@+id/caddress"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="12dp"
-                android:src="@drawable/sales_no"
-                app:tint="@color/blue"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/border">
-
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                android:id="@+id/subject"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_toRightOf="@+id/gst"
-                android:background="@android:color/transparent"
-                android:hint="Select Subject"
-                android:maxLines="1"
-                android:paddingLeft="9dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:textSize="13dp" />
-            <ImageView
-                android:id="@+id/gst"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="12dp"
-                android:src="@drawable/task"
-                app:tint="@color/blue"/>
-        </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -111,7 +40,7 @@
                 android:layout_weight="1"
                 android:buttonTint="@color/blue"
                 android:checked="true"
-                android:text="Approved" />
+                android:text="Approve" />
 
             <RadioButton
                 android:id="@+id/reject"

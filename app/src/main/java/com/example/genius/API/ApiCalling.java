@@ -388,6 +388,9 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_LIBRARY_APPROVAL_LIST)
     Call<LibraryData> Getalllibraryapprovallist(@Query("branchID") long branchID);
 
+    @POST(ApiConstant.LIBRARY_APPROVAL_MAINTENANCE)
+    Call<LibraryModel.ApprovalData> Library_Approval_Maintenanace(LibraryModel.ApprovalModel approvalModel);
+
     @POST(ApiConstant.REMOVE_NEW_LIBRARY)
     Call<CommonModel> RemoveNewLibrary(@Query("libraryID") long FeesID, @Query("lastupdatedby") String lastupdatedby);
 

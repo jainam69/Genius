@@ -75,6 +75,18 @@ public class LibrarySelectorFragment extends Fragment {
             fragmentTransaction.commit();
         });
 
+        linear_approve_library.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LibraryApproveFragment fragment = new LibraryApproveFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                fragmentTransaction.replace(R.id.nav_host_fragment, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
         return root;
     }

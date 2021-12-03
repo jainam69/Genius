@@ -27,15 +27,9 @@ public class LibraryModel {
     public List<SubjectModel> Subjectlist;
     public List<LibraryStandardModel> list;
     public long BranchID;
-
-    public void setSubjectlist(List<SubjectModel> subjectlist) {
-        Subjectlist = subjectlist;
+    public LibraryModel(long libraryID) {
+        LibraryID = libraryID;
     }
-
-    public List<SubjectModel> getSubjectlist() {
-        return Subjectlist;
-    }
-    
     public LibraryModel(long libraryID, long libraryDetailID, long type, String title, byte[] fileContent, String link, String fileName, String filePath, String description, RowStatusModel rowStatus, TransactionModel transaction, BranchModel branchInfo, CategoryModel categoryInfo) {
         LibraryID = libraryID;
         LibraryDetailID = libraryDetailID;
@@ -58,6 +52,14 @@ public class LibraryModel {
 
     public void setBranchID(long branchID) {
         BranchID = branchID;
+    }
+
+    public List<SubjectModel> getSubjectlist() {
+        return Subjectlist;
+    }
+
+    public void setSubjectlist(List<SubjectModel> subjectlist) {
+        Subjectlist = subjectlist;
     }
 
     public String getVideoLink() {
@@ -237,6 +239,19 @@ public class LibraryModel {
         public String Library_Status;
         public String Library_Status_text;
 
+        public ApprovalModel(String library_Status_text) {
+            Library_Status_text = library_Status_text;
+        }
+
+        public ApprovalModel(long approval_id, LibraryModel library, long branch_id, TransactionModel transactionInfo, RowStatusModel rowStatus, String library_Status) {
+            Approval_id = approval_id;
+            this.library = library;
+            Branch_id = branch_id;
+            TransactionInfo = transactionInfo;
+            RowStatus = rowStatus;
+            Library_Status = library_Status;
+        }
+
         public long getApproval_id() {
             return Approval_id;
         }
@@ -349,6 +364,58 @@ public class LibraryModel {
         public void setLibrary_id(long library_id) {
             this.library_id = library_id;
         }
+
+        public static class ApprovalData {
+            ApprovalModel Data;
+            boolean Completed;
+
+            public ApprovalModel getData() {
+                return Data;
+            }
+
+            public void setData(ApprovalModel data) {
+                Data = data;
+            }
+
+            public boolean isCompleted() {
+                return Completed;
+            }
+
+            public void setCompleted(boolean completed) {
+                Completed = completed;
+            }
+        }
     }
 
+    public static class ApprovalData {
+
+        boolean Completed;
+        ApprovalModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
+
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
+
+        public ApprovalModel getData() {
+            return Data;
+        }
+
+        public void setData(ApprovalModel data) {
+            Data = data;
+        }
+
+    }
 }
