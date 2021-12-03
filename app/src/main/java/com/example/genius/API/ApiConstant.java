@@ -82,6 +82,7 @@ public class ApiConstant {
 
     public static final String LIBRARY_MAINTENANCE = "library/v1/LibraryMaintenance";
     public static final String GET_ALL_LIBRARY = "library/v1/GetAllLibrary";
+    public static final String GET_ALL_MOBILE_LIBRARY = "library/v1/GetAllMobileLibrary";
     public static final String REMOVE_LIBRARY = "library/v1/RemoveLibrary";
 
     public static final String GET_STUDENT_ATTENDANCE_LIST = "attendance/v1/GetAllStudentForAttendance";

@@ -262,6 +262,9 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_ALL_LIBRARY)
     Call<LibraryData> GetAllLibrary();
 
+    @GET(ApiConstant.GET_ALL_MOBILE_LIBRARY)
+    Call<LibraryData> GetAllMobileLibrary(@Query("Type") int Type, @Query("branchID") Long branchID);
+
     @POST(ApiConstant.REMOVE_LIBRARY)
     Call<CommonModel> RemoveLibrary(@Query("libraryID") long libraryID, @Query("lastupdatedby") String lastupdatedby);
 

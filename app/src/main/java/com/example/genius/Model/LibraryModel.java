@@ -217,8 +217,7 @@ public class LibraryModel {
         CategoryInfo = categoryInfo;
     }
 
-    public static class ApprovalModel
-    {
+    public static class ApprovalModel {
         public long Approval_id;
         public LibraryModel library;
         public long Branch_id;

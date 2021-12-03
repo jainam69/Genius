@@ -30,6 +30,8 @@ import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,10 +86,10 @@ public class library_Listfragment extends Fragment {
     }
 
     public void GetLibraryDetails() {
-        Call<LibraryData> call = apiCalling.GetAllLibrary();
+        Call<LibraryData> call = apiCalling.GetAllMobileLibrary(2, 0L);
         call.enqueue(new Callback<LibraryData>() {
             @Override
-            public void onResponse(Call<LibraryData> call, Response<LibraryData> response) {
+            public void onResponse(@NotNull Call<LibraryData> call, @NotNull Response<LibraryData> response) {
                 if (response.isSuccessful()) {
                     LibraryData data = response.body();
                     if (data.isCompleted()) {
@@ -113,7 +115,7 @@ public class library_Listfragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<LibraryData> call, Throwable t) {
+            public void onFailure(@NotNull Call<LibraryData> call, @NotNull Throwable t) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                 progressBarHelper.hideProgressDialog();
             }
