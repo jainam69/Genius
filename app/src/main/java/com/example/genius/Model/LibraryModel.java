@@ -1,5 +1,7 @@
 package com.example.genius.Model;
 
+import java.util.List;
+
 public class LibraryModel {
 
     long LibraryID;
@@ -22,9 +24,18 @@ public class LibraryModel {
     public String DocFileName;
     public String DocFilePath;
     public ApprovalModel approval;
-    public SubjectModel Subjectlist;
+    public List<SubjectModel> Subjectlist;
+    public List<LibraryStandardModel> list;
     public long BranchID;
 
+    public void setSubjectlist(List<SubjectModel> subjectlist) {
+        Subjectlist = subjectlist;
+    }
+
+    public List<SubjectModel> getSubjectlist() {
+        return Subjectlist;
+    }
+    
     public LibraryModel(long libraryID, long libraryDetailID, long type, String title, byte[] fileContent, String link, String fileName, String filePath, String description, RowStatusModel rowStatus, TransactionModel transaction, BranchModel branchInfo, CategoryModel categoryInfo) {
         LibraryID = libraryID;
         LibraryDetailID = libraryDetailID;
@@ -47,14 +58,6 @@ public class LibraryModel {
 
     public void setBranchID(long branchID) {
         BranchID = branchID;
-    }
-
-    public SubjectModel getSubjectlist(int i) {
-        return Subjectlist;
-    }
-
-    public void setSubjectlist(SubjectModel subjectlist) {
-        Subjectlist = subjectlist;
     }
 
     public String getVideoLink() {
@@ -217,6 +220,14 @@ public class LibraryModel {
         CategoryInfo = categoryInfo;
     }
 
+    public List<LibraryStandardModel> getList() {
+        return list;
+    }
+
+    public void setList(List<LibraryStandardModel> list) {
+        this.list = list;
+    }
+
     public static class ApprovalModel {
         public long Approval_id;
         public LibraryModel library;
@@ -280,6 +291,63 @@ public class LibraryModel {
 
         public void setLibrary_Status_text(String library_Status_text) {
             Library_Status_text = library_Status_text;
+        }
+    }
+
+    public static class LibraryStandardModel {
+        public long library_std_id;
+        public long std_id;
+        public long sub_id;
+        public String standard;
+        public String subject;
+        public long library_id;
+
+        public long getLibrary_std_id() {
+            return library_std_id;
+        }
+
+        public void setLibrary_std_id(long library_std_id) {
+            this.library_std_id = library_std_id;
+        }
+
+        public long getStd_id() {
+            return std_id;
+        }
+
+        public void setStd_id(long std_id) {
+            this.std_id = std_id;
+        }
+
+        public long getSub_id() {
+            return sub_id;
+        }
+
+        public void setSub_id(long sub_id) {
+            this.sub_id = sub_id;
+        }
+
+        public String getStandard() {
+            return standard;
+        }
+
+        public void setStandard(String standard) {
+            this.standard = standard;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
+
+        public long getLibrary_id() {
+            return library_id;
+        }
+
+        public void setLibrary_id(long library_id) {
+            this.library_id = library_id;
         }
     }
 
