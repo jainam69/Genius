@@ -23,6 +23,7 @@ public class LibraryModel {
     public String DocFilePath;
     public ApprovalModel approval;
     public SubjectModel Subjectlist;
+    public long BranchID;
 
     public LibraryModel(long libraryID, long libraryDetailID, long type, String title, byte[] fileContent, String link, String fileName, String filePath, String description, RowStatusModel rowStatus, TransactionModel transaction, BranchModel branchInfo, CategoryModel categoryInfo) {
         LibraryID = libraryID;
@@ -40,7 +41,15 @@ public class LibraryModel {
         CategoryInfo = categoryInfo;
     }
 
-    public SubjectModel getSubjectlist() {
+    public long getBranchID() {
+        return BranchID;
+    }
+
+    public void setBranchID(long branchID) {
+        BranchID = branchID;
+    }
+
+    public SubjectModel getSubjectlist(int i) {
         return Subjectlist;
     }
 

@@ -22,7 +22,7 @@ import com.example.genius.ui.Home_Fragment.home_fragment;
 
 public class LibrarySelectorFragment extends Fragment {
 
-    LinearLayout linear_create_library, linear_show_library;
+    LinearLayout linear_create_library, linear_show_library,linear_approve_library;
     CardView linear_manage_library;
     OnBackPressedCallback callback = new OnBackPressedCallback(true) {
         @Override
@@ -45,14 +45,8 @@ public class LibrarySelectorFragment extends Fragment {
         linear_create_library = root.findViewById(R.id.linear_create_library);
         linear_show_library = root.findViewById(R.id.linear_show_library);
         linear_manage_library = root.findViewById(R.id.linear_manage_library);
+        linear_approve_library = root.findViewById(R.id.linear_approve_library);
         context = getActivity();
-
-//        if (Preferences.getInstance(context).getString(Preferences.KEY_ROLE).equals("Admin"))
-//        {
-//            linear_manage_library.setVisibility(View.VISIBLE);
-//        }else {
-//            linear_manage_library.setVisibility(View.GONE);
-//        }
 
         linear_create_library.setOnClickListener(v -> {
             library_Listfragment orderplace = new library_Listfragment();

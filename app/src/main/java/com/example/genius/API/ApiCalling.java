@@ -382,6 +382,9 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_ALL_LIBRARY_BRANCH)
     Call<LibraryData> GetAllLibrary(@Query("Type") int Type, @Query("branchID") long branchID);
 
+    @GET(ApiConstant.GET_LIBRARY_APPROVAL_LIST)
+    Call<LibraryData> Getalllibraryapprovallist(@Query("branchID") long branchID);
+
     @POST(ApiConstant.REMOVE_NEW_LIBRARY)
     Call<CommonModel> RemoveNewLibrary(@Query("libraryID") long FeesID, @Query("lastupdatedby") String lastupdatedby);
 

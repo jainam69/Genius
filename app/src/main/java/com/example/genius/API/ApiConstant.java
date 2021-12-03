@@ -131,6 +131,7 @@ public class ApiConstant {
     public static final String REMOVE_NEW_LIBRARY = "NewLibrary/v1/RemoveLibrary";
     public static final String LibraryLinkMaintenance = "NewLibrary/v1/LibraryLinkMaintenance";
     public static final String OldLibraryMaintenance = "library/v1/LibraryMaintenance";
+    public static final String GET_LIBRARY_APPROVAL_LIST = "library/v1/GetAllLibraryApproval";
 
     public static final String GET_TEST_MARKS_DATE = "Marks/v1/GetTestDatesByBatch";
     public static final String UPDATE_HOMEWORK_CHECKING = "homework/v1/Updatehomeworkdetails";
