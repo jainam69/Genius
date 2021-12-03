@@ -15,6 +15,14 @@ public class LibraryModel {
     public TransactionModel Transaction;
     public BranchModel BranchInfo;
     public CategoryModel CategoryInfo;
+    public String VideoLink;
+    public String LibraryTitle;
+    public String ThumbnailFileName;
+    public String ThumbnailFilePath;
+    public String DocFileName;
+    public String DocFilePath;
+    public ApprovalModel approval;
+    public SubjectModel Subjectlist;
 
     public LibraryModel(long libraryID, long libraryDetailID, long type, String title, byte[] fileContent, String link, String fileName, String filePath, String description, RowStatusModel rowStatus, TransactionModel transaction, BranchModel branchInfo, CategoryModel categoryInfo) {
         LibraryID = libraryID;
@@ -30,6 +38,70 @@ public class LibraryModel {
         Transaction = transaction;
         BranchInfo = branchInfo;
         CategoryInfo = categoryInfo;
+    }
+
+    public SubjectModel getSubjectlist() {
+        return Subjectlist;
+    }
+
+    public void setSubjectlist(SubjectModel subjectlist) {
+        Subjectlist = subjectlist;
+    }
+
+    public String getVideoLink() {
+        return VideoLink;
+    }
+
+    public void setVideoLink(String videoLink) {
+        VideoLink = videoLink;
+    }
+
+    public String getLibraryTitle() {
+        return LibraryTitle;
+    }
+
+    public void setLibraryTitle(String libraryTitle) {
+        LibraryTitle = libraryTitle;
+    }
+
+    public String getThumbnailFileName() {
+        return ThumbnailFileName;
+    }
+
+    public void setThumbnailFileName(String thumbnailFileName) {
+        ThumbnailFileName = thumbnailFileName;
+    }
+
+    public String getThumbnailFilePath() {
+        return ThumbnailFilePath;
+    }
+
+    public void setThumbnailFilePath(String thumbnailFilePath) {
+        ThumbnailFilePath = thumbnailFilePath;
+    }
+
+    public String getDocFileName() {
+        return DocFileName;
+    }
+
+    public void setDocFileName(String docFileName) {
+        DocFileName = docFileName;
+    }
+
+    public String getDocFilePath() {
+        return DocFilePath;
+    }
+
+    public void setDocFilePath(String docFilePath) {
+        DocFilePath = docFilePath;
+    }
+
+    public ApprovalModel getApproval() {
+        return approval;
+    }
+
+    public void setApproval(ApprovalModel approval) {
+        this.approval = approval;
     }
 
     public long getLibraryID() {
@@ -134,6 +206,73 @@ public class LibraryModel {
 
     public void setCategoryInfo(CategoryModel categoryInfo) {
         CategoryInfo = categoryInfo;
+    }
+
+    public static class ApprovalModel
+    {
+        public long Approval_id;
+        public LibraryModel library;
+        public long Branch_id;
+        public TransactionModel TransactionInfo;
+        public RowStatusModel RowStatus;
+        public String Library_Status;
+        public String Library_Status_text;
+
+        public long getApproval_id() {
+            return Approval_id;
+        }
+
+        public void setApproval_id(long approval_id) {
+            Approval_id = approval_id;
+        }
+
+        public LibraryModel getLibrary() {
+            return library;
+        }
+
+        public void setLibrary(LibraryModel library) {
+            this.library = library;
+        }
+
+        public long getBranch_id() {
+            return Branch_id;
+        }
+
+        public void setBranch_id(long branch_id) {
+            Branch_id = branch_id;
+        }
+
+        public TransactionModel getTransactionInfo() {
+            return TransactionInfo;
+        }
+
+        public void setTransactionInfo(TransactionModel transactionInfo) {
+            TransactionInfo = transactionInfo;
+        }
+
+        public RowStatusModel getRowStatus() {
+            return RowStatus;
+        }
+
+        public void setRowStatus(RowStatusModel rowStatus) {
+            RowStatus = rowStatus;
+        }
+
+        public String getLibrary_Status() {
+            return Library_Status;
+        }
+
+        public void setLibrary_Status(String library_Status) {
+            Library_Status = library_Status;
+        }
+
+        public String getLibrary_Status_text() {
+            return Library_Status_text;
+        }
+
+        public void setLibrary_Status_text(String library_Status_text) {
+            Library_Status_text = library_Status_text;
+        }
     }
 
 }
