@@ -116,9 +116,10 @@
         android:layout_below="@id/buttonLinear"
         android:layout_marginTop="10dp"
         android:id="@+id/permission_rv"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        style="@style/MyFabOverlay"
         android:id="@+id/fab_contact"
+        style="@style/MyFabOverlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -127,6 +128,6 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="15dp"
         android:contentDescription="TODO"
-        android:src="@drawable/ic_add_black_24dp"/>
+        android:src="@drawable/ic_add_black_24dp" />
 
 </RelativeLayout>

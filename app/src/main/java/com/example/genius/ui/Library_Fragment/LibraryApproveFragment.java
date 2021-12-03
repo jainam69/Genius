@@ -68,35 +68,32 @@ public class LibraryApproveFragment extends Fragment {
         approval_rv = root.findViewById(R.id.approval_rv);
         txt_nodata = root.findViewById(R.id.txt_nodata);
 
-        if (Function.isNetworkAvailable(context))
-        {
+        if (Function.isNetworkAvailable(context)) {
             GetAllLibraryApprovalList();
-        }else{
+        } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
         return root;
     }
 
-    public void GetAllLibraryApprovalList()
-    {
+    public void GetAllLibraryApprovalList() {
         progressBarHelper.showProgressDialog();
         Call<LibraryData> call = apiCalling.Getalllibraryapprovallist(0);
         call.enqueue(new Callback<LibraryData>() {
             @Override
             public void onResponse(Call<LibraryData> call, Response<LibraryData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     LibraryData data = response.body();
-                    if (data.isCompleted()){
+                    if (data.isCompleted()) {
                         List<LibraryModel> list = data.getData();
-                        if (list != null && list.size() > 0)
-                        {
+                        if (list != null && list.size() > 0) {
                             approval_rv.setVisibility(View.VISIBLE);
                             txt_nodata.setVisibility(View.GONE);
                             approval_rv.setLayoutManager(new LinearLayoutManager(context));
                             libraryApproval_adapter = new LibraryApproval_Adapter(context, list);
                             libraryApproval_adapter.notifyDataSetChanged();
                             approval_rv.setAdapter(libraryApproval_adapter);
-                        }else {
+                        } else {
                             approval_rv.setVisibility(View.GONE);
                             txt_nodata.setVisibility(View.VISIBLE);
                         }
@@ -113,12 +110,11 @@ public class LibraryApproveFragment extends Fragment {
         });
     }
 
-    public static class LibraryApproval_Adapter extends RecyclerView.Adapter<LibraryApproval_Adapter.ViewHolder>
-    {
+    public static class LibraryApproval_Adapter extends RecyclerView.Adapter<LibraryApproval_Adapter.ViewHolder> {
         Context context;
         List<LibraryModel> libraryModels;
         long downloadID;
-        String Name,sts;
+        String Name, sts;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
         int select;
@@ -138,19 +134,16 @@ public class LibraryApproveFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull LibraryApproval_Adapter.ViewHolder holder, int position) {
-            if (libraryModels.get(position).getThumbnailFilePath() != null && libraryModels.get(position).getThumbnailFilePath() != "")
-            {
+            if (libraryModels.get(position).getThumbnailFilePath() != null && libraryModels.get(position).getThumbnailFilePath() != "") {
                 Glide.with(context).load(libraryModels.get(position).getThumbnailFilePath()).into(holder.img_thumbnail);
-            }else
-            {
+            } else {
                 holder.img_thumbnail.setVisibility(View.GONE);
                 holder.img_download.setVisibility(View.GONE);
             }
             holder.txt_branchname.setText("Branch Name :   All Branch");
-            if (libraryModels.get(position).getVideoLink() != null && libraryModels.get(position).getVideoLink() != "")
-            {
+            if (libraryModels.get(position).getVideoLink() != null && libraryModels.get(position).getVideoLink() != "") {
                 holder.txt_videolink.setText("Video Link :   " + libraryModels.get(position).getVideoLink());
-            }else {
+            } else {
                 holder.txt_videolink.setVisibility(View.GONE);
             }
             holder.txt_subjectname.setText("Subject :   " + libraryModels.get(position).getSubjectlist().get(0).getSubject());
@@ -183,7 +176,7 @@ public class LibraryApproveFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.DialogStyle);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_manage_library, null);
                             builder.setView(dialogView);
                             builder.setCancelable(true);
@@ -194,13 +187,11 @@ public class LibraryApproveFragment extends Fragment {
 
                             AlertDialog dialog = builder.create();
                             String st = libraryModels.get(position).getApproval().getLibrary_Status_text();
-                            if (st.equals("Approve"))
-                            {
+                            if (st.equals("Approve")) {
                                 app.setChecked(true);
                                 rej.setChecked(false);
                             }
-                            if (st.equals("Reject"))
-                            {
+                            if (st.equals("Reject")) {
                                 app.setChecked(false);
                                 rej.setChecked(true);
                             }
@@ -223,8 +214,8 @@ public class LibraryApproveFragment extends Fragment {
                                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                                     LibraryModel libraryModel = new LibraryModel(libraryModels.get(position).getLibraryID());
-                                    LibraryModel.ApprovalModel model = new LibraryModel.ApprovalModel(libraryModels.get(position).getApproval().getApproval_id(),libraryModel,
-                                            Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),transactionModel,rowStatusModel,sts);
+                                    LibraryModel.ApprovalModel model = new LibraryModel.ApprovalModel(libraryModels.get(position).getApproval().getApproval_id(), libraryModel,
+                                            Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), transactionModel, rowStatusModel, sts);
                                     Call<LibraryModel.ApprovalData> call = apiCalling.Library_Approval_Maintenanace(model);
                                     call.enqueue(new Callback<LibraryModel.ApprovalData>() {
                                         @Override
@@ -238,7 +229,7 @@ public class LibraryApproveFragment extends Fragment {
                                                     libraryModels.get(position).setApproval(new LibraryModel.ApprovalModel(sts));
                                                     dialog.dismiss();
                                                 }
-                                            }else {
+                                            } else {
                                                 Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                                                 progressBarHelper.hideProgressDialog();
                                             }
@@ -291,6 +282,9 @@ public class LibraryApproveFragment extends Fragment {
                     dialog.show();
                 }
             });
+            holder.txt_categoryname.setText("Category Name : " + libraryModels.get(position).getCategoryInfo().getCategory());
+            holder.txt_description.setText("Description : " + libraryModels.get(position).getDescription());
+            holder.txt_approvalstatus.setText("Status : " + libraryModels.get(position).getApproval().getLibrary_Status_text());
         }
 
         @Override
@@ -300,8 +294,8 @@ public class LibraryApproveFragment extends Fragment {
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView img_thumbnail,img_download,img_edit;
-            TextView txt_branchname,txt_videolink,txt_subjectname,txt_categoryname,txt_description,txt_approvalstatus;
+            ImageView img_thumbnail, img_download, img_edit;
+            TextView txt_branchname, txt_videolink, txt_subjectname, txt_categoryname, txt_description, txt_approvalstatus;
             RadioButton rb1;
 
             public ViewHolder(@NonNull View itemView) {

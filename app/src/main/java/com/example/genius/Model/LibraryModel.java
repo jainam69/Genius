@@ -30,6 +30,7 @@ public class LibraryModel {
     public LibraryModel(long libraryID) {
         LibraryID = libraryID;
     }
+
     public LibraryModel(long libraryID, long libraryDetailID, long type, String title, byte[] fileContent, String link, String fileName, String filePath, String description, RowStatusModel rowStatus, TransactionModel transaction, BranchModel branchInfo, CategoryModel categoryInfo) {
         LibraryID = libraryID;
         LibraryDetailID = libraryDetailID;

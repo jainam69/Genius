@@ -1,20 +1,8 @@
 package com.example.genius.ui.Library_Fragment;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,40 +20,29 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CategoryModel;
-import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.LibrarySingleData;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
-import com.example.genius.helper.Preferences;
 import com.example.genius.R;
-import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
+import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.MultiSelectionSpinner;
-import com.example.genius.utils.ImageUtility;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,18 +53,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
-@SuppressLint("SetTextI18n")
-public class library_fragment extends Fragment implements MultiSelectionSpinner.OnMultipleItemsSelectedListener {
+public class library_video_fragment extends Fragment implements MultiSelectionSpinner.OnMultipleItemsSelectedListener {
 
     RadioGroup rg, rg1;
     RadioButton all, branch_1, rb_general, rb_standard, rb1, rb2;
     TextView attach_thumbnail, attach_document, master_id, lib_id, uniqid, libraryid, transactionid;
     SearchableSpinner subject;
     MultiSelectionSpinner standard;
-    EditText library_description, library_title;
+    EditText library_description, library_title, library_video_link;
     Button save_library, edit_library;
     Context context;
     ProgressBarHelper progressBarHelper;
@@ -100,10 +73,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM;
     Integer[] STANDARDID, SUBJECTID, CATEGORYID;
     String StandardName, SubjectName, attach = "", attach_doc = "", thumb_ext, doc_ext;
-    private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
-    public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
-    public static final int REQUEST_CODE_PICK_GALLERY1 = 0x11;
-    byte[] imageVal;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination, instrumentFileDestination1;
@@ -119,8 +88,8 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Image/Document");
-        View root = inflater.inflate(R.layout.library_fragment_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Video");
+        View root = inflater.inflate(R.layout.library_video_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
@@ -130,8 +99,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         branch_1 = root.findViewById(R.id.branch_1);
         rb_general = root.findViewById(R.id.rb_general);
         rb_standard = root.findViewById(R.id.rb_standard);
-        attach_document = root.findViewById(R.id.attach_document);
-        attach_thumbnail = root.findViewById(R.id.attach_thumbnail);
         standard = root.findViewById(R.id.standard);
         subject = root.findViewById(R.id.subject);
         library_description = root.findViewById(R.id.library_description);
@@ -147,6 +114,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         category = root.findViewById(R.id.category);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         library_title = root.findViewById(R.id.library_title);
+        library_video_link = root.findViewById(R.id.library_video_link);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -247,85 +215,43 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        attach_thumbnail.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= 23) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                    , Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                            PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-                } else {
-                    pickImage();
-                }
-            } else {
-                pickImage();
-            }
-        });
-
-        attach_document.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= 23) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                    , Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                            PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-                } else {
-                    pickImage1();
-                }
-            } else {
-                pickImage1();
-            }
-        });
-
         save_library.setOnClickListener(v -> {
-            if (validation()) {
-                if (Function.checkNetworkConnection(context)) {
-                    progressBarHelper.showProgressDialog();
-                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
-                            , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                            , rb_general.isChecked() ? 1 : 2, 2
-                            , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, "none", "none", "none", "none", "none"
-                            , true, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
-                                    , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination))
-                            , MultipartBody.Part.createFormData("", instrumentFileDestination1.getName()
-                                    , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination1)));
-                    call.enqueue(new Callback<LibrarySingleData>() {
-                        @Override
-                        public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
-                            if (response.isSuccessful()) {
-                                if (response.body().isCompleted()) {
-                                    library_Listfragment contact = new library_Listfragment();
-                                    FragmentManager fragmentManager = getFragmentManager();
-                                    FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                    fragmentTransaction.replace(R.id.nav_host_fragment, contact);
-                                    fragmentTransaction.addToBackStack(null);
-                                    fragmentTransaction.commit();
-                                }
-                                Function.showToast(context, response.body().getMessage());
+            if (Function.checkNetworkConnection(context)) {
+                progressBarHelper.showProgressDialog();
+                Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
+                        , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                        , rb_general.isChecked() ? 1 : 2, 2
+                        , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                        , 0, library_video_link.getText().toString(), "none", "none", "none", "none"
+                        , false, false, MultipartBody.Part.createFormData("attachment", ""
+                                , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
+                        , MultipartBody.Part.createFormData("attachment", ""
+                                , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
+                call.enqueue(new Callback<LibrarySingleData>() {
+                    @Override
+                    public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body().isCompleted()) {
+                                library_Listfragment contact = new library_Listfragment();
+                                FragmentManager fragmentManager = getFragmentManager();
+                                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                                fragmentTransaction.replace(R.id.nav_host_fragment, contact);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
                             }
-                            progressBarHelper.hideProgressDialog();
+                            Function.showToast(context, response.body().getMessage());
                         }
+                        progressBarHelper.hideProgressDialog();
+                    }
 
-                        @Override
-                        public void onFailure(@NotNull Call<LibrarySingleData> call, @NotNull Throwable t) {
-                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    });
-                } else {
-                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-                }
+                    @Override
+                    public void onFailure(@NotNull Call<LibrarySingleData> call, @NotNull Throwable t) {
+                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                        progressBarHelper.hideProgressDialog();
+                    }
+                });
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -558,180 +484,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 }
             };
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                pickImage();
-                pickImage1();
-            }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent result) {
-        super.onActivityResult(requestCode, resultCode, result);
-        if (requestCode == REQUEST_CODE_PICK_GALLERY) {
-            if (resultCode == RESULT_CANCELED) {
-                userCancelled();
-            } else if (resultCode == RESULT_OK) {
-                Uri image = result.getData();
-                try {
-                    Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
-                    instrumentFileDestination = new File(Path);
-                    attach_thumbnail.setText("Attached");
-                    attach_thumbnail.setTextColor(context.getResources().getColor(R.color.black));
-                    String name = instrumentFileDestination.getName();
-                    thumb_ext = name.substring(name.lastIndexOf("."));
-                    thunm_name = instrumentFileDestination.getName();
-                    attach = onGalleryImageResultInstrument(result);
-                } catch (Exception e) {
-                    errored();
-                }
-            } else {
-                errored();
-            }
-        } else if (requestCode == REQUEST_CODE_PICK_GALLERY1) {
-            if (resultCode == RESULT_CANCELED) {
-                userCancelled();
-            } else if (resultCode == RESULT_OK) {
-                Uri image = result.getData();
-                try {
-                    Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
-                    instrumentFileDestination1 = new File(Path);
-                    attach_document.setText("Attached");
-                    attach_document.setTextColor(context.getResources().getColor(R.color.black));
-                    String nm = instrumentFileDestination1.getName();
-                    doc_ext = nm.substring(nm.lastIndexOf("."));
-                    doc_name = instrumentFileDestination1.getName();
-                    attach_doc = encodeFileToBase64Binary(instrumentFileDestination1);
-                } catch (Exception e) {
-                    errored();
-                }
-            } else {
-                errored();
-            }
-        }
-    }
-
-    private void pickImage() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            startActivityForResult(intent, REQUEST_CODE_PICK_GALLERY);
-        } catch (ActivityNotFoundException ignored) {
-        }
-    }
-
-    private void pickImage1() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
-            startActivityForResult(intent, REQUEST_CODE_PICK_GALLERY1);
-        } catch (ActivityNotFoundException ignored) {
-        }
-    }
-
-    private String encodeFileToBase64Binary(File yourFile) {
-        int size = (int) yourFile.length();
-        byte[] bytes = new byte[size];
-        String encode = "";
-        try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        encode = Base64.encodeToString(bytes, Base64.DEFAULT);
-        return encode;
-    }
-
-    private String onGalleryImageResultInstrument(Intent data) {
-        Bitmap rotatedBitmap;
-        Bitmap bitmap = null;
-        String encodedImage = "";
-        Uri uri = data.getData();
-        String Path = FUtils.getPath(requireContext(), uri);
-        if (Path != null) {
-            instrumentFileDestination = new File(Path);
-        }
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ExifInterface ei = null;
-        try {
-            ei = new ExifInterface(String.valueOf(instrumentFileDestination));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int orientation = 0;
-        if (ei != null) {
-            orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-        }
-
-        int rotationDegree;
-        if (orientation >= 0 && orientation <= 1) {
-            rotationDegree = 0;
-        } else if (orientation >= 2 && orientation <= 4) {
-            rotationDegree = 180;
-        } else if (orientation >= 8) {
-            rotationDegree = 270;
-        } else {
-            rotationDegree = 90;
-        }
-        if (bitmap != null) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotationDegree);
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
-            rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-            if (instrumentFileDestination != null) {
-                if (instrumentFileDestination.length() >= 999999) {
-                    int compressRatio = 90;
-                    while (instrumentFileDestination.length() > 999999) {
-                        OutputStream fOut = null;
-                        try {
-                            fOut = new FileOutputStream(instrumentFileDestination);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, compressRatio, fOut);
-                        compressRatio = compressRatio - 20;
-                        try {
-                            if (fOut != null) {
-                                fOut.close();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                imageVal = ImageUtility.using(context).toBase64(instrumentFileDestination.getPath());
-                encodedImage = Base64.encodeToString(imageVal, android.util.Base64.DEFAULT);
-            }
-        }
-        return encodedImage;
-    }
-
-    public void userCancelled() {
-
-    }
-
-    public void errored() {
-        Intent intent = new Intent();
-        intent.putExtra(ERROR, true);
-        intent.putExtra(ERROR_MSG, "Error while opening the image file. Please try again.");
-    }
-
     public void GetAllCategory() {
         categoryitem.add("Select Category");
         categoryId.add(0);
@@ -804,46 +556,15 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     @Override
     public void selectedIndices(List<Integer> indices) {
         StringBuilder sb = new StringBuilder();
-        if (indices.size() > 0) {
-            for (int i = 0; i < indices.size(); i++) {
-                sb.append(standardid.get(indices.get(i)));
-                sb.append(",");
-            }
-            StandardIDs = sb.toString().substring(0, sb.length() - 1);
-        } else {
-            StandardIDs = "";
-            standard.setSelection(new int[]{0});
+        for (int i = 0; i < indices.size(); i++) {
+            sb.append(standardid.get(indices.get(i)));
+            sb.append(",");
         }
+        StandardIDs = sb.toString().substring(0, sb.length() - 1);
     }
 
     @Override
     public void selectedStrings(List<String> strings) {
 
     }
-
-    public boolean validation() {
-        if (library_title.getText().toString().trim().equals("")) {
-            Function.showToast(context, "Please enter library title");
-            return false;
-        } else if (category.getSelectedItemId() == 0) {
-            Function.showToast(context, "Please select category");
-            return false;
-        } else if (instrumentFileDestination == null) {
-            Function.showToast(context, "Please select thumbnail");
-            return false;
-        } else if (instrumentFileDestination1 == null) {
-            Function.showToast(context, "Please select document");
-            return false;
-        } else if (rb_standard.isChecked()) {
-            if (StandardIDs.equals("")) {
-                Function.showToast(context, "Please select standard");
-                return false;
-            } else if (subject.getSelectedItemId() == 0) {
-                Function.showToast(context, "Please select subject");
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="3dp"
     android:layout_marginLeft="10dp"
+    android:layout_marginTop="3dp"
     android:layout_marginRight="10dp"
     android:layout_marginBottom="10dp"
-    app:cardElevation="5dp"
     android:background="@color/white"
+    android:orientation="vertical"
     app:cardCornerRadius="10dp"
-    android:orientation="vertical">
+    app:cardElevation="5dp">
 
     <LinearLayout
         android:id="@+id/linear_contact"
@@ -19,36 +19,86 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
+
         <ImageView
             android:id="@+id/image"
-            android:layout_marginTop="5dp"
             android:layout_width="140dp"
             android:layout_height="100dp"
-            android:layout_gravity="center"/>
-        <TextView
-            android:id="@+id/doc_desc"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp" />
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:text="Image 1"
-            android:textColor="@color/blue"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="Description"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/doc_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="Standard"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/standard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="horizontal"
-            android:weightSum="2">
+            android:weightSum="2"
+            tools:ignore="DisableBaselineAlignment">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_weight="2"
                 android:background="@drawable/blue_fill"
                 android:orientation="vertical">
@@ -58,52 +108,51 @@
                     android:layout_width="28dp"
                     android:layout_height="27dp"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:padding="5dp"
                     android:src="@drawable/ic_edit"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_weight="1"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="vertical"
-                android:background="@drawable/blue_fill"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_fill"
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/library_delete"
                     android:layout_width="28dp"
                     android:layout_height="27dp"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:padding="5dp"
                     android:src="@drawable/ic_delete"
                     app:tint="@color/white" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_weight="1"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="vertical"
-                android:background="@drawable/blue_fill"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_fill"
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/library_download"
                     android:layout_width="28dp"
                     android:layout_height="27dp"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:padding="5dp"
                     android:src="@drawable/download"
-                    app:tint="@color/white" />
+                    app:tint="@color/white"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
         </LinearLayout>
 

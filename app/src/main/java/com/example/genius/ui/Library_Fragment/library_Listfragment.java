@@ -29,6 +29,7 @@ import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,11 +50,12 @@ public class library_Listfragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     EditText library_category;
+    FloatingActionButton fab_contact;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Upload Books");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library List");
         View root = inflater.inflate(R.layout.library__listfragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -62,6 +64,8 @@ public class library_Listfragment extends Fragment {
         save = root.findViewById(R.id.save_category);
         update = root.findViewById(R.id.update_category);
         library_category = root.findViewById(R.id.library_category);
+        library_rv = root.findViewById(R.id.library_rv);
+        fab_contact = root.findViewById(R.id.fab_contact);
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -69,6 +73,15 @@ public class library_Listfragment extends Fragment {
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
+        fab_contact.setOnClickListener(view -> {
+            library_fragment profileFragment = new library_fragment();
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.nav_host_fragment, profileFragment);
+            ft.addToBackStack(null);
+            ft.commit();
+        });
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -102,10 +115,8 @@ public class library_Listfragment extends Fragment {
                                         list.add(singlemodel);
                                     }
                                 }
-                                library_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                                library_rv.setLayoutManager(new GridLayoutManager(context, 2));
+                                library_rv.setLayoutManager(new LinearLayoutManager(context));
                                 libraryMaster_adapter = new LibraryMaster_Adapter(context, list);
-                                libraryMaster_adapter.notifyDataSetChanged();
                                 library_rv.setAdapter(libraryMaster_adapter);
                             }
                         }

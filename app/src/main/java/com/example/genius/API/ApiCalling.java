@@ -376,7 +376,7 @@ public interface ApiCalling {
                                                   @Path("CategoryID") long CategoryID, @Path("StandardID") String StandardID, @Path("BranchID") long BranchID,
                                                   @Path("Type") int Type, @Path("Library_Type") int Library_Type,
                                                   @Path("Description") String Description, @Path("SubjectID") long SubjectID, @Path("CreateId") int CreateId,
-                                                  @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
+                                                  @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("VideoLink") String VideoLink,
                                                   @Path("ThumbnailFileName") String ThumbnailFileName, @Path("ThumbnailFileExtension") String ThumbnailFileExtension,
                                                   @Path("DocFileName") String DocFileName, @Path("DocFileExtension") String DocFileExtension,
                                                   @Path("HasThumbnailFile") Boolean HasThumbnailFile, @Path("HasDocFile") Boolean HasDocFile,
