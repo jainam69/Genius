@@ -27,6 +27,16 @@ public class LibraryModel {
     public List<SubjectModel> Subjectlist;
     public List<LibraryStandardModel> list;
     public long BranchID;
+    int Library_Type;
+
+    public int getLibrary_Type() {
+        return Library_Type;
+    }
+
+    public void setLibrary_Type(int library_Type) {
+        Library_Type = library_Type;
+    }
+
     public LibraryModel(long libraryID) {
         LibraryID = libraryID;
     }

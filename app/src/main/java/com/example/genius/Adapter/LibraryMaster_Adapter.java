@@ -74,16 +74,18 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.doc_desc.setText(libraryDetails.get(position).getDescription());
-        if (libraryDetails.get(position).getType() == 1) {
+        if (libraryDetails.get(position).getLibrary_Type() == 1) {
             holder.library_video_link.setVisibility(View.VISIBLE);
             holder.image.setVisibility(View.GONE);
-            holder.library_video_link.setText(libraryDetails.get(position).getLink());
+            holder.library_download.setVisibility(View.GONE);
+            holder.library_video_link.setText(libraryDetails.get(position).getVideoLink());
         } else {
-            ViewGroup.LayoutParams params = holder.linear_standard.getLayoutParams();
+            ViewGroup.LayoutParams params = holder.linear_video.getLayoutParams();
             params.height = 0;
             params.width = 0;
-            holder.linear_standard.setLayoutParams(params);
+            holder.linear_video.setLayoutParams(params);
             holder.image.setVisibility(View.VISIBLE);
+            holder.library_download.setVisibility(View.VISIBLE);
             Glide.with(context).load(libraryDetails.get(position).getThumbnailFilePath()).into(holder.image);
         }
         standard = "";
@@ -210,7 +212,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
         TextView doc_desc, standard, library_video_link;
         ImageView image, library_edit, library_delete, library_download;
-        LinearLayout linear_standard;
+        LinearLayout linear_standard,linear_video;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -222,9 +224,11 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             library_delete = itemView.findViewById(R.id.library_delete);
             library_download = itemView.findViewById(R.id.library_download);
             linear_standard = itemView.findViewById(R.id.linear_standard);
+            linear_video = itemView.findViewById(R.id.linear_video);
             library_video_link = itemView.findViewById(R.id.library_video_link);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
     }
+
 }
