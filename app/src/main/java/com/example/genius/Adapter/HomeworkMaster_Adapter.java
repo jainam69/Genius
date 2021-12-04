@@ -236,11 +236,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                 DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                 Uri uri = Uri.parse(filetype);
                 DownloadManager.Request request = new DownloadManager.Request(uri);
-                if (homeworkDetails.get(position).getSubjectInfo().getSubject() != null) {
-                    Name = "Homework" + "_" + homeworkDetails.get(position).getSubjectInfo().getSubject() + filetyp;
-                } else {
-                    Name = "Homework" + filetyp;
-                }
+                Name = homeworkDetails.get(position).getHomeworkContentFileName();
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 

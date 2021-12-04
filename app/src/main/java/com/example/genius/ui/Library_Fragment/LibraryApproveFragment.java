@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -122,8 +123,6 @@ public class LibraryApproveFragment extends Fragment {
         public LibraryApproval_Adapter(Context context, List<LibraryModel> libraryModels) {
             this.context = context;
             this.libraryModels = libraryModels;
-            progressBarHelper = new ProgressBarHelper(context, false);
-            apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
 
         @NonNull
@@ -140,16 +139,24 @@ public class LibraryApproveFragment extends Fragment {
                 holder.img_thumbnail.setVisibility(View.GONE);
                 holder.img_download.setVisibility(View.GONE);
             }
-            holder.txt_branchname.setText("Branch Name :   All Branch");
-            if (libraryModels.get(position).getVideoLink() != null && libraryModels.get(position).getVideoLink() != "") {
-                holder.txt_videolink.setText("Video Link :   " + libraryModels.get(position).getVideoLink());
-            } else {
-                holder.txt_videolink.setVisibility(View.GONE);
+
+            holder.txt_branchname.setText("All Branch");
+            if (libraryModels.get(position).getVideoLink() != null && !libraryModels.get(position).getVideoLink().equals(""))
+            {
+                holder.txt_videolink.setText(libraryModels.get(position).getVideoLink());
+            }else {
+                holder.linear_videolink.setVisibility(View.GONE);
             }
-            holder.txt_subjectname.setText("Subject :   " + libraryModels.get(position).getSubjectlist().get(0).getSubject());
-            holder.txt_categoryname.setText("Category Name :   " + libraryModels.get(position).getCategoryInfo().getCategory());
-            holder.txt_description.setText("Description :   " + libraryModels.get(position).getDescription());
-            holder.txt_approvalstatus.setText("Status :   " + libraryModels.get(position).getApproval().getLibrary_Status_text());
+            if (libraryModels.get(position).getSubjectlist().size() > 0)
+            {
+                holder.txt_subjectname.setText(libraryModels.get(position).getSubjectlist().get(0).getSubject());
+            }else
+            {
+                holder.linear_subject.setVisibility(View.GONE);
+            }
+            holder.txt_categoryname.setText(libraryModels.get(position).getCategoryInfo().getCategory());
+            holder.txt_description.setText(libraryModels.get(position).getDescription());
+            holder.txt_approvalstatus.setText(libraryModels.get(position).getApproval().getLibrary_Status_text());
             holder.img_edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -292,11 +299,12 @@ public class LibraryApproveFragment extends Fragment {
             return libraryModels.size();
         }
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder {
 
             ImageView img_thumbnail, img_download, img_edit;
             TextView txt_branchname, txt_videolink, txt_subjectname, txt_categoryname, txt_description, txt_approvalstatus;
             RadioButton rb1;
+            LinearLayout linear_subject,linear_videolink;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -310,6 +318,10 @@ public class LibraryApproveFragment extends Fragment {
                 txt_categoryname = itemView.findViewById(R.id.txt_categoryname);
                 txt_description = itemView.findViewById(R.id.txt_description);
                 txt_approvalstatus = itemView.findViewById(R.id.txt_approvalstatus);
+                linear_subject = itemView.findViewById(R.id.linear_subject);
+                linear_videolink = itemView.findViewById(R.id.linear_videolink);
+                progressBarHelper = new ProgressBarHelper(context, false);
+                apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }
         }
 

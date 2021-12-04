@@ -366,49 +366,11 @@ public class LibraryModel {
             this.library_id = library_id;
         }
 
-        public static class ApprovalData {
-            ApprovalModel Data;
-            boolean Completed;
-
-            public ApprovalModel getData() {
-                return Data;
-            }
-
-            public void setData(ApprovalModel data) {
-                Data = data;
-            }
-
-            public boolean isCompleted() {
-                return Completed;
-            }
-
-            public void setCompleted(boolean completed) {
-                Completed = completed;
-            }
-        }
     }
 
     public static class ApprovalData {
-
-        boolean Completed;
         ApprovalModel Data;
-        String Message;
-
-        public String getMessage() {
-            return Message;
-        }
-
-        public void setMessage(String message) {
-            Message = message;
-        }
-
-        public boolean isCompleted() {
-            return Completed;
-        }
-
-        public void setCompleted(boolean completed) {
-            Completed = completed;
-        }
+        boolean Completed;
 
         public ApprovalModel getData() {
             return Data;
@@ -418,5 +380,12 @@ public class LibraryModel {
             Data = data;
         }
 
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
     }
 }

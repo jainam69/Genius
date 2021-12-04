@@ -38,36 +38,136 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Branch Name : All Branch"
-                android:id="@+id/txt_branchname"/>
-            <TextView
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
+                    android:text="Branch Name :"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_branchname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_videolink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Video Link : All Branch"
-                android:id="@+id/txt_videolink"/>
-            <TextView
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:text="Video Link :"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_videolink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:autoLink="web"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Subject  :Social Science"
-                android:id="@+id/txt_subjectname"/>
-            <TextView
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:text="Subject :"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_subjectname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Category Name : ABC"
-                android:id="@+id/txt_categoryname"/>
-            <TextView
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:text="Category :"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_categoryname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Document Description : Story Book for Kids"
-                android:id="@+id/txt_description"/>
-            <TextView
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:text="Description :"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Status : Pending"
-                android:id="@+id/txt_approvalstatus"/>
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:text="Status :"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_approvalstatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
@@ -131,7 +231,6 @@
 
     </LinearLayout>
         <LinearLayout
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
