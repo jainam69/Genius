@@ -216,42 +216,45 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         }
 
         save_library.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
-                progressBarHelper.showProgressDialog();
-                Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
-                        , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                        , rb_general.isChecked() ? 1 : 2, 2
-                        , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                        , 0, library_video_link.getText().toString(), "none", "none", "none", "none"
-                        , false, false, MultipartBody.Part.createFormData("attachment", ""
-                                , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
-                        , MultipartBody.Part.createFormData("attachment", ""
-                                , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
-                call.enqueue(new Callback<LibrarySingleData>() {
-                    @Override
-                    public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body().isCompleted()) {
-                                library_Listfragment contact = new library_Listfragment();
-                                FragmentManager fragmentManager = getFragmentManager();
-                                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                fragmentTransaction.replace(R.id.nav_host_fragment, contact);
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
+            progressBarHelper.showProgressDialog();
+            if (validation()) {
+                if (Function.checkNetworkConnection(context)) {
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
+                            , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , rb_general.isChecked() ? 1 : 2, 2
+                            , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                            , 0, library_video_link.getText().toString(), "none", "none", "none", "none"
+                            , false, false, MultipartBody.Part.createFormData("attachment", ""
+                                    , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
+                            , MultipartBody.Part.createFormData("attachment", ""
+                                    , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
+                    call.enqueue(new Callback<LibrarySingleData>() {
+                        @Override
+                        public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
+                            if (response.isSuccessful()) {
+                                if (response.body().isCompleted()) {
+                                    library_Listfragment contact = new library_Listfragment();
+                                    FragmentManager fragmentManager = getFragmentManager();
+                                    FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                                    fragmentTransaction.replace(R.id.nav_host_fragment, contact);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
+                                }
+                                Function.showToast(context, response.body().getMessage());
                             }
-                            Function.showToast(context, response.body().getMessage());
+                            progressBarHelper.hideProgressDialog();
                         }
-                        progressBarHelper.hideProgressDialog();
-                    }
 
-                    @Override
-                    public void onFailure(@NotNull Call<LibrarySingleData> call, @NotNull Throwable t) {
-                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                        progressBarHelper.hideProgressDialog();
-                    }
-                });
-            } else {
-                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onFailure(@NotNull Call<LibrarySingleData> call, @NotNull Throwable t) {
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                            progressBarHelper.hideProgressDialog();
+                        }
+                    });
+                } else {
+                    progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -567,4 +570,32 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     public void selectedStrings(List<String> strings) {
 
     }
+
+    public boolean validation() {
+        if (library_title.getText().toString().trim().equals("")) {
+            Function.showToast(context, "Please enter library title");
+            progressBarHelper.hideProgressDialog();
+            return false;
+        } else if (category.getSelectedItemId() == 0) {
+            Function.showToast(context, "Please select category");
+            progressBarHelper.hideProgressDialog();
+            return false;
+        } else if (library_video_link.getText().toString().equals("")) {
+            Function.showToast(context, "Please enter video link");
+            progressBarHelper.hideProgressDialog();
+            return false;
+        } else if (rb_standard.isChecked()) {
+            if (StandardIDs.equals("")) {
+                Function.showToast(context, "Please select standard");
+                progressBarHelper.hideProgressDialog();
+                return false;
+            } else if (subject.getSelectedItemId() == 0) {
+                Function.showToast(context, "Please select subject");
+                progressBarHelper.hideProgressDialog();
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

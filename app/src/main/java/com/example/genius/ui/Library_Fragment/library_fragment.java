@@ -109,12 +109,12 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     File instrumentFileDestination, instrumentFileDestination1;
     Bundle bundle;
     OnBackPressedCallback callback;
-    Long StandardId, SubjectId, categoryid;
+    Long StandardId = 0L, SubjectId = 0L, categoryid = 0L;
     SearchableSpinner category;
     List<String> categoryitem = new ArrayList<>();
     List<Integer> categoryId = new ArrayList<>();
     String BranchID;
-    String StandardIDs;
+    String StandardIDs = "none";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -288,9 +288,9 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         });
 
         save_library.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
             if (validation()) {
                 if (Function.checkNetworkConnection(context)) {
-                    progressBarHelper.showProgressDialog();
                     Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
                             , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                             , rb_general.isChecked() ? 1 : 2, 2
@@ -824,22 +824,28 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     public boolean validation() {
         if (library_title.getText().toString().trim().equals("")) {
             Function.showToast(context, "Please enter library title");
+            progressBarHelper.hideProgressDialog();
             return false;
         } else if (category.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select category");
+            progressBarHelper.hideProgressDialog();
             return false;
         } else if (instrumentFileDestination == null) {
             Function.showToast(context, "Please select thumbnail");
+            progressBarHelper.hideProgressDialog();
             return false;
         } else if (instrumentFileDestination1 == null) {
             Function.showToast(context, "Please select document");
+            progressBarHelper.hideProgressDialog();
             return false;
         } else if (rb_standard.isChecked()) {
             if (StandardIDs.equals("")) {
                 Function.showToast(context, "Please select standard");
+                progressBarHelper.hideProgressDialog();
                 return false;
             } else if (subject.getSelectedItemId() == 0) {
                 Function.showToast(context, "Please select subject");
+                progressBarHelper.hideProgressDialog();
                 return false;
             }
         }

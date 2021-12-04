@@ -369,7 +369,7 @@ public interface ApiCalling {
     @Multipart
     @POST(ApiConstant.OldLibraryMaintenance + "/{LibraryID}"
             + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{StandardID}" + "/{BranchID}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
-            + "/{SubjectID}" + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{ThumbnailFileName}" + "/{ThumbnailFileExtension}" + "/{DocFileName}"
+            + "/{SubjectID}" + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{VideoLink}" + "/{ThumbnailFileName}" + "/{ThumbnailFileExtension}" + "/{DocFileName}"
             + "/{DocFileExtension}" + "/{HasThumbnailFile}" + "/{HasDocFile}")
     Call<LibrarySingleData> OldLibraryMaintenance(@Path("LibraryID") long LibraryID,
                                                   @Path("LibraryDetailID") long LibraryDetailID, @Path("LibraryTitle") String LibraryTitle,

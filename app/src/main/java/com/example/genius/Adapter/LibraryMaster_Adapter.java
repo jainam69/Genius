@@ -6,16 +6,21 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -69,14 +74,32 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.doc_desc.setText(libraryDetails.get(position).getDescription());
-        List<LibraryModel.LibraryStandardModel> libraryStandardModels = libraryDetails.get(position).getList();
-        standard = "";
-        for (int i = 0; i < libraryStandardModels.size(); i++) {
-            standard += libraryStandardModels.get(i).getStandard();
-            standard += "\n";
+        if (libraryDetails.get(position).getType() == 1) {
+            holder.library_video_link.setVisibility(View.VISIBLE);
+            holder.image.setVisibility(View.GONE);
+            holder.library_video_link.setText(libraryDetails.get(position).getLink());
+        } else {
+            ViewGroup.LayoutParams params = holder.linear_standard.getLayoutParams();
+            params.height = 0;
+            params.width = 0;
+            holder.linear_standard.setLayoutParams(params);
+            holder.image.setVisibility(View.VISIBLE);
+            Glide.with(context).load(libraryDetails.get(position).getThumbnailFilePath()).into(holder.image);
         }
-        holder.standard.setText(standard);
-        Glide.with(context).load(libraryDetails.get(position).getThumbnailFilePath()).into(holder.image);
+        standard = "";
+        if (libraryDetails.get(position).getList().size() == 0) {
+            ViewGroup.LayoutParams params = holder.linear_standard.getLayoutParams();
+            params.height = 0;
+            params.width = 0;
+            holder.linear_standard.setLayoutParams(params);
+        } else {
+            holder.linear_standard.setVisibility(View.VISIBLE);
+            for (int i = 0; i < libraryDetails.get(position).getList().size(); i++) {
+                standard += libraryDetails.get(position).getList().get(i).getStandard();
+                standard += "\n";
+            }
+            holder.standard.setText(standard);
+        }
         holder.library_edit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -149,7 +172,19 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             image.setImageResource(R.drawable.download);
             AlertDialog dialog = builder.create();
             btn_edit_no.setOnClickListener(v15 -> dialog.dismiss());
-            btn_edit_yes.setOnClickListener(v16 -> dialog.dismiss());
+            btn_edit_yes.setOnClickListener(v16 -> {
+                String filetype = libraryDetails.get(position).getDocFilePath();
+                String filetyp = filetype.substring(filetype.lastIndexOf("."));
+                Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                Uri uri = Uri.parse(filetype);
+                DownloadManager.Request request = new DownloadManager.Request(uri);
+                Name = libraryDetails.get(position).getDocFileName();
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                downloadID = dm.enqueue(request);
+                context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+            });
             dialog.show();
         });
     }
@@ -173,8 +208,9 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView doc_desc, standard;
+        TextView doc_desc, standard, library_video_link;
         ImageView image, library_edit, library_delete, library_download;
+        LinearLayout linear_standard;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -185,6 +221,8 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             library_edit = itemView.findViewById(R.id.library_edit);
             library_delete = itemView.findViewById(R.id.library_delete);
             library_download = itemView.findViewById(R.id.library_download);
+            linear_standard = itemView.findViewById(R.id.linear_standard);
+            library_video_link = itemView.findViewById(R.id.library_video_link);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
