@@ -286,6 +286,9 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_TESTSCHEDULE_BY_BRANCH)
     Call<TestScheduleData> GetAllTestByBranch(@Query("branchID") long branchID);
 
+    @GET(ApiConstant.GET_TESTSCHEDULE_BY_BRANCH_API)
+    Call<TestScheduleData> GetAllTestByBranchAPI(@Query("branchID") long branchID);
+
     @POST(ApiConstant.UPLOAD_PAPER_MAINTENANCE)
     Call<UploadPaperModel.UploadPaperData1> TestPaperMaintenance(@Body UploadPaperModel uploadPaperModel);
 
@@ -332,7 +335,7 @@ public interface ApiCalling {
     Call<CommonModel> RemoveTodo(@Query("todoID") long todoID, @Query("lastupdatedby") String lastupdatedby);
 
     @POST(ApiConstant.REMOVE_TEST_SCHEDULE_PAPER)
-    Call<CommonModel> RemoveTest(@Query("testID") long testID, @Query("lastupdatedby") String lastupdatedby, @Query("removePaper") Boolean removePaper);
+    Call<CommonModel> RemoveTest(@Query("testID") long testID, @Query("lastupdatedby") String lastupdatedby, @Query("paper") Boolean paper);
 
     @Multipart
     @POST(ApiConstant.FEES_MAINTENANCE + "/{FeesID}"
@@ -409,6 +412,7 @@ public interface ApiCalling {
                                                           @Path("FileName") String FileName, @Path("Extension") String Extension,
                                                           @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
+    @Multipart
     @POST(ApiConstant.NEW_UPLOAD_PAPER_MAINTENANCE + "/{TestID}"
             + "/{TestPaperID}" + "/{Paper_Type}" + "/{Doc_Link}" + "/{Paper_Remark}" + "/{CreateId}" + "/{CreateBy}"
             + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
@@ -472,7 +476,7 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{BatchtimeID}/{SubjectID}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
-    Call<MarksModel.MarksData> MarksMaintenance(@Path("MarksID") long MarksID, @Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
+    Call<MarksModel.MarksData1> MarksMaintenance(@Path("MarksID") long MarksID, @Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
                                                 @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
                                                 @Path("BatchtimeID") int BatchtimeID, @Path("SubjectID") long SubjectID,
                                                 @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
@@ -482,7 +486,7 @@ public interface ApiCalling {
     Call<SubjectData> GetAllSubjectByTestDate(@Query("TestDate") String TestDate);
 
     @POST(ApiConstant.GET_ALL_STUDENT_ACHIEVE_MARK)
-    Call<MarksModel.MarksData> GetAllStudentAchieveMarks(@Query("Std") long Std, @Query("Branch") long Branch, @Query("Batch") long Batch, @Query("MarksID") long MarksID, @Query("TestDate") String TestDate);
+    Call<MarksModel.MarksData> GetAllStudentAchieveMarks(@Query("Std") long Std, @Query("Branch") long Branch, @Query("Batch") long Batch, @Query("MarksID") long MarksID);
 
     @POST(ApiConstant.UPDATE_ACHIEVE_MARKS)
     Call<MarksModel.MarksData> Update_Achieve_Marks(@Query("MarksID") long MarksID, @Query("StudentID") long StudentID, @Query("AchieveMarks") String AchieveMarks, @Query("CreatedId") long CreatedId, @Query("CreatedBy") String CreatedBy, @Query("TransactionId") long TransactionId);

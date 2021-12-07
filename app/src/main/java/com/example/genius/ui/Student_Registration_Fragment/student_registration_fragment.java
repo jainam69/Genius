@@ -129,50 +129,13 @@ public class student_registration_fragment extends Fragment {
     ApiCalling apiCalling;
     Bundle bundle;
     OnBackPressedCallback callback;
-    String pictureFilePath, attach = "";
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    SchoolName = schoolnitem.get(position);
-                    SchoolId = Long.parseLong(schoolnid.get(position).toString());
-                    if (school_name.getSelectedItem().equals("Select School")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
-                    StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
+    String pictureFilePath;
     private int year;
     private int month;
     private int day;
     int result1 = -1, status1;
+    DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
     private static String pad(int c) {
         if (c >= 10)
@@ -180,9 +143,6 @@ public class student_registration_fragment extends Fragment {
         else
             return "0" + c;
     }
-
-    DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
-    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -270,8 +230,8 @@ public class student_registration_fragment extends Fragment {
             if (bundle.containsKey("ParentName")) {
                 parent_name.setText(bundle.getString("ParentName"));
             }
-            if (bundle.containsKey("Percentage")) {
-                percentage.setText("" + bundle.getInt("Percentage"));
+            if (bundle.containsKey("Grade")) {
+                percentage.setText(bundle.getString("Grade"));
             }
             if (bundle.containsKey("FileName")){
                 FileName = bundle.getString("FileName");
@@ -310,46 +270,26 @@ public class student_registration_fragment extends Fragment {
                     inactive.setChecked(true);
                 }
             }
+            if (bundle.containsKey("LastYearResult")) {
+                int st = bundle.getInt("LastYearResult");
+                if (st == 1) {
+                    pass.setChecked(true);
+                    fail.setChecked(false);
+                }
+                if (st == 2) {
+                    pass.setChecked(false);
+                    fail.setChecked(true);
+                }
+            }
             if (bundle.containsKey("ParentID")) {
                 ParentID = bundle.getLong("ParentID");
+            }
+            if (bundle.containsKey("StudentID")){
+                StudentID = bundle.getLong("StudentID");
             }
             if (bundle.containsKey("TransactionID")) {
                 TransactionID = bundle.getLong("TransactionID");
             }
-            if (bundle.containsKey("StudentID")) {
-                StudentID = bundle.getLong("StudentID");
-                progressBarHelper.showProgressDialog();
-                Call<StudentByIdData> call = apiCalling.GetStudentByID(StudentID);
-                call.enqueue(new Callback<StudentByIdData>() {
-                    @Override
-                    public void onResponse(@NotNull Call<StudentByIdData> call, @NotNull Response<StudentByIdData> response) {
-                        if (response.isSuccessful()) {
-                            StudentByIdData data = response.body();
-                            if (data != null && data.Completed) {
-                                StudentModel studentModel = data.Data;
-                                if (studentModel.getStudentID() > 0) {
-                                    attachment.setText("Attached");
-                                    imageView.setVisibility(View.VISIBLE);
-                                    attach = studentModel.getStudImage();
-                                    attachment.setTextColor(context.getResources().getColor(R.color.black));
-                                    imageVal = Base64.decode(attach, Base64.DEFAULT);
-                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);
-                                    imageView.setImageBitmap(decodedByte);
-                                }
-                            }
-                        }
-                        progressBarHelper.hideProgressDialog();
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull Call<StudentByIdData> call, @NotNull Throwable t) {
-                        progressBarHelper.hideProgressDialog();
-                    }
-                });
-            }
-        } else {
-            /*addmission_date.setText("" + displaydate.format(Calendar.getInstance().getTime()));
-            indate = actualdate.format(Calendar.getInstance().getTime());*/
         }
 
         if (Function.checkNetworkConnection(context)) {
@@ -359,8 +299,10 @@ public class student_registration_fragment extends Fragment {
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
         selectschool_time();
         selectbatch_time();
+
         result_rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
             Result = rb1.getText().toString();
@@ -991,6 +933,25 @@ public class student_registration_fragment extends Fragment {
         }
     }
 
+    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    SchoolName = schoolnitem.get(position);
+                    SchoolId = Long.parseLong(schoolnid.get(position).toString());
+                    if (school_name.getSelectedItem().equals("Select School")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
     public void GetAllStandard() {
         standarditem.add("Select Standard");
         standardid.add(0);
@@ -1046,6 +1007,25 @@ public class student_registration_fragment extends Fragment {
             standard.setSelection(b);
         }
     }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StandardName = standarditem.get(position);
+                    StandardId = Long.parseLong(standardid.get(position).toString());
+                    if (standard.getSelectedItem().equals("Select Standard")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 
     private File getPictureFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -1131,7 +1111,7 @@ public class student_registration_fragment extends Fragment {
         batch_time.setAdapter(adapter);
         batch_time.setOnItemSelectedListener(onItemSelectedListener77);
         if (bundle != null) {
-            int a = batchid.indexOf(String.valueOf(bundle.getInt("BatchTime")));
+            int a = batchid.indexOf(String.valueOf(bundle.getString("BatchTime")));
             batch_time.setSelection(a);
         }
     }

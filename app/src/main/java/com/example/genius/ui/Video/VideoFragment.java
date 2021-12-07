@@ -109,7 +109,6 @@ public class VideoFragment extends Fragment {
         bid = root.findViewById(R.id.bid);
         video = root.findViewById(R.id.video);
         video_scroll = root.findViewById(R.id.video_scroll);
-//        text = root.findViewById(R.id.text);
         transaction_id = root.findViewById(R.id.transaction_id);
         unique_id = root.findViewById(R.id.unique_id);
 

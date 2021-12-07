@@ -12,6 +12,11 @@ public class UploadPaperModel {
     String PaperType;
     String DocContentText;
     String FileName;
+    String FilePath;
+    String DocLink;
+    String Remarks;
+    RowStatusModel RowStatus;
+    TransactionModel Transaction;
 
     public String getFilePath() {
         return FilePath;
@@ -20,12 +25,6 @@ public class UploadPaperModel {
     public void setFilePath(String filePath) {
         FilePath = filePath;
     }
-
-    String FilePath;
-    String DocLink;
-    String Remarks;
-    RowStatusModel RowStatus;
-    TransactionModel Transaction;
 
     public UploadPaperModel(long testPaperID, long testID, String testName, String testDate, int paperTypeID, String paperType, String docContentText, String fileName, String docLink, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
         TestPaperID = testPaperID;

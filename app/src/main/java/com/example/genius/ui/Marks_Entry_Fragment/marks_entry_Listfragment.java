@@ -136,7 +136,7 @@ public class marks_entry_Listfragment extends Fragment {
                         }catch (Exception e){
                         }
                         Call<MarksModel.MarksData> call = apiCalling.GetAllStudentAchieveMarks(StandardId,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
-                                Long.parseLong(BatchId),Long.parseLong(SubjectId),Subject_Date);
+                                Long.parseLong(BatchId),Long.parseLong(SubjectId));
                         call.enqueue(new Callback<MarksModel.MarksData>() {
                             @Override
                             public void onResponse(Call<MarksModel.MarksData> call, Response<MarksModel.MarksData> response) {

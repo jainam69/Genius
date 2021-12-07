@@ -134,4 +134,35 @@ public class MarksModel {
             Completed = completed;
         }
     }
+
+    public static class MarksData1
+    {
+        MarksModel Data;
+        String Message;
+        boolean Completed;
+
+        public MarksModel getData() {
+            return Data;
+        }
+
+        public void setData(MarksModel data) {
+            Data = data;
+        }
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
+
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
+    }
 }

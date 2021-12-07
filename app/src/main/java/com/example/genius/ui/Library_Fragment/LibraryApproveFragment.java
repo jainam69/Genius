@@ -289,9 +289,7 @@ public class LibraryApproveFragment extends Fragment {
                     dialog.show();
                 }
             });
-            holder.txt_categoryname.setText("Category Name : " + libraryModels.get(position).getCategoryInfo().getCategory());
-            holder.txt_description.setText("Description : " + libraryModels.get(position).getDescription());
-            holder.txt_approvalstatus.setText("Status : " + libraryModels.get(position).getApproval().getLibrary_Status_text());
+
         }
 
         @Override

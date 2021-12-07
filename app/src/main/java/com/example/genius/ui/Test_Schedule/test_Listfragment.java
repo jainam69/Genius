@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -60,6 +61,7 @@ public class test_Listfragment extends Fragment {
     ApiCalling apiCalling;
     EditText date, std;
     Button clear, search;
+    TextView txt_nodata;
     private int year;
     private int month;
     private int day;
@@ -83,6 +85,7 @@ public class test_Listfragment extends Fragment {
         std = root.findViewById(R.id.std);
         clear = root.findViewById(R.id.clear);
         search = root.findViewById(R.id.search);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -180,7 +183,7 @@ public class test_Listfragment extends Fragment {
     }
 
     public void GetTestScheduleDetails() {
-        Call<TestScheduleData> call = apiCalling.GetAllTestByBranch(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        Call<TestScheduleData> call = apiCalling.GetAllTestByBranchAPI(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<TestScheduleData>() {
             @Override
             public void onResponse(@NotNull Call<TestScheduleData> call, @NotNull Response<TestScheduleData> response) {
@@ -191,18 +194,17 @@ public class test_Listfragment extends Fragment {
                         List<TestScheduleModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                List<TestScheduleModel> list = new ArrayList<>();
-                                for (TestScheduleModel singlemodel : studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
+                                txt_nodata.setVisibility(View.GONE);
+                                testschedule_rv.setVisibility(View.VISIBLE);
                                 testScheduleDetails2 = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 testschedule_rv.setLayoutManager(linearLayoutManager);
                                 testScheduleMaster_adapter = new TestScheduleMaster_Adapter(context, studentModelList);
                                 testScheduleMaster_adapter.notifyDataSetChanged();
                                 testschedule_rv.setAdapter(testScheduleMaster_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                testschedule_rv.setVisibility(View.GONE);
                             }
                         }
                     }

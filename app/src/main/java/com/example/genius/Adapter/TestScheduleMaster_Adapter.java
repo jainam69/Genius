@@ -45,10 +45,8 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
 
     Context context;
     List<TestScheduleModel> testScheduleDetails;
-    int id;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -92,29 +90,36 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             image.setImageResource(R.drawable.ic_edit);
             AlertDialog dialog = builder.create();
 
-            btn_edit_no.setOnClickListener(v1 -> dialog.dismiss());
+            btn_edit_no.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
 
-            btn_edit_yes.setOnClickListener(v12 -> {
-                dialog.dismiss();
-                test_schedule_fragment orderplace = new test_schedule_fragment();
-                Bundle bundle = new Bundle();
-                bundle.putLong("Standard", testScheduleDetails.get(position).getStandard().getStandardID());
-                bundle.putInt("BatchTime", testScheduleDetails.get(position).getBatchTimeID());
-                bundle.putLong("TestSubject", testScheduleDetails.get(position).getSubject().getSubjectID());
-                bundle.putString("TestDate", testScheduleDetails.get(position).getTestDate());
-                bundle.putString("StartTime", testScheduleDetails.get(position).getTestStartTime());
-                bundle.putString("EndTime", testScheduleDetails.get(position).getTestEndTime());
-                bundle.putDouble("TestMarks", testScheduleDetails.get(position).getMarks());
-                bundle.putString("TestRemarks", testScheduleDetails.get(position).getRemarks());
-                bundle.putLong("TestID", testScheduleDetails.get(position).getTestID());
-                bundle.putLong("TransactionId", testScheduleDetails.get(position).getTransaction().getTransactionId());
-                orderplace.setArguments(bundle);
-                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-
+            btn_edit_yes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    test_schedule_fragment orderplace = new test_schedule_fragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("Standard", testScheduleDetails.get(position).getStandard().getStandardID());
+                    bundle.putInt("BatchTime", testScheduleDetails.get(position).getBatchTimeID());
+                    bundle.putLong("TestSubject", testScheduleDetails.get(position).getSubject().getSubjectID());
+                    bundle.putString("TestDate", testScheduleDetails.get(position).getTestDate());
+                    bundle.putString("StartTime", testScheduleDetails.get(position).getTestStartTime());
+                    bundle.putString("EndTime", testScheduleDetails.get(position).getTestEndTime());
+                    bundle.putDouble("TestMarks", testScheduleDetails.get(position).getMarks());
+                    bundle.putString("TestRemarks", testScheduleDetails.get(position).getRemarks());
+                    bundle.putLong("TestID", testScheduleDetails.get(position).getTestID());
+                    bundle.putLong("TransactionId", testScheduleDetails.get(position).getTransaction().getTransactionId());
+                    orderplace.setArguments(bundle);
+                    FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
             });
             dialog.show();
         });
@@ -132,34 +137,41 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             title.setText("Are you sure that you want to delete this Test Schedule?");
             AlertDialog dialog = builder.create();
 
-            btn_cancel.setOnClickListener(v14 -> dialog.dismiss());
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
 
-            btn_delete.setOnClickListener(v13 -> {
-                progressBarHelper.showProgressDialog();
-                Call<CommonModel> call = apiCalling.RemoveTest(testScheduleDetails.get(position).getTestID(), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), true);
-                call.enqueue(new Callback<CommonModel>() {
-                    @Override
-                    public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
-                        if (response.isSuccessful()) {
-                            CommonModel model = response.body();
-                            if (model.isCompleted()) {
-                                if (model.isData()) {
-                                    testScheduleDetails.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyDataSetChanged();
+            btn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    progressBarHelper.showProgressDialog();
+                    Call<CommonModel> call = apiCalling.RemoveTest(testScheduleDetails.get(position).getTestID(), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), true);
+                    call.enqueue(new Callback<CommonModel>() {
+                        @Override
+                        public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
+                            if (response.isSuccessful()) {
+                                CommonModel model = response.body();
+                                if (model.isCompleted()) {
+                                    if (model.isData()) {
+                                        testScheduleDetails.remove(position);
+                                        notifyItemRemoved(position);
+                                        notifyDataSetChanged();
+                                    }
                                 }
                             }
+                            progressBarHelper.hideProgressDialog();
                         }
-                        progressBarHelper.hideProgressDialog();
-                    }
 
-                    @Override
-                    public void onFailure(@NotNull Call<CommonModel> call, @NotNull Throwable t) {
-                        progressBarHelper.hideProgressDialog();
-                    }
-                });
-                dialog.dismiss();
-
+                        @Override
+                        public void onFailure(@NotNull Call<CommonModel> call, @NotNull Throwable t) {
+                            progressBarHelper.hideProgressDialog();
+                        }
+                    });
+                    dialog.dismiss();
+                }
             });
             dialog.show();
         });

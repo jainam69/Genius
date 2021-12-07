@@ -68,31 +68,11 @@ public class NotificationFragment extends Fragment {
     List<Integer> branchid = new ArrayList<>();
     String[] BRANCHITEM;
     Integer[] BRANCHID;
-    int BranchId = 0, flag = 0, check_value_admin, check_value_teacher, check_value_student;
+    int check_value_admin, check_value_teacher, check_value_student;
     OnBackPressedCallback callback;
     NestedScrollView notification_scroll;
     String BranchName, BranchID;
     Notification_Adapter notification_adapter;
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = branchitem.get(position);
-                    BranchID = String.valueOf(branchid.get(position));
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,6 +97,13 @@ public class NotificationFragment extends Fragment {
         transaction_id = root.findViewById(R.id.transaction_id);
         notification_scroll = root.findViewById(R.id.notification_scroll);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+
+        if (Function.isNetworkAvailable(context)) {
+            progressBarHelper.showProgressDialog();
+            GetAllNotification();
+        } else {
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+        }
 
         ch_admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -155,7 +142,8 @@ public class NotificationFragment extends Fragment {
                 if (Function.isNetworkAvailable(context)) {
                     if (notification_message.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
+                    {
                         progressBarHelper.showProgressDialog();
                         List<NotificationModel.NotificationTypeModel> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -204,6 +192,8 @@ public class NotificationFragment extends Fragment {
                                 progressBarHelper.hideProgressDialog();
                             }
                         });
+                    }else {
+                        Toast.makeText(context, "Please Select SubType.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     progressBarHelper.hideProgressDialog();
@@ -218,7 +208,8 @@ public class NotificationFragment extends Fragment {
                 if (Function.checkNetworkConnection(context)) {
                     if (notification_message.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
+                    {
                         progressBarHelper.showProgressDialog();
                         List<NotificationModel.NotificationTypeModel> typeModel = new ArrayList<>();
                         if (check_value_admin == 1) {
@@ -287,6 +278,8 @@ public class NotificationFragment extends Fragment {
                                 progressBarHelper.hideProgressDialog();
                             }
                         });
+                    }else {
+                        Toast.makeText(context, "Please Select SubType.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     progressBarHelper.hideProgressDialog();
@@ -294,13 +287,6 @@ public class NotificationFragment extends Fragment {
                 }
             }
         });
-
-        if (Function.isNetworkAvailable(context)) {
-            progressBarHelper.showProgressDialog();
-            GetAllNotification();
-        } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -318,7 +304,6 @@ public class NotificationFragment extends Fragment {
     }
 
     public void GetAllNotification() {
-        progressBarHelper.showProgressDialog();
         Call<NotificationData> call = apiCalling.GetAllNotificationBranch(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<NotificationData>() {
             @Override
@@ -330,11 +315,14 @@ public class NotificationFragment extends Fragment {
                             List<NotificationModel> respose = data.getData();
                             if (respose != null) {
                                 if (respose.size() > 0) {
+                                    text.setVisibility(View.VISIBLE);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                     notification_rv.setLayoutManager(linearLayoutManager);
                                     notification_adapter = new Notification_Adapter(context, respose);
                                     notification_adapter.notifyDataSetChanged();
                                     notification_rv.setAdapter(notification_adapter);
+                                }else {
+                                    text.setVisibility(View.GONE);
                                 }
                             }
                         }
@@ -400,9 +388,28 @@ public class NotificationFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         branch.setAdapter(adapter);
-
         branch.setOnItemSelectedListener(onItemSelectedListener6);
     }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    BranchName = branchitem.get(position);
+                    BranchID = String.valueOf(branchid.get(position));
+                    if (branch.getSelectedItem().equals("Select Branch")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 
     public class Notification_Adapter extends RecyclerView.Adapter<Notification_Adapter.ViewHolder> {
 

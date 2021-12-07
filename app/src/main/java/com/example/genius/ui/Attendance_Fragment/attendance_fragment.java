@@ -116,8 +116,6 @@ public class attendance_fragment extends Fragment {
         attendance_id = root.findViewById(R.id.attendance_id);
         transactionid = root.findViewById(R.id.transactionid);
 
-        attendance_date.setText(yesterday());
-
         bundle = getArguments();
         if (bundle != null) {
             linear_create_attendance.setVisibility(View.GONE);
@@ -182,7 +180,6 @@ public class attendance_fragment extends Fragment {
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             selectbatch_time();
             GetAllStandard();
         } else {
@@ -217,9 +214,6 @@ public class attendance_fragment extends Fragment {
 
         submit_attendance.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                /*if (branch.getSelectedItemId() == 0)
-                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
-                else */
                 if (standard.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 else if (batch_time.getSelectedItemId() == 0)

@@ -120,8 +120,6 @@ public class test_schedule_fragment extends Fragment {
     public static final String ERROR = "error";
     File instrumentFileDestination;
     int flag = 0, type;
-    UploadPaperModel uploadPaperModel;
-    UploadPaperModel uploadPaperModel_update;
     List<UploadPaperModel> studentModelList;
     String FileName = "none", Extension = "none";
 
@@ -214,11 +212,15 @@ public class test_schedule_fragment extends Fragment {
                                             edit_test_paper.setVisibility(View.VISIBLE);
                                             save_test_paper.setVisibility(View.GONE);
                                             paper_remarks.setText(studentModelList.get(0).getRemarks());
-                                            if (studentModelList.get(0).getFilePath().contains(".") && studentModelList.get(0).getFilePath().contains("/")) {
-                                                Extension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf(".") + 1);
-                                                String FileNameWithExtension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf("/") + 1);
-                                                String[] FileNameArray = FileNameWithExtension.split("\\.");
-                                                FileName = FileNameArray[0];
+                                            if (!studentModelList.get(0).getFilePath().equals("") && studentModelList.get(0).getFilePath() != null) {
+                                                if (studentModelList.get(0).getFilePath().contains(".") && studentModelList.get(0).getFilePath().contains("/")) {
+                                                    Extension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf(".") + 1);
+                                                    String FileNameWithExtension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf("/") + 1);
+                                                    String[] FileNameArray = FileNameWithExtension.split("\\.");
+                                                    FileName = FileNameArray[0];
+                                                }
+                                            }else {
+                                                upload_link.setText(studentModelList.get(0).getDocLink());
                                             }
                                         }
                                         GetPaperType();
@@ -240,13 +242,23 @@ public class test_schedule_fragment extends Fragment {
             }
         }
 
+        if (Function.checkNetworkConnection(context)) {
+            progressBarHelper.showProgressDialog();
+            selectbatch_time();
+            GetAllStandard();
+            GetAllSubject();
+            if (bundle == null) {
+                GetPaperType();
+            }
+        } else {
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+        }
+
         test_date.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
-
             DatePickerDialog picker = new DatePickerDialog(getActivity(),
                     (view, year2, monthOfYear, dayOfMonth) -> {
                         year = year2;
@@ -315,22 +327,16 @@ public class test_schedule_fragment extends Fragment {
         });
 
         save_testschedule.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                 } else if (subject.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 } else if (marks.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Total Marks.", Toast.LENGTH_SHORT).show();
                 } else if (test_date.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter Test Date.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -350,9 +356,9 @@ public class test_schedule_fragment extends Fragment {
                                 TestScheduleModel.TestScheduleData1 data = response.body();
                                 if (data.isCompleted()) {
                                     TestScheduleModel notimodel = data.getData();
-                                    if (notimodel != null) {
+                                    if (notimodel.getTestID() > 0) {
                                         if (paper_type.getSelectedItemId() == 0) {
-                                            Toast.makeText(context, "Test Schedule Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Test Schedule Inserted Successfully.", Toast.LENGTH_SHORT).show();
                                             test_Listfragment orderplace = new test_Listfragment();
                                             FragmentManager fragmentManager = getFragmentManager();
                                             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -360,7 +366,7 @@ public class test_schedule_fragment extends Fragment {
                                             fragmentTransaction.addToBackStack(null);
                                             fragmentTransaction.commit();
                                         } else {
-                                            Toast.makeText(context, "Test Schedule Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Test Schedule Inserted Successfully.", Toast.LENGTH_SHORT).show();
                                             save_testschedule.setVisibility(View.GONE);
                                             a = notimodel.getTestID();
                                             if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
@@ -372,7 +378,7 @@ public class test_schedule_fragment extends Fragment {
                                             save_test_paper.setVisibility(View.VISIBLE);
                                         }
                                     } else {
-                                        Toast.makeText(context, "Test Schedule not Inserted...!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Test Schedule Already Exists!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -429,34 +435,18 @@ public class test_schedule_fragment extends Fragment {
                                 if (data.isCompleted()) {
                                     TestScheduleModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Test Schedule Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
-                                        View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
-                                        builder.setView(dialogView);
-                                        builder.setCancelable(true);
-                                        Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                                        Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
-                                        ImageView image = dialogView.findViewById(R.id.image);
-                                        TextView title = dialogView.findViewById(R.id.title);
-                                        TextView header_title = dialogView.findViewById(R.id.header_title);
-                                        header_title.setVisibility(View.GONE);
-                                        title.setText("Do you want to changes continue?");
-                                        image.setImageResource(R.drawable.ic_edit);
-                                        AlertDialog dialog = builder.create();
-                                        btn_edit_no.setOnClickListener(v1 -> {
-                                            dialog.dismiss();
+                                        if (notimodel.getTestID() > 0)
+                                        {
+                                            Toast.makeText(context, "Test Schedule Updated Successfully.", Toast.LENGTH_SHORT).show();
                                             test_Listfragment orderplace = new test_Listfragment();
                                             FragmentManager fragmentManager = getFragmentManager();
                                             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                                             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                                             fragmentTransaction.addToBackStack(null);
                                             fragmentTransaction.commit();
-                                        });
-                                        btn_edit_yes.setOnClickListener(v12 -> {
-                                            dialog.dismiss();
-                                            edit_testschedule.setVisibility(View.GONE);
-                                        });
-                                        dialog.show();
+                                        }else {
+                                            Toast.makeText(context, "Test Schedule Already Exists!", Toast.LENGTH_SHORT).show();
+                                        }
                                     } else {
                                         Toast.makeText(context, "Test Schedule not Updated...!", Toast.LENGTH_SHORT).show();
                                     }
@@ -479,57 +469,43 @@ public class test_schedule_fragment extends Fragment {
         });
 
         save_test_paper.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (PaperType_Name.equals("UploadDocument") && instrumentFileDestination != null) {
-                    progressBarHelper.hideProgressDialog();
+                if (PaperType_Name.equals("UploadDocument") && instrumentFileDestination == null) {
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
                 } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     Call<UploadPaperModel.UploadPaperData1> call;
-                    /*TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);*/
                     if (bundle != null) {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                            /*uploadPaperModel = new UploadPaperModel(Long.parseLong(id.getText().toString()), "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
                             call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id), "none"
                                     , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", true
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "0", "0", true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
-                            /*uploadPaperModel = new UploadPaperModel(Long.parseLong(id.getText().toString()), "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
                             call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id)
-                                    , upload_link.getText().toString(), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , upload_link.getText().toString().replaceAll("\\s",""), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
                                     , MultipartBody.Part.createFormData("attachment", ""
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     } else {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                            /*uploadPaperModel = new UploadPaperModel(a, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
-                            call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id), "none"
+                            call = apiCalling.TestPaperMaintenance(a, 0, Integer.parseInt(PaperType_Id), "none"
                                     , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", true
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "0", "0", true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
-                            /*uploadPaperModel = new UploadPaperModel(a, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
-                            call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id)
-                                    , upload_link.getText().toString(), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                            call = apiCalling.TestPaperMaintenance(a, 0, Integer.parseInt(PaperType_Id)
+                                    , upload_link.getText().toString().replaceAll("\\s",""), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
                                     , MultipartBody.Part.createFormData("attachment", ""
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     }
-                    /*Call<UploadPaperModel.UploadPaperData1> call = apiCalling.TestPaperMaintenance(uploadPaperModel);*/
                     call.enqueue(new Callback<UploadPaperModel.UploadPaperData1>() {
                         @Override
                         public void onResponse(@NotNull Call<UploadPaperModel.UploadPaperData1> call, @NotNull Response<UploadPaperModel.UploadPaperData1> response) {
@@ -538,7 +514,7 @@ public class test_schedule_fragment extends Fragment {
                                 if (data.isCompleted()) {
                                     UploadPaperModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Paper Inserted Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Paper Inserted Successfully.", Toast.LENGTH_SHORT).show();
                                         test_Listfragment orderplace = new test_Listfragment();
                                         FragmentManager fragmentManager = getFragmentManager();
                                         FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -546,7 +522,7 @@ public class test_schedule_fragment extends Fragment {
                                         fragmentTransaction.addToBackStack(null);
                                         fragmentTransaction.commit();
                                     } else {
-                                        Toast.makeText(context, "Paper not Inserted...!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Paper not Inserted!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -567,41 +543,32 @@ public class test_schedule_fragment extends Fragment {
         });
 
         edit_test_paper.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
                 } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    /*TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);*/
                     Call<UploadPaperModel.UploadPaperData1> call;
                     if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                         if (instrumentFileDestination != null) {
-                            /*uploadPaperModel_update = new UploadPaperModel(b, c, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                    upload_paper, papername, " ", paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
-                            call = apiCalling.TestPaperMaintenance(b, c, Integer.parseInt(PaperType_Id), "none"
+                            call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id), "none"
                                     , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
-                            call = apiCalling.TestPaperMaintenance(b, c, Integer.parseInt(PaperType_Id), "none"
+                            call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id), "none"
                                     , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, false
                                     , MultipartBody.Part.createFormData("attachment", ""
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     } else {
-                        /*uploadPaperModel_update = new UploadPaperModel(b, c, "Demo", indate, Integer.parseInt(PaperType_Id), PaperType_Name,
-                                " ", " ", upload_link.getText().toString(), paper_remarks.getText().toString(), rowStatusModel, transactionModel);*/
-                        call = apiCalling.TestPaperMaintenance(b, c, Integer.parseInt(PaperType_Id)
-                                , upload_link.getText().toString(), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, false
+                        call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id)
+                                , upload_link.getText().toString().replaceAll("\\s",""), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), "none", "none", false
                                 , MultipartBody.Part.createFormData("attachment", ""
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
@@ -640,18 +607,6 @@ public class test_schedule_fragment extends Fragment {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
-
-        if (Function.checkNetworkConnection(context)) {
-            progressBarHelper.showProgressDialog();
-            selectbatch_time();
-            GetAllStandard();
-            GetAllSubject();
-            if (bundle == null) {
-                GetPaperType();
-            }
-        } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }
 
         upload_test_paper.setOnClickListener(v -> requestPermissionForAll());
 
@@ -963,15 +918,6 @@ public class test_schedule_fragment extends Fragment {
                 }
 
             };
-
-    private void selectSpinnerValue(Spinner spinner, String myString) {
-        for (int i = 0; i < spinner.getCount(); i++) {
-            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
-                spinner.setSelection(i);
-                break;
-            }
-        }
-    }
 
     private void requestPermissionForAll() {
 

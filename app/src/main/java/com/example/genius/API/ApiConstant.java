@@ -3,8 +3,8 @@ package com.example.genius.API;
 public class ApiConstant {
 
     //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    public static final String BASE_URL = "http://192.168.29.202:45461/api/";
-    //public static final String BASE_URL = "http://192.168.29.212/api/";
+    //public static final String BASE_URL = "http://192.168.29.202:45461/api/";
+    public static final String BASE_URL = "http://192.168.29.212/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
@@ -59,7 +59,7 @@ public class ApiConstant {
     public static final String GET_ALL_BANNER_BRANCH_TYPE = "banner/v1/GetAllBannerByBranchAndType";
     public static final String REMOVE_BANNER = "banner/v1/RemoveBanner";
 
-    public static final String GALLRY_IMAGE_MAINTENANCE = "gallery/v1/GalaryImageMaintenance";
+    public static final String GALLRY_IMAGE_MAINTENANCE = "gallery/v1/GalleryMaintenance";
     public static final String GET_ALL_IMAGES = "gallery/v1/GetAllGalleryImages";
     public static final String GET_ALL_IMAGES_BRANCH = "gallery/v1/GetAllGalleryImagesByBranch";
     public static final String REMOVE_IMAGE = "gallery/v1/RemoveGallery";
@@ -80,7 +80,6 @@ public class ApiConstant {
     public static final String GET_PRACTICE_PAPER_BY_PAPERID = "paper/v1/GetPaperByPaperID";
     public static final String REMOVE_PAPER = "paper/v1/RemovePaper";
 
-    public static final String LIBRARY_MAINTENANCE = "library/v1/LibraryMaintenance";
     public static final String GET_ALL_LIBRARY = "library/v1/GetAllLibrary";
     public static final String GET_ALL_MOBILE_LIBRARY = "library/v1/GetAllMobileLibrary";
     public static final String REMOVE_LIBRARY = "library/v1/RemoveLibrary";
@@ -93,10 +92,11 @@ public class ApiConstant {
 
     public static final String TESTSCHEDULE_MAINTENANCE = "test/v1/TestMaintenance";
     public static final String GET_TESTSCHEDULE_BY_BRANCH = "test/v1/GetAllTestByBranch";
+    public static final String GET_TESTSCHEDULE_BY_BRANCH_API = "test/v1/GetAllTestByBranchAPI";
     public static final String UPLOAD_PAPER_MAINTENANCE = "test/v1/TestPaperMaintenance";
     public static final String NEW_UPLOAD_PAPER_MAINTENANCE = "test/v1/TestPaperMaintenance";
     public static final String REMOVE_TEST_SCHEDULE_PAPER = "test/v1/RemoveTest";
-    public static final String GET_EDIT_PAPER_DATA = "test/v1/GetAllTestPapaerByTest";
+    public static final String GET_EDIT_PAPER_DATA = "test/v1/GetAllTestPapaerWithoutContentByTest";
     public static final String GET_ANSWERSHEET = "test/v1/GetAnswerSheetdata";
 
     public static final String HOMEWORK_MAINTENANCE = "homework/v1/HomeworkMaintenance";

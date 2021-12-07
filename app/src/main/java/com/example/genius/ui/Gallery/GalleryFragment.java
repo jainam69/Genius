@@ -561,16 +561,10 @@ public class GalleryFragment extends Fragment {
                         List<GalleryModel> galleryModelList = galleryMaster_model.getData();
                         if (galleryModelList != null) {
                             if (galleryModelList.size() > 0) {
-                                List<GalleryModel> list = new ArrayList<>();
-                                for (GalleryModel singlemodel : galleryModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
                                 text.setVisibility(View.VISIBLE);
                                 gallery_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                                 gallery_rv.setLayoutManager(new GridLayoutManager(context, 2));
-                                galleryMaster_adapter = new GalleryMaster_Adapter(context, list);
+                                galleryMaster_adapter = new GalleryMaster_Adapter(context, galleryModelList);
                                 galleryMaster_adapter.notifyDataSetChanged();
                                 gallery_rv.setAdapter(galleryMaster_adapter);
                             }

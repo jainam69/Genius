@@ -105,96 +105,7 @@ public class TaskFragment extends Fragment {
     String StatusName = "Pending";
     NestedScrollView scroll;
     String attach, date, filename ,Extension;
-    int branchid1, userid1 = 0;
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener61 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StatusName = statusitem.get(position);
-                    if (status.getSelectedItem().equals("Select Status")) {
-                        try {
-                            ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                            ((TextView) parent.getChildAt(0)).setTextSize(13);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        try {
-                            ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                            ((TextView) parent.getChildAt(0)).setTextSize(14);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-
-            };
-    AdapterView.OnItemSelectedListener UserItemListener =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    UserName = useritem.get(position);
-                    UserId = userid.get(position).toString();
-                    if (user.getSelectedItem().equals("Select User")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = branchitem.get(position);
-                    BranchID = branchid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                        GetAllUser(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                        GetAllUser(Long.parseLong(BranchID));
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = useritem.get(position);
-                    BranchID = userid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                        //GetAllUser(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                        //GetAllUser(Long.parseLong(BranchID));
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
+    int userid1 = 0;
     private int year;
     private int month;
     private int day;
@@ -249,7 +160,9 @@ public class TaskFragment extends Fragment {
 
         save_task.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                if (user.getSelectedItemId() == 0)
+                if (date_task.getText().toString().isEmpty())
+                    Toast.makeText(context, "Please Select Task Date.", Toast.LENGTH_SHORT).show();
+                else if(user.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select User.", Toast.LENGTH_SHORT).show();
                 else if(attachment.getText().toString().equals(""))
                     Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
@@ -296,7 +209,9 @@ public class TaskFragment extends Fragment {
 
         edit_task.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                if (user.getSelectedItemId() == 0)
+                if (date_task.getText().toString().isEmpty())
+                    Toast.makeText(context, "Please Select Task Date.", Toast.LENGTH_SHORT).show();
+                else if(user.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select User.", Toast.LENGTH_SHORT).show();
                 else if(attachment.getText().toString().equals(""))
                     Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
@@ -351,7 +266,6 @@ public class TaskFragment extends Fragment {
             }
         });
 
-        date_task.setText(yesterday());
         Calendar cal2 = Calendar.getInstance();
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
         cal2.add(Calendar.DATE, 0);
@@ -428,6 +342,32 @@ public class TaskFragment extends Fragment {
         status.setOnItemSelectedListener(onItemSelectedListener61);
     }
 
+    AdapterView.OnItemSelectedListener onItemSelectedListener61 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StatusName = statusitem.get(position);
+                    if (status.getSelectedItem().equals("Select Status")) {
+                        try {
+                            ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                            ((TextView) parent.getChildAt(0)).setTextSize(13);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                            ((TextView) parent.getChildAt(0)).setTextSize(14);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
     public void GetAllBranch() {
         branchitem.add("Select Branch");
         branchid.add(0);
@@ -479,6 +419,27 @@ public class TaskFragment extends Fragment {
         branch.setAdapter(adapter);
         branch.setOnItemSelectedListener(onItemSelectedListener6);
     }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    BranchName = branchitem.get(position);
+                    BranchID = branchid.get(position).toString();
+                    if (branch.getSelectedItem().equals("Select Branch")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                        GetAllUser(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                        GetAllUser(Long.parseLong(BranchID));
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 
     public void GetAllUser(long branch) {
         progressBarHelper.showProgressDialog();
@@ -532,10 +493,27 @@ public class TaskFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user.setAdapter(adapter);
         user.setOnItemSelectedListener(UserItemListener);
-       /* if (userid1 > 0) {
-            user.setSelection(userid1);
-        }*/
     }
+
+    AdapterView.OnItemSelectedListener UserItemListener =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    UserName = useritem.get(position);
+                    UserId = userid.get(position).toString();
+                    if (user.getSelectedItem().equals("Select User")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -593,12 +571,10 @@ public class TaskFragment extends Fragment {
     }
 
     public void GetAllTask() {
-        //progressBarHelper.showProgressDialog();
         Call<TodoData> call = apiCalling.GetAllToDoWithoutContentByBranch(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<TodoData>() {
             @Override
             public void onResponse(@NotNull Call<TodoData> call, @NotNull Response<TodoData> response) {
-                //progressBarHelper.hideProgressDialog();
                 if (response.isSuccessful()) {
                     TodoData data = response.body();
                     if (data.isCompleted()) {
@@ -628,7 +604,6 @@ public class TaskFragment extends Fragment {
         List<TodoModel> todoModels;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        int id;
         DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
         DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -656,10 +631,8 @@ public class TaskFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-            holder.branch_name.setText("" + todoModels.get(position).getBranchInfo().getBranchName());
             holder.staff_name.setText("" + todoModels.get(position).getUserInfo().getUsername());
-            attach = todoModels.get(position).getToDoContentText();
-
+            holder.task_description.setText(todoModels.get(position).getToDoDescription());
             holder.task_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -793,16 +766,15 @@ public class TaskFragment extends Fragment {
         public class ViewHolder extends RecyclerView.ViewHolder {
 
             ImageView task_edit, task_delete;
-            TextView status, task_date, staff_name, branch_name;
+            TextView task_date, staff_name, task_description;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                branch_name = itemView.findViewById(R.id.branch_name);
                 task_date = itemView.findViewById(R.id.task_date);
                 staff_name = itemView.findViewById(R.id.staff_name);
-                status = itemView.findViewById(R.id.status);
                 task_edit = itemView.findViewById(R.id.task_edit);
                 task_delete = itemView.findViewById(R.id.task_delete);
+                task_description = itemView.findViewById(R.id.task_description);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

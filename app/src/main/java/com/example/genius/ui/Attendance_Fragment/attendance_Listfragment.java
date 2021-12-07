@@ -64,7 +64,7 @@ public class attendance_Listfragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Attendance");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Attendance List");
         View root = inflater.inflate(R.layout.fragment_attendance__listfragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -75,9 +75,8 @@ public class attendance_Listfragment extends Fragment {
         attendance_entry_rv = root.findViewById(R.id.attendance_entry_rv);
         no_content = root.findViewById(R.id.no_content);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             Call<AttendanceData> call = apiCalling.GetAllAttendanceByBranch(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
             call.enqueue(new Callback<AttendanceData>() {
                 @Override
@@ -88,17 +87,11 @@ public class attendance_Listfragment extends Fragment {
                             List<AttendanceModel> studentModelList = data.getData();
                             if (studentModelList != null) {
                                 if (studentModelList.size() > 0) {
-                                    List<AttendanceModel> list = new ArrayList<>();
-                                    for (AttendanceModel singlemodel : studentModelList) {
-                                        if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                            list.add(singlemodel);
-                                        }
-                                    }
                                     no_content.setVisibility(View.GONE);
                                     attendance_entry_rv.setVisibility(View.VISIBLE);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                     attendance_entry_rv.setLayoutManager(linearLayoutManager);
-                                    attendanceEntry_adapter = new AttendanceEntry_Adapter(context, list);
+                                    attendanceEntry_adapter = new AttendanceEntry_Adapter(context, studentModelList);
                                     attendanceEntry_adapter.notifyDataSetChanged();
                                     attendance_entry_rv.setAdapter(attendanceEntry_adapter);
                                 } else {

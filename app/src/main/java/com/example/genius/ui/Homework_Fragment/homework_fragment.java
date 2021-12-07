@@ -40,6 +40,7 @@ import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
+import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -200,7 +201,6 @@ public class homework_fragment extends Fragment {
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             GetAllStandard();
             GetAllSubject();
         } else {
@@ -429,7 +429,7 @@ public class homework_fragment extends Fragment {
                     flag = 1;
                     InputStream imageStream;
                     Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
+                    String Path = FileUtils.getRealPath(context, uri);
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     attachment_homework.setText("Attached");

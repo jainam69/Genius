@@ -77,20 +77,23 @@ public class student_registration_Listfragment extends Fragment {
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
         clear.setOnClickListener(v -> {
             stu_name.setText("");
             con_no.setText("");
         });
+
         inactive.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             GetAllInactiveStudent();
         });
+
         active.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             GetAllActiveStudent();
         });
-        fab_contact.setOnClickListener(v -> {
 
+        fab_contact.setOnClickListener(v -> {
             student_registration_fragment orderplace = new student_registration_fragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();

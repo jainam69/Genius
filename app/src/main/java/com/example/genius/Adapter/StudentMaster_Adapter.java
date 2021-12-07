@@ -105,7 +105,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
                         bundle.putString("Address", studentDetails.get(position).getAddress());
                         if (studentDetails.get(position).getAdmissionDate() != null)
                             bundle.putString("AdmissionDate", studentDetails.get(position).getAdmissionDate().replace("T00:00:00", ""));
-                        bundle.putInt("BatchTime", studentDetails.get(position).getBatchInfo().getBatchTime());
+                        bundle.putString("BatchTime", studentDetails.get(position).getBatchInfo().getBatchType());
                         if (studentDetails.get(position).getDOB() != null)
                             bundle.putString("BirthDate", studentDetails.get(position).getDOB().replace("T00:00:00", ""));
                         bundle.putLong("Branch_ID", studentDetails.get(position).getBranchInfo().getBranchID());
@@ -120,15 +120,13 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
                         bundle.putString("ParentName", studentDetails.get(position).getStudentMaint().getParentName());
                         bundle.putLong("ParentID", studentDetails.get(position).getStudentMaint().getParentID());
                         bundle.putLong("TransactionID", studentDetails.get(position).getTransaction().getTransactionId());
-//                        bundle.putString("Password", studentDetails.get(position).getPassword();
-//                        bundle.putString("Result", studentDetails.get(position).getResult());
                         bundle.putLong("SchoolName", studentDetails.get(position).getSchoolInfo().getSchoolID());
                         bundle.putInt("SchoolTime", studentDetails.get(position).getSchoolTime());
                         bundle.putLong("Standard", studentDetails.get(position).getStandardInfo().getStandardID());
                         bundle.putInt("Status", studentDetails.get(position).getRowStatus().getRowStatusId());
                         bundle.putLong("StudentID", studentDetails.get(position).getStudentID());
-//                        bundle.putString("UniqNo", studentDetails.get(position).);
-                        bundle.putInt("Percentage", studentDetails.get(position).getLastYearResult());
+                        bundle.putString("Grade", studentDetails.get(position).getGrade());
+                        bundle.putInt("LastYearResult", studentDetails.get(position).getLastYearResult());
                         bundle.putString("FileName", studentDetails.get(position).getFileName());
                         bundle.putString("FilePath", studentDetails.get(position).getFilePath());
                         orderplace.setArguments(bundle);

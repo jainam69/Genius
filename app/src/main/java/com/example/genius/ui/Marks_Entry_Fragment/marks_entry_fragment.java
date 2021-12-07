@@ -256,14 +256,14 @@ public class marks_entry_fragment extends Fragment {
                         }
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        Call<MarksModel.MarksData> call = apiCalling.MarksMaintenance(0,Marks_Date,TestID,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                        Call<MarksModel.MarksData1> call = apiCalling.MarksMaintenance(0,Marks_Date,TestID,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                                 , StudentID,Achieve_Marks,Integer.parseInt(BatchId),Long.parseLong(SubjectId),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
                                 "0","0",true,uploadfile);
-                        call.enqueue(new Callback<MarksModel.MarksData>() {
+                        call.enqueue(new Callback<MarksModel.MarksData1>() {
                             @Override
-                            public void onResponse(Call<MarksModel.MarksData> call, Response<MarksModel.MarksData> response) {
+                            public void onResponse(Call<MarksModel.MarksData1> call, Response<MarksModel.MarksData1> response) {
                                 if (response.isSuccessful()){
-                                    MarksModel.MarksData data = response.body();
+                                    MarksModel.MarksData1 data = response.body();
                                     if (data.isCompleted()){
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         marks_entry_Listfragment profileFragment = new marks_entry_Listfragment();
@@ -280,7 +280,7 @@ public class marks_entry_fragment extends Fragment {
                             }
 
                             @Override
-                            public void onFailure(Call<MarksModel.MarksData> call, Throwable t) {
+                            public void onFailure(Call<MarksModel.MarksData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
                                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }

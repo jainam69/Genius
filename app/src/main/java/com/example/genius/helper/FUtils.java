@@ -199,8 +199,23 @@ public class FUtils {
         final String[] projection = {
                 column
         };
-
         try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(column);
+                String value = cursor.getString(column_index);
+                if (value.startsWith("content://") || !value.startsWith("/") && !value.startsWith("file://")) {
+                    return null;
+                }
+                return value;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        /*try {
             cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
                     null);
             if (cursor != null && cursor.moveToFirst()) {
@@ -210,10 +225,7 @@ public class FUtils {
                 final int column_index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(column_index);
             }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
+        } */
         return null;
     }
 
@@ -231,7 +243,7 @@ public class FUtils {
      * @see #isLocal(String)
      * @see #getFile(Context, Uri)
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+
     public static String getPath(final Context context, final Uri uri) {
 
         if (DEBUG)

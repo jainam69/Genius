@@ -64,8 +64,6 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, int position) {
-
-        holder.attendance_id.setText(""+attendanceDetails.get(position).getAttendanceID());
         String date = attendanceDetails.get(position).getAttendanceDate().replace("T00:00:00","");
         try {
             Date d = actualdate.parse(date);
@@ -191,13 +189,12 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView attendance_id,att_date,batch_time,std;
+        TextView att_date,batch_time,std;
         ImageView atten_edit,atten_delete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            attendance_id = itemView.findViewById(R.id.attendance_id);
             att_date = itemView.findViewById(R.id.att_date);
             batch_time = itemView.findViewById(R.id.batch_time);
             std = itemView.findViewById(R.id.std);
