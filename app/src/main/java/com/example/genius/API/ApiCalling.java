@@ -64,6 +64,7 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -371,14 +372,14 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.OldLibraryMaintenance + "/{LibraryID}"
-            + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{StandardID}" + "/{BranchID}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
+            + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{StandardID}" + "/{BranchID}" + "/{CreatebyBranch}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
             + "/{SubjectID}" + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{VideoLink}" + "/{ThumbnailFileName}" + "/{ThumbnailFileExtension}" + "/{DocFileName}"
             + "/{DocFileExtension}" + "/{HasThumbnailFile}" + "/{HasDocFile}")
     Call<LibrarySingleData> OldLibraryMaintenance(@Path("LibraryID") long LibraryID,
                                                   @Path("LibraryDetailID") long LibraryDetailID, @Path("LibraryTitle") String LibraryTitle,
                                                   @Path("CategoryID") long CategoryID, @Path("StandardID") String StandardID, @Path("BranchID") long BranchID,
-                                                  @Path("Type") int Type, @Path("Library_Type") int Library_Type,
-                                                  @Path("Description") String Description, @Path("SubjectID") long SubjectID, @Path("CreateId") int CreateId,
+                                                  @Path("CreatebyBranch") long CreatebyBranch, @Path("Type") int Type, @Path("Library_Type") int Library_Type,
+                                                  @Path(value = "Description") String Description, @Path("SubjectID") long SubjectID, @Path("CreateId") int CreateId,
                                                   @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("VideoLink") String VideoLink,
                                                   @Path("ThumbnailFileName") String ThumbnailFileName, @Path("ThumbnailFileExtension") String ThumbnailFileExtension,
                                                   @Path("DocFileName") String DocFileName, @Path("DocFileExtension") String DocFileExtension,
@@ -477,10 +478,10 @@ public interface ApiCalling {
     @Multipart
     @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{BatchtimeID}/{SubjectID}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
     Call<MarksModel.MarksData1> MarksMaintenance(@Path("MarksID") long MarksID, @Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
-                                                @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
-                                                @Path("BatchtimeID") int BatchtimeID, @Path("SubjectID") long SubjectID,
-                                                @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
-                                                @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+                                                 @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
+                                                 @Path("BatchtimeID") int BatchtimeID, @Path("SubjectID") long SubjectID,
+                                                 @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
+                                                 @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @GET(ApiConstant.GET_ALL_SUBJECT_BY_TESTDATE)
     Call<SubjectData> GetAllSubjectByTestDate(@Query("TestDate") String TestDate);

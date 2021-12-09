@@ -98,7 +98,7 @@ public class library_videolist_fragment extends Fragment {
     }
 
     public void GetLibraryDetails() {
-        Call<LibraryData> call = apiCalling.GetAllMobileLibrary(1, 0L);
+        Call<LibraryData> call = apiCalling.GetAllMobileLibrary(1, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<LibraryData>() {
             @Override
             public void onResponse(@NotNull Call<LibraryData> call, @NotNull Response<LibraryData> response) {

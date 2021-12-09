@@ -100,13 +100,13 @@ public class library_Listfragment extends Fragment {
     }
 
     public void GetLibraryDetails() {
-        Call<LibraryData> call = apiCalling.GetAllMobileLibrary(2, 0L);
+        Call<LibraryData> call = apiCalling.GetAllMobileLibrary(2, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<LibraryData>() {
             @Override
             public void onResponse(@NotNull Call<LibraryData> call, @NotNull Response<LibraryData> response) {
                 if (response.isSuccessful()) {
                     LibraryData data = response.body();
-                    if (data.isCompleted()) {
+                    if (data != null && data.isCompleted()) {
                         List<LibraryModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {

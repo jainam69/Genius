@@ -192,6 +192,7 @@
                         android:paddingLeft="9dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:textColor="@color/black"
                         android:textSize="13dp"
                         tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
                         tools:targetApi="o" />
@@ -235,11 +236,11 @@
                         android:paddingLeft="9dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:textColor="@color/black"
                         android:textSize="13dp"
                         tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
                         tools:targetApi="o" />
-
-
+                    
                     <ImageView
                         android:id="@+id/transprt121"
                         android:layout_width="24dp"

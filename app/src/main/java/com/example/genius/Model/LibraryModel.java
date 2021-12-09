@@ -1,8 +1,9 @@
 package com.example.genius.Model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class LibraryModel {
+public class LibraryModel implements Serializable {
 
     long LibraryID;
     long LibraryDetailID;

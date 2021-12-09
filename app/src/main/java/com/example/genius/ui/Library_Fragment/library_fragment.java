@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,10 +44,12 @@ import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CategoryModel;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.LibrarySingleData;
+import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -66,8 +69,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -115,11 +122,12 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     List<Integer> categoryId = new ArrayList<>();
     String BranchID;
     String StandardIDs = "none";
+    LibraryModel libraryModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Image/Document");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Library Image/Document");
         View root = inflater.inflate(R.layout.library_fragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -148,72 +156,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         library_title = root.findViewById(R.id.library_title);
 
-        bundle = getArguments();
-        if (bundle != null) {
-            save_library.setVisibility(View.GONE);
-            edit_library.setVisibility(View.VISIBLE);
-
-            if (!(bundle.getString("DocContentText") == null)) {
-                attach_document.setText("Attached");
-                attach_document.setTextColor(getResources().getColor(R.color.black));
-                attach_doc = bundle.getString("DocContentText");
-            }
-            if (!(bundle.getString("ThumbImageContentText") == null)) {
-                attach_thumbnail.setText("Attached");
-                attach_thumbnail.setTextColor(getResources().getColor(R.color.black));
-                attach = bundle.getString("ThumbImageContentText");
-            }
-            if (bundle.containsKey("StandardID") && bundle.containsKey("SubjectID")) {
-                long std = bundle.getLong("StandardID");
-                long sub = bundle.getLong("SubjectID");
-                if (std == 0 && sub == 0) {
-                    type = 1;
-                    rb_general.setChecked(true);
-                    rb_standard.setChecked(false);
-                    linear_spinner.setVisibility(View.GONE);
-                } else {
-                    type = 2;
-                    rb_general.setChecked(false);
-                    rb_standard.setChecked(true);
-                    linear_spinner.setVisibility(View.VISIBLE);
-                }
-            }
-            if (bundle.containsKey("Description")) {
-                library_description.setText(bundle.getString("Description"));
-            }
-            if (bundle.containsKey("LibraryID")) {
-                libraryid.setText("" + bundle.getLong("LibraryID"));
-            }
-            if (bundle.containsKey("UniqueID")) {
-                uniqid.setText("" + bundle.getLong("UniqueID"));
-            }
-            if (bundle.containsKey("TransactionId")) {
-                transactionid.setText("" + bundle.getLong("TransactionId"));
-            }
-            if (bundle.containsKey("ThumbImageExt")) {
-                thumb_ext = bundle.getString("ThumbImageExt");
-            }
-            if (bundle.containsKey("DocContentExt")) {
-                doc_ext = bundle.getString("DocContentExt");
-            }
-            if (bundle.containsKey("ThumbImageName")) {
-                thunm_name = bundle.getString("ThumbImageName");
-            }
-            if (bundle.containsKey("ThumbDocName")) {
-                doc_name = bundle.getString("ThumbDocName");
-            }
-            if (bundle.containsKey("BranchId")) {
-                long br = bundle.getLong("BranchId");
-                if (br == 0) {
-                    all.setChecked(true);
-                    branch_1.setChecked(false);
-                } else {
-                    all.setChecked(false);
-                    branch_1.setChecked(true);
-                }
-            }
-        }
-
         rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
             Branch = rb1.getText().toString();
@@ -237,6 +179,26 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         select = rg1.getCheckedRadioButtonId();
         rb2 = root.findViewById(select);
         Type = rb2.getText().toString();
+
+        bundle = getArguments();
+        if (bundle != null) {
+            save_library.setVisibility(View.GONE);
+            edit_library.setVisibility(View.VISIBLE);
+
+            libraryModel = (LibraryModel) bundle.getSerializable("LIBRARY_MST");
+            library_title.setText(libraryModel.getLibraryTitle());
+            if (libraryModel.getType() == 1)
+                rb_general.setChecked(true);
+            else
+                rb_standard.setChecked(true);
+            if (libraryModel.getBranchID() == 0)
+                rb1.setChecked(true);
+            else
+                rb2.setChecked(true);
+            library_description.setText(libraryModel.getDescription());
+            attach_thumbnail.setText("Attached");
+            attach_document.setText("Attached");
+        }
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -291,11 +253,11 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             progressBarHelper.showProgressDialog();
             if (validation()) {
                 if (Function.checkNetworkConnection(context)) {
-                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, encodeDecode(library_title.getText().toString())
                             , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                            , rb_general.isChecked() ? 1 : 2, 2
-                            , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, "none", "none", "none", "none", "none"
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 2
+                            , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                            , 0, "none,none", "none,none", "none,none", "none,none", "none,none"
                             , true, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination))
                             , MultipartBody.Part.createFormData("", instrumentFileDestination1.getName()
@@ -304,7 +266,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                         @Override
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
-                                if (response.body().isCompleted()) {
+                                if (response.body() != null && response.body().isCompleted()) {
                                     library_Listfragment contact = new library_Listfragment();
                                     FragmentManager fragmentManager = getFragmentManager();
                                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -312,7 +274,9 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
                                 }
-                                Function.showToast(context, response.body().getMessage());
+                                if (response.body() != null) {
+                                    Function.showToast(context, response.body().getMessage());
+                                }
                             }
                             progressBarHelper.hideProgressDialog();
                         }
@@ -329,53 +293,66 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             }
         });
 
-        /*edit_library.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        edit_library.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
+            if (editValidation()) {
                 if (Function.checkNetworkConnection(context)) {
-                    progressBarHelper.showProgressDialog();
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    LibraryModel.LibraryDataEntity libraryDataEntity = new LibraryModel.LibraryDataEntity(Long.parseLong(uniqid.getText().toString()), Long.parseLong(libraryid.getText().toString()), attach, thumb_ext, thunm_name, attach_doc, doc_name, doc_ext);
-                    if (Branch.equals("All") && Type.equals("Standard")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), 0, thunm_name, doc_name,
-                                2, StandardId, Long.parseLong(SubjectId), library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    } else if (Branch.equals("All") && Type.equals("General")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), 0, thunm_name, doc_name,
-                                1, 0, 0, library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    } else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("Standard")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), thunm_name, doc_name,
-                                2, StandardId, Long.parseLong(SubjectId), library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    } else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("General")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), thunm_name, doc_name,
-                                1, 0, 0, library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
+                    boolean isThumbnail = false, isDocument = false;
+                    MultipartBody.Part multipartThumbnailBody = MultipartBody.Part.createFormData("attachment", ""
+                            , RequestBody.create(MediaType.parse("multipart/form-data"), ""));
+                    MultipartBody.Part multipartDocBody = MultipartBody.Part.createFormData("attachment", ""
+                            , RequestBody.create(MediaType.parse("multipart/form-data"), ""));
+                    String ThumbnailFileName = "none,none", ThumbnailFileExtension = "none,none", DocumentFileName = "none,none", DocumentFileExtension = "none,none";
+                    if (libraryModel.getThumbnailFilePath().contains(".") && libraryModel.getThumbnailFilePath().contains("/")) {
+                        ThumbnailFileExtension = libraryModel.getThumbnailFilePath().substring(libraryModel.getThumbnailFilePath().lastIndexOf(".") + 1);
+                        String FileNameWithExtension = libraryModel.getThumbnailFilePath().substring(libraryModel.getThumbnailFilePath().lastIndexOf("/") + 1);
+                        String[] FileNameArray = FileNameWithExtension.split("\\.");
+                        ThumbnailFileName = libraryModel.getThumbnailFileName() + "," + FileNameArray[0];
                     }
-                    Call<LibraryModel.LibraryData1> call = apiCalling.OldLibraryMaintenance(libraryModel);
-                    call.enqueue(new Callback<LibraryModel.LibraryData1>() {
+                    if (libraryModel.getDocFilePath().contains(".") && libraryModel.getDocFilePath().contains("/")) {
+                        DocumentFileExtension = libraryModel.getDocFilePath().substring(libraryModel.getDocFilePath().lastIndexOf(".") + 1);
+                        String FileNameWithExtension = libraryModel.getDocFilePath().substring(libraryModel.getDocFilePath().lastIndexOf("/") + 1);
+                        String[] FileNameArray = FileNameWithExtension.split("\\.");
+                        DocumentFileName = libraryModel.getDocFileName() + "," + FileNameArray[0];
+                    }
+                    if (instrumentFileDestination != null) {
+                        isThumbnail = true;
+                        multipartThumbnailBody = MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination));
+                    }
+                    if (instrumentFileDestination1 != null) {
+                        isDocument = true;
+                        multipartDocBody = MultipartBody.Part.createFormData("", instrumentFileDestination1.getName()
+                                , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination1));
+                    }
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(libraryModel.getLibraryID(), 0, encodeDecode(library_title.getText().toString().trim())
+                            , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 2
+                            , !library_description.getText().toString().trim().equals("") ? encodeDecode(library_description.getText().toString().trim()) : "-", SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                            , 0, "none", ThumbnailFileName, ThumbnailFileExtension, DocumentFileName, DocumentFileExtension
+                            , isThumbnail, isDocument, multipartThumbnailBody
+                            , multipartDocBody);
+                    call.enqueue(new Callback<LibrarySingleData>() {
                         @Override
-                        public void onResponse(Call<LibraryModel.LibraryData1> call, Response<LibraryModel.LibraryData1> response) {
+                        public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
-                                LibraryModel.LibraryData1 data = response.body();
-                                if (data.isCompleted()) {
-                                    LibraryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, "Books Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                        library_Listfragment contact = new library_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, contact);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
-                                    } else {
-                                        Toast.makeText(context, "Books not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (response.body() != null && response.body().isCompleted()) {
+                                    library_Listfragment contact = new library_Listfragment();
+                                    FragmentManager fragmentManager = getFragmentManager();
+                                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                    fragmentTransaction.replace(R.id.nav_host_fragment, contact);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
+                                }
+                                if (response.body() != null) {
+                                    Function.showToast(context, response.body().getMessage());
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
-                        public void onFailure(Call<LibraryModel.LibraryData1> call, Throwable t) {
+                        public void onFailure(@NotNull Call<LibrarySingleData> call, @NotNull Throwable t) {
                             Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             progressBarHelper.hideProgressDialog();
                         }
@@ -384,20 +361,20 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
-        });*/
+        });
 
         callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 library_Listfragment profileFragment = new library_Listfragment();
-                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentManager fm = requireActivity().getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.nav_host_fragment, profileFragment);
                 ft.addToBackStack(null);
                 ft.commit();
             }
         };
-        getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
+        requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
 
         return root;
     }
@@ -453,9 +430,12 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subject.setAdapter(adapter);
-        if (bundle != null) {
+        /*if (bundle != null) {
             int bc = subjectid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("SubjectID"))));
             subject.setSelection(bc);
+        }*/
+        if (bundle != null && libraryModel.getList().size() > 0) {
+            selectSpinnerValue(subject, libraryModel.getList().get(0).getSubject());
         }
         subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
@@ -531,9 +511,16 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         standard.setListener(this);
         standard.hasNoneOption(true);
         standard.setSelection(new int[]{0});
-        if (bundle != null) {
-            int b = standardid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("StandardID"))));
-            standard.setSelection(b);
+        if (bundle != null && libraryModel.getList().size() > 0) {
+            List<String> list = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < libraryModel.getList().size(); i++) {
+                list.add(libraryModel.getList().get(i).getStandard());
+                sb.append(libraryModel.getList().get(i).getStd_id());
+                sb.append(",");
+            }
+            StandardIDs = sb.toString().substring(0, sb.length() - 1);
+            standard.setSelection(list);
         }
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
@@ -736,7 +723,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         categoryitem.add("Select Category");
         categoryId.add(0);
 
-        Call<CategoryData> call = apiCalling.GetAllCategory(Long.parseLong(BranchID));
+        Call<CategoryData> call = apiCalling.GetAllCategory(0);
         call.enqueue(new Callback<CategoryData>() {
             @Override
             public void onResponse(@NotNull Call<CategoryData> call, @NotNull Response<CategoryData> response) {
@@ -780,6 +767,9 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category.setAdapter(adapter);
         category.setOnItemSelectedListener(onItemSelectedListener6);
+        if (bundle != null) {
+            selectSpinnerValue(category, libraryModel.getCategoryInfo().getCategory());
+        }
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener6 =
@@ -814,6 +804,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             StandardIDs = "";
             standard.setSelection(new int[]{0});
         }
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     @Override
@@ -850,6 +841,42 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             }
         }
         return true;
+    }
+
+    public boolean editValidation() {
+        if (library_title.getText().toString().trim().equals("")) {
+            Function.showToast(context, "Please enter library title");
+            progressBarHelper.hideProgressDialog();
+            return false;
+        } else if (category.getSelectedItemId() == 0) {
+            Function.showToast(context, "Please select category");
+            progressBarHelper.hideProgressDialog();
+            return false;
+        } else if (rb_standard.isChecked()) {
+            if (StandardIDs.equals("")) {
+                Function.showToast(context, "Please select standard");
+                progressBarHelper.hideProgressDialog();
+                return false;
+            } else if (subject.getSelectedItemId() == 0) {
+                Function.showToast(context, "Please select subject");
+                progressBarHelper.hideProgressDialog();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void selectSpinnerValue(Spinner spinner, String myString) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 
 }

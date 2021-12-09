@@ -3,6 +3,7 @@ package com.example.genius.ui.Library_Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +29,14 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CategoryModel;
+import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.LibrarySingleData;
+import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -57,7 +62,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
 
     RadioGroup rg, rg1;
     RadioButton all, branch_1, rb_general, rb_standard, rb1, rb2;
-    TextView attach_thumbnail, attach_document, master_id, lib_id, uniqid, libraryid, transactionid;
+    TextView master_id, lib_id, uniqid, libraryid, transactionid;
     SearchableSpinner subject;
     MultiSelectionSpinner standard;
     EditText library_description, library_title, library_video_link;
@@ -66,16 +71,15 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     LinearLayout linear_spinner;
-    String Branch, Type, thunm_name, doc_name;
+    String Branch, Type;
     int select, type;
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>();
     String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM;
     Integer[] STANDARDID, SUBJECTID, CATEGORYID;
-    String StandardName, SubjectName, attach = "", attach_doc = "", thumb_ext, doc_ext;
+    String StandardName, SubjectName;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
-    File instrumentFileDestination, instrumentFileDestination1;
     Bundle bundle;
     OnBackPressedCallback callback;
     Long StandardId, SubjectId, categoryid;
@@ -84,6 +88,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     List<Integer> categoryId = new ArrayList<>();
     String BranchID;
     String StandardIDs;
+    LibraryModel libraryModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -116,72 +121,6 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         library_title = root.findViewById(R.id.library_title);
         library_video_link = root.findViewById(R.id.library_video_link);
 
-        bundle = getArguments();
-        if (bundle != null) {
-            save_library.setVisibility(View.GONE);
-            edit_library.setVisibility(View.VISIBLE);
-
-            if (!(bundle.getString("DocContentText") == null)) {
-                attach_document.setText("Attached");
-                attach_document.setTextColor(getResources().getColor(R.color.black));
-                attach_doc = bundle.getString("DocContentText");
-            }
-            if (!(bundle.getString("ThumbImageContentText") == null)) {
-                attach_thumbnail.setText("Attached");
-                attach_thumbnail.setTextColor(getResources().getColor(R.color.black));
-                attach = bundle.getString("ThumbImageContentText");
-            }
-            if (bundle.containsKey("StandardID") && bundle.containsKey("SubjectID")) {
-                long std = bundle.getLong("StandardID");
-                long sub = bundle.getLong("SubjectID");
-                if (std == 0 && sub == 0) {
-                    type = 1;
-                    rb_general.setChecked(true);
-                    rb_standard.setChecked(false);
-                    linear_spinner.setVisibility(View.GONE);
-                } else {
-                    type = 2;
-                    rb_general.setChecked(false);
-                    rb_standard.setChecked(true);
-                    linear_spinner.setVisibility(View.VISIBLE);
-                }
-            }
-            if (bundle.containsKey("Description")) {
-                library_description.setText(bundle.getString("Description"));
-            }
-            if (bundle.containsKey("LibraryID")) {
-                libraryid.setText("" + bundle.getLong("LibraryID"));
-            }
-            if (bundle.containsKey("UniqueID")) {
-                uniqid.setText("" + bundle.getLong("UniqueID"));
-            }
-            if (bundle.containsKey("TransactionId")) {
-                transactionid.setText("" + bundle.getLong("TransactionId"));
-            }
-            if (bundle.containsKey("ThumbImageExt")) {
-                thumb_ext = bundle.getString("ThumbImageExt");
-            }
-            if (bundle.containsKey("DocContentExt")) {
-                doc_ext = bundle.getString("DocContentExt");
-            }
-            if (bundle.containsKey("ThumbImageName")) {
-                thunm_name = bundle.getString("ThumbImageName");
-            }
-            if (bundle.containsKey("ThumbDocName")) {
-                doc_name = bundle.getString("ThumbDocName");
-            }
-            if (bundle.containsKey("BranchId")) {
-                long br = bundle.getLong("BranchId");
-                if (br == 0) {
-                    all.setChecked(true);
-                    branch_1.setChecked(false);
-                } else {
-                    all.setChecked(false);
-                    branch_1.setChecked(true);
-                }
-            }
-        }
-
         rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
             Branch = rb1.getText().toString();
@@ -206,6 +145,25 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         rb2 = root.findViewById(select);
         Type = rb2.getText().toString();
 
+        bundle = getArguments();
+        if (bundle != null) {
+            save_library.setVisibility(View.GONE);
+            edit_library.setVisibility(View.VISIBLE);
+
+            libraryModel = (LibraryModel) bundle.getSerializable("LIBRARY_MST");
+            library_title.setText(libraryModel.getLibraryTitle());
+            if (libraryModel.getType() == 1)
+                rb_general.setChecked(true);
+            else
+                rb_standard.setChecked(true);
+            if (libraryModel.getBranchID() == 0)
+                rb1.setChecked(true);
+            else
+                rb2.setChecked(true);
+            library_description.setText(libraryModel.getDescription());
+            library_video_link.setText(libraryModel.getVideoLink());
+        }
+
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
             GetAllCategory();
@@ -219,11 +177,11 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             progressBarHelper.showProgressDialog();
             if (validation()) {
                 if (Function.checkNetworkConnection(context)) {
-                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, library_title.getText().toString()
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, encodeDecode(library_title.getText().toString())
                             , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                            , rb_general.isChecked() ? 1 : 2, 2
-                            , library_description.getText().toString(), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, library_video_link.getText().toString(), "none", "none", "none", "none"
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 1
+                            , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                            , 0, library_video_link.getText().toString(), "none,none", "none,none", "none,none", "none,none"
                             , false, false, MultipartBody.Part.createFormData("attachment", ""
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
                             , MultipartBody.Part.createFormData("attachment", ""
@@ -233,9 +191,9 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
                                 if (response.body().isCompleted()) {
-                                    library_Listfragment contact = new library_Listfragment();
+                                    library_videolist_fragment contact = new library_videolist_fragment();
                                     FragmentManager fragmentManager = getFragmentManager();
-                                    FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                                    FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();
                                     fragmentTransaction.replace(R.id.nav_host_fragment, contact);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
@@ -258,67 +216,53 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             }
         });
 
-        /*edit_library.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        edit_library.setOnClickListener(v -> {
+            progressBarHelper.showProgressDialog();
+            if (validation()) {
                 if (Function.checkNetworkConnection(context)) {
-                    progressBarHelper.showProgressDialog();
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    LibraryModel.LibraryDataEntity libraryDataEntity = new LibraryModel.LibraryDataEntity(Long.parseLong(uniqid.getText().toString()), Long.parseLong(libraryid.getText().toString()), attach, thumb_ext, thunm_name, attach_doc, doc_name, doc_ext);
-                    if (Branch.equals("All") && Type.equals("Standard")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), 0, thunm_name, doc_name,
-                                2, StandardId, Long.parseLong(SubjectId), library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    } else if (Branch.equals("All") && Type.equals("General")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), 0, thunm_name, doc_name,
-                                1, 0, 0, library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    } else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("Standard")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), thunm_name, doc_name,
-                                2, StandardId, Long.parseLong(SubjectId), library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    } else if (Branch.equals(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME)) && Type.equals("General")) {
-                        libraryModel = new LibraryModel(Long.parseLong(libraryid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), thunm_name, doc_name,
-                                1, 0, 0, library_description.getText().toString(), rowStatusModel, transactionModel, libraryDataEntity);
-                    }
-                    Call<LibraryModel.LibraryData1> call = apiCalling.OldLibraryMaintenance(libraryModel);
-                    call.enqueue(new Callback<LibraryModel.LibraryData1>() {
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(libraryModel.getLibraryID(), 0, encodeDecode(library_title.getText().toString())
+                            , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 1
+                            , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                            , 0, library_video_link.getText().toString(), "none,none", "none,none", "none,none", "none,none"
+                            , false, false, MultipartBody.Part.createFormData("attachment", ""
+                                    , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
+                            , MultipartBody.Part.createFormData("attachment", ""
+                                    , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
+                    call.enqueue(new Callback<LibrarySingleData>() {
                         @Override
-                        public void onResponse(Call<LibraryModel.LibraryData1> call, Response<LibraryModel.LibraryData1> response) {
+                        public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
-                                LibraryModel.LibraryData1 data = response.body();
-                                if (data.isCompleted()) {
-                                    LibraryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, "Books Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                        library_Listfragment contact = new library_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, contact);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
-                                    } else {
-                                        Toast.makeText(context, "Books not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (response.body().isCompleted()) {
+                                    library_videolist_fragment contact = new library_videolist_fragment();
+                                    FragmentManager fragmentManager = getFragmentManager();
+                                    FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();
+                                    fragmentTransaction.replace(R.id.nav_host_fragment, contact);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
                                 }
+                                Function.showToast(context, response.body().getMessage());
                             }
                             progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
-                        public void onFailure(Call<LibraryModel.LibraryData1> call, Throwable t) {
+                        public void onFailure(@NotNull Call<LibrarySingleData> call, @NotNull Throwable t) {
                             Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             progressBarHelper.hideProgressDialog();
                         }
                     });
                 } else {
+                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
-        });*/
+        });
 
         callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                library_Listfragment profileFragment = new library_Listfragment();
+                library_videolist_fragment profileFragment = new library_videolist_fragment();
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.nav_host_fragment, profileFragment);
@@ -382,9 +326,8 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subject.setAdapter(adapter);
-        if (bundle != null) {
-            int bc = subjectid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("SubjectID"))));
-            subject.setSelection(bc);
+        if (bundle != null && libraryModel.getList().size() > 0) {
+            selectSpinnerValue(subject, libraryModel.getList().get(0).getSubject());
         }
         subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
@@ -460,9 +403,16 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         standard.setListener(this);
         standard.hasNoneOption(true);
         standard.setSelection(new int[]{0});
-        if (bundle != null) {
-            int b = standardid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("StandardID"))));
-            standard.setSelection(b);
+        if (bundle != null && libraryModel.getList().size() > 0) {
+            List<String> list = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < libraryModel.getList().size(); i++) {
+                list.add(libraryModel.getList().get(i).getStandard());
+                sb.append(standardid.get(i));
+                sb.append(",");
+            }
+            StandardIDs = sb.toString().substring(0, sb.length() - 1);
+            standard.setSelection(list);
         }
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
@@ -491,7 +441,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         categoryitem.add("Select Category");
         categoryId.add(0);
 
-        Call<CategoryData> call = apiCalling.GetAllCategory(Long.parseLong(BranchID));
+        Call<CategoryData> call = apiCalling.GetAllCategory(0);
         call.enqueue(new Callback<CategoryData>() {
             @Override
             public void onResponse(@NotNull Call<CategoryData> call, @NotNull Response<CategoryData> response) {
@@ -535,6 +485,9 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category.setAdapter(adapter);
         category.setOnItemSelectedListener(onItemSelectedListener6);
+        if (bundle != null) {
+            selectSpinnerValue(category, libraryModel.getCategoryInfo().getCategory());
+        }
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener6 =
@@ -596,6 +549,19 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             }
         }
         return true;
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
+    }
+
+    private void selectSpinnerValue(Spinner spinner, String myString) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
 }

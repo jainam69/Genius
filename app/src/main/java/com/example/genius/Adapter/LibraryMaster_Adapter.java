@@ -37,10 +37,13 @@ import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
+import com.example.genius.ui.BranchClass.BranchClassFragment;
 import com.example.genius.ui.Library_Fragment.library_fragment;
+import com.example.genius.ui.Library_Fragment.library_video_fragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -73,6 +76,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.doc_category.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
         holder.doc_desc.setText(libraryDetails.get(position).getDescription());
         if (libraryDetails.get(position).getLibrary_Type() == 1) {
             holder.library_video_link.setVisibility(View.VISIBLE);
@@ -116,6 +120,27 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             AlertDialog dialog = builder.create();
             btn_edit_no.setOnClickListener(v1 -> dialog.dismiss());
             btn_edit_yes.setOnClickListener(v12 -> {
+                if (libraryDetails.get(position).getLibrary_Type() == 1) {
+                    library_video_fragment orderplace = new library_video_fragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("LIBRARY_MST", libraryDetails.get(position));
+                    orderplace.setArguments(bundle);
+                    FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    library_fragment orderplace = new library_fragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("LIBRARY_MST", libraryDetails.get(position));
+                    orderplace.setArguments(bundle);
+                    FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
                 dialog.dismiss();
             });
             dialog.show();
@@ -142,7 +167,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
                     public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
                         if (response.isSuccessful()) {
                             CommonModel model = response.body();
-                            if (model.isCompleted()) {
+                            if (model != null && model.isCompleted()) {
                                 if (model.isData()) {
                                     libraryDetails.remove(position);
                                     notifyItemRemoved(position);
@@ -175,6 +200,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             AlertDialog dialog = builder.create();
             btn_edit_no.setOnClickListener(v15 -> dialog.dismiss());
             btn_edit_yes.setOnClickListener(v16 -> {
+                dialog.dismiss();
                 String filetype = libraryDetails.get(position).getDocFilePath();
                 String filetyp = filetype.substring(filetype.lastIndexOf("."));
                 Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
@@ -210,9 +236,9 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView doc_desc, standard, library_video_link;
+        TextView doc_desc, standard, library_video_link, doc_category;
         ImageView image, library_edit, library_delete, library_download;
-        LinearLayout linear_standard,linear_video;
+        LinearLayout linear_standard, linear_video;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -226,9 +252,11 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             linear_standard = itemView.findViewById(R.id.linear_standard);
             linear_video = itemView.findViewById(R.id.linear_video);
             library_video_link = itemView.findViewById(R.id.library_video_link);
+            doc_category = itemView.findViewById(R.id.doc_category);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
     }
+
 
 }
