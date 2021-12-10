@@ -179,16 +179,10 @@ public class homework_Listfragment extends Fragment {
                         List<HomeworkModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                List<HomeworkModel> list = new ArrayList<>();
-                                for (HomeworkModel singlemodel : studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
                                 homeworkfilter = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 homework_rv.setLayoutManager(linearLayoutManager);
-                                homeworkMaster_adapter = new HomeworkMaster_Adapter(context, list);
+                                homeworkMaster_adapter = new HomeworkMaster_Adapter(context, studentModelList);
                                 homeworkMaster_adapter.notifyDataSetChanged();
                                 homework_rv.setAdapter(homeworkMaster_adapter);
                             }

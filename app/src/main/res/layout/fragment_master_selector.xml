@@ -327,7 +327,8 @@
                             android:layout_width="60dp"
                             android:layout_height="50dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/banner2" />
+                            android:src="@drawable/course"
+                            app:tint="@color/blue" />
 
 
                         <TextView
@@ -365,7 +366,8 @@
                             android:layout_width="60dp"
                             android:layout_height="50dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/noti" />
+                            android:src="@drawable/branchclass"
+                            app:tint="@color/blue" />
 
 
                         <TextView
@@ -410,7 +412,8 @@
                             android:layout_width="60dp"
                             android:layout_height="50dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/banner2" />
+                            android:src="@drawable/branchsubject"
+                            app:tint="@color/blue" />
 
 
                         <TextView

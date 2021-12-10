@@ -122,7 +122,7 @@ public class student_registration_fragment extends Fragment {
     List<String> batchitem = new ArrayList<>(), batchid = new ArrayList<>();
     String[] BATCHITEM, BATCHID;
     String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001",grade = "none",classname = "none",student_contact_no = "none", father_occupation = "none", mother_occupation = "none",Name,
-    FileName = "none",Extension = "none",Address;
+    FileName = "none",Extension = "none",Address,attach,FinalFileName,RandomFileName,OriginalFileName,Result_Status;
     int select, flag = 0;
     long SchoolId = -1, StandardId, TransactionID, StudentID, ParentID;
     ProgressBarHelper progressBarHelper;
@@ -234,20 +234,30 @@ public class student_registration_fragment extends Fragment {
                 percentage.setText(bundle.getString("Grade"));
             }
             if (bundle.containsKey("FileName")){
-                FileName = bundle.getString("FileName");
+                String file = bundle.getString("FileName");
+                if (file != null)
+                {
+                   OriginalFileName = file;
+                }else
+                {
+                    FinalFileName = "none";
+                }
             }
             if (bundle.containsKey("FilePath")){
                 String Path = bundle.getString("FilePath");
-                if (Path != null || Path != ""){
+                if (Path != null && !Path.equals("http://highpack-001-site12.dtempurl.com")){
+                    if (Path.contains(".") && Path.contains("/")) {
+                        Extension = Path.substring(Path.lastIndexOf(".") + 1);
+                        String FileNameWithExtension = Path.substring(Path.lastIndexOf("/") + 1);
+                        String[] FileNameArray = FileNameWithExtension.split("\\.");
+                        RandomFileName = FileNameArray[0];
+                    }
                     imageView.setVisibility(View.VISIBLE);
                     attachment.setText("attached");
                     Glide.with(context).load(Path).into(imageView);
                 }else {
                     imageView.setVisibility(View.GONE);
                     attachment.setText("");
-                }
-                if (bundle.getString("FilePath").contains(".") && bundle.getString("FilePath").contains("/")) {
-                    Extension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf(".") + 1);
                 }
             }
             if (bundle.containsKey("AdmissionDate")) {
@@ -423,19 +433,20 @@ public class student_registration_fragment extends Fragment {
                     }
                     Address = address.getText().toString().replaceAll("\\s","");
                     Name = first_name.getText().toString().replaceAll("\\s","") + "," + middle_name.getText().toString().replaceAll("\\s","") + "," +last_name.getText().toString().replaceAll("\\s","");
+                    Result_Status = result1 + "," + status1;
                     if (instrumentFileDestination != null){
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                         call = apiCalling.StudentMaintenance(0,0,"1",Name,bdate,Address,
                                 Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString().replaceAll("\\s",""),father_occupation,mother_occupation,login_id.getText().toString(),
+                                Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString().replaceAll("\\s",""),father_occupation,mother_occupation,login_id.getText().toString(),
                                 Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,student_password.getText().toString(),parent_password.getText().toString(),"0","0",true,uploadfile);
                     }else {
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                         call = apiCalling.StudentMaintenance(0,0,"1",Name,bdate,Address,
                                 Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString().replaceAll("\\s",""),father_occupation,mother_occupation,login_id.getText().toString(),
+                                Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString().replaceAll("\\s",""),father_occupation,mother_occupation,login_id.getText().toString(),
                                 Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,student_password.getText().toString(),parent_password.getText().toString(),FileName,Extension,false,uploadfile);
                     }
                     call.enqueue(new Callback<StudentModel.StudentData1>() {
@@ -523,21 +534,23 @@ public class student_registration_fragment extends Fragment {
                         }
                         Address = address.getText().toString().replaceAll("\\s","");
                         Name = first_name.getText().toString().replaceAll("\\s","") + "," + middle_name.getText().toString().replaceAll("\\s","") + "," +last_name.getText().toString().replaceAll("\\s","");
+                        Result_Status = result1 + "," + status1;
                         if (instrumentFileDestination != null)
                         {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                             call = apiCalling.StudentMaintenance(StudentID,ParentID,"1",Name,bdate,Address,
                                     Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                    Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString(),father_occupation,mother_occupation,login_id.getText().toString(),
+                                    Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString(),father_occupation,mother_occupation,login_id.getText().toString(),
                                     Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),"0","0",true,uploadfile);
                         }else {
+                            FinalFileName = OriginalFileName + "," + RandomFileName;
                             RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                             call = apiCalling.StudentMaintenance(StudentID,ParentID,"1",Name,bdate,address.getText().toString(),
                                     Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                    Integer.parseInt(BatchId),result1,grade,classname,student_contact_no,indate,parent_name.getText().toString(),father_occupation,mother_occupation,login_id.getText().toString(),
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),FileName,Extension,false,uploadfile);
+                                    Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString(),father_occupation,mother_occupation,login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),FinalFileName,Extension,false,uploadfile);
                         }
                         call.enqueue(new Callback<StudentModel.StudentData1>() {
                             @Override
@@ -646,16 +659,9 @@ public class student_registration_fragment extends Fragment {
                     selectfile = true;
                     imageVal = null;
                     imageView.setVisibility(View.VISIBLE);
-                   /* Bitmap image = (Bitmap) Objects.requireNonNull(result.getExtras()).get("data");
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(image);
-                    imageVal = ImageUtility.using(getActivity()).toBase64FromBitmap(image);
-                   */
                     attachment.setText("Attached");
                     attachment.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
-                    //imageVal = ImageUtility.using(context).toBase64(instrumentFileDestination.getPath());
-                    //attach = Base64.encodeToString(imageVal, android.util.Base64.DEFAULT);
                     try {
                         imageView.setImageURI(Uri.fromFile(instrumentFileDestination));
                     } catch (Exception ignored) {
@@ -691,7 +697,7 @@ public class student_registration_fragment extends Fragment {
                     imageView.setImageBitmap(bitmap);
                     attachment.setText("Attached");
                     attachment.setTextColor(context.getResources().getColor(R.color.black));
-                    //attach = onGalleryImageResultInstrument(result);
+                    attach = onGalleryImageResultInstrument(result);
                 } catch (Exception e) {
                     errored();
                 }

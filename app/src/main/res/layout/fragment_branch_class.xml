@@ -90,23 +90,21 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/course_rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="70dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="end"
         android:layout_marginTop="-60dp"
-        android:layout_marginEnd="10dp"
-        android:baselineAligned="false"
+        android:layout_gravity="center"
         android:orientation="horizontal"
         android:weightSum="2">
 
         <Button
             android:id="@+id/save_course"
-            android:layout_width="140dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
@@ -119,7 +117,7 @@
 
         <Button
             android:id="@+id/delete_course"
-            android:layout_width="140dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"

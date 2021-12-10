@@ -51,7 +51,6 @@ public class BranchCourseListFragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     RecyclerView course_list_rv;
-    TextView branch_name;
     BranchCourseList_Adapter branchCourseListFragment;
 
     @Override

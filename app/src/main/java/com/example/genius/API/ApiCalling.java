@@ -11,6 +11,7 @@ import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.BranchCourseSingleModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.BranchSubjectModel;
+import com.example.genius.Model.BranchSubjectSingleModel;
 import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.ClassModel;
 import com.example.genius.Model.CommonModel;
@@ -455,7 +456,7 @@ public interface ApiCalling {
     @Multipart
     @POST(ApiConstant.STUDENT_MAINTENANCE + "/{StudentID}/{ParentID}/{Gr_No}/{Name}/{Birth_Date}/{Address}/{BranchID}/{StandardID}/{SchoolID}/{School_TimeID}/{Batch_TimeID}/{Last_Year_Result}/{Grade}/{Class_Name}/{Student_Contact_No}/{Admission_Date}/{Parent_Name}/{Father_Occupation}/{Mother_Occupation}/{Parent_Contact_No}/{CreateId}/{CreateBy}/{TransactionId}/{std_pwd}/{parent_pwd}/{FileName}/{Extension}/{HasFile}")
     Call<StudentModel.StudentData1> StudentMaintenance(@Path("StudentID") long StudentID, @Path("ParentID") long ParentID, @Path("Gr_No") String Gr_No, @Path("Name") String Name, @Path("Birth_Date") String Birth_Date, @Path("Address") String Address, @Path("BranchID") long BranchID, @Path("StandardID") long StandardID, @Path("SchoolID") long SchoolID,
-                                                       @Path("School_TimeID") int School_TimeID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Last_Year_Result") int Last_Year_Result, @Path("Grade") String Grade, @Path("Class_Name") String Class_Name,
+                                                       @Path("School_TimeID") int School_TimeID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Last_Year_Result") String Last_Year_Result, @Path("Grade") String Grade, @Path("Class_Name") String Class_Name,
                                                        @Path("Student_Contact_No") String Student_Contact_No, @Path("Admission_Date") String Admission_Date, @Path("Parent_Name") String Parent_Name, @Path("Father_Occupation") String Father_Occupation, @Path("Mother_Occupation") String Mother_Occupation,
                                                        @Path("Parent_Contact_No") String Parent_Contact_No, @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("std_pwd") String std_pwd, @Path("parent_pwd") String parent_pwd, @Path("FileName") String FileName,
                                                        @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
@@ -535,7 +536,7 @@ public interface ApiCalling {
 
     //Branch Subject
     @POST(ApiConstant.BRANCH_SUBJECT_MAITENANCE)
-    Call<BranchSubjectModel> BranchSubjectMaintenance(@Body BranchSubjectModel.BranchSubjectData libraryModel);
+    Call<BranchSubjectSingleModel> BranchSubjectMaintenance(@Body BranchSubjectModel.BranchSubjectData libraryModel);
 
     @POST(ApiConstant.GET_BRANCH_SUBJECT_BRANCHSUBJECT_BY_ID)
     Call<TestScheduleModel.TestScheduleData1> GetBranchSubjectByBranchSubjectID(@Query("SubjectID") long SubjectID, @Query("branchID") long branchID, @Query("ClassID") long ClassID);
@@ -547,7 +548,7 @@ public interface ApiCalling {
     Call<SuperAdminSubjectModel> GetAllSubject();
 
     @POST(ApiConstant.BRANCH_SUBJECT_REMOVE)
-    Call<TestScheduleModel.TestScheduleData1> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+    Call<CommonModel> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
 
     @GET(ApiConstant.DOWNLOAD_STUDENT_HOMEWORK + "/{HomeworkID}/{StudentID}/{Homework}/{Student}/{Class}")
     Call<HomeworkModel.HomeworkData1> Download_Student_Homework(@Path("HomeworkID") long HomeworkID, @Path("StudentID") long StudentID, @Path("Homework") String Homework,

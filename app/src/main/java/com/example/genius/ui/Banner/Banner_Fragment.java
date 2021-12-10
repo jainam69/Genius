@@ -88,7 +88,7 @@ public class Banner_Fragment extends Fragment {
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     Boolean selectfile = false;
-    String BranchID, attach = "",FileName, Extension;
+    String BranchID, attach = "",RandomFileName, Extension,FinalFileName,OriginalFileName;
     SearchableSpinner branch;
     CheckBox ch_admin, ch_teacher, ch_student;
     TextView banner_image, text, id, image, transactionid, bannerid;
@@ -256,6 +256,7 @@ public class Banner_Fragment extends Fragment {
                     } else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
+                        FinalFileName = OriginalFileName + "," + RandomFileName;
                         Call<BannerModel.BannerlData1> call;
                         if (instrumentFileDestination != null) {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
@@ -268,7 +269,7 @@ public class Banner_Fragment extends Fragment {
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                             call = apiCalling.BannerMaintenance(Long.parseLong(bannerid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), isAdmin,isTeacher,isStudent
                                     ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
-                                    , FileName, Extension, false, uploadfile);
+                                    , FinalFileName, Extension, false, uploadfile);
                         }
                         call.enqueue(new Callback<BannerModel.BannerlData1>() {
                             @Override
@@ -616,11 +617,12 @@ public class Banner_Fragment extends Fragment {
                     bannerid.setText("" + bannerDetails.get(position).getBannerID());
                     banner_image.setText("Attached");
                     banner_image.setTextColor(context.getResources().getColor(R.color.black));
+                    OriginalFileName = bannerDetails.get(position).getFileName();
                     if (bannerDetails.get(position).getFilePath().contains(".") && bannerDetails.get(position).getFilePath().contains("/")) {
                         Extension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf(".") + 1);
                         String FileNameWithExtension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf("/") + 1);
                         String[] FileNameArray = FileNameWithExtension.split("\\.");
-                        FileName = bannerDetails.get(position).getFileName();
+                        RandomFileName = FileNameArray[0];
                     }
                     List<BannerModel.BannerTypeEntity> notitypelist1 = bannerDetails.get(position).getBannerType();
                     for (BannerModel.BannerTypeEntity model : notitypelist1) {

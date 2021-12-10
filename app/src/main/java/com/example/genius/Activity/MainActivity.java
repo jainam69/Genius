@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
     Context context;
+    TextView branchname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +32,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        branchname = findViewById(R.id.branchname);
         context = MainActivity.this;
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        branchname.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
     }
 
     @Override

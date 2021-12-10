@@ -33,6 +33,7 @@ import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.BranchSubjectModel;
+import com.example.genius.Model.BranchSubjectSingleModel;
 import com.example.genius.Model.ClassModel;
 import com.example.genius.Model.CourceModel;
 import com.example.genius.Model.RowStatusModel;
@@ -69,22 +70,16 @@ public class BranchSubjectFragment extends Fragment {
     SearchableSpinner spinner_course, spinner_class;
     List<String> couseitem = new ArrayList<>();
     List<Long> couseiditem = new ArrayList<>();
-
     List<String> classitem = new ArrayList<>();
     List<Long> classiditem = new ArrayList<>();
-
     Long[] COURSEID;
     String[] COURSEITEM;
-
     Long[] CLASSID;
     String[] CLASSITEM;
-
     String course;
     long courseid;
-
     String class_name;
     long classid;
-
     Bundle bundle = null;
     List<BranchSubjectModel.BranchSubjectData> list;
     List<BranchSubjectModel.BranchSubjectData> listForBundle;
@@ -94,9 +89,8 @@ public class BranchSubjectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Subject List");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Subject Master");
         root = inflater.inflate(R.layout.fragment_branch_subject, container, false);
-
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
@@ -198,6 +192,7 @@ public class BranchSubjectFragment extends Fragment {
                         }
                     }
                     GetAllCourse();
+                    GetAllSimpleClass();
                 }
             }
 
@@ -331,7 +326,7 @@ public class BranchSubjectFragment extends Fragment {
         spinner_class.setAdapter(adapter);
         spinner_class.setOnItemSelectedListener(reportareaListener1);
         if (bundle != null) {
-            selectSpinnerValue(spinner_course, bundle.getString("CLASS_NAME"));
+            selectSpinnerValue(spinner_class, bundle.getString("CLASS_NAME"));
         }
     }
 
@@ -347,11 +342,40 @@ public class BranchSubjectFragment extends Fragment {
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(16);
-                        class_name = couseitem.get(position);
-                        classid = couseiditem.get(position);
+                        class_name = classitem.get(position);
+                        classid = classiditem.get(position);
                     }
                 }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 
+    public void GetAllSimpleClass()
+    {
+        classitem.clear();
+        classitem.add("Select Class");
+
+        CLASSITEM = new String[classitem.size()];
+        CLASSITEM = classitem.toArray(CLASSITEM);
+
+        bindselectclass();
+    }
+
+    public void bindselectclass() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_class.setAdapter(adapter);
+        spinner_class.setOnItemSelectedListener(onItemSelectedListener80);
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener80 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                    ((TextView) parent.getChildAt(0)).setTextSize(16);
+                }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
@@ -373,13 +397,13 @@ public class BranchSubjectFragment extends Fragment {
             Function.showToast(context, "Please select course");
         } else {
             progressBarHelper.showProgressDialog();
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 list = new ArrayList<>();
                 if (BranchSubjectAapter.CourceDataList.size() > 0) {
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1, "Active");
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     if (bundle == null) {
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         for (int i = 0; i < BranchSubjectAapter.CourceDataList.size(); i++) {
                             BranchSubjectModel.BranchSubjectData model = new BranchSubjectModel.BranchSubjectData(
                                     0, branchModel
@@ -389,6 +413,7 @@ public class BranchSubjectFragment extends Fragment {
                             list.add(model);
                         }
                     } else {
+                        TransactionModel transactionModel = new TransactionModel(0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         for (int i = 0; i < BranchSubjectAapter.CourceDataList.size(); i++) {
                             BranchSubjectModel.BranchSubjectData model = new BranchSubjectModel.BranchSubjectData(
                                     listForBundle.get(i).Subject_dtl_id, branchModel
@@ -399,16 +424,16 @@ public class BranchSubjectFragment extends Fragment {
                         }
                     }
                     BranchSubjectModel.BranchSubjectData branch = new BranchSubjectModel.BranchSubjectData(list);
-                    Call<BranchSubjectModel> call = apiCalling.BranchSubjectMaintenance(branch);
-                    call.enqueue(new Callback<BranchSubjectModel>() {
+                    Call<BranchSubjectSingleModel> call = apiCalling.BranchSubjectMaintenance(branch);
+                    call.enqueue(new Callback<BranchSubjectSingleModel>() {
                         @Override
-                        public void onResponse(@NotNull Call<BranchSubjectModel> call, @NotNull Response<BranchSubjectModel> response) {
+                        public void onResponse(@NotNull Call<BranchSubjectSingleModel> call, @NotNull Response<BranchSubjectSingleModel> response) {
                             if (response.isSuccessful()) {
-                                BranchSubjectModel data = response.body();
+                                BranchSubjectSingleModel data = response.body();
                                 if (data != null) {
-                                    if (data.isCompleted()) {
+                                    if (data.getCompleted()) {
                                         Function.showToast(context, data.getMessage());
-                                        BranchClassListFragment profileFragment = new BranchClassListFragment();
+                                        BranchSubjectListFragment profileFragment = new BranchSubjectListFragment();
                                         FragmentManager fm = requireActivity().getSupportFragmentManager();
                                         FragmentTransaction ft = fm.beginTransaction();
                                         ft.replace(R.id.nav_host_fragment, profileFragment);
@@ -423,7 +448,7 @@ public class BranchSubjectFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(@NotNull Call<BranchSubjectModel> call, @NotNull Throwable t) {
+                        public void onFailure(@NotNull Call<BranchSubjectSingleModel> call, @NotNull Throwable t) {
                             Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             progressBarHelper.hideProgressDialog();
                         }

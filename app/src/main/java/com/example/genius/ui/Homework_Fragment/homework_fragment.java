@@ -106,7 +106,7 @@ public class homework_fragment extends Fragment {
     Long StandardId;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    String FileName = "none", Extension = "jpg";
+    String Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -147,55 +147,24 @@ public class homework_fragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-            if (bundle.containsKey("Remarks")) {
+            if (!(bundle.getString("Remarks") == null)) {
                 remarks.setText(bundle.getString("Remarks"));
             }
-            if (bundle.containsKey("HomeworkID")) {
-                id.setText("" + bundle.getLong("HomeworkID"));
-                progressBarHelper.showProgressDialog();
-                Call<HomeworkByIdData> call = apiCalling.GetHomeworkByHWID(bundle.getLong("HomeworkID"));
-                call.enqueue(new Callback<HomeworkByIdData>() {
-                    @Override
-                    public void onResponse(@NotNull Call<HomeworkByIdData> call, @NotNull Response<HomeworkByIdData> response) {
-                        if (response.isSuccessful()) {
-                            progressBarHelper.hideProgressDialog();
-                            HomeworkByIdData paperData = response.body();
-                            if (paperData != null && paperData.Completed) {
-                                HomeworkModel paperModelList = paperData.Data;
-                                if (paperModelList != null) {
-                                    attachment_homework.setText("Attached");
-                                    attachment_homework.setTextColor(context.getResources().getColor(R.color.black));
-                                    attach = paperModelList.getHomeworkContentText();
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull Call<HomeworkByIdData> call, @NotNull Throwable t) {
-                        Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show();
-                        progressBarHelper.hideProgressDialog();
-                    }
-                });
-            }
-            if (!(bundle.getString("HomeworkContentText") == null)) {
+            if (!(bundle.getString("FilePath") == null)) {
                 attachment_homework.setText("Attached");
                 attachment_homework.setTextColor(context.getResources().getColor(R.color.black));
-                attach = bundle.getString("HomeworkContentText");
+                if (bundle.getString("FilePath").contains(".") && bundle.getString("FilePath").contains("/")) {
+                    Extension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf(".") + 1);
+                    String FileNameWithExtension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf("/") + 1);
+                    String[] FileNameArray = FileNameWithExtension.split("\\.");
+                    RandomFileName = FileNameArray[0];
+                }
             }
-            if (bundle.containsKey("HomeworkContentFileName")) {
-                filename = bundle.getString("HomeworkContentFileName");
+            if (bundle.containsKey("FileName")) {
+                OriginFileName = bundle.getString("FileName");
             }
             if (bundle.containsKey("TransactionId")) {
                 transactionid.setText("" + bundle.getLong("TransactionId"));
-            }
-            if (bundle.getString("FilePath").contains(".") && bundle.getString("FilePath").contains("/")) {
-                Extension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf(".") + 1);
-                String FileNameWithExtension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf("/") + 1);
-                String[] FileNameArray = FileNameWithExtension.split("\\.");
-            }
-            if (bundle.containsKey("FileName")){
-                FileName = bundle.getString("FileName");
             }
         }
 
@@ -228,28 +197,25 @@ public class homework_fragment extends Fragment {
         });
 
         save_homework.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (homework_date.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Homework Date.", Toast.LENGTH_SHORT).show();
                 } else if (branch.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
                 } else if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (subject.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 } else if (instrumentFileDestination == null) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Homework.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
+                    if (!remarks.getText().toString().isEmpty()){
+                        Description = remarks.getText().toString();
+                    }
                     Call<HomeworkModel.HomeworkData1> call = apiCalling.HomeworkMaintenance(0
                             , indate, Long.parseLong(BranchID)
-                            , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId), remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                            , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                             , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
                             , 0, "0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
@@ -258,7 +224,7 @@ public class homework_fragment extends Fragment {
                         public void onResponse(@NotNull Call<HomeworkModel.HomeworkData1> call, @NotNull Response<HomeworkModel.HomeworkData1> response) {
                             if (response.isSuccessful()) {
                                 HomeworkModel.HomeworkData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
+                                if (data.isCompleted()) {
                                     HomeworkModel notimodel = data.getData();
                                     if (notimodel != null) {
                                         Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -269,8 +235,11 @@ public class homework_fragment extends Fragment {
                                         fragmentTransaction.addToBackStack(null);
                                         fragmentTransaction.commit();
                                     } else {
-                                        Toast.makeText(context, "Homework not Inserted...!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
+                                }else
+                                {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -290,41 +259,39 @@ public class homework_fragment extends Fragment {
         });
 
         edit_homework.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (homework_date.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Homework Date.", Toast.LENGTH_SHORT).show();
                 } else if (branch.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
                 } else if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (subject.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 } else if (attachment_homework.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Homework.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     Call<HomeworkModel.HomeworkData1> call;
+                    if (!remarks.getText().toString().isEmpty()){
+                        Description = remarks.getText().toString();
+                    }
                     if (instrumentFileDestination != null) {
                         call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
                                 , indate, Long.parseLong(BranchID)
                                 , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId)
-                                , remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
                                 , Long.parseLong(transactionid.getText().toString()), "0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
+                        FinalFileName = OriginFileName + "," + RandomFileName;
                         call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
                                 , indate, Long.parseLong(BranchID)
                                 , StandardId, Long.parseLong(SubjectId), Integer.parseInt(BatchId)
-                                , remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                ,Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , Long.parseLong(transactionid.getText().toString()), FileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
+                                , Long.parseLong(transactionid.getText().toString()), FinalFileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
                     call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
@@ -332,7 +299,7 @@ public class homework_fragment extends Fragment {
                         public void onResponse(@NotNull Call<HomeworkModel.HomeworkData1> call, @NotNull Response<HomeworkModel.HomeworkData1> response) {
                             if (response.isSuccessful()) {
                                 HomeworkModel.HomeworkData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
+                                if (data.isCompleted()) {
                                     HomeworkModel notimodel = data.getData();
                                     if (notimodel != null) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -343,8 +310,11 @@ public class homework_fragment extends Fragment {
                                         fragmentTransaction.addToBackStack(null);
                                         fragmentTransaction.commit();
                                     } else {
-                                        Toast.makeText(context, "Homework not Updated...!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
+                                }else
+                                {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -429,7 +399,7 @@ public class homework_fragment extends Fragment {
                     flag = 1;
                     InputStream imageStream;
                     Uri uri = result.getData();
-                    String Path = FileUtils.getRealPath(context, uri);
+                    String Path = FUtils.getPath(requireActivity(), uri);
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     attachment_homework.setText("Attached");

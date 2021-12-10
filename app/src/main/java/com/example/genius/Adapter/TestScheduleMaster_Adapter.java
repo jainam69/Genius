@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -156,6 +157,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
                                 CommonModel model = response.body();
                                 if (model.isCompleted()) {
                                     if (model.isData()) {
+                                        Toast.makeText(context, "Test Schedule Deleted Successfully.", Toast.LENGTH_SHORT).show();
                                         testScheduleDetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();

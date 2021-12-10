@@ -68,12 +68,6 @@ public class BranchClassListAdapter extends RecyclerView.Adapter<BranchClassList
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.txt_branch_name.setText(CourceDataList.get(position).branch.getBranchName());
         holder.txt_course_name.setText(CourceDataList.get(position).BranchCourse.getCourse().getCourseName());
-        /*List<BranchClassSingleModel.BranchClassData> branchClassData = new ArrayList<>();
-        for (int i = 0; i < CourceDataList.get(position).BranchClassData.size(); i++) {
-            if (CourceDataList.get(i).BranchClassData.get(i).isClass) {
-                branchClassData.add(CourceDataList.get(i).BranchClassData.get(i));
-            }
-        }*/
         BranchClassSublistAdapter branchClassSublistAdapter = new BranchClassSublistAdapter(context, CourceDataList.get(position).BranchClassData);
         holder.class_sublist_rv.setLayoutManager(new LinearLayoutManager(context));
         holder.class_sublist_rv.setAdapter(branchClassSublistAdapter);
@@ -86,7 +80,7 @@ public class BranchClassListAdapter extends RecyclerView.Adapter<BranchClassList
             Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
-            title.setText("Are you sure that you want to Edit Class?");
+            title.setText("Are you sure that you want to Edit Branch Class?");
             image.setImageResource(R.drawable.ic_edit);
             AlertDialog dialog = builder.create();
 
@@ -118,7 +112,7 @@ public class BranchClassListAdapter extends RecyclerView.Adapter<BranchClassList
             TextView title = dialogView.findViewById(R.id.title);
             ImageView image = dialogView.findViewById(R.id.image);
             image.setImageResource(R.drawable.delete);
-            title.setText("Are you sure that you want to delete this Course?");
+            title.setText("Are you sure that you want to delete this Class?");
             AlertDialog dialog = builder.create();
 
             btn_cancel.setOnClickListener(v13 -> dialog.dismiss());
@@ -135,8 +129,8 @@ public class BranchClassListAdapter extends RecyclerView.Adapter<BranchClassList
                             CommonModel model = response.body();
                             if (model != null && model.isCompleted()) {
                                 if (model.isData()) {
-                                    Toast.makeText(context, "Course deleted successfully.", Toast.LENGTH_SHORT).show();
-                                    //branchCourceData.remove(position);
+                                    Toast.makeText(context, "Class deleted successfully.", Toast.LENGTH_SHORT).show();
+                                    CourceDataList.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
                                 }

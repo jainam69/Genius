@@ -77,7 +77,7 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
             Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
-            title.setText("Are you sure that you want to Edit Class?");
+            title.setText("Are you sure that you want to Edit Subject?");
             image.setImageResource(R.drawable.ic_edit);
             AlertDialog dialog = builder.create();
 
@@ -110,14 +110,15 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
             TextView title = dialogView.findViewById(R.id.title);
             ImageView image = dialogView.findViewById(R.id.image);
             image.setImageResource(R.drawable.delete);
-            title.setText("Are you sure that you want to delete this Course?");
+            title.setText("Are you sure that you want to delete this Subject?");
             AlertDialog dialog = builder.create();
 
             btn_cancel.setOnClickListener(v13 -> dialog.dismiss());
 
             btn_delete.setOnClickListener(v14 -> {
                 progressBarHelper.showProgressDialog();
-                Call<CommonModel> call = apiCalling.RemoveClassDetail(CourceDataList.get(position).BranchCourse.getCourse_dtl_id()
+                Call<CommonModel> call = apiCalling.RemoveSubjectDetail(CourceDataList.get(position).getBranchCourse().getCourse_dtl_id(),
+                        CourceDataList.get(position).getBranchClass().getClass_dtl_id()
                         , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                         , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID));
                 call.enqueue(new Callback<CommonModel>() {
@@ -127,8 +128,8 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
                             CommonModel model = response.body();
                             if (model != null && model.isCompleted()) {
                                 if (model.isData()) {
-                                    Toast.makeText(context, "Course deleted successfully.", Toast.LENGTH_SHORT).show();
-                                    //branchCourceData.remove(position);
+                                    Toast.makeText(context, "Subject deleted successfully.", Toast.LENGTH_SHORT).show();
+                                    CourceDataList.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
                                 }

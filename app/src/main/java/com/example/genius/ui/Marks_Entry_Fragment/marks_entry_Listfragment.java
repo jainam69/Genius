@@ -57,7 +57,7 @@ public class marks_entry_Listfragment extends Fragment {
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(),dateid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM,DATEITEM;
     Integer[] STANDARDID, SUBJECTID, BRANCHID;
-    String StandardName, SubjectName, BatchTime, BranchName, BranchID, BatchId, SubjectId,TestDate,Subject_Date;
+    String StandardName, SubjectName, BatchTime, BranchName, BranchID, BatchId, SubjectId,TestDate,Subject_Date,TestID;
     OnBackPressedCallback callback;
     Long StandardId;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -135,7 +135,7 @@ public class marks_entry_Listfragment extends Fragment {
                             Subject_Date = actualdate.format(d);
                         }catch (Exception e){
                         }
-                        Call<MarksModel.MarksData> call = apiCalling.GetAllStudentAchieveMarks(StandardId,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
+                        Call<MarksModel.MarksData> call = apiCalling.GetAllStudentAchieveMarks(Long.parseLong(TestID),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
                                 Long.parseLong(BatchId),Long.parseLong(SubjectId));
                         call.enqueue(new Callback<MarksModel.MarksData>() {
                             @Override
@@ -471,6 +471,7 @@ public class marks_entry_Listfragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TestDate = dateitem.get(position);
+                    TestID = dateid.get(position).toString();
                     if (test_date.getSelectedItem().equals("Test Date")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);

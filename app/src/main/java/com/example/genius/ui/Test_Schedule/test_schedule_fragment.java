@@ -121,7 +121,7 @@ public class test_schedule_fragment extends Fragment {
     File instrumentFileDestination;
     int flag = 0, type;
     List<UploadPaperModel> studentModelList;
-    String FileName = "none", Extension = "none";
+    String Description = "none", Extension = "none",FinalFileName,OriginFileName,RandomFileName;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -211,14 +211,17 @@ public class test_schedule_fragment extends Fragment {
                                             linear_remarks.setVisibility(View.VISIBLE);
                                             edit_test_paper.setVisibility(View.VISIBLE);
                                             save_test_paper.setVisibility(View.GONE);
-                                            paper_remarks.setText(studentModelList.get(0).getRemarks());
+                                            if (studentModelList.get(0).getRemarks() != null){
+                                                paper_remarks.setText(studentModelList.get(0).getRemarks());
+                                            }
                                             if (!studentModelList.get(0).getFilePath().equals("") && studentModelList.get(0).getFilePath() != null) {
                                                 if (studentModelList.get(0).getFilePath().contains(".") && studentModelList.get(0).getFilePath().contains("/")) {
                                                     Extension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf(".") + 1);
                                                     String FileNameWithExtension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf("/") + 1);
                                                     String[] FileNameArray = FileNameWithExtension.split("\\.");
-                                                    FileName = FileNameArray[0];
+                                                    RandomFileName = FileNameArray[0];
                                                 }
+                                                OriginFileName = studentModelList.get(0).getFileName();
                                             }else {
                                                 upload_link.setText(studentModelList.get(0).getDocLink());
                                             }
@@ -327,7 +330,7 @@ public class test_schedule_fragment extends Fragment {
         });
 
         save_testschedule.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (standard.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
@@ -476,20 +479,21 @@ public class test_schedule_fragment extends Fragment {
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
+                    if (!paper_remarks.getText().toString().isEmpty()){
+                        Description = paper_remarks.getText().toString();
+                    }
                     Call<UploadPaperModel.UploadPaperData1> call;
                     if (bundle != null) {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                             call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id), "none"
-                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "0", "0", true
-                                    , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
-                                            , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
+                                    , MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
                             call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id)
-                                    , upload_link.getText().toString().replaceAll("\\s",""), paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , upload_link.getText().toString().replaceAll("\\s",""), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
-                                    , MultipartBody.Part.createFormData("attachment", ""
-                                            , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
+                                    , MultipartBody.Part.createFormData("attachment", "", RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     } else {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
@@ -550,18 +554,22 @@ public class test_schedule_fragment extends Fragment {
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
+                    if (!paper_remarks.getText().toString().isEmpty()){
+                        Description = paper_remarks.getText().toString();
+                    }
                     Call<UploadPaperModel.UploadPaperData1> call;
                     if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                         if (instrumentFileDestination != null) {
                             call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id), "none"
-                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, true
+                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), "0", "0", true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
+                            FinalFileName = OriginFileName + "," + RandomFileName;
                             call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id), "none"
-                                    , paper_remarks.getText().toString(), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FileName, Extension, false
+                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FinalFileName, Extension, false
                                     , MultipartBody.Part.createFormData("attachment", ""
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
@@ -580,7 +588,7 @@ public class test_schedule_fragment extends Fragment {
                                 if (data.isCompleted()) {
                                     UploadPaperModel notimodel = data.getData();
                                     if (notimodel != null) {
-                                        Toast.makeText(context, "Paper Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Paper Updated Successfully.", Toast.LENGTH_SHORT).show();
                                         test_Listfragment orderplace = new test_Listfragment();
                                         FragmentManager fragmentManager = getFragmentManager();
                                         FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -588,7 +596,7 @@ public class test_schedule_fragment extends Fragment {
                                         fragmentTransaction.addToBackStack(null);
                                         fragmentTransaction.commit();
                                     } else {
-                                        Toast.makeText(context, "Paper not Updated...!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Paper not Updated!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }

@@ -56,7 +56,12 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
             holder.staff_name.setText(staffDetails.get(position).getName());
             holder.mobile_no.setText(staffDetails.get(position).getMobileNo());
             holder.email.setText(staffDetails.get(position).getEmailID());
-            holder.status.setText(staffDetails.get(position).getRowStatus().getRowStatusText());
+            String grnd = staffDetails.get(position).getGender();
+            if (grnd.equals("1")){
+                holder.gender.setText("Male");
+            }else {
+                holder.gender.setText("Female");
+            }
             holder.staff_edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -68,7 +73,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                     Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                     ImageView image = dialogView.findViewById(R.id.image);
                     TextView title = dialogView.findViewById(R.id.title);
-                    title.setText("Are you sure that you want to Edit Staff?");
+                    title.setText("Are you sure that you want to Edit User?");
                     image.setImageResource(R.drawable.ic_edit);
                     AlertDialog dialog = builder.create();
 
@@ -186,7 +191,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView staff_name, mobile_no, email, user_type, status;
+        TextView staff_name, mobile_no, email, user_type, status,gender;
         ImageView staff_edit, staff_delete;
 
         public ViewHolder(@NonNull View itemView) {
@@ -199,6 +204,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
             status = itemView.findViewById(R.id.status);
             staff_edit = itemView.findViewById(R.id.staff_edit);
             staff_delete = itemView.findViewById(R.id.staff_delete);
+            gender = itemView.findViewById(R.id.gender);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

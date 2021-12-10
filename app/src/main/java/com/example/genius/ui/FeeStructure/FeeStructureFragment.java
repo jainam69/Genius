@@ -117,17 +117,7 @@ public class FeeStructureFragment extends Fragment {
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
     ImageView imageView;
     long TransactionId, FeesId, FeesDetailId;
-    String FileName, FilePath, Extension;
-
-    public FeeStructureFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
+    String Description = "none", Extension,FinalFileName,RandomFileName,OriginFilename;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -185,8 +175,11 @@ public class FeeStructureFragment extends Fragment {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 } else {
+                    if (!remarks.getText().toString().isEmpty()){
+                        Description = remarks.getText().toString();
+                    }
                     Call<FeeStructureSingleData> call = apiCalling.FeesMaintenance(0, 0, studentid
-                            , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
+                            , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
                             , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                             , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
                             0, "0", "0", true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
@@ -231,21 +224,28 @@ public class FeeStructureFragment extends Fragment {
                 if (standard.getSelectedItemId() == 0) {
                     progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please select standard", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (banner_image.getText().toString().isEmpty()) {
+                    progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (!remarks.getText().toString().isEmpty()){
+                        Description = remarks.getText().toString();
+                    }
                     Call<FeeStructureSingleData> call;
                     if (instrumentFileDestination != null) {
                         call = apiCalling.FeesMaintenance(FeesId, FeesDetailId, studentid
-                                , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
+                                , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
                                 , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , TransactionId, FileName, Extension, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                                , TransactionId,"0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
+                        FinalFileName = OriginFilename + "," + RandomFileName;
                         call = apiCalling.FeesMaintenance(FeesId, FeesDetailId, studentid
-                                , Long.parseLong(BranchID), remarks.getText().toString(), actualdate.format(Calendar.getInstance().getTime())
+                                , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
                                 , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , TransactionId, FileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
+                                , TransactionId, FinalFileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
                     call.enqueue(new Callback<FeeStructureSingleData>() {
@@ -261,6 +261,7 @@ public class FeeStructureFragment extends Fragment {
                                         remarks.setText("");
                                         banner_image.setText("");
                                         branch.setSelection(0);
+                                        imageView.setVisibility(View.GONE);
                                         GetBannerDetails();
                                     }
                                 }
@@ -403,6 +404,8 @@ public class FeeStructureFragment extends Fragment {
                     InputStream imageStream;
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     bitmap = BitmapFactory.decodeStream(imageStream);
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.setImageBitmap(bitmap);
                     banner_image.setText("Attached");
                     banner_image.setTextColor(context.getResources().getColor(R.color.black));
                     attach = onGalleryImageResultInstrument(result);
@@ -515,16 +518,10 @@ public class FeeStructureFragment extends Fragment {
                         bannerDataList = bannerData.getData();
                         if (bannerDataList != null) {
                             if (bannerDataList.size() > 0) {
-                                List<FeeStructureModel> list = new ArrayList<>();
-                                for (FeeStructureModel singlemodel : bannerDataList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
                                 text.setVisibility(View.VISIBLE);
                                 banner_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                                 banner_rv.setLayoutManager(new GridLayoutManager(context, 1));
-                                bannerMaster_adapter = new BannerMaster_Adapter(context, list);
+                                bannerMaster_adapter = new BannerMaster_Adapter(context, bannerDataList);
                                 bannerMaster_adapter.notifyDataSetChanged();
                                 banner_rv.setAdapter(bannerMaster_adapter);
                             }
@@ -548,7 +545,6 @@ public class FeeStructureFragment extends Fragment {
         List<FeeStructureModel> bannerDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        int id;
 
         public BannerMaster_Adapter(Context context, List<FeeStructureModel> bannerDetails) {
             this.context = context;
@@ -563,9 +559,6 @@ public class FeeStructureFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull BannerMaster_Adapter.ViewHolder holder, int position) {
-            /*attach = bannerDetails.get(position).getFilePath();
-            imageVal = Base64.decode(attach, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);*/
             holder.remark.setText(bannerDetails.get(position).getRemark());
             holder.standard.setText(bannerDetails.get(position).getStandardInfo().getStandard());
             Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
@@ -595,18 +588,17 @@ public class FeeStructureFragment extends Fragment {
                         Extension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf(".") + 1);
                         String FileNameWithExtension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf("/") + 1);
                         String[] FileNameArray = FileNameWithExtension.split("\\.");
-                        FileName = FileNameArray[0];
+                        RandomFileName = FileNameArray[0];
                     }
                     TransactionId = bannerDetails.get(position).getTransaction().getTransactionId();
-                    FileName = bannerDetails.get(position).getFileName();
-                    FilePath = bannerDetails.get(position).getFilePath();
+                    OriginFilename = bannerDetails.get(position).getFileName();
                     FeesId = bannerDetails.get(position).getFeesID();
                     FeesDetailId = bannerDetails.get(position).getFeesDetailID();
                     studentid = bannerDetails.get(position).getStandardInfo().getStandardID();
                     selectSpinnerValue(standard, bannerDetails.get(position).getStandardInfo().getStandard());
                     remarks.setText(bannerDetails.get(position).getRemark());
                     imageView.setVisibility(View.VISIBLE);
-                    Glide.with(context).load("http://192.168.91.181/" + bannerDetails.get(position).getFilePath()).into(imageView);
+                    Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(imageView);
                     scroll.scrollTo(0, 0);
                     scroll.fullScroll(View.FOCUS_UP);
                 });
@@ -622,7 +614,7 @@ public class FeeStructureFragment extends Fragment {
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
-                title.setText("Are you sure that you want to delete this Banner?");
+                title.setText("Are you sure that you want to delete this Fee Structure?");
                 AlertDialog dialog = builder.create();
 
                 btn_cancel.setOnClickListener(v13 -> dialog.dismiss());
@@ -639,7 +631,7 @@ public class FeeStructureFragment extends Fragment {
                                 CommonModel model = response.body();
                                 if (model.isCompleted()) {
                                     if (model.isData()) {
-                                        Toast.makeText(context, "Banner deleted successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Fee Structure deleted successfully.", Toast.LENGTH_SHORT).show();
                                         bannerDetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();

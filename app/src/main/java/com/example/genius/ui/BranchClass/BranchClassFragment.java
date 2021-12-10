@@ -52,6 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class BranchClassFragment extends Fragment {
+
     View root;
     Context context;
     ProgressBarHelper progressBarHelper;
@@ -68,7 +69,6 @@ public class BranchClassFragment extends Fragment {
     String[] COURSEITEM;
     String course;
     long courseid;
-    List<ClassModel.ClassData> ClassData;
     Bundle bundle = null;
     List<BranchClassSingleModel.BranchClassData> list;
     List<BranchClassSingleModel.BranchClassData> listForBundle;
@@ -77,7 +77,7 @@ public class BranchClassFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Class List");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Class Master");
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_branch_class, container, false);
 

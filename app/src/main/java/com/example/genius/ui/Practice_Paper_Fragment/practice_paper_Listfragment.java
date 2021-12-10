@@ -99,7 +99,7 @@ public class practice_paper_Listfragment extends Fragment {
     Long StandardId;
     OnBackPressedCallback callback;
     NestedScrollView paper_scroll;
-    String attach = "", path = "",FileName, Extension;
+    String attach = "", path = "",Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
     EditText remarks;
 
     @Override
@@ -130,7 +130,6 @@ public class practice_paper_Listfragment extends Fragment {
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
-            //GetAllBranch();
             GetAllStandard();
             GetAllSubject();
             selectbatch_time();
@@ -140,26 +139,24 @@ public class practice_paper_Listfragment extends Fragment {
         }
 
         save_practice_paper.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (subject.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                 } else if (attach_paper.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
+                    if (!remarks.getText().toString().isEmpty()){
+                        Description = remarks.getText().toString();
+                    }
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                     Call<PaperModel.PaperData1> call = apiCalling.PaperMaintenance(0,0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,
-                            Long.parseLong(SubjectId),Integer.parseInt(BatchId),remarks.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                            Long.parseLong(SubjectId),Integer.parseInt(BatchId),Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
                             "0","0",true,uploadfile);
                     call.enqueue(new Callback<PaperModel.PaperData1>() {
                         @Override
@@ -199,35 +196,34 @@ public class practice_paper_Listfragment extends Fragment {
         });
 
         edit_practice_paper.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
                 if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (subject.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                 } else if (attach_paper.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
+                    if (!remarks.getText().toString().isEmpty()){
+                        Description = remarks.getText().toString();
+                    }
                     Call<PaperModel.PaperData1> call;
                     if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                         call = apiCalling.PaperMaintenance(Long.parseLong(paper_id.getText().toString()),Long.parseLong(uniq_id.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,
-                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),remarks.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
                                 "0","0",true,uploadfile);
                     }else {
+                        FinalFileName = OriginFileName + "," + RandomFileName;
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                         call = apiCalling.PaperMaintenance(Long.parseLong(paper_id.getText().toString()),Long.parseLong(uniq_id.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,
-                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),remarks.getText().toString(),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
-                                FileName,Extension,false,uploadfile);
+                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
+                                FinalFileName,Extension,false,uploadfile);
                     }
                     call.enqueue(new Callback<PaperModel.PaperData1>() {
                         @Override
@@ -748,7 +744,6 @@ public class practice_paper_Listfragment extends Fragment {
                                 if (paperData.Completed) {
                                     PaperModel paperModelList = paperData.Data;
                                     if (paperModelList != null) {
-                                        //String a1 = paperModelList.getPaperData().getPaperContentText();
                                         save_practice_paper.setVisibility(View.GONE);
                                         edit_practice_paper.setVisibility(View.VISIBLE);
                                         int cb = Integer.parseInt(String.valueOf(paperModels.get(position).getBranch().getBranchID()));
@@ -769,13 +764,14 @@ public class practice_paper_Listfragment extends Fragment {
                                             Extension = paperModels.get(position).getPaperData().getFilePath().substring(paperModels.get(position).getPaperData().getFilePath().lastIndexOf(".") + 1);
                                             String FileNameWithExtension = paperModels.get(position).getPaperData().getFilePath().substring(paperModels.get(position).getPaperData().getFilePath().lastIndexOf("/") + 1);
                                             String[] FileNameArray = FileNameWithExtension.split("\\.");
-                                            FileName = paperModels.get(position).getPaperData().getPaperPath();
+                                            RandomFileName = FileNameArray[0];
                                         }
                                         attach_paper.setTextColor(context.getResources().getColor(R.color.black));
                                         uniq_id.setText("" + paperModels.get(position).getPaperData().getUniqueID());
                                         paper_id.setText("" + paperModels.get(position).getPaperID());
                                         id.setText("" + paperModels.get(position).getTransaction().getTransactionId());
                                         remarks.setText(paperModels.get(position).getRemarks());
+                                        OriginFileName = paperModels.get(position).getPaperData().getPaperPath();
                                         paper_scroll.scrollTo(0, 0);
                                         paper_scroll.fullScroll(View.FOCUS_UP);
                                     }

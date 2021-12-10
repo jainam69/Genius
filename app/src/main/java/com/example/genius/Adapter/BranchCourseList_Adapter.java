@@ -45,7 +45,6 @@ import retrofit2.Response;
 public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseList_Adapter.ViewHolder> {
 
     Context context;
-    //List<BranchCourseModel.BranchCourceData> branchCourceData;
     BranchCourseModel branchCourceData;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -78,7 +77,7 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
             Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
-            title.setText("Are you sure that you want to Edit Course?");
+            title.setText("Are you sure that you want to Edit Branch Course?");
             image.setImageResource(R.drawable.ic_edit);
             AlertDialog dialog = builder.create();
 

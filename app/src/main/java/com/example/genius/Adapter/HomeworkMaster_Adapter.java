@@ -57,12 +57,10 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     List<HomeworkModel> homeworkDetails;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    int id;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     long downloadID;
     String Name;
-    byte[] imageVal;
 
     public HomeworkMaster_Adapter(Context context, List<HomeworkModel> homeworkDetails) {
         this.context = context;
@@ -119,8 +117,6 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                 bundle.putLong("SubjectID", homeworkDetails.get(position).getSubjectInfo().getSubjectID());
                 bundle.putString("BatchTimeText", homeworkDetails.get(position).getBatchTimeText());
                 bundle.putString("Remarks", homeworkDetails.get(position).getRemarks());
-                bundle.putString("HomeworkContentText", homeworkDetails.get(position).getHomeworkContentText());
-                bundle.putString("HomeworkContentFileName", homeworkDetails.get(position).getHomeworkContentFileName());
                 bundle.putLong("TransactionId", homeworkDetails.get(position).getTransaction().getTransactionId());
                 bundle.putString("FilePath", homeworkDetails.get(position).getFilePath());
                 bundle.putString("FileName", homeworkDetails.get(position).getHomeworkContentFileName());
