@@ -4,14 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".ui.Library_Fragment.LibraryApproveFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="No Data Found"
+        android:visibility="gone"
         android:id="@+id/txt_nodata"
-        android:gravity="center"/>
+        android:gravity="center"
+        tools:ignore="HardcodedText" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/approval_rv"

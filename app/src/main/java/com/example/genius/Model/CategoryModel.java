@@ -1,6 +1,8 @@
 package com.example.genius.Model;
 
-public class CategoryModel {
+import java.io.Serializable;
+
+public class CategoryModel implements Serializable {
     public long getCategoryID() {
         return CategoryID;
     }

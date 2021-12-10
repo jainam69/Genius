@@ -192,9 +192,9 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             else
                 rb_standard.setChecked(true);
             if (libraryModel.getBranchID() == 0)
-                rb1.setChecked(true);
+                all.setChecked(true);
             else
-                rb2.setChecked(true);
+                branch_1.setChecked(true);
             library_description.setText(libraryModel.getDescription());
             attach_thumbnail.setText("Attached");
             attach_document.setText("Attached");

@@ -392,7 +392,7 @@
                     android:id="@+id/library_description"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:layout_toRightOf="@+id/addressimg19"
+                    android:layout_toEndOf="@+id/addressimg19"
                     android:background="@android:color/transparent"
                     android:gravity="top"
                     android:hint="Document Description"

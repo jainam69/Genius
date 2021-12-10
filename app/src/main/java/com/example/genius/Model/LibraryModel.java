@@ -3,6 +3,8 @@ package com.example.genius.Model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.security.auth.Subject;
+
 public class LibraryModel implements Serializable {
 
     long LibraryID;
@@ -25,10 +27,19 @@ public class LibraryModel implements Serializable {
     public String DocFileName;
     public String DocFilePath;
     public ApprovalModel approval;
+    public SubjectModel subject;
     public List<SubjectModel> Subjectlist;
     public List<LibraryStandardModel> list;
     public long BranchID;
     int Library_Type;
+
+    public SubjectModel getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectModel subject) {
+        this.subject = subject;
+    }
 
     public int getLibrary_Type() {
         return Library_Type;
