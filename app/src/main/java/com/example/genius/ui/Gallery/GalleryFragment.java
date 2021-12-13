@@ -161,7 +161,7 @@ public class GalleryFragment extends Fragment {
                 } else {
                     progressBarHelper.showProgressDialog();
                     if (!gallery_description.getText().toString().isEmpty()){
-                        Description = gallery_description.getText().toString();
+                        Description = encodeDecode(gallery_description.getText().toString());
                     }
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
@@ -210,7 +210,7 @@ public class GalleryFragment extends Fragment {
                 }else {
                     progressBarHelper.showProgressDialog();
                     if (!gallery_description.getText().toString().isEmpty()){
-                        Description = gallery_description.getText().toString();
+                        Description = encodeDecode(gallery_description.getText().toString());
                     }
                     Call<GalleryModel.GallaryData1> call;
                     if (instrumentFileDestination != null) {
@@ -727,4 +727,7 @@ public class GalleryFragment extends Fragment {
         }
     }
 
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
+    }
 }

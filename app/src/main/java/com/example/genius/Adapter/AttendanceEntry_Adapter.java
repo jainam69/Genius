@@ -3,12 +3,14 @@ package com.example.genius.Adapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaCodec;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,12 +24,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Attendance_Fragment.attendance_fragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +52,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
     List<AttendanceModel> attendanceDetails;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+    UserModel userpermission;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
 
@@ -64,6 +69,19 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, int position) {
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 18){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                    holder.atten_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
+                    holder.atten_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(0).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_create_delete.setVisibility(View.GONE);
+                }
+            }
+        }
         String date = attendanceDetails.get(position).getAttendanceDate().replace("T00:00:00","");
         try {
             Date d = actualdate.parse(date);
@@ -191,6 +209,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
         TextView att_date,batch_time,std;
         ImageView atten_edit,atten_delete;
+        LinearLayout linear_create_delete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -200,8 +219,10 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
             std = itemView.findViewById(R.id.std);
             atten_edit = itemView.findViewById(R.id.atten_edit);
             atten_delete = itemView.findViewById(R.id.atten_delete);
+            linear_create_delete = itemView.findViewById(R.id.linear_create_delete);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         }
     }
 }

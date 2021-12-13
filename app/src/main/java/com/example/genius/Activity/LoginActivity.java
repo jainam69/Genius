@@ -16,6 +16,9 @@ import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.gson.Gson;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,17 +60,18 @@ public class LoginActivity extends AppCompatActivity {
                                 UserModel.UserData data = response.body();
                                 if (data.isCompleted()) {
                                     UserModel model = data.getData();
-                                    if (model != null && model.getUserID() > 0) {
+                                    if (model != null && model.getUserID() > 0 && model.getPermission().size() > 0) {
                                         Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN, true);
                                         Preferences.getInstance(context).setLong(Preferences.KEY_USER_ID, model.getUserID());
                                         Preferences.getInstance(context).setLong(Preferences.KEY_BRANCH_ID, model.getBranchInfo().getBranchID());
                                         Preferences.getInstance(context).setString(Preferences.KEY_BRANCH_NAME, model.getBranchInfo().getBranchName());
                                         Preferences.getInstance(context).setString(Preferences.KEY_USER_NAME, model.getUsername());
                                         Preferences.getInstance(context).setInt(Preferences.KEY_USER_TYPE, Integer.parseInt(model.getUserType()));
+                                        Preferences.getInstance(context).setString(Preferences.KEY_PERMISSION_LIST,new Gson().toJson(model));
                                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                         LoginActivity.this.finish();
                                     } else {
-                                        Toast.makeText(LoginActivity.this, "Invalid Credentials passed..!!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();

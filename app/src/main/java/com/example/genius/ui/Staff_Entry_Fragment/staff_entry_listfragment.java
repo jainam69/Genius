@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -46,6 +47,7 @@ public class staff_entry_listfragment extends Fragment {
     Context context;
     RecyclerView staff_rv;
     EditText user_name, mno;
+    TextView txt_nodata;
     Button clear, search;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -67,6 +69,7 @@ public class staff_entry_listfragment extends Fragment {
         mno = root.findViewById(R.id.mno);
         clear = root.findViewById(R.id.clear);
         search = root.findViewById(R.id.search);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -155,18 +158,17 @@ public class staff_entry_listfragment extends Fragment {
                             List<StaffModel> respose = staffData.getData();
                             if (respose != null){
                                 if (respose.size() > 0) {
-                                    List<StaffModel> list = new ArrayList<>();
-                                    for (StaffModel singlemodel:respose) {
-                                        if (singlemodel.getRowStatus().getRowStatusId() == 1){
-                                            list.add(singlemodel);
-                                        }
-                                    }
+                                    txt_nodata.setVisibility(View.GONE);
+                                    staff_rv.setVisibility(View.VISIBLE);
                                     staffDetails2 = respose;
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                     staff_rv.setLayoutManager(linearLayoutManager);
-                                    staffMaster_adapter = new StaffMaster_Adapter(context, list);
+                                    staffMaster_adapter = new StaffMaster_Adapter(context, respose);
                                     staffMaster_adapter.notifyDataSetChanged();
                                     staff_rv.setAdapter(staffMaster_adapter);
+                                }else {
+                                    staff_rv.setVisibility(View.GONE);
+                                    txt_nodata.setVisibility(View.VISIBLE);
                                 }
                             }
                         }

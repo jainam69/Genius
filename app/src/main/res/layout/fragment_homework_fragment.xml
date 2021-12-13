@@ -43,14 +43,14 @@
                         android:cursorVisible="false"
                         android:editable="false"
                         android:focusable="true"
-                        android:hint="Date"
+                        android:hint="Homework Date"
                         android:maxLines="1"
                         android:paddingStart="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
                         android:singleLine="true"
-                        android:textSize="15sp"
                         android:textColor="@color/black"
+                        android:textSize="15sp"
                         tools:ignore="Autofill,HardcodedText,RtlSymmetry,TextFields,TextViewEdits" />
 
 

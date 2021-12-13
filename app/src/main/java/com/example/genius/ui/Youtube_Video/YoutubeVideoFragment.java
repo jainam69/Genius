@@ -259,17 +259,14 @@ public class YoutubeVideoFragment extends Fragment {
                         List<LinkModel> models = data.getData();
                         if (models != null) {
                             if (models.size() > 0) {
-                                List<LinkModel> list = new ArrayList<>();
-                                for (LinkModel linkmodel : models) {
-                                    if (linkmodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(linkmodel);
-                                    }
-                                }
+                                text.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 youtube_rv.setLayoutManager(linearLayoutManager);
-                                youtubeVideo_adapter = new YoutubeVideo_Adapter(context, list);
+                                youtubeVideo_adapter = new YoutubeVideo_Adapter(context, models);
                                 youtubeVideo_adapter.notifyDataSetChanged();
                                 youtube_rv.setAdapter(youtubeVideo_adapter);
+                            }else {
+                                text.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -341,7 +338,6 @@ public class YoutubeVideoFragment extends Fragment {
         List<LinkModel> linkdetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        String stname;
 
         public YoutubeVideo_Adapter(Context context, List<LinkModel> linkdetails) {
             this.context = context;

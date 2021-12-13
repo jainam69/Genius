@@ -164,11 +164,16 @@ public class student_registration_Listfragment extends Fragment {
                         List<StudentModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                txt_nodata.setVisibility(View.GONE);
+                                student_rv.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 student_rv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
                                 studentMaster_adapter.notifyDataSetChanged();
                                 student_rv.setAdapter(studentMaster_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                student_rv.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -194,11 +199,16 @@ public class student_registration_Listfragment extends Fragment {
                         List<StudentModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                txt_nodata.setVisibility(View.GONE);
+                                student_rv.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 student_rv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
                                 studentMaster_adapter.notifyDataSetChanged();
                                 student_rv.setAdapter(studentMaster_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                student_rv.setVisibility(View.GONE);
                             }
                         }
                     }

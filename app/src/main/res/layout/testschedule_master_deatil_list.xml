@@ -221,6 +221,26 @@
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/test_paper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:src="@drawable/document"
+                        app:tint="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/blue_fill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
                         android:id="@+id/paper_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

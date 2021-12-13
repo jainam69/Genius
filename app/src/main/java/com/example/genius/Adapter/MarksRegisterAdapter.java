@@ -89,6 +89,7 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
                         Button edit = dialogView.findViewById(R.id.test_marks_edit);
                         AlertDialog dialog = builder.create();
                         dialog.show();
+                        achieve_marks.setText(marksModels.get(position).getAchieveMarks());
                         edit.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

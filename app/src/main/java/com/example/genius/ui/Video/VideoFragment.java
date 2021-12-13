@@ -128,7 +128,7 @@ public class VideoFragment extends Fragment {
                 } else {
                     progressBarHelper.showProgressDialog();
                     if (!video_description.getText().toString().isEmpty()){
-                        Description = video_description.getText().toString();
+                        Description = encodeDecode(video_description.getText().toString());
                     }
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
@@ -176,7 +176,7 @@ public class VideoFragment extends Fragment {
                 }else {
                     progressBarHelper.showProgressDialog();
                     if (!video_description.getText().toString().isEmpty()){
-                        Description = video_description.getText().toString();
+                        Description = encodeDecode(video_description.getText().toString());
                     }
                     Call<GalleryModel.GallaryData1> call;
                     if (instrumentFileDestination != null) {
@@ -533,5 +533,9 @@ public class VideoFragment extends Fragment {
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }
         }
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 }

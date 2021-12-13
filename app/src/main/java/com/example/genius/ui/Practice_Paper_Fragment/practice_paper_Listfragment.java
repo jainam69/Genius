@@ -151,7 +151,7 @@ public class practice_paper_Listfragment extends Fragment {
                 } else {
                     progressBarHelper.showProgressDialog();
                     if (!remarks.getText().toString().isEmpty()){
-                        Description = remarks.getText().toString();
+                        Description = encodeDecode(remarks.getText().toString());
                     }
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
@@ -208,7 +208,7 @@ public class practice_paper_Listfragment extends Fragment {
                 } else {
                     progressBarHelper.showProgressDialog();
                     if (!remarks.getText().toString().isEmpty()){
-                        Description = remarks.getText().toString();
+                        Description = encodeDecode(remarks.getText().toString());
                     }
                     Call<PaperModel.PaperData1> call;
                     if (instrumentFileDestination != null) {
@@ -595,7 +595,7 @@ public class practice_paper_Listfragment extends Fragment {
     public void selectbatch_time() {
         batchid.clear();
         batchitem.clear();
-        batchitem.add("Batch Time");
+        batchitem.add("Select Batch Time");
         batchid.add("0");
         batchitem.add("Morning");
         batchid.add("1");
@@ -622,7 +622,7 @@ public class practice_paper_Listfragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     BatchTime = batchitem.get(position);
                     BatchId = batchid.get(position);
-                    if (batch_time.getSelectedItem().equals("Batch Time")) {
+                    if (batch_time.getSelectedItem().equals("Select Batch Time")) {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -910,5 +910,9 @@ public class practice_paper_Listfragment extends Fragment {
                 }
             }
         };
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 }

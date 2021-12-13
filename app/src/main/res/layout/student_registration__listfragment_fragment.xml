@@ -73,15 +73,16 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_weight="1">
+
             <Button
                 android:id="@+id/active"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:text="Active"
-                android:textSize="16dp"
                 android:background="@drawable/blue_fill"
-                android:textColor="@color/white"/>
+                android:text="Active"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
 
         </RelativeLayout>
         <RelativeLayout
@@ -95,12 +96,12 @@
                 android:id="@+id/inactive"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-                android:text="Inactive"
-                android:textSize="16dp"
                 android:background="@drawable/blue_fill"
-                android:textColor="@color/white"/>
+                android:text="Inactive"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
         <RelativeLayout

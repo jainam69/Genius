@@ -207,10 +207,12 @@ public class BranchClassFragment extends Fragment {
                         List<BranchCourseModel.BranchCourceData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             for (BranchCourseModel.BranchCourceData singleResponseModel : studentModelList) {
-                                long code = singleResponseModel.getCourse_dtl_id();
-                                String desc = singleResponseModel.getCourse().getCourseName();
-                                couseiditem.add(code);
-                                couseitem.add(desc);
+                                if (singleResponseModel.getCourse_dtl_id() != 0 && singleResponseModel.getCourse().getCourseName() != null){
+                                    long code = singleResponseModel.getCourse_dtl_id();
+                                    String desc = singleResponseModel.getCourse().getCourseName();
+                                    couseiditem.add(code);
+                                    couseitem.add(desc);
+                                }
                             }
                             COURSEITEM = new String[couseitem.size()];
                             COURSEITEM = couseitem.toArray(COURSEITEM);

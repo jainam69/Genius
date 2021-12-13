@@ -1,6 +1,7 @@
 package com.example.genius.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,12 +37,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        try {
-            ActionBar ac = getSupportActionBar();
-            ac.setTitle("Change Password");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Change Password");
         old_pwd = findViewById(R.id.old_pwd);
         new_pwd = findViewById(R.id.new_pwd);
         retype_pwd = findViewById(R.id.retype_pwd);
@@ -47,6 +47,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         context = ChangePasswordActivity.this;
         progressBarHelper = new ProgressBarHelper(ChangePasswordActivity.this, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,13 +55,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 newpwd = new_pwd.getText().toString();
                 retypepwd = retype_pwd.getText().toString();
                 if (oldpwd.equalsIgnoreCase(""))
-                    Toast.makeText(ChangePasswordActivity.this, "Please enter Old Password..!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangePasswordActivity.this, "Please enter Old Password.", Toast.LENGTH_SHORT).show();
                 else if (newpwd.equalsIgnoreCase(""))
-                    Toast.makeText(ChangePasswordActivity.this, "Please enter New Password..!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangePasswordActivity.this, "Please enter New Password.", Toast.LENGTH_SHORT).show();
                 else if (retypepwd.equalsIgnoreCase(""))
-                    Toast.makeText(ChangePasswordActivity.this, "Please fill Re-type new Password..!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangePasswordActivity.this, "Please fill Re-type new Password.", Toast.LENGTH_SHORT).show();
                 else if (!retypepwd.equals(newpwd))
-                    Toast.makeText(ChangePasswordActivity.this, "Password and Re-enter Password not match..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChangePasswordActivity.this, "Password and Re-enter Password not match.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
                     Call<CommonModel> call = apiCalling.ChangePassword(Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), newpwd, oldpwd);
@@ -71,9 +72,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                 CommonModel model = response.body();
                                 if (model.isCompleted()) {
                                     if (model.isData()) {
-                                        Toast.makeText(ChangePasswordActivity.this, "Password Updated Successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ChangePasswordActivity.this, "Password Updated Successfully.", Toast.LENGTH_SHORT).show();
+                                        Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN,false);
+                                        startActivity(new Intent(context, LoginActivity.class));
+                                        finish();
                                     } else {
-                                        Toast.makeText(ChangePasswordActivity.this, "Password Not Changed..", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ChangePasswordActivity.this, "Password Not Changed.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -88,5 +92,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
 }

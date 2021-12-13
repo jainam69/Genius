@@ -13,6 +13,7 @@ public class StaffModel {
     String EmailID;
     String MobileNo;
     String Userrole;
+    long UserID;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
     BranchModel BranchInfo;
@@ -20,7 +21,7 @@ public class StaffModel {
     public StaffModel() {
     }
 
-    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole) {
+    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid) {
         StaffID = staffID;
         Name = name;
         Education = education;
@@ -35,7 +36,7 @@ public class StaffModel {
         Transaction = transaction;
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
-        Userrole = Userrole;
+        UserID = userid;
     }
 
     public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole) {
@@ -53,6 +54,22 @@ public class StaffModel {
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
         Userrole = Userrole;
+    }
+
+    public String getUserrole() {
+        return Userrole;
+    }
+
+    public void setUserrole(String userrole) {
+        Userrole = userrole;
+    }
+
+    public long getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(long userID) {
+        UserID = userID;
     }
 
     public long getStaffID() {

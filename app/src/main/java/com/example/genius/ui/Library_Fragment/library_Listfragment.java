@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -46,6 +47,7 @@ public class library_Listfragment extends Fragment {
     RecyclerView library_rv;
     Button save, update;
     Context context;
+    TextView txt_nodata;
     LibraryMaster_Adapter libraryMaster_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -56,7 +58,7 @@ public class library_Listfragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library List");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Image/Document List");
         View root = inflater.inflate(R.layout.library__listfragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -67,6 +69,7 @@ public class library_Listfragment extends Fragment {
         library_category = root.findViewById(R.id.library_category);
         library_rv = root.findViewById(R.id.library_rv);
         fab_contact = root.findViewById(R.id.fab_contact);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -110,15 +113,14 @@ public class library_Listfragment extends Fragment {
                         List<LibraryModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                List<LibraryModel> list = new ArrayList<>();
-                                for (LibraryModel singlemodel : studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
+                                txt_nodata.setVisibility(View.GONE);
+                                library_rv.setVisibility(View.VISIBLE);
                                 library_rv.setLayoutManager(new LinearLayoutManager(context));
-                                libraryMaster_adapter = new LibraryMaster_Adapter(context, list);
+                                libraryMaster_adapter = new LibraryMaster_Adapter(context, studentModelList);
                                 library_rv.setAdapter(libraryMaster_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                library_rv.setVisibility(View.GONE);
                             }
                         }
                     }

@@ -15,6 +15,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -27,6 +28,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.ViewPager_Adapter;
 import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -47,6 +49,7 @@ import com.example.genius.ui.Student_Registration_Fragment.student_registration_
 import com.example.genius.ui.Task_Fragment.TaskListFragment;
 import com.example.genius.ui.Test_Schedule.test_Listfragment;
 import com.example.genius.ui.Youtube_Video.YoutubeVideoFragment;
+import com.google.gson.Gson;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,16 +71,14 @@ public class home_fragment extends Fragment {
     private static int NUM_PAGE = 0;
     View root;
     Context context;
-    RecyclerView home_rv;
+    UserModel userpermission;
     CirclePageIndicator circlePageIndicator;
     ViewPager viewPager;
     ProgressBarHelper progressBarHelper;
-    List<String> list = new ArrayList<>();
-    NestedScrollView home_scroll;
     ApiCalling apiCalling;
-    OnBackPressedCallback callback;
-    LinearLayout linear_masters, linear_students, linear_attendance, linear_test_schedule, linear_test_marks, linear_practice_papers, linear_fees_structure,
-            linear_homework, linear_gallery, linear_youtube_video, linear_live_video, linear_task, linear_reminder, linear_permission, linear_library;
+    CardView linear_attendance,linear_homework;
+    LinearLayout linear_masters, linear_students, linear_test_schedule, linear_test_marks, linear_practice_papers, linear_fees_structure,
+            linear_gallery, linear_youtube_video, linear_live_video, linear_task, linear_reminder, linear_permission, linear_library;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -102,8 +103,29 @@ public class home_fragment extends Fragment {
         linear_permission = root.findViewById(R.id.linear_permission);
         linear_fees_structure = root.findViewById(R.id.linear_fees_structure);
         viewPager = root.findViewById(R.id.viewpager);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         circlePageIndicator = root.findViewById(R.id.circlepagerindicator);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+
+        if (Function.isNetworkAvailable(context)) {
+            GetBannerDetails();
+        } else {
+            Toast.makeText(context, "No Internet Connection..", Toast.LENGTH_SHORT).show();
+        }
+
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 19){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
+                    linear_attendance.setVisibility(View.GONE);
+                }
+            }
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 37){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
+                    linear_homework.setVisibility(View.GONE);
+                }
+            }
+        }
+
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED
@@ -115,11 +137,7 @@ public class home_fragment extends Fragment {
                             , Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                     PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
-        if (Function.checkNetworkConnection(context)) {
-            GetBannerDetails();
-        } else {
-            Toast.makeText(context, "No Internet Connection..", Toast.LENGTH_SHORT).show();
-        }
+
         linear_masters.setOnClickListener(v -> {
             MasterSelectorFragment orderplace = new MasterSelectorFragment();
             FragmentManager fragmentManager = getFragmentManager();
@@ -253,6 +271,7 @@ public class home_fragment extends Fragment {
     }
 
     public void GetBannerDetails() {
+        progressBarHelper.showProgressDialog();
         retrofit2.Call<BannerData> call = apiCalling.GetAllBannerBranchType(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Preferences.getInstance(context).getInt(Preferences.KEY_USER_TYPE));
         call.enqueue(new Callback<BannerData>() {
             @Override
@@ -264,8 +283,7 @@ public class home_fragment extends Fragment {
                         List<BannerModel> bannerDataList = bannerData.getData();
                         if (bannerDataList != null) {
                             if (bannerDataList.size() > 0) {
-                                ViewPager_Adapter adapter = new ViewPager_Adapter(context
-                                        , bannerDataList);
+                                ViewPager_Adapter adapter = new ViewPager_Adapter(context, bannerDataList);
                                 viewPager.setPadding(0, 0, 0, 0);
                                 viewPager.setAdapter(adapter);
 

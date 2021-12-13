@@ -18,9 +18,11 @@ public class UserModel {
     long StaffID;
     BranchModel BranchInfo;
     List<RolesModel> Roles;
+    List<UserPermission> Permission;
 
     public UserModel() {
     }
+
     public UserModel(long userID, TransactionModel transaction, List<RolesModel> roles) {
         UserID = userID;
         Transaction = transaction;
@@ -29,6 +31,14 @@ public class UserModel {
 
     public UserModel(long userID) {
         UserID = userID;
+    }
+
+    public List<UserPermission> getPermission() {
+        return Permission;
+    }
+
+    public void setPermission(List<UserPermission> permission) {
+        Permission = permission;
     }
 
     public List<RolesModel> getRoles() {
@@ -133,6 +143,81 @@ public class UserModel {
 
     public void setBranchInfo(BranchModel branchInfo) {
         BranchInfo = branchInfo;
+    }
+
+    public static class UserPermission
+    {
+        PackageRightsEntity PackageRightinfo;
+        PageInfoEntity PageInfo;
+
+        public PackageRightsEntity getPackageRightinfo() {
+            return PackageRightinfo;
+        }
+
+        public void setPackageRightinfo(PackageRightsEntity packageRightinfo) {
+            PackageRightinfo = packageRightinfo;
+        }
+
+        public PageInfoEntity getPageInfo() {
+            return PageInfo;
+        }
+
+        public void setPageInfo(PageInfoEntity pageInfo) {
+            PageInfo = pageInfo;
+        }
+    }
+
+    public static class PackageRightsEntity
+    {
+        boolean Createstatus;
+        boolean Deletestatus;
+        boolean Viewstatus;
+
+        public boolean isCreatestatus() {
+            return Createstatus;
+        }
+
+        public void setCreatestatus(boolean createstatus) {
+            Createstatus = createstatus;
+        }
+
+        public boolean isDeletestatus() {
+            return Deletestatus;
+        }
+
+        public void setDeletestatus(boolean deletestatus) {
+            Deletestatus = deletestatus;
+        }
+
+        public boolean isViewstatus() {
+            return Viewstatus;
+        }
+
+        public void setViewstatus(boolean viewstatus) {
+            Viewstatus = viewstatus;
+        }
+    }
+
+    public static class PageInfoEntity
+    {
+        String Page;
+        long PageID;
+
+        public String getPage() {
+            return Page;
+        }
+
+        public void setPage(String page) {
+            Page = page;
+        }
+
+        public long getPageID() {
+            return PageID;
+        }
+
+        public void setPageID(long pageID) {
+            PageID = pageID;
+        }
     }
 
     public static class UserData {

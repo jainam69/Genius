@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.LibraryModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -40,6 +41,7 @@ import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.BranchClass.BranchClassFragment;
 import com.example.genius.ui.Library_Fragment.library_fragment;
 import com.example.genius.ui.Library_Fragment.library_video_fragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,10 +59,9 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     String standard;
-    int id, bid;
     long downloadID;
     String Name;
-    byte[] imageVal;
+    UserModel userpermission;
 
     public LibraryMaster_Adapter(Context context, List<LibraryModel> libraryDetails) {
         this.context = context;
@@ -76,6 +77,16 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 30){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                    holder.library_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
+                    holder.library_delete.setVisibility(View.GONE);
+                }
+            }
+        }
         holder.doc_category.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
         holder.doc_desc.setText(libraryDetails.get(position).getDescription());
         if (libraryDetails.get(position).getLibrary_Type() == 1) {
@@ -225,11 +236,9 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context1, Intent intent) {
-            //Fetching the download id received with the broadcast
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-            //Checking if the received broadcast is for our enqueued download by matching download id
             if (downloadID == id) {
-//                Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -253,6 +262,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             linear_video = itemView.findViewById(R.id.linear_video);
             library_video_link = itemView.findViewById(R.id.library_video_link);
             doc_category = itemView.findViewById(R.id.doc_category);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

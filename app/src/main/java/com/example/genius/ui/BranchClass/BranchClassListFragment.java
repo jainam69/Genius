@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.genius.API.ApiCalling;
@@ -47,6 +48,7 @@ public class BranchClassListFragment extends Fragment {
 
     View root;
     Context context;
+    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -58,7 +60,6 @@ public class BranchClassListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Class List");
-        // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_branch_class_list, container, false);
 
         context = getActivity();
@@ -66,6 +67,7 @@ public class BranchClassListFragment extends Fragment {
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         fab_contact = root.findViewById(R.id.fab_contact);
         class_list_rv = root.findViewById(R.id.class_list_rv);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -110,11 +112,16 @@ public class BranchClassListFragment extends Fragment {
                         List<BranchClassSingleModel.BranchClassData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                txt_nodata.setVisibility(View.GONE);
+                                class_list_rv.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 class_list_rv.setLayoutManager(linearLayoutManager);
                                 branchCourceAdapter = new BranchClassListAdapter(context, studentModelList);
                                 branchCourceAdapter.notifyDataSetChanged();
                                 class_list_rv.setAdapter(branchCourceAdapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                class_list_rv.setVisibility(View.GONE);
                             }
                         }
                     }

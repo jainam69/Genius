@@ -3,6 +3,7 @@ package com.example.genius.Model;
 public class SubjectModel {
 
     long SubjectID;
+    long testID;
     String Subject;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
@@ -28,6 +29,14 @@ public class SubjectModel {
         Transaction = transaction;
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
+    }
+
+    public long getTestID() {
+        return testID;
+    }
+
+    public void setTestID(long testID) {
+        this.testID = testID;
     }
 
     public long getSubjectID() {

@@ -176,7 +176,7 @@ public class FeeStructureFragment extends Fragment {
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!remarks.getText().toString().isEmpty()){
-                        Description = remarks.getText().toString();
+                        Description = encodeDecode(remarks.getText().toString());
                     }
                     Call<FeeStructureSingleData> call = apiCalling.FeesMaintenance(0, 0, studentid
                             , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
@@ -190,15 +190,18 @@ public class FeeStructureFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 FeeStructureSingleData data = response.body();
                                 if (data.isCompleted()) {
-                                    FeeStructureModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        standard.setSelection(0);
-                                        remarks.setText("");
-                                        banner_image.setText("");
-                                        branch.setSelection(0);
-                                        GetBannerDetails();
-                                    }
+                                    FeeStructureModel feemodel = data.getData();
+                                   if (feemodel.getFeesID() > 0){
+                                       Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                       standard.setSelection(0);
+                                       remarks.setText("");
+                                       banner_image.setText("");
+                                       branch.setSelection(0);
+                                       imageView.setVisibility(View.GONE);
+                                       GetBannerDetails();
+                                   }else {
+                                       Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                   }
                                 }
                                 Function.showToast(context, data.getMessage());
                                 progressBarHelper.hideProgressDialog();
@@ -229,7 +232,7 @@ public class FeeStructureFragment extends Fragment {
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 }else {
                     if (!remarks.getText().toString().isEmpty()){
-                        Description = remarks.getText().toString();
+                        Description = encodeDecode(remarks.getText().toString());
                     }
                     Call<FeeStructureSingleData> call;
                     if (instrumentFileDestination != null) {
@@ -255,7 +258,7 @@ public class FeeStructureFragment extends Fragment {
                                 FeeStructureSingleData data = response.body();
                                 if (data.isCompleted()) {
                                     FeeStructureModel notimodel = data.getData();
-                                    if (notimodel != null) {
+                                    if (notimodel.getFeesID() > 0) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         standard.setSelection(0);
                                         remarks.setText("");
@@ -263,6 +266,8 @@ public class FeeStructureFragment extends Fragment {
                                         branch.setSelection(0);
                                         imageView.setVisibility(View.GONE);
                                         GetBannerDetails();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                                 Function.showToast(context, data.getMessage());
@@ -684,6 +689,10 @@ public class FeeStructureFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 
 }

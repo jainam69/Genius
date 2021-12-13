@@ -45,7 +45,7 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
     @Override
     public void onBindViewHolder(@NonNull AttendanceMaster_Adapter.ViewHolder holder, int position) {
         holder.gr_no.setText(""+studentModels.get(position).getGrNo());
-        holder.stu_name.setText(studentModels.get(position).getFirstName() + studentModels.get(position).getLastName());
+        holder.stu_name.setText(studentModels.get(position).getFirstName() + " " + studentModels.get(position).getLastName());
         holder.std_id.setText(""+studentModels.get(position).getStudentID());
         AttendanceModel.AttendanceDetailEntity att = new AttendanceModel.AttendanceDetailEntity();
         StudentModel mod = new StudentModel();

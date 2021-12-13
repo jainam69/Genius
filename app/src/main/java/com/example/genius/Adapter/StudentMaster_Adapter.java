@@ -129,6 +129,8 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
                         bundle.putInt("LastYearResult", studentDetails.get(position).getLastYearResult());
                         bundle.putString("FileName", studentDetails.get(position).getFileName());
                         bundle.putString("FilePath", studentDetails.get(position).getFilePath());
+                        bundle.putString("STUDENT_PASSWORD", studentDetails.get(position).getStudentPassword());
+                        bundle.putString("PARENT_PASSWORD", studentDetails.get(position).getStudentPassword2());
                         orderplace.setArguments(bundle);
                         FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                         FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();

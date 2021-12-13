@@ -59,7 +59,7 @@ import retrofit2.Response;
 public class reminder_fragment extends Fragment {
 
     View root;
-    String format, toDate;
+    String format;
     Context context;
     TextView text, id, transactionid, reminderid;
     EditText reminder_time, date_reminder, edt_reminderDescription;
@@ -98,11 +98,18 @@ public class reminder_fragment extends Fragment {
         transactionid = root.findViewById(R.id.transactionid);
         reminder_scroll = root.findViewById(R.id.reminder_scroll);
 
-        date_reminder.setText(yesterday());
+        //date_reminder.setText(yesterday());
         Calendar cal2 = Calendar.getInstance();
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
+
+        if (Function.checkNetworkConnection(context)) {
+            progressBarHelper.showProgressDialog();
+            GetReminderDetails();
+        } else {
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+        }
 
         save_reminder.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
@@ -205,13 +212,6 @@ public class reminder_fragment extends Fragment {
             }
         });
 
-        if (Function.checkNetworkConnection(context)) {
-            progressBarHelper.showProgressDialog();
-            GetReminderDetails();
-        } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }
-
         reminder_time.setOnClickListener(v -> {
             Calendar mcurrentTime = Calendar.getInstance();
             int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
@@ -294,10 +294,13 @@ public class reminder_fragment extends Fragment {
                         List<ReminderModel> reminderModelList = reminderData.getData();
                         if (reminderModelList != null) {
                             if (reminderModelList.size() > 0) {
+                                text.setVisibility(View.VISIBLE);
                                 reminder_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
                                 reminder_adapter = new Reminder_Adapter(context, reminderModelList);
                                 reminder_adapter.notifyDataSetChanged();
                                 reminder_rv.setAdapter(reminder_adapter);
+                            }else {
+                                text.setVisibility(View.GONE);
                             }
                         }
                     }

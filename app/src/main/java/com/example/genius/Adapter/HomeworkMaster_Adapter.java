@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.HomeworkModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -35,6 +36,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Homework_Fragment.HomeWorkCheckingFragment;
 import com.example.genius.ui.Homework_Fragment.homework_fragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,6 +63,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     ApiCalling apiCalling;
     long downloadID;
     String Name;
+    UserModel userpermission;
 
     public HomeworkMaster_Adapter(Context context, List<HomeworkModel> homeworkDetails) {
         this.context = context;
@@ -78,6 +81,16 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull HomeworkMaster_Adapter.ViewHolder holder, int position) {
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 37){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                    holder.homework_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
+                    holder.homework_delete.setVisibility(View.GONE);
+                }
+            }
+        }
         String a = homeworkDetails.get(position).getHomeworkDate().replace("T00:00:00", "");
         try {
             Date d = actualdate.parse(a);
@@ -264,6 +277,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             homework_delete = itemView.findViewById(R.id.homework_delete);
             homework_checking = itemView.findViewById(R.id.homework_checking);
             homework_download = itemView.findViewById(R.id.homework_download);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
@@ -278,27 +292,6 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             }
         }
     };
-
-    public static String getOnlyDigits(String s) {
-        Pattern pattern = Pattern.compile("[^0-9]");
-        Matcher matcher = pattern.matcher(s);
-        return matcher.replaceAll("");
-    }
-
-    public boolean accept(String pathname) {
-        String ext = null;
-        int i = pathname.lastIndexOf('.');
-
-
-        if (i > 0 && i < pathname.length() - 1) {
-            ext = pathname.substring(i + 1).toLowerCase();
-        }
-
-        if (ext == null)
-            return false;
-        else
-            return ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("gif");
-    }
 
     public void filterList(List<HomeworkModel> filteredList) {
         homeworkDetails = filteredList;

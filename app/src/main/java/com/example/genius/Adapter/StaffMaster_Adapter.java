@@ -107,6 +107,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                             bundle.putString("MobileNo", staffDetails.get(position).getMobileNo());
                             bundle.putInt("Status", staffDetails.get(position).getRowStatus().getRowStatusId());
                             bundle.putLong("Branch_ID", staffDetails.get(position).getBranchInfo().getBranchID());
+                            bundle.putLong("USER_ID",staffDetails.get(position).getUserID());
                             bundle.putLong("TransactionId",staffDetails.get(position).getTransaction().getTransactionId());
                             orderplace.setArguments(bundle);
                             FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();

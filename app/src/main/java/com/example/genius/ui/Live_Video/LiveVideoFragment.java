@@ -75,26 +75,6 @@ public class LiveVideoFragment extends Fragment {
     LiveVideo_Adapter liveVideo_adapter;
     Long StandardId;
 
-    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
-                    StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,6 +95,14 @@ public class LiveVideoFragment extends Fragment {
         live_scroll = root.findViewById(R.id.live_scroll);
         transaction_id = root.findViewById(R.id.transaction_id);
         unique_id = root.findViewById(R.id.unique_id);
+
+        if (Function.checkNetworkConnection(context)) {
+            progressBarHelper.showProgressDialog();
+            GetAllLiveVideo();
+            GetAllStandard();
+        } else {
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+        }
 
         save_live_video.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
@@ -234,14 +222,6 @@ public class LiveVideoFragment extends Fragment {
             }
         });
 
-        if (Function.checkNetworkConnection(context)) {
-            progressBarHelper.showProgressDialog();
-            GetAllLiveVideo();
-            GetAllStandard();
-        } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }
-
         callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -269,17 +249,14 @@ public class LiveVideoFragment extends Fragment {
                         List<LinkModel> models = data.getData();
                         if (models != null) {
                             if (models.size() > 0) {
-                                List<LinkModel> list = new ArrayList<>();
-                                for (LinkModel linkmodel : models) {
-                                    if (linkmodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(linkmodel);
-                                    }
-                                }
+                                text.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 live_rv.setLayoutManager(linearLayoutManager);
-                                liveVideo_adapter = new LiveVideo_Adapter(context, list);
+                                liveVideo_adapter = new LiveVideo_Adapter(context, models);
                                 liveVideo_adapter.notifyDataSetChanged();
                                 live_rv.setAdapter(liveVideo_adapter);
+                            }else {
+                                text.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -351,12 +328,31 @@ public class LiveVideoFragment extends Fragment {
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
+    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StandardName = standarditem.get(position);
+                    StandardId = Long.parseLong(standardid.get(position).toString());
+                    if (standard.getSelectedItem().equals("Select Standard")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
     public class LiveVideo_Adapter extends RecyclerView.Adapter<LiveVideo_Adapter.ViewHolder> {
         Context context;
         List<LinkModel> linkdetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        String stname;
 
         public LiveVideo_Adapter(Context context, List<LinkModel> linkdetails) {
             this.context = context;
@@ -375,6 +371,7 @@ public class LiveVideoFragment extends Fragment {
                 holder.video_name.setText("" + linkdetails.get(position).getTitle());
                 holder.description.setText("" + linkdetails.get(position).getLinkDesc());
                 holder.video_url.setText("" + linkdetails.get(position).getLinkURL());
+                holder.standard.setText(linkdetails.get(position).getStandardName());
                 holder.live_edit.setOnClickListener(v -> {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -457,7 +454,7 @@ public class LiveVideoFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView video_name, description, video_url;
+            TextView video_name, description, video_url,standard;
             ImageView live_edit, live_delete;
 
             public ViewHolder(@NonNull View itemView) {
@@ -467,6 +464,7 @@ public class LiveVideoFragment extends Fragment {
                 video_url = itemView.findViewById(R.id.video_url);
                 live_edit = itemView.findViewById(R.id.live_edit);
                 live_delete = itemView.findViewById(R.id.live_delete);
+                standard = itemView.findViewById(R.id.standard);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

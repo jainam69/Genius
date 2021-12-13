@@ -101,7 +101,7 @@ public class BranchSubjectFragment extends Fragment {
 
         bundle = getArguments();
         if (bundle != null) {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
                 GetAllCourse();
             } else {
@@ -123,7 +123,7 @@ public class BranchSubjectFragment extends Fragment {
                 course_rv.setAdapter(branchCourceAdapter);
             }
         } else {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
                 GetAllSubject();
             } else {
@@ -219,10 +219,12 @@ public class BranchSubjectFragment extends Fragment {
                         List<BranchCourseModel.BranchCourceData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             for (BranchCourseModel.BranchCourceData singleResponseModel : studentModelList) {
-                                long code = singleResponseModel.getCourse_dtl_id();
-                                String desc = singleResponseModel.getCourse().getCourseName();
-                                couseiditem.add(code);
-                                couseitem.add(desc);
+                                if (singleResponseModel.getCourse_dtl_id() != 0 && singleResponseModel.getCourse().getCourseName() != null){
+                                    long code = singleResponseModel.getCourse_dtl_id();
+                                    String desc = singleResponseModel.getCourse().getCourseName();
+                                    couseiditem.add(code);
+                                    couseitem.add(desc);
+                                }
                             }
                             COURSEITEM = new String[couseitem.size()];
                             COURSEITEM = couseitem.toArray(COURSEITEM);
@@ -273,7 +275,36 @@ public class BranchSubjectFragment extends Fragment {
                         GetAllClass();
                     }
                 }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
 
+    public void GetAllSimpleClass()
+    {
+        classitem.clear();
+        classitem.add("Select Class");
+
+        CLASSITEM = new String[classitem.size()];
+        CLASSITEM = classitem.toArray(CLASSITEM);
+
+        bindselectclass();
+    }
+
+    public void bindselectclass() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_class.setAdapter(adapter);
+        spinner_class.setOnItemSelectedListener(onItemSelectedListener80);
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener80 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                    ((TextView) parent.getChildAt(0)).setTextSize(16);
+                }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
@@ -295,10 +326,12 @@ public class BranchSubjectFragment extends Fragment {
                         List<BranchClassSingleModel.BranchClassData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             for (BranchClassSingleModel.BranchClassData singleResponseModel : studentModelList) {
-                                long code = singleResponseModel.getClass_dtl_id();
-                                String desc = singleResponseModel.getClassModel().getClassName();
-                                classiditem.add(code);
-                                classitem.add(desc);
+                                if (singleResponseModel.getClass_dtl_id() != 0 && singleResponseModel.getClassModel().getClassName() != null){
+                                    long code = singleResponseModel.getClass_dtl_id();
+                                    String desc = singleResponseModel.getClassModel().getClassName();
+                                    classiditem.add(code);
+                                    classitem.add(desc);
+                                }
                             }
                             CLASSITEM = new String[classitem.size()];
                             CLASSITEM = classitem.toArray(CLASSITEM);
@@ -351,36 +384,6 @@ public class BranchSubjectFragment extends Fragment {
                 }
             };
 
-    public void GetAllSimpleClass()
-    {
-        classitem.clear();
-        classitem.add("Select Class");
-
-        CLASSITEM = new String[classitem.size()];
-        CLASSITEM = classitem.toArray(CLASSITEM);
-
-        bindselectclass();
-    }
-
-    public void bindselectclass() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_class.setAdapter(adapter);
-        spinner_class.setOnItemSelectedListener(onItemSelectedListener80);
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener80 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                    ((TextView) parent.getChildAt(0)).setTextSize(16);
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
     private void selectSpinnerValue(Spinner spinner, String myString) {
         for (int i = 0; i < spinner.getCount(); i++) {
             if (spinner.getItemAtPosition(i).toString().equals(myString)) {
@@ -394,7 +397,7 @@ public class BranchSubjectFragment extends Fragment {
         if (spinner_course.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select course");
         } else if (spinner_class.getSelectedItemId() == 0) {
-            Function.showToast(context, "Please select course");
+            Function.showToast(context, "Please select class");
         } else {
             progressBarHelper.showProgressDialog();
             if (Function.isNetworkAvailable(context)) {

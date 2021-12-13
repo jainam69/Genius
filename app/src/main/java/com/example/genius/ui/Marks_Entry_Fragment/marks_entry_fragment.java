@@ -90,7 +90,7 @@ public class marks_entry_fragment extends Fragment {
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(), dateitem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(), dateid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM, DATEITEM;
-    Integer[] STANDARDID, SUBJECTID, BRANCHID, BATCHID, DATEID;
+    Integer[] STANDARDID, SUBJECTID, BRANCHID, BATCHID,TESTID;
     String StandardName, SubjectName, BatchTime, BranchName,BranchID,SubjectId,BatchId,TestDate;
     Long StandardId,TestID;
     public static final String ERROR_MSG = "error_msg";
@@ -585,8 +585,10 @@ public class marks_entry_fragment extends Fragment {
         progressBarHelper.showProgressDialog();
         subjectitem.clear();
         subjectid.clear();
+        dateid.clear();
         subjectitem.add("Select Subject");
         subjectid.add(0);
+        dateid.add(0);
         try {
             Date d = displaydate.parse(TestDate);
             Subject_Date = actualdate.format(d);
@@ -604,7 +606,6 @@ public class marks_entry_fragment extends Fragment {
                         if (standardData.isCompleted()) {
                             List<SubjectModel> respose = standardData.getData();
                             if (respose.size() > 0) {
-                                List<SubjectModel> list = new ArrayList<>();
                                 for (SubjectModel singleResponseModel : respose) {
 
                                     String std = singleResponseModel.getSubject();
@@ -612,12 +613,18 @@ public class marks_entry_fragment extends Fragment {
 
                                     int stdid = (int) singleResponseModel.getSubjectID();
                                     subjectid.add(stdid);
+
+                                    int testid = (int) singleResponseModel.getTestID();
+                                    dateid.add(testid);
                                 }
                                 SUBJECTITEM = new String[subjectitem.size()];
                                 SUBJECTITEM = subjectitem.toArray(SUBJECTITEM);
 
                                 SUBJECTID = new Integer[subjectid.size()];
                                 SUBJECTID = subjectid.toArray(SUBJECTID);
+
+                                TESTID = new Integer[dateid.size()];
+                                TESTID = dateid.toArray(TESTID);
 
                                 bindsubject();
                             }
@@ -649,6 +656,7 @@ public class marks_entry_fragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     SubjectName = subjectitem.get(position);
                     SubjectId = subjectid.get(position).toString();
+                    TestID = Long.parseLong(dateid.get(position).toString());
                     if (subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -676,7 +684,7 @@ public class marks_entry_fragment extends Fragment {
             public void onResponse(Call<TestScheduleModel.TestScheduleData1> call, Response<TestScheduleModel.TestScheduleData1> response) {
                 if (response.isSuccessful()){
                     TestScheduleModel.TestScheduleData1 data = response.body();
-                    if (data.isCompleted()){
+                    if (data != null && data.isCompleted()){
                         TestScheduleModel model = data.getData();
                         total_marks.setText(""+model.getMarks());
                         remarks.setText(model.getRemarks());
@@ -824,9 +832,7 @@ public class marks_entry_fragment extends Fragment {
     {
         progressBarHelper.showProgressDialog();
         dateitem.clear();
-        dateid.clear();
         dateitem.add("Test Date");
-        dateid.add(0);
         Call<MarksModel.MarksData> call = apiCalling.Get_Test_Marks(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,Integer.parseInt(BatchId));
         call.enqueue(new Callback<MarksModel.MarksData>() {
             @Override
@@ -845,16 +851,10 @@ public class marks_entry_fragment extends Fragment {
                             }catch (Exception e){
 
                             }
-
-                            int id = (int) marksModel.getTestID();
-                            dateid.add(id);
                         }
 
                         DATEITEM = new String[dateitem.size()];
                         DATEITEM = dateitem.toArray(DATEITEM);
-
-                        DATEID = new Integer[dateid.size()];
-                        DATEID = dateid.toArray(DATEID);
 
                         bindDate();
                     }
@@ -882,7 +882,6 @@ public class marks_entry_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TestDate = dateitem.get(position);
-                    TestID = Long.parseLong(dateid.get(position).toString());
                     if (test_date.getSelectedItem().equals("Test Date")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -28,6 +29,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.HomeworkMaster_Adapter;
 import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -35,6 +37,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +60,7 @@ public class homework_Listfragment extends Fragment {
     FloatingActionButton fab_contact;
     Context context;
     EditText standard, date;
+    TextView txt_nodata;
     RecyclerView homework_rv;
     HomeworkMaster_Adapter homeworkMaster_adapter;
     ProgressBarHelper progressBarHelper;
@@ -68,6 +72,7 @@ public class homework_Listfragment extends Fragment {
     Button clear;
     List<HomeworkModel> homeworkfilter;
     String Date;
+    UserModel userpermission;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -84,6 +89,16 @@ public class homework_Listfragment extends Fragment {
         standard = root.findViewById(R.id.standard);
         date = root.findViewById(R.id.date);
         clear = root.findViewById(R.id.clear);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 37){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                    fab_contact.setVisibility(View.GONE);
+                }
+            }
+        }
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -179,12 +194,17 @@ public class homework_Listfragment extends Fragment {
                         List<HomeworkModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                txt_nodata.setVisibility(View.GONE);
+                                homework_rv.setVisibility(View.VISIBLE);
                                 homeworkfilter = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 homework_rv.setLayoutManager(linearLayoutManager);
                                 homeworkMaster_adapter = new HomeworkMaster_Adapter(context, studentModelList);
                                 homeworkMaster_adapter.notifyDataSetChanged();
                                 homework_rv.setAdapter(homeworkMaster_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                homework_rv.setVisibility(View.GONE);
                             }
                         }
                     }

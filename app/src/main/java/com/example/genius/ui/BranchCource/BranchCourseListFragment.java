@@ -46,6 +46,7 @@ public class BranchCourseListFragment extends Fragment {
 
     View view;
     FloatingActionButton fab_contact;
+    TextView txt_nodata;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -63,6 +64,7 @@ public class BranchCourseListFragment extends Fragment {
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         fab_contact = view.findViewById(R.id.fab_contact);
         course_list_rv = view.findViewById(R.id.course_list_rv);
+        txt_nodata = view.findViewById(R.id.txt_nodata);
 
         if (Function.checkNetworkConnection(context)) {
             GetAllCource();
@@ -106,11 +108,16 @@ public class BranchCourseListFragment extends Fragment {
                     if (data != null && data.isCompleted()) {
                         List<BranchCourseModel.BranchCourceData> list = data.getData();
                         if (list != null && list.size() > 0) {
+                            txt_nodata.setVisibility(View.GONE);
+                            course_list_rv.setVisibility(View.VISIBLE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                             course_list_rv.setLayoutManager(linearLayoutManager);
                             branchCourseListFragment = new BranchCourseList_Adapter(context, data);
                             branchCourseListFragment.notifyDataSetChanged();
                             course_list_rv.setAdapter(branchCourseListFragment);
+                        }else {
+                            txt_nodata.setVisibility(View.VISIBLE);
+                            course_list_rv.setVisibility(View.GONE);
                         }
                     }
                     progressBarHelper.hideProgressDialog();

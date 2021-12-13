@@ -167,13 +167,13 @@
             android:textColor="@color/blue"
             android:layout_marginLeft="10dp"/>
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/id"
             android:visibility="gone"/>
     </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:overScrollMode="never"
                 android:layout_marginTop="5dp"

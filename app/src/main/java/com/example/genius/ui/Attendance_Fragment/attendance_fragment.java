@@ -96,7 +96,7 @@ public class attendance_fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Attendance");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Attendance Entry");
         View root = inflater.inflate(R.layout.attendance_fragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -223,13 +223,13 @@ public class attendance_fragment extends Fragment {
                 else {
                     progressBarHelper.showProgressDialog();
                     BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    Call<StudentData> call = apiCalling.GetAllStudentForAttendance(Long.parseLong(BranchID), StandardId, Integer.parseInt(BatchId));
+                    Call<StudentData> call = apiCalling.GetAllStudentForAttendance(Long.parseLong(BranchID), StandardId, Integer.parseInt(BatchId),indate);
                     call.enqueue(new Callback<StudentData>() {
                         @Override
                         public void onResponse(@NotNull Call<StudentData> call, @NotNull Response<StudentData> response) {
                             if (response.isSuccessful()) {
                                 StudentData data = response.body();
-                                if (data != null && data.isCompleted()) {
+                                if (data.isCompleted()) {
                                     List<StudentModel> studentModelList = data.getData();
                                     if (studentModelList != null) {
                                         if (studentModelList.size() > 0) {
@@ -245,12 +245,12 @@ public class attendance_fragment extends Fragment {
                                             attendance_rv.setVisibility(View.GONE);
                                             no_content.setVisibility(View.VISIBLE);
                                         }
-                                        progressBarHelper.hideProgressDialog();
                                     }
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_LONG).show();
                                 }
-                            } else {
-                                progressBarHelper.showProgressDialog();
                             }
+                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override

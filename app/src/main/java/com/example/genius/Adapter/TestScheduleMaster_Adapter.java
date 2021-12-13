@@ -178,6 +178,38 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             dialog.show();
         });
 
+        holder.test_paper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+                View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
+                builder.setView(dialogView);
+                builder.setCancelable(true);
+                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                ImageView image = dialogView.findViewById(R.id.image);
+                TextView title = dialogView.findViewById(R.id.title);
+                title.setText("Are you sure that you want to View Test Paper?");
+                image.setImageResource(R.drawable.document);
+                AlertDialog dialog = builder.create();
+
+                btn_edit_no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btn_edit_yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
+        });
+
         holder.paper_view.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -217,7 +249,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView standard, batch_time, test_date, test_time, subject, total_marks;
-        ImageView testschedule_edit, testschedule_delete, paper_view;
+        ImageView testschedule_edit, testschedule_delete, paper_view,test_paper;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -231,6 +263,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             testschedule_edit = itemView.findViewById(R.id.testschedule_edit);
             testschedule_delete = itemView.findViewById(R.id.testschedule_delete);
             paper_view = itemView.findViewById(R.id.paper_view);
+            test_paper = itemView.findViewById(R.id.test_paper);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

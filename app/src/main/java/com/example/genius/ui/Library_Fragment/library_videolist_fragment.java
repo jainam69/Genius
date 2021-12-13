@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -23,12 +24,14 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.LibraryMaster_Adapter;
 import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,17 +47,19 @@ public class library_videolist_fragment extends Fragment {
     RecyclerView library_rv;
     Button save, update;
     Context context;
+    TextView txt_nodata;
     LibraryMaster_Adapter libraryMaster_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     EditText library_category;
     FloatingActionButton fab_contact;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library List");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Video List");
         View root = inflater.inflate(R.layout.library__listfragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -65,8 +70,18 @@ public class library_videolist_fragment extends Fragment {
         library_category = root.findViewById(R.id.library_category);
         library_rv = root.findViewById(R.id.library_rv);
         fab_contact = root.findViewById(R.id.fab_contact);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 30){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                    fab_contact.setVisibility(View.GONE);
+                }
+            }
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetLibraryDetails();
         } else {
@@ -108,9 +123,14 @@ public class library_videolist_fragment extends Fragment {
                         List<LibraryModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                txt_nodata.setVisibility(View.GONE);
+                                library_rv.setVisibility(View.VISIBLE);
                                 library_rv.setLayoutManager(new LinearLayoutManager(context));
                                 libraryMaster_adapter = new LibraryMaster_Adapter(context, studentModelList);
                                 library_rv.setAdapter(libraryMaster_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                library_rv.setVisibility(View.GONE);
                             }
                         }
                     }

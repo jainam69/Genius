@@ -40,8 +40,6 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:text="Video Link"
-                android:textColor="@color/black"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
 
@@ -53,13 +51,14 @@
                 android:layout_marginEnd="5dp"
                 android:textColor="@color/blue"
                 android:autoLink="web"
+                android:textSize="14dp"
                 android:textIsSelectable="true"
-                android:linksClickable="true"
-                android:textSize="16sp" />
+                android:linksClickable="true"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="3dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -69,10 +68,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
                 android:text="Category"
-                android:textColor="@color/black"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
 
@@ -80,10 +76,8 @@
                 android:id="@+id/doc_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="14dp" />
 
         </LinearLayout>
 
@@ -97,10 +91,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
                 android:text="Description"
-                android:textColor="@color/black"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
 
@@ -108,10 +99,8 @@
                 android:id="@+id/doc_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="14dp" />
 
         </LinearLayout>
 
@@ -126,10 +115,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
                 android:text="Standard"
-                android:textColor="@color/black"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
 
@@ -137,10 +123,8 @@
                 android:id="@+id/standard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="14dp" />
 
         </LinearLayout>
 
@@ -156,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="2"
@@ -177,7 +161,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
@@ -197,7 +181,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"

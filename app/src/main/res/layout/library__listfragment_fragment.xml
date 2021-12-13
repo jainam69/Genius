@@ -90,7 +90,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/buttonLinear"
-        android:layout_margin="10dp" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:visibility="gone"
+        android:layout_below="@id/buttonLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Data Found"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginTop="200dp"
+        android:id="@+id/txt_nodata"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_contact"

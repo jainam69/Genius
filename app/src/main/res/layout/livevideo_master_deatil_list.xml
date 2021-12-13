@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="5dp">
 
@@ -35,11 +35,35 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2"
                     android:paddingLeft="10dp"
-                    android:text="Video Name"
+                    android:text="Video Title"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/video_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:paddingLeft="10dp"
+                    android:textSize="14dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:paddingLeft="10dp"
+                    android:text="Standard"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/standard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.8"

@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,12 +36,14 @@ import com.example.genius.Model.NotificationData;
 import com.example.genius.Model.NotificationModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +58,7 @@ import retrofit2.Response;
 public class NotificationFragment extends Fragment {
 
     SearchableSpinner branch;
+    LinearLayout linear_create_notification;
     CheckBox ch_admin, ch_teacher, ch_student;
     Long adminid = Long.valueOf(0), teacherid = Long.valueOf(0), studentid = Long.valueOf(0);
     TextView text, id, image, transaction_id, notification_id;
@@ -73,6 +77,7 @@ public class NotificationFragment extends Fragment {
     NestedScrollView notification_scroll;
     String BranchName, BranchID;
     Notification_Adapter notification_adapter;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,6 +102,16 @@ public class NotificationFragment extends Fragment {
         transaction_id = root.findViewById(R.id.transaction_id);
         notification_scroll = root.findViewById(R.id.notification_scroll);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        linear_create_notification = root.findViewById(R.id.linear_create_notification);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        for (int i = 0; i < userpermission.getPermission().size(); i++){
+            if (userpermission.getPermission().get(i).getPageInfo().getPageID() ==10){
+                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                    linear_create_notification.setVisibility(View.GONE);
+                }
+            }
+        }
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -417,6 +432,7 @@ public class NotificationFragment extends Fragment {
         List<NotificationModel> notificationDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public Notification_Adapter(Context context, List<NotificationModel> notificationDetails) {
             this.context = context;
@@ -431,6 +447,19 @@ public class NotificationFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Notification_Adapter.ViewHolder holder, int position) {
+            for (int i = 0; i < userpermission.getPermission().size(); i++){
+                if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 10){
+                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                        holder.noti_edit.setVisibility(View.GONE);
+                    }
+                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
+                        holder.noti_delete.setVisibility(View.GONE);
+                    }
+                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(0).getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
+                }
+            }
             holder.noti_desc.setText("" + notificationDetails.get(position).getNotificationMessage());
             List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
             String a = null;
@@ -562,6 +591,7 @@ public class NotificationFragment extends Fragment {
 
             TextView noti_desc, sub_type;
             ImageView noti_delete, noti_edit;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -569,6 +599,8 @@ public class NotificationFragment extends Fragment {
                 sub_type = itemView.findViewById(R.id.sub_type);
                 noti_delete = itemView.findViewById(R.id.noti_delete);
                 noti_edit = itemView.findViewById(R.id.noti_edit);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

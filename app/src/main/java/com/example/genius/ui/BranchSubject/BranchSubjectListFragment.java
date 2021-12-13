@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.genius.API.ApiCalling;
@@ -44,6 +45,7 @@ public class BranchSubjectListFragment extends Fragment {
 
     View root;
     Context context;
+    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -62,6 +64,14 @@ public class BranchSubjectListFragment extends Fragment {
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         fab_contact = root.findViewById(R.id.fab_contact);
         class_list_rv = root.findViewById(R.id.class_list_rv);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
+
+        if (Function.checkNetworkConnection(context)) {
+            progressBarHelper.showProgressDialog();
+            GetAllSubjectBranchData();
+        } else {
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+        }
 
         fab_contact.setOnClickListener(v -> {
             BranchSubjectFragment orderplace = new BranchSubjectFragment();
@@ -71,13 +81,6 @@ public class BranchSubjectListFragment extends Fragment {
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });
-
-        if (Function.checkNetworkConnection(context)) {
-            progressBarHelper.showProgressDialog();
-            GetAllSubjectBranchData();
-        } else {
-            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-        }
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -106,11 +109,16 @@ public class BranchSubjectListFragment extends Fragment {
                         List<BranchSubjectModel.BranchSubjectData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
+                                txt_nodata.setVisibility(View.GONE);
+                                class_list_rv.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 class_list_rv.setLayoutManager(linearLayoutManager);
                                 branchSubjectListAapter = new BranchSubjectListAapter(context, studentModelList);
                                 branchSubjectListAapter.notifyDataSetChanged();
                                 class_list_rv.setAdapter(branchSubjectListAapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                class_list_rv.setVisibility(View.GONE);
                             }
                         }
                     }

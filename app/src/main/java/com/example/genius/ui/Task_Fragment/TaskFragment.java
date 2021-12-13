@@ -4,14 +4,19 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,7 +173,7 @@ public class TaskFragment extends Fragment {
                 else {
                     progressBarHelper.showProgressDialog();
                     if(!edt_taskDescription.getText().toString().isEmpty()){
-                        Description = edt_taskDescription.getText().toString();
+                        Description = encodeDecode(edt_taskDescription.getText().toString());
                     }
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
@@ -220,7 +225,7 @@ public class TaskFragment extends Fragment {
                 else {
                     progressBarHelper.showProgressDialog();
                     if(!edt_taskDescription.getText().toString().isEmpty()){
-                        Description = edt_taskDescription.getText().toString();
+                        Description = encodeDecode(edt_taskDescription.getText().toString());
                     }
                     Call<TodoModel.TodoData1> call;
                     if (instrumentFileDestination != null) {
@@ -587,10 +592,13 @@ public class TaskFragment extends Fragment {
                         List<TodoModel> modelList = data.getData();
                         if (modelList != null) {
                             if (modelList.size() > 0) {
+                                text.setVisibility(View.VISIBLE);
                                 task_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
                                 todoMaster_adapter = new TodoMaster_Adapter(context, modelList);
                                 todoMaster_adapter.notifyDataSetChanged();
                                 task_rv.setAdapter(todoMaster_adapter);
+                            }else {
+                                text.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -612,6 +620,8 @@ public class TaskFragment extends Fragment {
         ApiCalling apiCalling;
         DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
         DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+        long downloadID;
+        String Name;
 
         public TodoMaster_Adapter(Context context, List<TodoModel> todoModels) {
             this.context = context;
@@ -662,7 +672,6 @@ public class TaskFragment extends Fragment {
                         @Override
                         public void onResponse(@NotNull Call<ToDoByIdData> call, @NotNull Response<ToDoByIdData> response) {
                             if (response.isSuccessful()) {
-                                progressBarHelper.hideProgressDialog();
                                 ToDoByIdData paperData = response.body();
                                 if (paperData.Completed) {
                                     TodoModel paperModelList = paperData.Data;
@@ -699,6 +708,7 @@ public class TaskFragment extends Fragment {
                                     }
                                 }
                             }
+                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
@@ -763,6 +773,40 @@ public class TaskFragment extends Fragment {
                 });
                 dialog.show();
             });
+
+            holder.task_download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+                    View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
+                    builder.setView(dialogView);
+                    builder.setCancelable(true);
+                    Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                    Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                    ImageView image = dialogView.findViewById(R.id.image);
+                    TextView title = dialogView.findViewById(R.id.title);
+                    title.setText("Are you sure that you want to Download Task Document?");
+                    image.setImageResource(R.drawable.download);
+                    AlertDialog dialog = builder.create();
+
+                    btn_edit_no.setOnClickListener(v18 -> dialog.dismiss());
+
+                    btn_edit_yes.setOnClickListener(v17 -> {
+                        dialog.dismiss();
+                        String filetype = todoModels.get(position).getFilePath();
+                        Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                        DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                        Uri uri = Uri.parse(filetype);
+                        DownloadManager.Request request = new DownloadManager.Request(uri);
+                        Name = todoModels.get(position).getToDoFileName();
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        downloadID = dm.enqueue(request);
+                        context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                    });
+                    dialog.show();
+                }
+            });
         }
 
         @Override
@@ -772,7 +816,7 @@ public class TaskFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView task_edit, task_delete;
+            ImageView task_edit, task_delete,task_download;
             TextView task_date, staff_name, task_description;
 
             public ViewHolder(@NonNull View itemView) {
@@ -782,10 +826,25 @@ public class TaskFragment extends Fragment {
                 task_edit = itemView.findViewById(R.id.task_edit);
                 task_delete = itemView.findViewById(R.id.task_delete);
                 task_description = itemView.findViewById(R.id.task_description);
+                task_download = itemView.findViewById(R.id.task_download);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }
         }
+
+        private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context1, Intent intent) {
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (downloadID == id) {
+                    Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 
 }

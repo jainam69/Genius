@@ -8,12 +8,30 @@ public class StudentData {
     long stdID;
     int batchID;
     boolean Completed;
+    boolean Status;
+    String Message;
     List<StudentModel> Data;
 
     public StudentData(long branchID, long stdID, int batchID) {
         this.branchID = branchID;
         this.stdID = stdID;
         this.batchID = batchID;
+    }
+
+    public boolean isStatus() {
+        return Status;
+    }
+
+    public void setStatus(boolean status) {
+        Status = status;
+    }
+
+    public String getMessage() {
+        return Message;
+    }
+
+    public void setMessage(String message) {
+        Message = message;
     }
 
     public long getBranchID() {

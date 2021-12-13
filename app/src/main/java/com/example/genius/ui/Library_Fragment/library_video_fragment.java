@@ -82,12 +82,12 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     public static final String ERROR = "error";
     Bundle bundle;
     OnBackPressedCallback callback;
-    Long StandardId, SubjectId, categoryid;
+    Long StandardId = 0L, SubjectId = 0L, categoryid = 0L;
     SearchableSpinner category;
     List<String> categoryitem = new ArrayList<>();
     List<Integer> categoryId = new ArrayList<>();
     String BranchID;
-    String StandardIDs;
+    String StandardIDs = "none";
     LibraryModel libraryModel;
 
     @Override

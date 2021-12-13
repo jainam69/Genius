@@ -41,13 +41,13 @@
                     android:cursorVisible="false"
                     android:editable="false"
                     android:focusable="false"
-                    android:hint="Date"
+                    android:hint="Reminder Date"
                     android:maxLines="1"
                     android:paddingStart="12dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:singleLine="true"
-                    android:textSize="14dp"/>
+                    android:textSize="14dp" />
 
                 <ImageView
                     android:id="@+id/ulimit"

@@ -211,7 +211,7 @@ public class homework_fragment extends Fragment {
                 } else {
                     progressBarHelper.showProgressDialog();
                     if (!remarks.getText().toString().isEmpty()){
-                        Description = remarks.getText().toString();
+                        Description = encodeDecode(remarks.getText().toString());
                     }
                     Call<HomeworkModel.HomeworkData1> call = apiCalling.HomeworkMaintenance(0
                             , indate, Long.parseLong(BranchID)
@@ -274,7 +274,7 @@ public class homework_fragment extends Fragment {
                     progressBarHelper.showProgressDialog();
                     Call<HomeworkModel.HomeworkData1> call;
                     if (!remarks.getText().toString().isEmpty()){
-                        Description = remarks.getText().toString();
+                        Description = encodeDecode(remarks.getText().toString());
                     }
                     if (instrumentFileDestination != null) {
                         call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
@@ -753,6 +753,10 @@ public class homework_fragment extends Fragment {
                 break;
             }
         }
+    }
+
+    public String encodeDecode(String text) {
+        return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 
 }

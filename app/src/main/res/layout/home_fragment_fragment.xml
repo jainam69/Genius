@@ -130,6 +130,7 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/linear_attendance"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
                     android:layout_marginStart="25dp"
@@ -138,7 +139,6 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/linear_attendance"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
                         android:gravity="center"
@@ -306,6 +306,7 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/linear_homework"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
                     android:layout_marginStart="25dp"
@@ -315,7 +316,6 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/linear_homework"
                         android:layout_width="match_parent"
                         android:layout_height="130dp"
                         android:gravity="center"

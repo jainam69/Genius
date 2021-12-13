@@ -271,7 +271,7 @@ public interface ApiCalling {
     Call<CommonModel> RemoveLibrary(@Query("libraryID") long libraryID, @Query("lastupdatedby") String lastupdatedby);
 
     @GET(ApiConstant.GET_STUDENT_ATTENDANCE_LIST)
-    Call<StudentData> GetAllStudentForAttendance(@Query("branchID") long branchID, @Query("stdID") long stdID, @Query("batchID") int batchID);
+    Call<StudentData> GetAllStudentForAttendance(@Query("branchID") long branchID, @Query("stdID") long stdID, @Query("batchID") int batchID, @Query("attendanceDate") String attendanceDate);
 
     @POST(ApiConstant.ATTENDANCE_MAINTENANCE)
     Call<AttendanceModel.AttendanceData1> AttendanceMaintenance(@Body AttendanceModel attendanceModel);
