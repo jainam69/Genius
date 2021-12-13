@@ -28,7 +28,10 @@ import com.example.genius.Model.LibraryModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
+import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,12 +61,10 @@ public class ShowLibraryFragment extends Fragment {
         view_library = root.findViewById(R.id.view_library);
         no_content = root.findViewById(R.id.no_content);
 
-        if (Function.checkNetworkConnection(context))
-        {
+        if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
             GetViewLibrary();
-        }
-        else {
+        } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
@@ -82,22 +83,21 @@ public class ShowLibraryFragment extends Fragment {
         return root;
     }
 
-    public void GetViewLibrary()
-    {
-        Call<LibraryData> call = apiCalling.GetAllLibrary();
+    public void GetViewLibrary() {
+        Call<LibraryData> call = apiCalling.GetLibraryApprovalByBranch(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<LibraryData>() {
             @Override
-            public void onResponse(Call<LibraryData> call, Response<LibraryData> response) {
+            public void onResponse(@NotNull Call<LibraryData> call, @NotNull Response<LibraryData> response) {
                 progressBarHelper.hideProgressDialog();
                 if (response.isSuccessful()) {
                     LibraryData data = response.body();
                     if (data.isCompleted()) {
                         List<LibraryModel> studentModelList = data.getData();
-                        if (studentModelList !=null){
+                        if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
                                 List<LibraryModel> list = new ArrayList<>();
-                                for (LibraryModel singlemodel:studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId()==1){
+                                for (LibraryModel singlemodel : studentModelList) {
+                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
                                         list.add(singlemodel);
                                     }
                                 }
@@ -113,7 +113,7 @@ public class ShowLibraryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<LibraryData> call, Throwable t) {
+            public void onFailure(@NotNull Call<LibraryData> call, @NotNull Throwable t) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                 progressBarHelper.hideProgressDialog();
             }

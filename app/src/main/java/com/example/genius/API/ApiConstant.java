@@ -133,6 +133,7 @@ public class ApiConstant {
     public static final String LibraryLinkMaintenance = "NewLibrary/v1/LibraryLinkMaintenance";
     public static final String OldLibraryMaintenance = "library/v1/LibraryMaintenance";
     public static final String GET_LIBRARY_APPROVAL_LIST = "library/v1/GetAllLibraryApproval";
+    public static final String GET_LIBRARY_APPROVAL_LIST_BRANCH = "library/v1/GetLibraryApprovalByBranch";
     public static final String LIBRARY_APPROVAL_MAINTENANCE = "library/v1/LibraryApprovalMaintenance";
 
     public static final String GET_TEST_MARKS_DATE = "Marks/v1/GetTestDatesByBatch";
