@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,12 +36,14 @@ import com.example.genius.Model.ReminderData;
 import com.example.genius.Model.ReminderModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +66,7 @@ public class reminder_fragment extends Fragment {
     Context context;
     TextView text, id, transactionid, reminderid;
     EditText reminder_time, date_reminder, edt_reminderDescription;
+    LinearLayout linear_create_reminder;
     RecyclerView reminder_rv;
     Button save_reminder, edit_reminder;
     ProgressBarHelper progressBarHelper;
@@ -77,6 +81,7 @@ public class reminder_fragment extends Fragment {
     Reminder_Adapter reminder_adapter;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -97,6 +102,8 @@ public class reminder_fragment extends Fragment {
         reminderid = root.findViewById(R.id.reminderid);
         transactionid = root.findViewById(R.id.transactionid);
         reminder_scroll = root.findViewById(R.id.reminder_scroll);
+        linear_create_reminder = root.findViewById(R.id.linear_create_reminder);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         //date_reminder.setText(yesterday());
         Calendar cal2 = Calendar.getInstance();
@@ -104,7 +111,11 @@ public class reminder_fragment extends Fragment {
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(24).getPageInfo().getPageID() == 40 && !userpermission.getPermission().get(24).getPackageRightinfo().isCreatestatus()){
+            linear_create_reminder.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetReminderDetails();
         } else {
@@ -321,7 +332,7 @@ public class reminder_fragment extends Fragment {
         List<ReminderModel> reminderModels;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        int id;
+        UserModel userpermission;
 
         public Reminder_Adapter(Context context, List<ReminderModel> reminderModels) {
             this.context = context;
@@ -336,6 +347,17 @@ public class reminder_fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Reminder_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(24).getPageInfo().getPageID() == 40){
+                if (!userpermission.getPermission().get(24).getPackageRightinfo().isCreatestatus()){
+                    holder.reminder_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(24).getPackageRightinfo().isDeletestatus()){
+                    holder.reminder_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(24).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(24).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             if (reminderModels.get(position).getReminderDate() != null) {
                 String a = reminderModels.get(position).getReminderDate().replace("T00:00:00", "");
                 try {
@@ -441,6 +463,7 @@ public class reminder_fragment extends Fragment {
 
             ImageView reminder_edit, reminder_delete;
             TextView task_date, task_time, desc;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -450,6 +473,8 @@ public class reminder_fragment extends Fragment {
                 task_date = itemView.findViewById(R.id.task_date);
                 task_time = itemView.findViewById(R.id.task_time);
                 desc = itemView.findViewById(R.id.desc);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

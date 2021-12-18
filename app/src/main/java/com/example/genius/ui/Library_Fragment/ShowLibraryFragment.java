@@ -36,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.spec.GCMParameterSpec;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,7 +47,7 @@ public class ShowLibraryFragment extends Fragment {
     RecyclerView view_library;
     Context context;
     ViewLibrary_Adapter viewLibrary_adapter;
-    TextView no_content;
+    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -59,9 +61,9 @@ public class ShowLibraryFragment extends Fragment {
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         view_library = root.findViewById(R.id.view_library);
-        no_content = root.findViewById(R.id.no_content);
+        txt_nodata = root.findViewById(R.id.txt_nodata);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetViewLibrary();
         } else {
@@ -95,17 +97,16 @@ public class ShowLibraryFragment extends Fragment {
                         List<LibraryModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                List<LibraryModel> list = new ArrayList<>();
-                                for (LibraryModel singlemodel : studentModelList) {
-                                    if (singlemodel.getRowStatus().getRowStatusId() == 1) {
-                                        list.add(singlemodel);
-                                    }
-                                }
+                                txt_nodata.setVisibility(View.GONE);
+                                view_library.setVisibility(View.VISIBLE);
                                 view_library.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                                 view_library.setLayoutManager(new GridLayoutManager(context, 2));
-                                viewLibrary_adapter = new ViewLibrary_Adapter(context, list);
+                                viewLibrary_adapter = new ViewLibrary_Adapter(context, studentModelList);
                                 viewLibrary_adapter.notifyDataSetChanged();
                                 view_library.setAdapter(viewLibrary_adapter);
+                            }else {
+                                txt_nodata.setVisibility(View.VISIBLE);
+                                view_library.setVisibility(View.GONE);
                             }
                         }
                     }

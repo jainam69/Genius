@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -48,6 +50,7 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
     BranchCourseModel branchCourceData;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
+    UserModel userpermission;
 
     public BranchCourseList_Adapter(Context context, BranchCourseModel branchCourceData) {
         this.context = context;
@@ -65,6 +68,17 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull BranchCourseList_Adapter.ViewHolder holder, int position) {
+        if (userpermission.getPermission().get(9).getPageInfo().getPageID() == 75){
+            if (!userpermission.getPermission().get(9).getPackageRightinfo().isCreatestatus()){
+                holder.img_edit.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(9).getPackageRightinfo().isDeletestatus()){
+                holder.img_delete.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(9).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(9).getPackageRightinfo().isDeletestatus()){
+                holder.linear_actions.setVisibility(View.GONE);
+            }
+        }
         holder.branch_name.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
         holder.course_sublist_rv.setLayoutManager(new LinearLayoutManager(context));
         holder.course_sublist_rv.setAdapter(new BranchCourseSubList_Adapter(context, branchCourceData.getData()));
@@ -150,12 +164,12 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
         return 1;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView branch_name;
         ImageView img_edit, img_delete;
         RecyclerView course_sublist_rv;
-
+        LinearLayout linear_actions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -164,7 +178,8 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
             course_sublist_rv = itemView.findViewById(R.id.course_sublist_rv);
             img_edit = itemView.findViewById(R.id.img_edit);
             img_delete = itemView.findViewById(R.id.img_delete);
-
+            linear_actions = itemView.findViewById(R.id.linear_actions);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         }
     }
 }

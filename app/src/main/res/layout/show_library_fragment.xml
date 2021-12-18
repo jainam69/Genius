@@ -19,11 +19,9 @@
         android:layout_marginTop="300dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No Record Found!!!"
-        android:textStyle="bold"
-        android:textColor="@color/blue"
-        android:textSize="18sp"
+        android:text="No Data Found"
+        android:textColor="@color/black"
         android:gravity="center"
-        android:id="@+id/no_content"/>
+        android:id="@+id/txt_nodata"/>
 
 </LinearLayout>

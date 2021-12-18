@@ -18,6 +18,7 @@
             android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/linear_create_image"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -35,6 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_toEndOf="@+id/transprt12"
+                android:layout_toRightOf="@+id/transprt12"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:editable="false"
@@ -44,13 +46,12 @@
                 android:importantForAutofill="no"
                 android:maxLines="1"
                 android:paddingStart="9dp"
+                android:paddingLeft="9dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 android:textSize="14dp"
                 tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
-                tools:targetApi="o"
-                android:paddingLeft="9dp"
-                android:layout_toRightOf="@+id/transprt12" />
+                tools:targetApi="o" />
 
             <ImageView
                 android:id="@+id/transprt12"

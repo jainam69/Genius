@@ -69,17 +69,15 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, int position) {
-        for (int i = 0; i < userpermission.getPermission().size(); i++){
-            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 18){
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
-                    holder.atten_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
-                    holder.atten_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(0).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_create_delete.setVisibility(View.GONE);
-                }
+        if (userpermission.getPermission().get(3).getPageInfo().getPageID() == 18){
+            if (!userpermission.getPermission().get(3).getPackageRightinfo().isCreatestatus()){
+                holder.atten_edit.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(3).getPackageRightinfo().isDeletestatus()){
+                holder.atten_delete.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(3).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(3).getPackageRightinfo().isDeletestatus()){
+                holder.linear_create_delete.setVisibility(View.GONE);
             }
         }
         String date = attendanceDetails.get(position).getAttendanceDate().replace("T00:00:00","");

@@ -31,6 +31,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.text.DateFormat;
@@ -63,6 +64,7 @@ public class marks_entry_Listfragment extends Fragment {
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
     MarksRegisterAdapter marksRegisterAdapter;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,8 +84,13 @@ public class marks_entry_Listfragment extends Fragment {
         clear = root.findViewById(R.id.clear);
         search = root.findViewById(R.id.search);
         no_content = root.findViewById(R.id.no_content);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(19).getPageInfo().getPageID() == 81 && !userpermission.getPermission().get(19).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllStandard();
             SelectTestDate();

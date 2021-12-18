@@ -26,6 +26,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.StaffMaster_Adapter;
 import com.example.genius.Model.StaffData;
 import com.example.genius.Model.StaffModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -33,6 +34,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,7 @@ public class staff_entry_listfragment extends Fragment {
     OnBackPressedCallback callback;
     StaffMaster_Adapter staffMaster_adapter;
     List<StaffModel> staffDetails2;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -70,6 +73,11 @@ public class staff_entry_listfragment extends Fragment {
         clear = root.findViewById(R.id.clear);
         search = root.findViewById(R.id.search);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        if (userpermission.getPermission().get(36).getPageInfo().getPageID() == 4 && !userpermission.getPermission().get(36).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();

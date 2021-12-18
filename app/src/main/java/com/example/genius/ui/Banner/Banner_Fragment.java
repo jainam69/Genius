@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -57,6 +59,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
 import com.example.genius.utils.ImageUtility;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -109,6 +112,8 @@ public class Banner_Fragment extends Fragment {
     File instrumentFileDestination;
     OnBackPressedCallback callback;
     NestedScrollView banner_scroll;
+    UserModel userpermission;
+    LinearLayout linear_create_banner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,6 +138,12 @@ public class Banner_Fragment extends Fragment {
         bannerid = root.findViewById(R.id.bannerid);
         banner_scroll = root.findViewById(R.id.banner_scroll);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        linear_create_banner = root.findViewById(R.id.linear_create_banner);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        if (userpermission.getPermission().get(5).getPageInfo().getPageID() == 73 && !userpermission.getPermission().get(5).getPackageRightinfo().isCreatestatus()){
+            linear_create_banner.setVisibility(View.GONE);
+        }
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -565,6 +576,7 @@ public class Banner_Fragment extends Fragment {
         List<BannerModel> bannerDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public BannerMaster_Adapter(Context context, List<BannerModel> bannerDetails) {
             this.context = context;
@@ -579,6 +591,17 @@ public class Banner_Fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(5).getPageInfo().getPageID() == 73){
+                if (!userpermission.getPermission().get(5).getPackageRightinfo().isCreatestatus()){
+                    holder.banner_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(5).getPackageRightinfo().isDeletestatus()){
+                    holder.banner_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(5).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(5).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             List<BannerModel.BannerTypeEntity> notitypelist = bannerDetails.get(position).getBannerType();
             String a = null;
             for (BannerModel.BannerTypeEntity model : notitypelist) {
@@ -589,9 +612,6 @@ public class Banner_Fragment extends Fragment {
                 }
             }
             holder.sub_type.setText("" + a);
-            attach = bannerDetails.get(position).getBannerImageText();
-            /*imageVal = Base64.decode(attach, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);*/
             Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
             holder.banner_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
@@ -708,6 +728,7 @@ public class Banner_Fragment extends Fragment {
 
             ImageView banner_image, banner_edit, banner_delete;
             TextView branch_name, sub_type;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -717,6 +738,8 @@ public class Banner_Fragment extends Fragment {
                 banner_delete = itemView.findViewById(R.id.banner_delete);
                 branch_name = itemView.findViewById(R.id.branch_name);
                 sub_type = itemView.findViewById(R.id.sub_type);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

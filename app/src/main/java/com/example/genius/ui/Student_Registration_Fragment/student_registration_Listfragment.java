@@ -2,6 +2,8 @@ package com.example.genius.ui.Student_Registration_Fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.StudentMaster_Adapter;
+import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.StudentData;
 import com.example.genius.Model.StudentModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -31,9 +35,11 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,10 +55,12 @@ public class student_registration_Listfragment extends Fragment {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     EditText stu_name, con_no;
-    Button clear, search, active, inactive;
+    Button clear,active, inactive;
     OnBackPressedCallback callback;
     StudentMaster_Adapter studentMaster_adapter;
     LinearLayout txt_nodata;
+    UserModel userpermission;
+    List<StudentModel> model;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -70,8 +78,13 @@ public class student_registration_Listfragment extends Fragment {
         active = root.findViewById(R.id.active);
         inactive = root.findViewById(R.id.inactive);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(30).getPageInfo().getPageID() == 8 && !userpermission.getPermission().get(30).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllStudent();
         } else {
@@ -100,6 +113,38 @@ public class student_registration_Listfragment extends Fragment {
             fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
+        });
+
+        stu_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                getUserName(s.toString());
+            }
+        });
+
+        con_no.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                getMobileNo(s.toString());
+            }
         });
 
         callback = new OnBackPressedCallback(true) {
@@ -131,6 +176,7 @@ public class student_registration_Listfragment extends Fragment {
                             if (studentModelList.size() > 0) {
                                 student_rv.setVisibility(View.VISIBLE);
                                 txt_nodata.setVisibility(View.GONE);
+                                model = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 student_rv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
@@ -166,6 +212,7 @@ public class student_registration_Listfragment extends Fragment {
                             if (studentModelList.size() > 0) {
                                 txt_nodata.setVisibility(View.GONE);
                                 student_rv.setVisibility(View.VISIBLE);
+                                model = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 student_rv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
@@ -201,6 +248,7 @@ public class student_registration_Listfragment extends Fragment {
                             if (studentModelList.size() > 0) {
                                 txt_nodata.setVisibility(View.GONE);
                                 student_rv.setVisibility(View.VISIBLE);
+                                model = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                                 student_rv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
@@ -220,5 +268,38 @@ public class student_registration_Listfragment extends Fragment {
                 progressBarHelper.hideProgressDialog();
             }
         });
+    }
+
+    private void getUserName(String text) {
+        ArrayList<StudentModel> filteredList = new ArrayList<>();
+
+        for (StudentModel item : model) {
+            if (item.getFirstName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        if (filteredList.size() > 0) {
+            studentMaster_adapter.filterList(filteredList);
+        } else {
+            studentMaster_adapter.filterList(filteredList);
+        }
+    }
+
+    private void getMobileNo(String text) {
+        ArrayList<StudentModel> filteredList = new ArrayList<>();
+
+        for (StudentModel item : model) {
+            if (item.getContactNo().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        if (filteredList.size() > 0) {
+            studentMaster_adapter.filterList(filteredList);
+        } else {
+            studentMaster_adapter.filterList(filteredList);
+        }
+
     }
 }

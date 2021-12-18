@@ -18,10 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.MarksModel;
 import com.example.genius.Model.StudentModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
     ApiCalling apiCalling;
     long ID,StudentID;
     String marks;
+    UserModel userpermission;
 
     public MarksRegisterAdapter(Context context, List<MarksModel> studentModels) {
         this.context = context;
@@ -51,6 +54,9 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
 
     @Override
     public void onBindViewHolder(@NonNull MarksRegisterAdapter.ViewHolder holder, int position) {
+        if (userpermission.getPermission().get(19).getPageInfo().getPageID() == 81 && !userpermission.getPermission().get(19).getPackageRightinfo().isCreatestatus()){
+            holder.edit.setVisibility(View.GONE);
+        }
         holder.student_name.setText(marksModels.get(position).getStudent().getName());
         holder.subject_name.setText(marksModels.get(position).getSubjectInfo().getSubject());
         holder.total_marks.setText(""+marksModels.get(position).getTestEntityInfo().getMarks());
@@ -149,6 +155,7 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
             total_marks = itemView.findViewById(R.id.total_marks);
             ach_marks = itemView.findViewById(R.id.ach_marks);
             edit = itemView.findViewById(R.id.edit);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

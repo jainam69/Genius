@@ -73,12 +73,8 @@ public class library_videolist_fragment extends Fragment {
         txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        for (int i = 0; i < userpermission.getPermission().size(); i++){
-            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 30){
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
-                    fab_contact.setVisibility(View.GONE);
-                }
-            }
+        if (userpermission.getPermission().get(14).getPageInfo().getPageID() == 30 && !userpermission.getPermission().get(14).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
         }
 
         if (Function.isNetworkAvailable(context)) {

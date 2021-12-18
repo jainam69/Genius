@@ -9,13 +9,17 @@ import android.widget.LinearLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.helper.Preferences;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.example.genius.ui.Video.VideoFragment;
+import com.google.gson.Gson;
 
 import java.util.Objects;
 
@@ -23,9 +27,10 @@ import java.util.Objects;
 public class GallerySelectorFragment extends Fragment {
 
     View root;
-    LinearLayout linear_image, linear_video;
+    CardView linear_image, linear_video;
     OnBackPressedCallback callback;
     Context context;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +41,14 @@ public class GallerySelectorFragment extends Fragment {
         context = getActivity();
         linear_video = root.findViewById(R.id.linear_video);
         linear_image = root.findViewById(R.id.linear_image);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        if (userpermission.getPermission().get(22).getPageInfo().getPageID() == 83 && !userpermission.getPermission().get(22).getPackageRightinfo().isViewstatus()){
+            linear_image.setVisibility(View.GONE);
+        }
+        if (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85 && !userpermission.getPermission().get(37).getPackageRightinfo().isViewstatus()){
+            linear_video.setVisibility(View.GONE);
+        }
 
         linear_video.setOnClickListener(v -> {
             VideoFragment orderplace = new VideoFragment();

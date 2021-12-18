@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -84,6 +86,7 @@ public class practice_paper_Listfragment extends Fragment {
     ImageView imageView;
     Context context;
     RecyclerView practice_paper_rv;
+    LinearLayout linear_create_paper;
     PracticePaperMaster_Adapter practicePaperMaster_adapter;
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>();
@@ -101,6 +104,7 @@ public class practice_paper_Listfragment extends Fragment {
     NestedScrollView paper_scroll;
     String attach = "", path = "",Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
     EditText remarks;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -126,7 +130,13 @@ public class practice_paper_Listfragment extends Fragment {
         paper_id = root.findViewById(R.id.paper_id);
         uniq_id = root.findViewById(R.id.uniq_id);
         remarks = root.findViewById(R.id.remarks);
+        linear_create_paper = root.findViewById(R.id.linear_create_paper);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        if (userpermission.getPermission().get(23).getPageInfo().getPageID() == 36 && !userpermission.getPermission().get(23).getPackageRightinfo().isCreatestatus()){
+            linear_create_paper.setVisibility(View.GONE);
+        }
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
@@ -688,7 +698,7 @@ public class practice_paper_Listfragment extends Fragment {
         List<PaperModel> paperModels;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        byte[] imageVal;
+        UserModel userpermission;
         long downloadID;
         String Name;
 
@@ -705,6 +715,18 @@ public class practice_paper_Listfragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PracticePaperMaster_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(23).getPageInfo().getPageID() == 36){
+                if (!userpermission.getPermission().get(23).getPackageRightinfo().isCreatestatus()){
+                    holder.paper_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(23).getPackageRightinfo().isDeletestatus()){
+                    holder.paper_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(23).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(23).getPackageRightinfo().isDeletestatus()){
+                    holder.paper_edit.setVisibility(View.GONE);
+                    holder.paper_delete.setVisibility(View.GONE);
+                }
+            }
             holder.standard.setText(paperModels.get(position).getStandard().getStandard());
             holder.subject.setText(paperModels.get(position).getSubject().getSubject());
             int a = paperModels.get(position).getBatchTypeID();
@@ -862,11 +884,7 @@ public class practice_paper_Listfragment extends Fragment {
                     DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                     Uri uri = Uri.parse(filetype);
                     DownloadManager.Request request = new DownloadManager.Request(uri);
-                    if (paperModels.get(position).getSubject().getSubject() != null) {
-                        Name = "Practice_Paper" + "_" + paperModels.get(position).getSubject().getSubject() + filetyp;
-                    } else {
-                        Name = "Practice_Paper" + filetyp;
-                    }
+                    Name = paperModels.get(position).getPaperData().getPaperPath();
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
                     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
@@ -896,6 +914,7 @@ public class practice_paper_Listfragment extends Fragment {
                 paper_edit = itemView.findViewById(R.id.paper_edit);
                 paper_delete = itemView.findViewById(R.id.paper_delete);
                 paper_download = itemView.findViewById(R.id.paper_download);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

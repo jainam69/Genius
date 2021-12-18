@@ -1,5 +1,6 @@
 package com.example.genius.Model;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class ClassModel {
@@ -33,7 +34,7 @@ public class ClassModel {
         Completed = completed;
     }
 
-    public static class ClassData {
+    public static class ClassData implements Serializable {
 
         long ClassID;
         String ClassName;

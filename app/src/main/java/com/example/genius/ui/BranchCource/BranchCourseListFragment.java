@@ -23,6 +23,7 @@ import com.example.genius.Adapter.HomeworkMaster_Adapter;
 import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -31,6 +32,7 @@ import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Homework_Fragment.homework_fragment;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,6 +55,7 @@ public class BranchCourseListFragment extends Fragment {
     OnBackPressedCallback callback;
     RecyclerView course_list_rv;
     BranchCourseList_Adapter branchCourseListFragment;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,8 +68,13 @@ public class BranchCourseListFragment extends Fragment {
         fab_contact = view.findViewById(R.id.fab_contact);
         course_list_rv = view.findViewById(R.id.course_list_rv);
         txt_nodata = view.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(9).getPageInfo().getPageID() == 75 && !userpermission.getPermission().get(9).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             GetAllCource();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();

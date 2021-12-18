@@ -2,6 +2,7 @@ package com.example.genius.Model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class BranchClassSingleModel {
@@ -34,7 +35,7 @@ public class BranchClassSingleModel {
         Completed = completed;
     }
 
-    public static class BranchClassData {
+    public static class BranchClassData implements Serializable {
         public long Class_dtl_id;
         public BranchModel branch;
         @SerializedName("Class")

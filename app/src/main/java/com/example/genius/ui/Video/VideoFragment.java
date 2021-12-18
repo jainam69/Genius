@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.Activity.VideoViewActivity;
@@ -50,6 +52,7 @@ import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Gallery.GallerySelectorFragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -91,6 +94,8 @@ public class VideoFragment extends Fragment {
     ByteArrayOutputStream byteBuffer;
     String Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
     VideoMaster_Adapter videoMaster_adapter;
+    UserModel userpermission;
+    LinearLayout linear_create_video;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -111,10 +116,16 @@ public class VideoFragment extends Fragment {
         video_scroll = root.findViewById(R.id.video_scroll);
         transaction_id = root.findViewById(R.id.transaction_id);
         unique_id = root.findViewById(R.id.unique_id);
+        linear_create_video = root.findViewById(R.id.linear_create_video);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        if (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85 && !userpermission.getPermission().get(37).getPackageRightinfo().isCreatestatus()){
+            linear_create_video.setVisibility(View.GONE);
+        }
 
         attachment_video.setOnClickListener(v -> requestPermissionForVideo());
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetVideoDetails();
         } else {
@@ -381,6 +392,7 @@ public class VideoFragment extends Fragment {
         List<GalleryModel> galleryDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public VideoMaster_Adapter(Context context, List<GalleryModel> galleryDetails) {
             this.context = context;
@@ -396,6 +408,18 @@ public class VideoFragment extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull VideoMaster_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85){
+                if (!userpermission.getPermission().get(37).getPackageRightinfo().isCreatestatus()){
+                    holder.video_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(37).getPackageRightinfo().isDeletestatus()){
+                    holder.video_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(37).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(37).getPackageRightinfo().isDeletestatus()){
+                    holder.video_edit.setVisibility(View.GONE);
+                    holder.video_delete.setVisibility(View.GONE);
+                }
+            }
             holder.description.setText(galleryDetails.get(position).getRemarks());
             holder.video_edit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
@@ -492,7 +516,7 @@ public class VideoFragment extends Fragment {
                 Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
-                title.setText("Are you sure that you want to View Video?");
+                title.setText("Are you sure that you want to Play Video?");
                 image.setImageResource(R.drawable.view);
                 AlertDialog dialog = builder.create();
 
@@ -531,6 +555,7 @@ public class VideoFragment extends Fragment {
                 video_image = itemView.findViewById(R.id.video_image);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             }
         }
     }

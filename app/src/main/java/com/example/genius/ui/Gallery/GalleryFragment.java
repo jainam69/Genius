@@ -48,6 +48,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -55,6 +56,7 @@ import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.utils.ImageUtility;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -91,9 +93,9 @@ public class GalleryFragment extends Fragment {
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String Ans, pictureFilePath, attach = "";
+    String pictureFilePath, attach = "";
     int flag = 0;
-    Boolean a, selectfile = false;
+    Boolean selectfile = false;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
@@ -106,6 +108,8 @@ public class GalleryFragment extends Fragment {
     Bitmap bitmap;
     GalleryMaster_Adapter galleryMaster_adapter;
     String Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
+    UserModel userpermission;
+    LinearLayout linear_create_image;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,8 +130,14 @@ public class GalleryFragment extends Fragment {
         text = root.findViewById(R.id.text);
         transactionid = root.findViewById(R.id.transactionid);
         gallery_scroll = root.findViewById(R.id.gallery_scroll);
+        linear_create_image = root.findViewById(R.id.linear_create_image);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(22).getPageInfo().getPageID() == 83 && !userpermission.getPermission().get(22).getPackageRightinfo().isCreatestatus()){
+            linear_create_image.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetGalleryDetails();
         } else {
@@ -597,6 +607,7 @@ public class GalleryFragment extends Fragment {
         List<GalleryModel> galleryDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public GalleryMaster_Adapter(Context context, List<GalleryModel> galleryDetails) {
             this.context = context;
@@ -611,6 +622,17 @@ public class GalleryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(22).getPageInfo().getPageID() == 83){
+                if (!userpermission.getPermission().get(22).getPackageRightinfo().isCreatestatus()){
+                    holder.gallery_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(22).getPackageRightinfo().isDeletestatus()){
+                    holder.gallery_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(22).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(22).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             holder.description.setText(galleryDetails.get(position).getRemarks());
             Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(holder.gallery_image);
             holder.gallery_edit.setOnClickListener(v -> {
@@ -713,6 +735,7 @@ public class GalleryFragment extends Fragment {
 
             TextView description;
             ImageView gallery_image, gallery_edit, gallery_delete;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -721,8 +744,10 @@ public class GalleryFragment extends Fragment {
                 gallery_image = itemView.findViewById(R.id.gallery_image);
                 gallery_edit = itemView.findViewById(R.id.gallery_edit);
                 gallery_delete = itemView.findViewById(R.id.gallery_delete);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             }
         }
     }

@@ -2,8 +2,15 @@ package com.example.genius.Adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +29,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.TestScheduleModel;
+import com.example.genius.Model.UploadPaperData;
+import com.example.genius.Model.UploadPaperModel;
+import com.example.genius.Model.UserModel;
+import com.example.genius.helper.Function;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Test_Paper_Entry_Fragment.Test_Paper_Checking_fragment;
 import com.example.genius.ui.Test_Schedule.test_schedule_fragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +62,9 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     ApiCalling apiCalling;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+    UserModel userpermission;
+    long downloadID;
+    String Name;
 
     public TestScheduleMaster_Adapter(Context context, List<TestScheduleModel> testScheduleDetails) {
         this.context = context;
@@ -65,6 +80,18 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TestScheduleMaster_Adapter.ViewHolder holder, int position) {
+        if (userpermission.getPermission().get(33).getPageInfo().getPageID() == 84){
+            if (!userpermission.getPermission().get(33).getPackageRightinfo().isCreatestatus()){
+                holder.testschedule_edit.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(33).getPackageRightinfo().isDeletestatus()){
+                holder.testschedule_delete.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(33).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(33).getPackageRightinfo().isDeletestatus()){
+                holder.testschedule_edit.setVisibility(View.GONE);
+                holder.testschedule_delete.setVisibility(View.GONE);
+            }
+        }
         holder.standard.setText(testScheduleDetails.get(position).getStandard().getStandard());
         holder.batch_time.setText(testScheduleDetails.get(position).getBatchTimeText());
         String a = testScheduleDetails.get(position).getTestDate().replace("T00:00:00", "");
@@ -204,6 +231,59 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        if (Function.isNetworkAvailable(context)) {
+                            progressBarHelper.showProgressDialog();
+                            Call<UploadPaperData> call = apiCalling.GetAllTestPapaerByTest(testScheduleDetails.get(position).getTestID());
+                            call.enqueue(new Callback<UploadPaperData>() {
+                                @Override
+                                public void onResponse(@NotNull Call<UploadPaperData> call, @NotNull Response<UploadPaperData> response) {
+                                    if (response.isSuccessful()) {
+                                        UploadPaperData data = response.body();
+                                        if (data.isCompleted()) {
+                                            List<UploadPaperModel> models = data.getData();
+                                            if (models != null && models.size() > 0) {
+                                                if (!models.get(0).getFileName().equals("")){
+                                                    String path = models.get(0).getFilePath();
+                                                    Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                                                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                                                    Uri uri = Uri.parse(path);
+                                                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                                                    Name = models.get(0).getFileName();
+                                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                                                    downloadID = dm.enqueue(request);
+                                                    context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                                                }else {
+                                                    try {
+                                                        String url = models.get(0).getDocLink();
+                                                        if (!models.get(0).getDocLink().startsWith("http://") && !models.get(0).getDocLink().startsWith("https://")){
+                                                            url = "http://" + models.get(0).getDocLink();
+                                                        }
+                                                        Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                                        webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        context.startActivity(webIntent);
+                                                    } catch (ActivityNotFoundException ex) {
+                                                        ex.printStackTrace();
+                                                    }
+                                                }
+                                            }else {
+                                                Toast.makeText(context, "You have not uploaded Test Paper.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                    progressBarHelper.hideProgressDialog();
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull Call<UploadPaperData> call, @NotNull Throwable t) {
+                                    Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                                    progressBarHelper.hideProgressDialog();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 dialog.show();
@@ -264,6 +344,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             testschedule_delete = itemView.findViewById(R.id.testschedule_delete);
             paper_view = itemView.findViewById(R.id.paper_view);
             test_paper = itemView.findViewById(R.id.test_paper);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
@@ -273,4 +354,14 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
         testScheduleDetails = filteredList;
         notifyDataSetChanged();
     }
+
+    private final BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context1, Intent intent) {
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+            if (downloadID == id) {
+                Toast.makeText(context, "Download " + Name + " Completed And Stored In AshirvadStudyCircle Folder...", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 }

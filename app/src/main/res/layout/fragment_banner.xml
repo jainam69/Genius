@@ -50,6 +50,11 @@
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/linear_create_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -167,6 +172,8 @@
             android:textColor="@color/white"
             android:textSize="14dp"
             android:textStyle="bold"/>
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"

@@ -39,12 +39,14 @@ import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Banner.Banner_Fragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -134,6 +136,7 @@ public class LibraryApproveFragment extends Fragment {
     }
 
     public static class LibraryApproval_Adapter extends RecyclerView.Adapter<LibraryApproval_Adapter.ViewHolder> {
+
         Context context;
         List<LibraryModel> libraryModels;
         long downloadID;
@@ -141,6 +144,7 @@ public class LibraryApproveFragment extends Fragment {
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
         int select;
+        UserModel userpermission;
 
         public LibraryApproval_Adapter(Context context, List<LibraryModel> libraryModels) {
             this.context = context;
@@ -153,10 +157,20 @@ public class LibraryApproveFragment extends Fragment {
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_library_approval_detail, parent, false));
         }
 
+        @SuppressLint("RecyclerView")
         @Override
-        public void onBindViewHolder(@NonNull LibraryApproval_Adapter.ViewHolder holder, int position) {
-            if (libraryModels.get(position).getThumbnailFilePath() != null && libraryModels.get(position).getThumbnailFilePath() != "") {
+        public void onBindViewHolder(@NonNull LibraryApproval_Adapter.ViewHolder holder,int position) {
+            for (int i = 0; i< userpermission.getPermission().size(); i++){
+                if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 80){
+                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+                        holder.img_edit.setVisibility(View.GONE);
+                    }
+                }
+            }
+            if (libraryModels.get(position).getLibrary_Type() == 2) {
                 Glide.with(context).load(libraryModels.get(position).getThumbnailFilePath()).into(holder.img_thumbnail);
+                holder.img_thumbnail.setVisibility(View.VISIBLE);
+                holder.img_download.setVisibility(View.VISIBLE);
             } else {
                 holder.img_thumbnail.setVisibility(View.GONE);
                 holder.img_download.setVisibility(View.GONE);
@@ -165,6 +179,7 @@ public class LibraryApproveFragment extends Fragment {
             holder.txt_branchname.setText("All Branch");
             if (libraryModels.get(position).getVideoLink() != null && !libraryModels.get(position).getVideoLink().equals("")) {
                 holder.txt_videolink.setText(libraryModels.get(position).getVideoLink());
+                holder.linear_videolink.setVisibility(View.VISIBLE);
             } else {
                 holder.linear_videolink.setVisibility(View.GONE);
             }
@@ -322,6 +337,7 @@ public class LibraryApproveFragment extends Fragment {
                 linear_videolink = itemView.findViewById(R.id.linear_videolink);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             }
         }
 

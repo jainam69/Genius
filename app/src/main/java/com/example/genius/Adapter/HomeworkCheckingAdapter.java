@@ -223,6 +223,8 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
                                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                                 downloadID = dm.enqueue(request);
                                 context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                            }else {
+                                Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

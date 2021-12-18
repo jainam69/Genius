@@ -81,14 +81,12 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull HomeworkMaster_Adapter.ViewHolder holder, int position) {
-        for (int i = 0; i < userpermission.getPermission().size(); i++){
-            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 37){
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
-                    holder.homework_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
-                    holder.homework_delete.setVisibility(View.GONE);
-                }
+        if (userpermission.getPermission().get(12).getPageInfo().getPageID() == 43){
+            if (!userpermission.getPermission().get(12).getPackageRightinfo().isCreatestatus()){
+                holder.homework_edit.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(12).getPackageRightinfo().isDeletestatus()){
+                holder.homework_delete.setVisibility(View.GONE);
             }
         }
         String a = homeworkDetails.get(position).getHomeworkDate().replace("T00:00:00", "");
@@ -240,7 +238,6 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             btn_edit_yes.setOnClickListener(v17 -> {
                 dialog.dismiss();
                 String filetype = homeworkDetails.get(position).getFilePath();
-                String filetyp = filetype.substring(filetype.lastIndexOf("."));
                 Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
                 DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                 Uri uri = Uri.parse(filetype);

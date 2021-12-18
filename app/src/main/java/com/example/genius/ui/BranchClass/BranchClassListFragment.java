@@ -24,6 +24,7 @@ import com.example.genius.Adapter.BranchClassListAdapter;
 import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.ClassModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -33,6 +34,7 @@ import com.example.genius.ui.BranchCource.BranchCourseFragment;
 import com.example.genius.ui.BranchCource.BranchCourseListFragment;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,6 +57,7 @@ public class BranchClassListFragment extends Fragment {
     RecyclerView class_list_rv;
     BranchClassListAdapter branchCourceAdapter;
     FloatingActionButton fab_contact;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,8 +71,13 @@ public class BranchClassListFragment extends Fragment {
         fab_contact = root.findViewById(R.id.fab_contact);
         class_list_rv = root.findViewById(R.id.class_list_rv);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(8).getPageInfo().getPageID() == 74 && !userpermission.getPermission().get(8).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllClass();
         } else {

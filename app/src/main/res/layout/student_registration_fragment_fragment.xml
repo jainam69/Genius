@@ -288,8 +288,8 @@
                     android:paddingLeft="9dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:textSize="13dp"
                     android:textColor="@color/black"
+                    android:textSize="13dp"
                     tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
                     tools:targetApi="o" />
 

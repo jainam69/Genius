@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +37,14 @@ import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +77,8 @@ public class LiveVideoFragment extends Fragment {
     NestedScrollView live_scroll;
     LiveVideo_Adapter liveVideo_adapter;
     Long StandardId;
+    LinearLayout linear_create_live;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,8 +100,14 @@ public class LiveVideoFragment extends Fragment {
         live_scroll = root.findViewById(R.id.live_scroll);
         transaction_id = root.findViewById(R.id.transaction_id);
         unique_id = root.findViewById(R.id.unique_id);
+        linear_create_live = root.findViewById(R.id.linear_create_live);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(16).getPageInfo().getPageID() == 79 && !userpermission.getPermission().get(16).getPackageRightinfo().isCreatestatus()){
+            linear_create_live.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllLiveVideo();
             GetAllStandard();
@@ -349,10 +360,12 @@ public class LiveVideoFragment extends Fragment {
             };
 
     public class LiveVideo_Adapter extends RecyclerView.Adapter<LiveVideo_Adapter.ViewHolder> {
+
         Context context;
         List<LinkModel> linkdetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public LiveVideo_Adapter(Context context, List<LinkModel> linkdetails) {
             this.context = context;
@@ -367,6 +380,17 @@ public class LiveVideoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull LiveVideo_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(16).getPageInfo().getPageID() == 79){
+                if (!userpermission.getPermission().get(16).getPackageRightinfo().isCreatestatus()){
+                    holder.live_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(16).getPackageRightinfo().isDeletestatus()){
+                    holder.live_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(16).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(16).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             if (linkdetails.get(position).getRowStatus().getRowStatusId() == 1) {
                 holder.video_name.setText("" + linkdetails.get(position).getTitle());
                 holder.description.setText("" + linkdetails.get(position).getLinkDesc());
@@ -456,6 +480,7 @@ public class LiveVideoFragment extends Fragment {
 
             TextView video_name, description, video_url,standard;
             ImageView live_edit, live_delete;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -465,6 +490,8 @@ public class LiveVideoFragment extends Fragment {
                 live_edit = itemView.findViewById(R.id.live_edit);
                 live_delete = itemView.findViewById(R.id.live_delete);
                 standard = itemView.findViewById(R.id.standard);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

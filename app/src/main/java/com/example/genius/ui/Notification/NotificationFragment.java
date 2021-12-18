@@ -105,12 +105,8 @@ public class NotificationFragment extends Fragment {
         linear_create_notification = root.findViewById(R.id.linear_create_notification);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        for (int i = 0; i < userpermission.getPermission().size(); i++){
-            if (userpermission.getPermission().get(i).getPageInfo().getPageID() ==10){
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
-                    linear_create_notification.setVisibility(View.GONE);
-                }
-            }
+        if (userpermission.getPermission().get(21).getPageInfo().getPageID() == 10 && !userpermission.getPermission().get(21).getPackageRightinfo().isCreatestatus()){
+            linear_create_notification.setVisibility(View.GONE);
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -447,17 +443,15 @@ public class NotificationFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Notification_Adapter.ViewHolder holder, int position) {
-            for (int i = 0; i < userpermission.getPermission().size(); i++){
-                if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 10){
-                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
-                        holder.noti_edit.setVisibility(View.GONE);
-                    }
-                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
-                        holder.noti_delete.setVisibility(View.GONE);
-                    }
-                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(0).getPackageRightinfo().isDeletestatus()){
-                        holder.linear_actions.setVisibility(View.GONE);
-                    }
+            if (userpermission.getPermission().get(21).getPageInfo().getPageID() == 10){
+                if (!userpermission.getPermission().get(21).getPackageRightinfo().isCreatestatus()){
+                    holder.noti_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(21).getPackageRightinfo().isDeletestatus()){
+                    holder.noti_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(21).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(21).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
                 }
             }
             holder.noti_desc.setText("" + notificationDetails.get(position).getNotificationMessage());

@@ -2,6 +2,7 @@ package com.example.genius.ui.Home_Fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,10 +22,15 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Activity.LoginActivity;
+import com.example.genius.Activity.MainActivity;
+import com.example.genius.Adapter.Home_Adapter;
 import com.example.genius.Adapter.ViewPager_Adapter;
 import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
@@ -34,6 +40,7 @@ import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.example.genius.helper.RecyclerTouchListener;
 import com.example.genius.ui.Attendance_Fragment.attendance_Listfragment;
 import com.example.genius.ui.FeeStructure.FeeStructureFragment;
 import com.example.genius.ui.Gallery.GallerySelectorFragment;
@@ -76,9 +83,11 @@ public class home_fragment extends Fragment {
     ViewPager viewPager;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    CardView linear_attendance,linear_homework;
-    LinearLayout linear_masters, linear_students, linear_test_schedule, linear_test_marks, linear_practice_papers, linear_fees_structure,
-            linear_gallery, linear_youtube_video, linear_live_video, linear_task, linear_reminder, linear_permission, linear_library;
+    RecyclerView home_rv;
+    Home_Adapter home_adapter;
+    ArrayList<String> pagename = new ArrayList<>();
+    ArrayList<Integer> image = new ArrayList<>();
+    OnBackPressedCallback callback;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -87,43 +96,16 @@ public class home_fragment extends Fragment {
         root = inflater.inflate(R.layout.home_fragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
-        linear_masters = root.findViewById(R.id.linear_masters);
-        linear_students = root.findViewById(R.id.linear_students);
-        linear_gallery = root.findViewById(R.id.linear_gallery);
-        linear_homework = root.findViewById(R.id.linear_homework);
-        linear_youtube_video = root.findViewById(R.id.linear_youtube_video);
-        linear_library = root.findViewById(R.id.linear_library);
-        linear_attendance = root.findViewById(R.id.linear_attendance);
-        linear_live_video = root.findViewById(R.id.linear_live_video);
-        linear_practice_papers = root.findViewById(R.id.linear_practice_papers);
-        linear_reminder = root.findViewById(R.id.linear_reminder);
-        linear_test_schedule = root.findViewById(R.id.linear_test_schedule);
-        linear_test_marks = root.findViewById(R.id.linear_test_marks);
-        linear_task = root.findViewById(R.id.linear_task);
-        linear_permission = root.findViewById(R.id.linear_permission);
-        linear_fees_structure = root.findViewById(R.id.linear_fees_structure);
+        home_rv = root.findViewById(R.id.home_rv);
         viewPager = root.findViewById(R.id.viewpager);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         circlePageIndicator = root.findViewById(R.id.circlepagerindicator);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
 
         if (Function.isNetworkAvailable(context)) {
             GetBannerDetails();
+            GetUserPermission();
         } else {
-            Toast.makeText(context, "No Internet Connection..", Toast.LENGTH_SHORT).show();
-        }
-
-        for (int i = 0; i < userpermission.getPermission().size(); i++){
-            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 19){
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
-                    linear_attendance.setVisibility(View.GONE);
-                }
-            }
-            if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 37){
-                if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(i).getPackageRightinfo().isDeletestatus()){
-                    linear_homework.setVisibility(View.GONE);
-                }
-            }
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
         if (ContextCompat.checkSelfPermission(context,
@@ -138,135 +120,136 @@ public class home_fragment extends Fragment {
                     PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-        linear_masters.setOnClickListener(v -> {
-            MasterSelectorFragment orderplace = new MasterSelectorFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-        linear_students.setOnClickListener(v -> {
-            student_registration_Listfragment orderplace = new student_registration_Listfragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-        linear_gallery.setOnClickListener(v -> {
-            GallerySelectorFragment orderplace = new GallerySelectorFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
+        home_rv.addOnItemTouchListener(new RecyclerTouchListener(context, home_rv, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                if (pagename.get(position).equals("MASTERS")){
+                    MasterSelectorFragment orderplace = new MasterSelectorFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("STUDENTS")){
+                    student_registration_Listfragment orderplace = new student_registration_Listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("ATTENDANCE")){
+                    attendance_Listfragment orderplace = new attendance_Listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("TEST SCHEDULE")){
+                    test_Listfragment orderplace = new test_Listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("TEST MARKS")){
+                    marks_entry_Listfragment orderplace = new marks_entry_Listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("PRACTICE PAPERS")){
+                    practice_paper_Listfragment orderplace = new practice_paper_Listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("HOMEWORKS")){
+                    homework_Listfragment orderplace = new homework_Listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("GALLERY")){
+                    GallerySelectorFragment orderplace = new GallerySelectorFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("YOU-TUBE VIDEO")){
+                    YoutubeVideoFragment orderplace = new YoutubeVideoFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("LIVE VIDEO")){
+                    LiveVideoFragment orderplace = new LiveVideoFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("TASK")){
+                    TaskListFragment orderplace = new TaskListFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("REMINDER")){
+                    reminder_fragment orderplace = new reminder_fragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("FEE STRUCTURE")){
+                    FeeStructureFragment orderplace = new FeeStructureFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("LIBRARY")){
+                    LibrarySelectorFragment orderplace = new LibrarySelectorFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+            }
+            @Override
+            public void onLongClick(View view, int position) {
 
-        linear_youtube_video.setOnClickListener(v -> {
-            YoutubeVideoFragment orderplace = new YoutubeVideoFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
+            }
+        }));
 
-        linear_homework.setOnClickListener(v -> {
-            homework_Listfragment orderplace = new homework_Listfragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
+        callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                getActivity().finish();
+            }
+        };
+        getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
 
-        linear_library.setOnClickListener(v -> {
-            LibrarySelectorFragment orderplace = new LibrarySelectorFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-        linear_task.setOnClickListener(v -> {
-            TaskListFragment orderplace = new TaskListFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-
-        linear_reminder.setOnClickListener(v -> {
-            reminder_fragment orderplace = new reminder_fragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-
-        linear_practice_papers.setOnClickListener(v -> {
-            practice_paper_Listfragment orderplace = new practice_paper_Listfragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-
-        linear_test_marks.setOnClickListener(v -> {
-            marks_entry_Listfragment orderplace = new marks_entry_Listfragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-
-        linear_test_schedule.setOnClickListener(v -> {
-            test_Listfragment orderplace = new test_Listfragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-
-        linear_live_video.setOnClickListener(v -> {
-            LiveVideoFragment orderplace = new LiveVideoFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-
-        linear_attendance.setOnClickListener(v -> {
-            attendance_Listfragment orderplace = new attendance_Listfragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-        linear_permission.setOnClickListener(v -> {
-            PermissionListFragment orderplace = new PermissionListFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
-        linear_fees_structure.setOnClickListener(view -> {
-            FeeStructureFragment orderplace = new FeeStructureFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
         return root;
     }
 
@@ -318,5 +301,115 @@ public class home_fragment extends Fragment {
                 progressBarHelper.hideProgressDialog();
             }
         });
+    }
+
+    public void GetUserPermission()
+    {
+        progressBarHelper.showProgressDialog();
+        Call<UserModel.UserData> call = apiCalling.Get_User_Permission(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<UserModel.UserData>() {
+            @Override
+            public void onResponse(Call<UserModel.UserData> call, Response<UserModel.UserData> response) {
+                if (response.isSuccessful()) {
+                    UserModel.UserData data = response.body();
+                    if (data.isCompleted()) {
+                        UserModel model = data.getData();
+                        if (model.getPermission().size() > 0) {
+                            Preferences.getInstance(context).setString(Preferences.KEY_PERMISSION_LIST,new Gson().toJson(model));
+                            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                        } else {
+                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                SetUserPermission();
+                progressBarHelper.hideProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<UserModel.UserData> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context,t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void SetUserPermission()
+    {
+        if ((userpermission.getPermission().get(36).getPageInfo().getPageID() == 4 && userpermission.getPermission().get(36).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(26).getPageInfo().getPageID() == 6 && userpermission.getPermission().get(26).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(9).getPageInfo().getPageID() == 75 && userpermission.getPermission().get(9).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(8).getPageInfo().getPageID() == 74 && userpermission.getPermission().get(8).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(10).getPageInfo().getPageID() == 76 && userpermission.getPermission().get(10).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(5).getPageInfo().getPageID() == 73 && userpermission.getPermission().get(5).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(21).getPageInfo().getPageID() == 10 && userpermission.getPermission().get(21).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(11).getPageInfo().getPageID() == 77 && userpermission.getPermission().get(11).getPackageRightinfo().isViewstatus())){
+            pagename.add("MASTERS");
+            image.add(R.drawable.master);
+        }
+        if (userpermission.getPermission().get(18).getPageInfo().getPageID() == 9 && userpermission.getPermission().get(18).getPackageRightinfo().isViewstatus()){
+            pagename.add("STUDENTS");
+            image.add(R.drawable.students);
+        }
+        if (userpermission.getPermission().get(4).getPageInfo().getPageID() == 19 && userpermission.getPermission().get(4).getPackageRightinfo().isViewstatus()){
+            pagename.add("ATTENDANCE");
+            image.add(R.drawable.attendance);
+        }
+        if (userpermission.getPermission().get(33).getPageInfo().getPageID() == 84 && userpermission.getPermission().get(33).getPackageRightinfo().isViewstatus()){
+            pagename.add("TEST SCHEDULE");
+            image.add(R.drawable.schedules);
+        }
+        if (userpermission.getPermission().get(20).getPageInfo().getPageID() == 82 && userpermission.getPermission().get(20).getPackageRightinfo().isViewstatus()){
+            pagename.add("TEST MARKS");
+            image.add(R.drawable.marks);
+        }
+        if (userpermission.getPermission().get(23).getPageInfo().getPageID() == 36 && userpermission.getPermission().get(23).getPackageRightinfo().isViewstatus()){
+            pagename.add("PRACTICE PAPERS");
+            image.add(R.drawable.practice);
+        }
+        if (userpermission.getPermission().get(12).getPageInfo().getPageID() == 43 && userpermission.getPermission().get(12).getPackageRightinfo().isViewstatus()){
+            pagename.add("HOMEWORKS");
+            image.add(R.drawable.homework);
+        }
+        if ((userpermission.getPermission().get(22).getPageInfo().getPageID() == 83 && userpermission.getPermission().get(22).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85 && userpermission.getPermission().get(37).getPackageRightinfo().isViewstatus())){
+            pagename.add("GALLERY");
+            image.add(R.drawable.gallery);
+        }
+        if (userpermission.getPermission().get(38).getPageInfo().getPageID() == 86 && userpermission.getPermission().get(38).getPackageRightinfo().isViewstatus()){
+            pagename.add("YOU-TUBE VIDEO");
+            image.add(R.drawable.youtube);
+        }
+        if (userpermission.getPermission().get(16).getPageInfo().getPageID() == 79 && userpermission.getPermission().get(16).getPackageRightinfo().isViewstatus()){
+            pagename.add("LIVE VIDEO");
+            image.add(R.drawable.live);
+        }
+        if (userpermission.getPermission().get(35).getPageInfo().getPageID() == 39 && userpermission.getPermission().get(35).getPackageRightinfo().isViewstatus()){
+            pagename.add("TASK");
+            image.add(R.drawable.task);
+        }
+        if (userpermission.getPermission().get(24).getPageInfo().getPageID() == 40 && userpermission.getPermission().get(24).getPackageRightinfo().isViewstatus()){
+            pagename.add("REMINDER");
+            image.add(R.drawable.reminder);
+        }
+        if (userpermission.getPermission().get(29).getPageInfo().getPageID() == 15 && userpermission.getPermission().get(29).getPackageRightinfo().isViewstatus()){
+            pagename.add("FEE STRUCTURE");
+            image.add(R.drawable.branchclass);
+        }
+        if ((userpermission.getPermission().get(13).getPageInfo().getPageID() == 78 && userpermission.getPermission().get(13).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(14).getPageInfo().getPageID() == 30 && userpermission.getPermission().get(14).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(17).getPageInfo().getPageID() == 80 && userpermission.getPermission().get(17).getPackageRightinfo().isViewstatus()) ||
+                (userpermission.getPermission().get(39).getPageInfo().getPageID() == 88 && userpermission.getPermission().get(39).getPackageRightinfo().isViewstatus())){
+            pagename.add("LIBRARY");
+            image.add(R.drawable.library);
+        }
+
+        home_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        home_rv.setLayoutManager(new GridLayoutManager(context, 2));
+        home_adapter = new Home_Adapter(context,pagename,image);
+        home_adapter.notifyDataSetChanged();
+        home_rv.setAdapter(home_adapter);
     }
 }

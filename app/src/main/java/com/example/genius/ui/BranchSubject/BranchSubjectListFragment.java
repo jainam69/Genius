@@ -23,6 +23,7 @@ import com.example.genius.Adapter.BranchSubjectListAapter;
 import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchSubjectModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -31,6 +32,7 @@ import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.BranchClass.BranchClassFragment;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,11 +54,11 @@ public class BranchSubjectListFragment extends Fragment {
     FloatingActionButton fab_contact;
     BranchSubjectListAapter branchSubjectListAapter;
     RecyclerView class_list_rv;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Subject List");
         root = inflater.inflate(R.layout.fragment_branch_subject_list, container, false);
         context = getActivity();
@@ -65,8 +67,13 @@ public class BranchSubjectListFragment extends Fragment {
         fab_contact = root.findViewById(R.id.fab_contact);
         class_list_rv = root.findViewById(R.id.class_list_rv);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(10).getPageInfo().getPageID() == 76 && !userpermission.getPermission().get(10).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllSubjectBranchData();
         } else {

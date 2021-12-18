@@ -39,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ import com.example.genius.Model.FeeStructureModel;
 import com.example.genius.Model.FeeStructureSingleData;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -59,6 +61,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.example.genius.utils.ImageUtility;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -99,6 +102,7 @@ public class FeeStructureFragment extends Fragment {
     RecyclerView banner_rv;
     BannerMaster_Adapter bannerMaster_adapter;
     Button save_banner, edit_banner;
+    LinearLayout linear_create_fee;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -118,6 +122,7 @@ public class FeeStructureFragment extends Fragment {
     ImageView imageView;
     long TransactionId, FeesId, FeesDetailId;
     String Description = "none", Extension,FinalFileName,RandomFileName,OriginFilename;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -142,8 +147,13 @@ public class FeeStructureFragment extends Fragment {
         banner_scroll = root.findViewById(R.id.banner_scroll);
         remarks = root.findViewById(R.id.remarks);
         imageView = root.findViewById(R.id.imageView);
-
+        linear_create_fee = root.findViewById(R.id.linear_create_fee);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+
+        if (userpermission.getPermission().get(29).getPageInfo().getPageID() == 15 && !userpermission.getPermission().get(29).getPackageRightinfo().isCreatestatus()){
+            linear_create_fee.setVisibility(View.GONE);
+        }
 
         banner_image.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -550,6 +560,7 @@ public class FeeStructureFragment extends Fragment {
         List<FeeStructureModel> bannerDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public BannerMaster_Adapter(Context context, List<FeeStructureModel> bannerDetails) {
             this.context = context;
@@ -564,6 +575,17 @@ public class FeeStructureFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull BannerMaster_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(29).getPageInfo().getPageID() == 15){
+                if (!userpermission.getPermission().get(29).getPackageRightinfo().isCreatestatus()){
+                    holder.banner_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(29).getPackageRightinfo().isDeletestatus()){
+                    holder.banner_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(29).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(29).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             holder.remark.setText(bannerDetails.get(position).getRemark());
             holder.standard.setText(bannerDetails.get(position).getStandardInfo().getStandard());
             Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
@@ -666,6 +688,7 @@ public class FeeStructureFragment extends Fragment {
 
             ImageView banner_image, banner_edit, banner_delete;
             TextView standard, remark;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -675,9 +698,10 @@ public class FeeStructureFragment extends Fragment {
                 banner_delete = itemView.findViewById(R.id.banner_delete);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 standard = itemView.findViewById(R.id.standard);
                 remark = itemView.findViewById(R.id.remark);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
             }
         }
 

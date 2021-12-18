@@ -19,10 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.StudentModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
+import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Student_Registration_Fragment.student_registration_fragment;
+import com.google.gson.Gson;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,6 +41,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
     ApiCalling apiCalling;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+    UserModel userpermission;
 
     public StudentMaster_Adapter(Context context, List<StudentModel> studentDetails) {
         this.context = context;
@@ -51,7 +55,9 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
 
     @Override
     public void onBindViewHolder(@NonNull StudentMaster_Adapter.ViewHolder holder, int position) {
-
+        if (userpermission.getPermission().get(30).getPageInfo().getPageID() == 8 && !userpermission.getPermission().get(30).getPackageRightinfo().isCreatestatus()){
+            holder.student_edit.setVisibility(View.GONE);
+        }
         holder.student_name.setText(studentDetails.get(position).getFirstName());
         if (studentDetails.get(position).getAdmissionDate() != null) {
             String a = studentDetails.get(position).getAdmissionDate().replace("T00:00:00", "");
@@ -170,6 +176,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
             batch_time = itemView.findViewById(R.id.batch_time);
             contact_no = itemView.findViewById(R.id.contact_no);
             student_edit = itemView.findViewById(R.id.student_edit);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

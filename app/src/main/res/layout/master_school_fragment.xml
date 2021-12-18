@@ -16,6 +16,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/linear_create_school"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -28,6 +34,7 @@
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+
                 <AutoCompleteTextView
                     android:id="@+id/school_name"
                     android:layout_width="match_parent"
@@ -35,8 +42,8 @@
                     android:layout_toRightOf="@+id/emailimg"
                     android:background="@android:color/transparent"
                     android:hint="Select School Name"
-                    android:maxLines="1"
                     android:inputType="textCapWords"
+                    android:maxLines="1"
                     android:paddingLeft="9dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
@@ -129,6 +136,8 @@
                 android:textColor="@color/white"
                 android:textSize="14dp"
                 android:textStyle="bold"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/text"

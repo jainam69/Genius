@@ -26,12 +26,14 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.LibraryMaster_Adapter;
 import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +56,7 @@ public class library_Listfragment extends Fragment {
     OnBackPressedCallback callback;
     EditText library_category;
     FloatingActionButton fab_contact;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -70,8 +73,13 @@ public class library_Listfragment extends Fragment {
         library_rv = root.findViewById(R.id.library_rv);
         fab_contact = root.findViewById(R.id.fab_contact);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(13).getPageInfo().getPageID() == 78 && !userpermission.getPermission().get(13).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetLibraryDetails();
         } else {

@@ -28,6 +28,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.TestScheduleMaster_Adapter;
 import com.example.genius.Model.TestScheduleData;
 import com.example.genius.Model.TestScheduleModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -35,6 +36,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -70,11 +72,12 @@ public class test_Listfragment extends Fragment {
     String Date;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Schedule");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Schedule List");
         View root = inflater.inflate(R.layout.test_list_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -86,8 +89,13 @@ public class test_Listfragment extends Fragment {
         clear = root.findViewById(R.id.clear);
         search = root.findViewById(R.id.search);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(33).getPageInfo().getPageID() == 84 && !userpermission.getPermission().get(33).getPackageRightinfo().isCreatestatus()){
+            fab_contact.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetTestScheduleDetails();
         } else {

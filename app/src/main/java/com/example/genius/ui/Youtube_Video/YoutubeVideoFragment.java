@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,12 +36,14 @@ import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
@@ -69,26 +72,8 @@ public class YoutubeVideoFragment extends Fragment {
     NestedScrollView you_scroll;
     Long StandardId;
     YoutubeVideo_Adapter youtubeVideo_adapter;
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
-                    StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
+    UserModel userpermission;
+    LinearLayout linear_create_youtube;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,8 +94,14 @@ public class YoutubeVideoFragment extends Fragment {
         id = root.findViewById(R.id.id);
         text = root.findViewById(R.id.text);
         you_scroll = root.findViewById(R.id.you_scroll);
+        linear_create_youtube = root.findViewById(R.id.linear_create_youtube);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(38).getPageInfo().getPageID() == 86 && !userpermission.getPermission().get(38).getPackageRightinfo().isCreatestatus()){
+            linear_create_youtube.setVisibility(View.GONE);
+        }
+
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllStandard();
             GetAllYoutubeVideos();
@@ -333,11 +324,33 @@ public class YoutubeVideoFragment extends Fragment {
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
+    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StandardName = standarditem.get(position);
+                    StandardId = Long.parseLong(standardid.get(position).toString());
+                    if (standard.getSelectedItem().equals("Select Standard")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
     public class YoutubeVideo_Adapter extends RecyclerView.Adapter<YoutubeVideo_Adapter.ViewHolder> {
+
         Context context;
         List<LinkModel> linkdetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
+        UserModel userpermission;
 
         public YoutubeVideo_Adapter(Context context, List<LinkModel> linkdetails) {
             this.context = context;
@@ -351,6 +364,17 @@ public class YoutubeVideoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull YoutubeVideo_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(38).getPageInfo().getPageID() == 86){
+                if (!userpermission.getPermission().get(38).getPackageRightinfo().isCreatestatus()){
+                    holder.youtube_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(38).getPackageRightinfo().isDeletestatus()){
+                    holder.youtube_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(38).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(38).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             if (linkdetails.get(position).getRowStatus().getRowStatusId() == 1) {
                 try {
                     int qw = standardid.indexOf(Integer.parseInt(String.valueOf(linkdetails.get(position).getStandardID())));
@@ -467,6 +491,7 @@ public class YoutubeVideoFragment extends Fragment {
 
             TextView standardname, title, youtube_url;
             ImageView youtube_delete, youtube_edit;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -475,6 +500,8 @@ public class YoutubeVideoFragment extends Fragment {
                 youtube_url = itemView.findViewById(R.id.youtube_url);
                 youtube_delete = itemView.findViewById(R.id.youtube_delete);
                 youtube_edit = itemView.findViewById(R.id.youtube_edit);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.StaffModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Staff_Entry_Fragment.staff_entry_fragment;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -39,6 +42,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
     List<StaffModel> staffDetails;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
+    UserModel userpermission;
 
     public StaffMaster_Adapter(Context context, List<StaffModel> staffDetails) {
         this.context = context;
@@ -52,6 +56,17 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
     @Override
     public void onBindViewHolder(@NonNull StaffMaster_Adapter.ViewHolder holder, int position) {
+        if (userpermission.getPermission().get(36).getPageInfo().getPageID() == 4){
+            if (!userpermission.getPermission().get(36).getPackageRightinfo().isCreatestatus()){
+                holder.staff_edit.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(36).getPackageRightinfo().isDeletestatus()){
+                holder.staff_delete.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(36).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(36).getPackageRightinfo().isDeletestatus()){
+                holder.linear_actions.setVisibility(View.GONE);
+            }
+        }
         if (staffDetails.get(position).getRowStatus().getRowStatusId()==1){
             holder.staff_name.setText(staffDetails.get(position).getName());
             holder.mobile_no.setText(staffDetails.get(position).getMobileNo());
@@ -194,6 +209,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
         TextView staff_name, mobile_no, email, user_type, status,gender;
         ImageView staff_edit, staff_delete;
+        LinearLayout linear_actions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -206,6 +222,8 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
             staff_edit = itemView.findViewById(R.id.staff_edit);
             staff_delete = itemView.findViewById(R.id.staff_delete);
             gender = itemView.findViewById(R.id.gender);
+            linear_actions = itemView.findViewById(R.id.linear_actions);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

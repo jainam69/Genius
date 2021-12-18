@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -114,19 +116,14 @@ public class TaskFragment extends Fragment {
     private int month;
     private int day;
     TodoMaster_Adapter todoMaster_adapter;
+    LinearLayout linear_create_todo;
+    UserModel userpermission;
 
     private static String pad(int c) {
         if (c >= 10)
             return String.valueOf(c);
         else
             return "0" + c;
-    }
-
-    public static String yesterday() {
-        Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        cal.add(Calendar.DATE, 0);
-        return dateFormat.format(cal.getTime());
     }
 
     @Override
@@ -152,7 +149,13 @@ public class TaskFragment extends Fragment {
         status = root.findViewById(R.id.status);
         scroll = root.findViewById(R.id.scroll);
         no_content = root.findViewById(R.id.no_content);
+        linear_create_todo = root.findViewById(R.id.linear_create_todo);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+
+        if (userpermission.getPermission().get(34).getPageInfo().getPageID() == 38 && !userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus()){
+            linear_create_todo.setVisibility(View.GONE);
+        }
 
         if (Function.isNetworkAvailable(context)) {
             selectstatus();
@@ -622,6 +625,7 @@ public class TaskFragment extends Fragment {
         DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
         long downloadID;
         String Name;
+        UserModel userpermission;
 
         public TodoMaster_Adapter(Context context, List<TodoModel> todoModels) {
             this.context = context;
@@ -637,7 +641,18 @@ public class TaskFragment extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull TodoMaster_Adapter.ViewHolder holder, int position) {
-
+            if (userpermission.getPermission().get(34).getPageInfo().getPageID() == 38){
+                if (!userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus()){
+                    holder.task_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(34).getPackageRightinfo().isDeletestatus()){
+                    holder.task_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(34).getPackageRightinfo().isDeletestatus()){
+                    holder.task_edit.setVisibility(View.GONE);
+                    holder.task_delete.setVisibility(View.GONE);
+                }
+            }
             if (todoModels.get(position).getToDoDate() != null) {
                 String a = todoModels.get(position).getToDoDate().replace("T00:00:00", "");
                 try {
@@ -827,6 +842,7 @@ public class TaskFragment extends Fragment {
                 task_delete = itemView.findViewById(R.id.task_delete);
                 task_description = itemView.findViewById(R.id.task_description);
                 task_download = itemView.findViewById(R.id.task_download);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

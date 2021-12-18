@@ -14,6 +14,7 @@
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/linear_image"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginLeft="25dp"
@@ -22,7 +23,6 @@
             android:layout_weight="1">
 
             <LinearLayout
-                android:id="@+id/linear_image"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:gravity="center"
@@ -51,6 +51,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/linear_video"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginLeft="10dp"
@@ -59,7 +60,6 @@
             android:layout_weight="1">
 
             <LinearLayout
-                android:id="@+id/linear_video"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:gravity="center"

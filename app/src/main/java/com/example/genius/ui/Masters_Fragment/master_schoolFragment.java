@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,11 +34,13 @@ import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.SchoolData;
 import com.example.genius.Model.SchoolModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,7 @@ import retrofit2.Response;
 public class master_schoolFragment extends Fragment {
 
     AutoCompleteTextView school_name;
+    LinearLayout linear_create_school;
     RadioButton school_active, school_inactive;
     Button save_school_master, edit_school_master;
     RecyclerView school_rv;
@@ -63,6 +67,7 @@ public class master_schoolFragment extends Fragment {
     OnBackPressedCallback callback;
     NestedScrollView school_scroll;
     SchoolMaster_Adapter schoolMaster_adapter;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -83,6 +88,12 @@ public class master_schoolFragment extends Fragment {
         text = root.findViewById(R.id.text);
         school_scroll = root.findViewById(R.id.school_scroll);
         transaction_id = root.findViewById(R.id.transaction_id);
+        linear_create_school = root.findViewById(R.id.linear_create_school);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+
+        if (userpermission.getPermission().get(26).getPageInfo().getPageID() == 6 && !userpermission.getPermission().get(26).getPackageRightinfo().isCreatestatus()){
+            linear_create_school.setVisibility(View.GONE);
+        }
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -272,7 +283,7 @@ public class master_schoolFragment extends Fragment {
         List<SchoolModel> schoolDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        String sname;
+        UserModel userpermission;
 
         public SchoolMaster_Adapter(Context context, List<SchoolModel> schoolDetails) {
             this.context = context;
@@ -286,6 +297,17 @@ public class master_schoolFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull SchoolMaster_Adapter.ViewHolder holder, int position) {
+            if (userpermission.getPermission().get(26).getPageInfo().getPageID() == 6){
+                if (!userpermission.getPermission().get(26).getPackageRightinfo().isCreatestatus()){
+                    holder.school_edit.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(26).getPackageRightinfo().isDeletestatus()){
+                    holder.school_delete.setVisibility(View.GONE);
+                }
+                if (!userpermission.getPermission().get(26).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(26).getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
+            }
             if (schoolDetails.get(position).getRowStatus().getRowStatusId() == 1) {
                 holder.school_name.setText(schoolDetails.get(position).getSchoolName());
                 holder.school_edit.setOnClickListener(new View.OnClickListener() {
@@ -396,6 +418,7 @@ public class master_schoolFragment extends Fragment {
 
             TextView school_name, status;
             ImageView school_edit, school_delete;
+            LinearLayout linear_actions;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -403,6 +426,8 @@ public class master_schoolFragment extends Fragment {
                 status = itemView.findViewById(R.id.status);
                 school_edit = itemView.findViewById(R.id.school_edit);
                 school_delete = itemView.findViewById(R.id.school_delete);
+                linear_actions = itemView.findViewById(R.id.linear_actions);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

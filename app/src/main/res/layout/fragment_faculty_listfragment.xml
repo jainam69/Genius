@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+
     <LinearLayout
         android:id="@+id/editLinear"
         android:layout_width="match_parent"
@@ -18,36 +19,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
             android:background="@drawable/border">
 
             <EditText
-                android:id="@+id/stu_name"
+                android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:hint="Student Name"
+                android:hint="Search"
                 android:inputType="text"
-                android:maxLines="1"
-                android:padding="12dp"
-                android:singleLine="true"
-                android:textSize="15dp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/border">
-
-            <EditText
-                android:id="@+id/con_no"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="Contact No."
-                android:inputType="phone"
                 android:maxLines="1"
                 android:padding="12dp"
                 android:singleLine="true"
@@ -66,44 +46,25 @@
         android:layout_marginRight="10dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="2">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_weight="1">
-
             <Button
-                android:id="@+id/active"
+                android:visibility="invisible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/blue_fill"
-                android:text="Active"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="16dp" />
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_marginRight="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end">
-
-            <Button
-                android:id="@+id/inactive"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/blue_fill"
-                android:text="Inactive"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:text="Clear"
                 android:textSize="16dp"
-                android:textStyle="bold" />
+                android:background="@drawable/blue_fill__rounded_color"
+                android:textColor="@color/white"/>
 
         </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -114,40 +75,34 @@
                 android:id="@+id/clear"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-                android:text="Clear"
-                android:textSize="16dp"
                 android:background="@drawable/blue_fill"
-                android:textColor="@color/white"/>
+                android:text="Clear"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
-
 
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/student_rv"
+        android:id="@+id/faculty_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/buttonLinear"
         android:layout_marginTop="10dp" />
 
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:id="@+id/txt_nodata"
-        android:layout_below="@id/buttonLinear">
-
     <TextView
-        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/txt_nodata"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="No Data Found"
-        android:textColor="@color/black"/>
-    </LinearLayout>
+        android:textColor="@color/black"
+        android:layout_below="@id/buttonLinear"
+        android:gravity="center"
+        android:layout_marginTop="200dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/MyFabOverlay"

@@ -24,6 +24,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.TaskRegister_Adapter;
 import com.example.genius.Model.TodoData;
 import com.example.genius.Model.TodoModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -31,6 +32,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Home_Fragment.home_fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -58,10 +60,9 @@ public class TaskListFragment extends Fragment {
     List<String> statusitem = new ArrayList<>(), statusid = new ArrayList<>();
     String[] STATUSITEM, STATUSID;
     String StatusName;
-    HashMap<Integer, Object> dateHashMap;
-    Calendar calendar;
     TextView no_content;
     TaskRegister_Adapter taskRegister_adapter;
+    UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,9 +77,13 @@ public class TaskListFragment extends Fragment {
         status = root.findViewById(R.id.status);
         task_reg_rv = root.findViewById(R.id.task_reg_rv);
         no_content = root.findViewById(R.id.no_content);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (Function.checkNetworkConnection(context)) {
+        if (userpermission.getPermission().get(34).getPageInfo().getPageID() == 38 && !userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus()){
+            fab_task.setVisibility(View.GONE);
+        }
 
+        if (Function.isNetworkAvailable(context)) {
             selectstatus();
             GetAllTask();
         } else {

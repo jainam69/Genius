@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,12 +25,14 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.BranchClass.BranchClassFragment;
 import com.example.genius.ui.BranchSubject.BranchSubjectFragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +49,7 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
     public List<BranchSubjectModel.BranchSubjectData> CourceDataList;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
+    UserModel userpermission;
 
     public BranchSubjectListAapter(Context context, List<BranchSubjectModel.BranchSubjectData> courceDataList) {
         this.context = context;
@@ -63,6 +67,17 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (userpermission.getPermission().get(10).getPageInfo().getPageID() == 76){
+            if (!userpermission.getPermission().get(10).getPackageRightinfo().isCreatestatus()){
+                holder.img_edit.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(10).getPackageRightinfo().isDeletestatus()){
+                holder.img_delete.setVisibility(View.GONE);
+            }
+            if (!userpermission.getPermission().get(10).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(10).getPackageRightinfo().isDeletestatus()){
+                holder.linear_actions.setVisibility(View.GONE);
+            }
+        }
         holder.txt_branch_name.setText(CourceDataList.get(position).branch.getBranchName());
         holder.txt_course_name.setText(CourceDataList.get(position).BranchCourse.getCourse().getCourseName());
         holder.txt_class_name.setText(CourceDataList.get(position).getClassModel().getClassName());
@@ -154,11 +169,12 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
         return CourceDataList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txt_branch_name, txt_course_name, txt_class_name;
         RecyclerView subject_sublist_rv;
         ImageView img_edit, img_delete;
+        LinearLayout linear_actions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -169,7 +185,8 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
             txt_class_name = itemView.findViewById(R.id.txt_class_name);
             img_edit = itemView.findViewById(R.id.img_edit);
             img_delete = itemView.findViewById(R.id.img_delete);
-
+            linear_actions = itemView.findViewById(R.id.linear_actions);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         }
     }
 
