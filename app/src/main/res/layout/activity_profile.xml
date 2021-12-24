@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Activity.ChangePasswordActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/border">
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_toEndOf="@+id/pwd1"
+            android:background="@android:color/transparent"
+            android:hint="Name"
+            android:maxLines="1"
+            android:paddingStart="9dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            tools:ignore="Autofill,HardcodedText,RtlSymmetry,TextFields"
+            tools:targetApi="o" />
+
+
+        <ImageView
+            android:id="@+id/pwd1"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/password"
+            app:tint="@color/blue" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/border">
+
+        <EditText
+            android:id="@+id/mobile_no"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_toEndOf="@+id/pwd2"
+            android:background="@android:color/transparent"
+            android:hint="Mobile No(Login ID)"
+            android:importantForAutofill="no"
+            android:maxLines="1"
+            android:maxLength="10"
+            android:inputType="number"
+            android:paddingStart="9dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText,RtlSymmetry"
+            tools:targetApi="o" />
+
+
+        <ImageView
+            android:id="@+id/pwd2"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/password"
+            app:tint="@color/blue" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/border">
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_toEndOf="@+id/pwd3"
+            android:background="@android:color/transparent"
+            android:hint="Email"
+            android:importantForAutofill="no"
+            android:maxLines="1"
+            android:paddingStart="9dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            tools:ignore="Deprecated,HardcodedText,RtlSymmetry,TextFields"
+            tools:targetApi="o" />
+
+
+        <ImageView
+            android:id="@+id/pwd3"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/password"
+            app:tint="@color/blue" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="10dp"
+        android:background="@drawable/blue_fill"
+        android:text="Save"
+        android:textColor="@color/white" />
+</LinearLayout>

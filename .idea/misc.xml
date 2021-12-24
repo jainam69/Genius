@@ -3,8 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/layout/activity_change_password.xml" value="0.21422101449275363" />
+        <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/layout/activity_profile.xml" value="0.21422101449275363" />
+        <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/layout/fragment_homework_fragment.xml" value="0.4" />
         <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/layout/home_fragment_fragment.xml" value="0.13405797101449277" />
+        <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/layout/student_registration_fragment_fragment.xml" value="0.264" />
         <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/layout/view_library_master_deatil_list.xml" value="0.253125" />
+        <entry key="..\:/Android/Shail_Genius/Genius/app/src/main/res/menu/menu_action_bar.xml" value="0.24923076923076923" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/drawable/ic_baseline_keyboard_arrow_left_24.xml" value="0.21666666666666667" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/activity_change_password.xml" value="0.17407407407407408" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/activity_home.xml" value="0.20416666666666666" />

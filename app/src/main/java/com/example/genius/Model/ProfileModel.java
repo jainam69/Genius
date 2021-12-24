@@ -2,21 +2,11 @@ package com.example.genius.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CommonModel {
+public class ProfileModel {
     @SerializedName("Completed")
     boolean Completed;
-    @SerializedName("Data")
-    boolean Data;
     @SerializedName("Message")
     String Message;
-
-    public String getMessage() {
-        return Message;
-    }
-
-    public void setMessage(String message) {
-        Message = message;
-    }
 
     public boolean isCompleted() {
         return Completed;
@@ -26,11 +16,11 @@ public class CommonModel {
         Completed = completed;
     }
 
-    public boolean isData() {
-        return Data;
+    public String getMessage() {
+        return Message;
     }
 
-    public void setData(boolean data) {
-        Data = data;
+    public void setMessage(String message) {
+        Message = message;
     }
 }

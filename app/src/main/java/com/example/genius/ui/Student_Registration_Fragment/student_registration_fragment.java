@@ -100,7 +100,7 @@ public class student_registration_fragment extends Fragment {
     TextView attachment, uno;
     ImageView imageView;
     SearchableSpinner standard, school_name, school_time, batch_time;
-    EditText gr_no, addmission_date, first_name, middle_name, last_name, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password, student_password,parent_password;
+    EditText gr_no, addmission_date, first_name, middle_name, last_name, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password, student_password, parent_password;
     TextView birth_date;
     RadioButton pass, fail, active, inactive, rb1, rb2;
     RadioGroup result_rg, status_rg;
@@ -121,8 +121,8 @@ public class student_registration_fragment extends Fragment {
     String[] SCHOOLTITEM, SCHOOLTID;
     List<String> batchitem = new ArrayList<>(), batchid = new ArrayList<>();
     String[] BATCHITEM, BATCHID;
-    String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001",grade = "none",classname = "none",student_contact_no = "none", father_occupation = "none", mother_occupation = "none",Name,
-    FileName = "none",Extension = "none",Address,attach,FinalFileName = "none",RandomFileName,OriginalFileName,Result_Status;
+    String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001", grade = "none", classname = "none", student_contact_no = "none", father_occupation = "none", mother_occupation = "none", Name,
+            FileName = "none", Extension = "none", Address, attach, FinalFileName = "none", RandomFileName, OriginalFileName, Result_Status;
     int select, flag = 0;
     long SchoolId = -1, StandardId, TransactionID, StudentID, ParentID;
     ProgressBarHelper progressBarHelper;
@@ -233,16 +233,15 @@ public class student_registration_fragment extends Fragment {
             if (bundle.containsKey("Grade")) {
                 percentage.setText(bundle.getString("Grade"));
             }
-            if (bundle.containsKey("STUDENT_PASSWORD")){
-                student_password.setText(""+bundle.getString("STUDENT_PASSWORD"));
+            if (bundle.containsKey("STUDENT_PASSWORD")) {
+                student_password.setText("" + bundle.getString("STUDENT_PASSWORD"));
             }
-            if (bundle.containsKey("PARENT_PASSWORD")){
-                parent_password.setText(""+bundle.getString("PARENT_PASSWORD"));
+            if (bundle.containsKey("PARENT_PASSWORD")) {
+                parent_password.setText("" + bundle.getString("PARENT_PASSWORD"));
             }
-            if (bundle.containsKey("FileName")){
+            if (bundle.containsKey("FileName")) {
                 String file = bundle.getString("FileName");
-                if (file != null)
-                {
+                if (file != null) {
                     String Path = bundle.getString("FilePath");
                     if (Path.contains(".") && Path.contains("/")) {
                         Extension = Path.substring(Path.lastIndexOf(".") + 1);
@@ -250,19 +249,18 @@ public class student_registration_fragment extends Fragment {
                         String[] FileNameArray = FileNameWithExtension.split("\\.");
                         RandomFileName = FileNameArray[0];
                     }
-                   FinalFileName = file + "," + RandomFileName;
-                }else
-                {
+                    FinalFileName = file + "," + RandomFileName;
+                } else {
                     FinalFileName = "none";
                 }
             }
-            if (bundle.containsKey("FilePath")){
+            if (bundle.containsKey("FilePath")) {
                 String Path = bundle.getString("FilePath");
-                if (Path != null && !Path.equals("http://highpack-001-site12.dtempurl.com")){
+                if (Path != null && !Path.equals("http://highpack-001-site12.dtempurl.com")) {
                     imageView.setVisibility(View.VISIBLE);
                     attachment.setText("attached");
                     Glide.with(context).load(Path).into(imageView);
-                }else {
+                } else {
                     imageView.setVisibility(View.GONE);
                     attachment.setText("");
                 }
@@ -301,7 +299,7 @@ public class student_registration_fragment extends Fragment {
             if (bundle.containsKey("ParentID")) {
                 ParentID = bundle.getLong("ParentID");
             }
-            if (bundle.containsKey("StudentID")){
+            if (bundle.containsKey("StudentID")) {
                 StudentID = bundle.getLong("StudentID");
             }
             if (bundle.containsKey("TransactionID")) {
@@ -406,15 +404,13 @@ public class student_registration_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Parent Name.", Toast.LENGTH_SHORT).show();
                 } else if (login_id.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                }else if (student_password.getText().toString().isEmpty())
+                } else if (student_password.getText().toString().isEmpty())
                     Toast.makeText(context, "Please enter Student Password.", Toast.LENGTH_SHORT).show();
-                else if (parent_password.getText().toString().isEmpty())
-                    Toast.makeText(context, "Please enter Parent Password.", Toast.LENGTH_SHORT).show();
-                else if (login_id.getText().toString().length() < 10){
+                else if (login_id.getText().toString().length() < 10) {
                     Toast.makeText(context, "Please enter valid Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                }else if (contact_no.getText().toString().length() < 10) {
+                } else if (contact_no.getText().toString().length() < 10) {
                     Toast.makeText(context, "Please enter valid student contact number.", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     Call<StudentModel.StudentData1> call;
                     progressBarHelper.showProgressDialog();
                     if (Result.equalsIgnoreCase("Pass")) {
@@ -427,38 +423,38 @@ public class student_registration_fragment extends Fragment {
                     } else {
                         status1 = 2;
                     }
-                    if (!percentage.getText().toString().equals("")){
+                    if (!percentage.getText().toString().equals("")) {
                         grade = percentage.getText().toString();
                     }
-                    if (!class_name.getText().toString().equals("")){
+                    if (!class_name.getText().toString().equals("")) {
                         classname = encodeDecode(class_name.getText().toString().trim());
                     }
-                    if (!contact_no.getText().toString().equals("")){
+                    if (!contact_no.getText().toString().equals("")) {
                         student_contact_no = contact_no.getText().toString();
                     }
-                    if (!father_occu.getText().toString().equals("")){
+                    if (!father_occu.getText().toString().equals("")) {
                         father_occupation = father_occu.getText().toString();
                     }
-                    if (!mother_occu.getText().toString().equals("")){
+                    if (!mother_occu.getText().toString().equals("")) {
                         mother_occupation = mother_occu.getText().toString();
                     }
                     Address = encodeDecode(address.getText().toString().trim());
-                    Name = first_name.getText().toString().replaceAll("\\s","") + "," + middle_name.getText().toString().replaceAll("\\s","") + "," +last_name.getText().toString().replaceAll("\\s","");
+                    Name = first_name.getText().toString().replaceAll("\\s", "") + "," + middle_name.getText().toString().replaceAll("\\s", "") + "," + last_name.getText().toString().replaceAll("\\s", "");
                     Result_Status = result1 + "," + status1;
-                    if (instrumentFileDestination != null){
+                    if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        call = apiCalling.StudentMaintenance(0,0,"1",Name,bdate,Address,
-                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString().trim(),father_occupation,mother_occupation,login_id.getText().toString(),
-                                Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,student_password.getText().toString(),parent_password.getText().toString(),"0","0",true,uploadfile);
-                    }else {
+                        call = apiCalling.StudentMaintenance(0, 0, "1", Name, bdate, Address,
+                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
+                                Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, student_password.getText().toString(), student_password.getText().toString(), "0", "0", true, uploadfile);
+                    } else {
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                        call = apiCalling.StudentMaintenance(0,0,"1",Name,bdate,Address,
-                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString().trim(),father_occupation,mother_occupation,login_id.getText().toString(),
-                                Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,student_password.getText().toString(),parent_password.getText().toString(),FileName,Extension,false,uploadfile);
+                        call = apiCalling.StudentMaintenance(0, 0, "1", Name, bdate, Address,
+                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
+                                Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, student_password.getText().toString(), student_password.getText().toString(), FileName, Extension, false, uploadfile);
                     }
                     call.enqueue(new Callback<StudentModel.StudentData1>() {
                         @Override
@@ -511,15 +507,13 @@ public class student_registration_fragment extends Fragment {
                         Toast.makeText(context, "Please enter Parent Name.", Toast.LENGTH_SHORT).show();
                     } else if (login_id.getText().toString().equals("")) {
                         Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                    }else if (student_password.getText().toString().isEmpty())
+                    } else if (student_password.getText().toString().isEmpty())
                         Toast.makeText(context, "Please enter Student Password.", Toast.LENGTH_SHORT).show();
-                    else if (parent_password.getText().toString().isEmpty())
-                        Toast.makeText(context, "Please enter Parent Password.", Toast.LENGTH_SHORT).show();
-                    else if (login_id.getText().toString().length() < 10){
+                    else if (login_id.getText().toString().length() < 10) {
                         Toast.makeText(context, "Please enter valid Contact No(Login Id).", Toast.LENGTH_SHORT).show();
-                    }else if (contact_no.getText().toString().length() < 10) {
+                    } else if (contact_no.getText().toString().length() < 10) {
                         Toast.makeText(context, "Please enter valid student contact number.", Toast.LENGTH_SHORT).show();
-                    }else {
+                    } else {
                         Call<StudentModel.StudentData1> call;
                         progressBarHelper.showProgressDialog();
                         if (Result.equalsIgnoreCase("Pass")) {
@@ -532,39 +526,38 @@ public class student_registration_fragment extends Fragment {
                         } else {
                             status1 = 2;
                         }
-                        if (!percentage.getText().toString().equals("")){
+                        if (!percentage.getText().toString().equals("")) {
                             grade = percentage.getText().toString();
                         }
-                        if (!class_name.getText().toString().equals("")){
+                        if (!class_name.getText().toString().equals("")) {
                             classname = encodeDecode(class_name.getText().toString().trim());
                         }
-                        if (!contact_no.getText().toString().equals("")){
+                        if (!contact_no.getText().toString().equals("")) {
                             student_contact_no = contact_no.getText().toString();
                         }
-                        if (!father_occu.getText().toString().equals("")){
+                        if (!father_occu.getText().toString().equals("")) {
                             father_occupation = father_occu.getText().toString();
                         }
-                        if (!mother_occu.getText().toString().equals("")){
+                        if (!mother_occu.getText().toString().equals("")) {
                             mother_occupation = mother_occu.getText().toString();
                         }
                         Address = encodeDecode(address.getText().toString().trim());
-                        Name = first_name.getText().toString().replaceAll("\\s","") + "," + middle_name.getText().toString().replaceAll("\\s","") + "," +last_name.getText().toString().replaceAll("\\s","");
+                        Name = first_name.getText().toString().replaceAll("\\s", "") + "," + middle_name.getText().toString().replaceAll("\\s", "") + "," + last_name.getText().toString().replaceAll("\\s", "");
                         Result_Status = result1 + "," + status1;
-                        if (instrumentFileDestination != null)
-                        {
+                        if (instrumentFileDestination != null) {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                            call = apiCalling.StudentMaintenance(StudentID,ParentID,"1",Name,bdate,Address,
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                    Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString().trim(),father_occupation,mother_occupation,login_id.getText().toString(),
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),"0","0",true,uploadfile);
-                        }else {
+                            call = apiCalling.StudentMaintenance(StudentID, ParentID, "1", Name, bdate, Address,
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
+                                    Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), TransactionID, student_password.getText().toString(), student_password.getText().toString(), "0", "0", true, uploadfile);
+                        } else {
                             RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                            call = apiCalling.StudentMaintenance(StudentID,ParentID,"1",Name,bdate,Address,
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,SchoolId,Integer.parseInt(SchooltimeId),
-                                    Integer.parseInt(BatchId),Result_Status,grade,classname,student_contact_no,indate,parent_name.getText().toString().trim(),father_occupation,mother_occupation,login_id.getText().toString(),
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),TransactionID,student_password.getText().toString(),parent_password.getText().toString(),FinalFileName,Extension,false,uploadfile);
+                            call = apiCalling.StudentMaintenance(StudentID, ParentID, "1", Name, bdate, Address,
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
+                                    Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), TransactionID, student_password.getText().toString(), student_password.getText().toString(), FinalFileName, Extension, false, uploadfile);
                         }
                         call.enqueue(new Callback<StudentModel.StudentData1>() {
                             @Override
@@ -572,7 +565,7 @@ public class student_registration_fragment extends Fragment {
                                 if (response.isSuccessful()) {
                                     StudentModel.StudentData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                         student_registration_Listfragment profileFragment = new student_registration_Listfragment();
                                         FragmentManager fm = getActivity().getSupportFragmentManager();
                                         FragmentTransaction ft = fm.beginTransaction();
@@ -599,16 +592,16 @@ public class student_registration_fragment extends Fragment {
         });
 
         callback = new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        student_registration_Listfragment profileFragment = new student_registration_Listfragment();
-                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                        FragmentTransaction ft = fm.beginTransaction();
-                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                        ft.addToBackStack(null);
-                        ft.commit();
-                    }
-                }
+            @Override
+            public void handleOnBackPressed() {
+                student_registration_Listfragment profileFragment = new student_registration_Listfragment();
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.nav_host_fragment, profileFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        }
 
         ;
 
@@ -967,6 +960,7 @@ public class student_registration_fragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
                 }
+
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
@@ -1042,6 +1036,7 @@ public class student_registration_fragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
                 }
+
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }

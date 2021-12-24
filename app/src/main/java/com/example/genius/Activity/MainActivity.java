@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this,ChangePasswordActivity.class));
         }
         if (id == R.id.action_profile) {
-//            startActivity(new Intent(MainActivity.this,ProfileActivity.class));
+            startActivity(new Intent(MainActivity.this,ProfileActivity.class));
         }
         if (id == R.id.action_signout) {
             alertDialog().show();

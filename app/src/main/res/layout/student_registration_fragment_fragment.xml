@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".ui.Student_Registration_Fragment.student_registration_fragment">
 
     <TextView
+        android:id="@+id/uno"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/uno"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,14 +30,14 @@
                 android:orientation="horizontal">
 
                 <RelativeLayout
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/border">
+                    android:background="@drawable/border"
+                    android:visibility="gone">
 
                     <EditText
                         android:id="@+id/gr_no"
@@ -44,11 +45,11 @@
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@+id/tlimit"
                         android:background="@android:color/transparent"
-                        android:hint="G.R.No"
                         android:clickable="false"
                         android:cursorVisible="false"
                         android:editable="false"
                         android:focusable="false"
+                        android:hint="G.R.No"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
@@ -73,11 +74,12 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/border">
+
                     <TextView
                         android:id="@+id/transaction_id"
-                        android:visibility="gone"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
 
                     <EditText
                         android:id="@+id/addmission_date"
@@ -129,11 +131,11 @@
                         android:background="@android:color/transparent"
                         android:hint="First Name"
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -164,11 +166,11 @@
                         android:background="@android:color/transparent"
                         android:hint="Middle Name"
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -181,6 +183,7 @@
                         app:tint="#0074AA" />
                 </RelativeLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -203,11 +206,11 @@
                         android:background="@android:color/transparent"
                         android:hint="Last Name"
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -246,8 +249,8 @@
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
                         android:singleLine="true"
-                        android:textSize="15sp"
                         android:textColor="@color/black"
+                        android:textSize="15sp"
                         tools:ignore="Autofill,HardcodedText,RtlSymmetry,TextFields" />
 
                     <ImageView
@@ -300,19 +303,20 @@
                     android:layout_height="24dp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/ic_attach"
-                    app:tint="@color/blue"
-                    android:layout_marginLeft="12dp" />
+                    app:tint="@color/blue" />
 
             </RelativeLayout>
+
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
-                android:visibility="gone"
-                android:contentDescription="@string/app_name" />
+                android:contentDescription="@string/app_name"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -358,10 +362,10 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginRight="5dp"
+                    android:layout_weight="1"
                     android:background="@drawable/border">
 
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -384,7 +388,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="12dp"
                         android:src="@drawable/sales_no"
-                        app:tint="@color/blue"/>
+                        app:tint="@color/blue" />
 
                 </RelativeLayout>
 
@@ -409,6 +413,7 @@
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
                         android:textSize="15dp" />
+
                     <ImageView
                         android:id="@+id/gst"
                         android:layout_width="24dp"
@@ -416,7 +421,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="12dp"
                         android:src="@drawable/branch"
-                        app:tint="@color/blue"/>
+                        app:tint="@color/blue" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -428,10 +433,10 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="7dp"
                     android:layout_marginRight="5dp"
+                    android:layout_weight="1"
                     android:background="@drawable/border">
 
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -454,7 +459,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="12dp"
                         android:src="@drawable/time"
-                        app:tint="@color/blue"/>
+                        app:tint="@color/blue" />
 
                 </RelativeLayout>
 
@@ -479,6 +484,7 @@
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
                         android:textSize="15dp" />
+
                     <ImageView
                         android:id="@+id/gst1"
                         android:layout_width="24dp"
@@ -486,7 +492,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="12dp"
                         android:src="@drawable/time"
-                        app:tint="@color/blue"/>
+                        app:tint="@color/blue" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -498,13 +504,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:text="Result of Last Year"
                     android:textColor="#0074AA"
                     android:textSize="14dp"
-                    android:textStyle="bold"
-                    android:layout_weight="1"/>
+                    android:textStyle="bold" />
 
                 <RadioGroup
                     android:id="@+id/result_rg"
@@ -512,10 +518,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"
+                    android:layout_weight="0.7"
                     android:orientation="horizontal"
                     android:paddingLeft="12dp"
                     android:paddingRight="12dp"
-                    android:layout_weight="0.7"
                     android:weightSum="2">
 
                     <RadioButton
@@ -656,13 +662,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:text="Status"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1.3"
+                    android:text="Status"
                     android:textColor="#0074AA"
                     android:textSize="14dp"
-                    android:textStyle="bold"
-                    android:layout_weight="1.3"/>
+                    android:textStyle="bold" />
 
                 <RadioGroup
                     android:id="@+id/status_rg"
@@ -670,10 +676,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_weight="0.7"
                     android:orientation="horizontal"
                     android:paddingLeft="12dp"
                     android:paddingRight="12dp"
-                    android:layout_weight="0.7"
                     android:weightSum="2">
 
                     <RadioButton
@@ -732,12 +738,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Parent's Details :"
-                android:layout_marginTop="15dp"
                 android:layout_marginLeft="17dp"
-                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:text="Parent's Details :"
+                android:textColor="@color/blue"
                 android:textSize="16sp"
-                android:textColor="@color/blue"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -761,11 +767,11 @@
                         android:background="@android:color/transparent"
                         android:hint="Parent's Name"
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -816,13 +822,13 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/border">
+                android:background="@drawable/border"
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/password"
@@ -848,6 +854,7 @@
                     android:src="@drawable/password"
                     app:tint="#0074AA" />
             </RelativeLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -905,11 +912,11 @@
                         android:background="@android:color/transparent"
                         android:hint="Mother's Occu."
                         android:inputType="textCapWords"
-                        android:singleLine="true"
                         android:maxLines="1"
                         android:paddingLeft="12dp"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
+                        android:singleLine="true"
                         android:textSize="15dp" />
 
                     <ImageView
@@ -929,7 +936,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/border">
+                android:background="@drawable/border"
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/parent_password"
@@ -958,33 +966,33 @@
             </RelativeLayout>
 
             <Button
-                android:layout_marginBottom="10dp"
                 android:id="@+id/save_student_regi"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/blue_fill"
                 android:layout_gravity="end"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/blue_fill"
                 android:text="Save"
                 android:textColor="@color/white"
                 android:textSize="14dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Button
-                android:visibility="gone"
-                android:layout_marginBottom="10dp"
                 android:id="@+id/edit_student_regi"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/blue_fill"
                 android:layout_gravity="end"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/blue_fill"
                 android:text="Update"
                 android:textColor="@color/white"
                 android:textSize="14dp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

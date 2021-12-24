@@ -66,6 +66,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -81,7 +82,7 @@ public class marks_entry_fragment extends Fragment {
 
     SearchableSpinner standard, batch_time, subject, branch, test_date;
     EditText remarks, total_marks;
-    TextView upload_image,txt_nodata;
+    TextView upload_image, txt_nodata;
     RecyclerView marks_rv;
     Button save_test_marks, edit_test_marks, btnsearch_student;
     Context context;
@@ -90,9 +91,9 @@ public class marks_entry_fragment extends Fragment {
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(), dateitem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(), dateid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM, DATEITEM;
-    Integer[] STANDARDID, SUBJECTID, BRANCHID, BATCHID,TESTID;
-    String StandardName, SubjectName, BatchTime, BranchName,BranchID,SubjectId,BatchId,TestDate;
-    Long StandardId,TestID;
+    Integer[] STANDARDID, SUBJECTID, BRANCHID, BATCHID, TESTID;
+    String StandardName, SubjectName, BatchTime, BranchName, BranchID, SubjectId, BatchId, TestDate;
+    Long StandardId, TestID;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
@@ -104,7 +105,7 @@ public class marks_entry_fragment extends Fragment {
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     byte[] imageVal;
     Bitmap bitmap;
-    String pictureFilePath,Achieve_Marks = "",StudentID = "",Subject_Date,Marks_Date;
+    String pictureFilePath, Achieve_Marks = "", StudentID = "", Subject_Date, Marks_Date;
     boolean marksentered;
     MarksEnterAdapter marksEnterAdapter;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -179,19 +180,19 @@ public class marks_entry_fragment extends Fragment {
                     else if (subject.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                     else {
-                        if (marksentered){
+                        if (marksentered) {
                             Toast.makeText(context, "Marks Already inserted for this Test !", Toast.LENGTH_LONG).show();
-                        }else {
+                        } else {
                             progressBarHelper.showProgressDialog();
-                            Call<StudentModel.StudentDataList> call = apiCalling.Get_Student_Details(StandardId,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(BatchId));
+                            Call<StudentModel.StudentDataList> call = apiCalling.Get_Student_Details(StandardId, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Long.parseLong(BatchId));
                             call.enqueue(new Callback<StudentModel.StudentDataList>() {
                                 @Override
                                 public void onResponse(Call<StudentModel.StudentDataList> call, Response<StudentModel.StudentDataList> response) {
-                                    if (response.isSuccessful()){
+                                    if (response.isSuccessful()) {
                                         StudentModel.StudentDataList data = response.body();
-                                        if (data.isCompleted()){
+                                        if (data.isCompleted()) {
                                             List<StudentModel> list = data.getData();
-                                            if (list != null && list.size() > 0){
+                                            if (list != null && list.size() > 0) {
                                                 marks_rv.setVisibility(View.VISIBLE);
                                                 txt_nodata.setVisibility(View.GONE);
                                                 save_test_marks.setVisibility(View.VISIBLE);
@@ -200,7 +201,7 @@ public class marks_entry_fragment extends Fragment {
                                                 marksEnterAdapter = new MarksEnterAdapter(context, list);
                                                 marksEnterAdapter.notifyDataSetChanged();
                                                 marks_rv.setAdapter(marksEnterAdapter);
-                                            }else {
+                                            } else {
                                                 marks_rv.setVisibility(View.GONE);
                                                 txt_nodata.setVisibility(View.VISIBLE);
                                                 save_test_marks.setVisibility(View.GONE);
@@ -234,12 +235,10 @@ public class marks_entry_fragment extends Fragment {
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                     else if (test_date.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
-                    else if (upload_image.getText().toString().isEmpty())
-                        Toast.makeText(context, "Please Upload Solution Image.", Toast.LENGTH_SHORT).show();
                     else {
                         progressBarHelper.showProgressDialog();
-                        if (MarksEnterAdapter.studentModels.size() > 0){
-                            for (int i = 0; i < MarksEnterAdapter.studentModels.size(); i++){
+                        if (MarksEnterAdapter.studentModels.size() > 0) {
+                            for (int i = 0; i < MarksEnterAdapter.studentModels.size(); i++) {
                                 String id = String.valueOf(MarksEnterAdapter.studentModels.get(i).getStudentID());
                                 String mks = MarksEnterAdapter.studentModels.get(i).getAchieveMarks();
                                 StudentID = StudentID + "," + id;
@@ -251,36 +250,47 @@ public class marks_entry_fragment extends Fragment {
                         try {
                             Date d = displaydate.parse(TestDate);
                             Marks_Date = actualdate.format(d);
-                        }catch (Exception e){
+                        } catch (Exception e) {
 
                         }
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
-                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        Call<MarksModel.MarksData1> call = apiCalling.MarksMaintenance(0,Marks_Date,TestID,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                                , StudentID,Achieve_Marks,Integer.parseInt(BatchId),Long.parseLong(SubjectId),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                                "0","0",true,uploadfile);
+                        Call<MarksModel.MarksData1> call;
+                        if (upload_image.getText().toString().isEmpty()) {
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                            MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", requestBody);
+                            call = apiCalling.MarksMaintenance(0, Marks_Date, TestID, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                                    , StudentID, Achieve_Marks, Integer.parseInt(BatchId), Long.parseLong(SubjectId), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                                    "0", "0", false, uploadfile);
+                        } else {
+                            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                            MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                            call = apiCalling.MarksMaintenance(0, Marks_Date, TestID, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                                    , StudentID, Achieve_Marks, Integer.parseInt(BatchId), Long.parseLong(SubjectId), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                                    "0", "0", true, uploadfile);
+                        }
                         call.enqueue(new Callback<MarksModel.MarksData1>() {
                             @Override
-                            public void onResponse(Call<MarksModel.MarksData1> call, Response<MarksModel.MarksData1> response) {
-                                if (response.isSuccessful()){
+                            public void onResponse(@NonNull Call<MarksModel.MarksData1> call, @NonNull Response<MarksModel.MarksData1> response) {
+                                if (response.isSuccessful()) {
                                     MarksModel.MarksData1 data = response.body();
-                                    if (data.isCompleted()){
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        marks_entry_Listfragment profileFragment = new marks_entry_Listfragment();
-                                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                                        FragmentTransaction ft = fm.beginTransaction();
-                                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                                        ft.addToBackStack(null);
-                                        ft.commit();
-                                    }else {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    if (data != null) {
+                                        if (data.isCompleted()) {
+                                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                            marks_entry_Listfragment profileFragment = new marks_entry_Listfragment();
+                                            FragmentManager fm = requireActivity().getSupportFragmentManager();
+                                            FragmentTransaction ft = fm.beginTransaction();
+                                            ft.replace(R.id.nav_host_fragment, profileFragment);
+                                            ft.addToBackStack(null);
+                                            ft.commit();
+                                        } else {
+                                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
                             }
 
                             @Override
-                            public void onFailure(Call<MarksModel.MarksData1> call, Throwable t) {
+                            public void onFailure(@NonNull Call<MarksModel.MarksData1> call, @NonNull Throwable t) {
                                 progressBarHelper.hideProgressDialog();
                                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
@@ -308,8 +318,7 @@ public class marks_entry_fragment extends Fragment {
         return root;
     }
 
-    private void showAddProfilePicDialog()
-    {
+    private void showAddProfilePicDialog() {
         AlertDialog dialog = new AlertDialog.Builder(context).create();
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = layoutInflater.inflate(R.layout.dialog_selection, null);
@@ -358,12 +367,12 @@ public class marks_entry_fragment extends Fragment {
                     upload_image.setText("Attached");
                     upload_image.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
-                    try{
+                    try {
 //                        imageView.setImageURI(Uri.fromFile(instrumentFileDestination));
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
-                    Toast.makeText(context, ""+instrumentFileDestination, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "" + instrumentFileDestination, Toast.LENGTH_SHORT).show();
                     onCameraImageResultInstrument();
                 } catch (Exception ex) {
                     errored();
@@ -412,8 +421,8 @@ public class marks_entry_fragment extends Fragment {
     private File getPictureFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         String pictureFile = "ZOFTINO_" + timeStamp;
-        File storageDir =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File image = File.createTempFile(pictureFile,  ".jpg", storageDir);
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File image = File.createTempFile(pictureFile, ".jpg", storageDir);
         pictureFilePath = image.getAbsolutePath();
         return image;
     }
@@ -423,7 +432,7 @@ public class marks_entry_fragment extends Fragment {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION,true);
+        intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
 //        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         File pictureFile = null;
         try {
@@ -433,7 +442,7 @@ public class marks_entry_fragment extends Fragment {
             return;
         }
         if (pictureFile != null) {
-            Uri photoURI = FileProvider.getUriForFile(context,"com.ashirvad.genius.provider",pictureFile);
+            Uri photoURI = FileProvider.getUriForFile(context, "com.ashirvad.genius.provider", pictureFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         }
@@ -506,8 +515,7 @@ public class marks_entry_fragment extends Fragment {
         }
     }
 
-    public void GetAllBranch()
-    {
+    public void GetAllBranch() {
         branchitem.add("Select Branch");
         branchid.add(0);
 
@@ -568,8 +576,7 @@ public class marks_entry_fragment extends Fragment {
                     if (branch.getSelectedItem().equals("Select Branch")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                    else{
+                    } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
@@ -592,7 +599,7 @@ public class marks_entry_fragment extends Fragment {
         try {
             Date d = displaydate.parse(TestDate);
             Subject_Date = actualdate.format(d);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date);
@@ -650,6 +657,7 @@ public class marks_entry_fragment extends Fragment {
         subject.setAdapter(adapter);
         subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
+
     AdapterView.OnItemSelectedListener onItemSelectedListener8 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -660,12 +668,11 @@ public class marks_entry_fragment extends Fragment {
                     if (subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                    else{
+                    } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (subject.getSelectedItemId() != 0){
+                    if (subject.getSelectedItemId() != 0) {
                         GetTestDetails();
                     }
                 }
@@ -675,18 +682,17 @@ public class marks_entry_fragment extends Fragment {
                 }
             };
 
-    public void GetTestDetails()
-    {
+    public void GetTestDetails() {
         progressBarHelper.showProgressDialog();
-        Call<TestScheduleModel.TestScheduleData1> call = apiCalling.Get_Test_Details(TestID,Long.parseLong(SubjectId));
+        Call<TestScheduleModel.TestScheduleData1> call = apiCalling.Get_Test_Details(TestID, Long.parseLong(SubjectId));
         call.enqueue(new Callback<TestScheduleModel.TestScheduleData1>() {
             @Override
             public void onResponse(Call<TestScheduleModel.TestScheduleData1> call, Response<TestScheduleModel.TestScheduleData1> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     TestScheduleModel.TestScheduleData1 data = response.body();
-                    if (data != null && data.isCompleted()){
+                    if (data != null && data.isCompleted()) {
                         TestScheduleModel model = data.getData();
-                        total_marks.setText(""+model.getMarks());
+                        total_marks.setText("" + model.getMarks());
                         remarks.setText(model.getRemarks());
                         marksentered = model.isMarksentered();
                     }
@@ -753,6 +759,7 @@ public class marks_entry_fragment extends Fragment {
         standard.setAdapter(adapter);
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
+
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
             new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -773,8 +780,7 @@ public class marks_entry_fragment extends Fragment {
                 }
             };
 
-    public void selectbatch_time()
-    {
+    public void selectbatch_time() {
         batchitem.clear();
         batchid.clear();
         batchitem.add("Batch Time");
@@ -811,35 +817,34 @@ public class marks_entry_fragment extends Fragment {
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
                         } catch (Exception e) {
                         }
-                    }
-                    else{
+                    } else {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                             ((TextView) parent.getChildAt(0)).setTextSize(14);
                         } catch (Exception e) {
                         }
                     }
-                    if (batch_time.getSelectedItemId() != 0){
+                    if (batch_time.getSelectedItemId() != 0) {
                         GetTestDates();
                     }
                 }
+
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             };
 
-    public void GetTestDates()
-    {
+    public void GetTestDates() {
         progressBarHelper.showProgressDialog();
         dateitem.clear();
         dateitem.add("Test Date");
-        Call<MarksModel.MarksData> call = apiCalling.Get_Test_Marks(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),StandardId,Integer.parseInt(BatchId));
+        Call<MarksModel.MarksData> call = apiCalling.Get_Test_Marks(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, Integer.parseInt(BatchId));
         call.enqueue(new Callback<MarksModel.MarksData>() {
             @Override
             public void onResponse(Call<MarksModel.MarksData> call, Response<MarksModel.MarksData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     MarksModel.MarksData data = response.body();
-                    if (data.isCompleted() && data != null){
+                    if (data.isCompleted() && data != null) {
                         List<MarksModel> model = data.getData();
                         for (MarksModel marksModel : model) {
 
@@ -848,7 +853,7 @@ public class marks_entry_fragment extends Fragment {
                                 Date d = actualdate.parse(testdate);
                                 String date = displaydate.format(d);
                                 dateitem.add(date);
-                            }catch (Exception e){
+                            } catch (Exception e) {
 
                             }
                         }
@@ -889,7 +894,7 @@ public class marks_entry_fragment extends Fragment {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (test_date.getSelectedItemId() != 0){
+                    if (test_date.getSelectedItemId() != 0) {
                         GetAllSubject();
                     }
                 }
@@ -980,8 +985,7 @@ public class marks_entry_fragment extends Fragment {
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
-    public void SelectTestDate()
-    {
+    public void SelectTestDate() {
         dateitem.clear();
         dateitem.add("Test Date");
 
@@ -1011,8 +1015,7 @@ public class marks_entry_fragment extends Fragment {
                 }
             };
 
-    public void SelectSubject()
-    {
+    public void SelectSubject() {
         subjectitem.clear();
         subjectitem.add("Select Subject");
 

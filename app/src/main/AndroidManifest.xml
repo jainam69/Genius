@@ -38,8 +38,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.VideoViewActivity" />
-        <activity android:name=".Activity.ChangePasswordActivity" android:theme="@style/Actionbar"
-            android:parentActivityName=".Activity.MainActivity"/>
+        <activity
+            android:name=".Activity.ChangePasswordActivity"
+            android:parentActivityName=".Activity.MainActivity"
+            android:theme="@style/Actionbar" />
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:parentActivityName=".Activity.MainActivity"
+            android:theme="@style/Actionbar" />
     </application>
 
 </manifest>

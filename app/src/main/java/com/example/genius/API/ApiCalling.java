@@ -34,6 +34,7 @@ import com.example.genius.Model.NotificationModel;
 import com.example.genius.Model.PaperByIdData;
 import com.example.genius.Model.PaperData;
 import com.example.genius.Model.PaperModel;
+import com.example.genius.Model.ProfileModel;
 import com.example.genius.Model.ReminderData;
 import com.example.genius.Model.ReminderModel;
 import com.example.genius.Model.SchoolData;
@@ -84,6 +85,12 @@ public interface ApiCalling {
 
     @POST(ApiConstant.CHANGE_PASSWORD)
     Call<CommonModel> ChangePassword(@Query("userID") long userID, @Query("password") String password, @Query("oldPassword") String oldpassword);
+
+    @POST(ApiConstant.UPDATE_PROFILE)
+    Call<ProfileModel> UpdateProfile(@Body StaffModel staffModel);
+
+    @POST(ApiConstant.GET_STAFF_BY_ID)
+    Call<StaffModel.StaffData1> GetStaffByID(@Query("StaffID") long StaffID);
 
     @POST(ApiConstant.GET_ALL_SCHOOL)
     Call<SchoolData> GetAllSchool(@Query("BranchID") long BranchID);
@@ -483,7 +490,7 @@ public interface ApiCalling {
     Call<FacultyModel.FacultyModelData> Faculty_Maintanance(@Path("facultyID") long facultyID, @Path("StaffID") long StaffID,
                                                             @Path("Subject_dtl_id") long Subject_dtl_id, @Path("course_dtl_id") long course_dtl_id,
                                                             @Path("Class_dtl_id") long Class_dtl_id, @Path("BranchID") long BranchID, @Path("Descripation") String Descripation,
-                                                         @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
-                                                         @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
+                                                            @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
+                                                            @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
 }

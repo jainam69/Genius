@@ -7,6 +7,8 @@ public class Preferences {
 
     public static final String KEY_LOGIN = "KEY_LOGIN";
     public static final String KEY_USER_ID ="KEY_USER_ID";
+    public static final String KEY_STAFF_ID ="KEY_STAFF_ID";
+
     public static final String KEY_USER_NAME = "KEY_USER_NAME";
     public static final String KEY_USER_TYPE = "KEY_USER_TYPE";
     public static final String KEY_BRANCH_ID = "KEY_BRNACH_ID";

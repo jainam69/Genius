@@ -56,6 +56,17 @@ public class StaffModel {
         Userrole = Userrole;
     }
 
+    public StaffModel(long staffID, long userID, String name, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo) {
+        UserID = userID;
+        StaffID = staffID;
+        Name = name;
+        EmailID = emailID;
+        MobileNo = mobileNo;
+        Transaction = transaction;
+        RowStatus = rowStatus;
+        BranchInfo = branchInfo;
+    }
+
     public String getUserrole() {
         return Userrole;
     }

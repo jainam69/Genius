@@ -62,13 +62,14 @@ public class LoginActivity extends AppCompatActivity {
                                     UserModel model = data.getData();
                                     Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN, true);
                                     Preferences.getInstance(context).setLong(Preferences.KEY_USER_ID, model.getUserID());
+                                    Preferences.getInstance(context).setLong(Preferences.KEY_STAFF_ID, model.getStaffID());
                                     Preferences.getInstance(context).setLong(Preferences.KEY_BRANCH_ID, model.getBranchInfo().getBranchID());
                                     Preferences.getInstance(context).setString(Preferences.KEY_BRANCH_NAME, model.getBranchInfo().getBranchName());
                                     Preferences.getInstance(context).setString(Preferences.KEY_USER_NAME, model.getUsername());
                                     Preferences.getInstance(context).setInt(Preferences.KEY_USER_TYPE, Integer.parseInt(model.getUserType()));
                                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                     LoginActivity.this.finish();
-                                }else {
+                                } else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();

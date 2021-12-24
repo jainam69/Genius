@@ -3,12 +3,14 @@ package com.example.genius.API;
 public class ApiConstant {
 
     public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
-    //public static final String BASE_URL = "http://192.168.29.202:45467/api/";
+    //public static final String BASE_URL = "http://192.168.29.202:45455/api/";
     //public static final String BASE_URL = "http://192.168.29.212/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String GET_USER_PERMISSION = "user/v1/GetUserPermission";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
+    public static final String UPDATE_PROFILE = "profile/v1/UpdateProfile";
+    public static final String GET_STAFF_BY_ID = "profile/v1/GetStaffByID";
 
     public static final String GET_ALL_BRANCH = "branch/v1/GetBranchWithoutContent";
 
