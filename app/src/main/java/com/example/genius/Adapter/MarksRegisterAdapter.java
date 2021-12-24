@@ -54,8 +54,10 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
 
     @Override
     public void onBindViewHolder(@NonNull MarksRegisterAdapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(19).getPageInfo().getPageID() == 81 && !userpermission.getPermission().get(19).getPackageRightinfo().isCreatestatus()){
-            holder.edit.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 81 && !model.getPackageRightinfo().isCreatestatus()){
+                holder.edit.setVisibility(View.GONE);
+            }
         }
         holder.student_name.setText(marksModels.get(position).getStudent().getName());
         holder.subject_name.setText(marksModels.get(position).getSubjectInfo().getSubject());

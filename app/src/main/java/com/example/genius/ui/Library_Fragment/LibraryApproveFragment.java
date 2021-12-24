@@ -160,9 +160,9 @@ public class LibraryApproveFragment extends Fragment {
         @SuppressLint("RecyclerView")
         @Override
         public void onBindViewHolder(@NonNull LibraryApproval_Adapter.ViewHolder holder,int position) {
-            for (int i = 0; i< userpermission.getPermission().size(); i++){
-                if (userpermission.getPermission().get(i).getPageInfo().getPageID() == 80){
-                    if (!userpermission.getPermission().get(i).getPackageRightinfo().isCreatestatus()){
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 80){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
                         holder.img_edit.setVisibility(View.GONE);
                     }
                 }

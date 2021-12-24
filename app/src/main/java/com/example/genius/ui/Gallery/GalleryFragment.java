@@ -133,8 +133,10 @@ public class GalleryFragment extends Fragment {
         linear_create_image = root.findViewById(R.id.linear_create_image);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(22).getPageInfo().getPageID() == 83 && !userpermission.getPermission().get(22).getPackageRightinfo().isCreatestatus()){
-            linear_create_image.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 83 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_image.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -622,15 +624,17 @@ public class GalleryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(22).getPageInfo().getPageID() == 83){
-                if (!userpermission.getPermission().get(22).getPackageRightinfo().isCreatestatus()){
-                    holder.gallery_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(22).getPackageRightinfo().isDeletestatus()){
-                    holder.gallery_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(22).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(22).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 83){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.gallery_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.gallery_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             holder.description.setText(galleryDetails.get(position).getRemarks());

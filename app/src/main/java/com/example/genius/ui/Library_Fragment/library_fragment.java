@@ -50,6 +50,7 @@ import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -257,7 +258,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                             , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                             , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 2
                             , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, "none,none", "none,none", "none,none", "none,none", "none,none"
+                            , 0, "none", "none,none", "none", "none,none", "none"
                             , true, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination))
                             , MultipartBody.Part.createFormData("", instrumentFileDestination1.getName()
@@ -302,7 +303,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                             , RequestBody.create(MediaType.parse("multipart/form-data"), ""));
                     MultipartBody.Part multipartDocBody = MultipartBody.Part.createFormData("attachment", ""
                             , RequestBody.create(MediaType.parse("multipart/form-data"), ""));
-                    String ThumbnailFileName = "none,none", ThumbnailFileExtension = "none,none", DocumentFileName = "none,none", DocumentFileExtension = "none,none";
+                    String ThumbnailFileName = "none,none", ThumbnailFileExtension = "none", DocumentFileName = "none,none", DocumentFileExtension = "none";
                     if (libraryModel.getThumbnailFilePath().contains(".") && libraryModel.getThumbnailFilePath().contains("/")) {
                         ThumbnailFileExtension = libraryModel.getThumbnailFilePath().substring(libraryModel.getThumbnailFilePath().lastIndexOf(".") + 1);
                         String FileNameWithExtension = libraryModel.getThumbnailFilePath().substring(libraryModel.getThumbnailFilePath().lastIndexOf("/") + 1);
@@ -586,7 +587,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 Uri image = result.getData();
                 try {
                     Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
+                    String Path = FileUtils.getReadablePathFromUri(requireActivity(),uri);
                     instrumentFileDestination1 = new File(Path);
                     attach_document.setText("Attached");
                     attach_document.setTextColor(context.getResources().getColor(R.color.black));

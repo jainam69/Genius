@@ -1,6 +1,8 @@
 package com.example.genius.Model;
 
-public class RowStatusModel {
+import java.io.Serializable;
+
+public class RowStatusModel implements Serializable {
 
     int RowStatusId;
     String RowStatusText;

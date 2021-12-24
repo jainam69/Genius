@@ -141,8 +141,11 @@ public class Banner_Fragment extends Fragment {
         linear_create_banner = root.findViewById(R.id.linear_create_banner);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(5).getPageInfo().getPageID() == 73 && !userpermission.getPermission().get(5).getPackageRightinfo().isCreatestatus()){
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+             if (model.getPageInfo().getPageID() == 73 && !model.getPackageRightinfo().isCreatestatus()){
             linear_create_banner.setVisibility(View.GONE);
+        }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -591,15 +594,18 @@ public class Banner_Fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(5).getPageInfo().getPageID() == 73){
-                if (!userpermission.getPermission().get(5).getPackageRightinfo().isCreatestatus()){
-                    holder.banner_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(5).getPackageRightinfo().isDeletestatus()){
-                    holder.banner_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(5).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(5).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission())
+            {
+                if (model.getPageInfo().getPageID() == 73){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.banner_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.banner_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             List<BannerModel.BannerTypeEntity> notitypelist = bannerDetails.get(position).getBannerType();

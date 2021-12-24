@@ -81,12 +81,15 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull HomeworkMaster_Adapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(12).getPageInfo().getPageID() == 43){
-            if (!userpermission.getPermission().get(12).getPackageRightinfo().isCreatestatus()){
-                holder.homework_edit.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(12).getPackageRightinfo().isDeletestatus()){
-                holder.homework_delete.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 43){
+                if (!model.getPackageRightinfo().isCreatestatus()){
+                    holder.homework_edit.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isDeletestatus()){
+                    holder.homework_delete.setVisibility(View.GONE);
+                }
             }
         }
         String a = homeworkDetails.get(position).getHomeworkDate().replace("T00:00:00", "");

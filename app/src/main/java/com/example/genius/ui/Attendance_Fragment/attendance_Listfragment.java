@@ -79,8 +79,11 @@ public class attendance_Listfragment extends Fragment {
         no_content = root.findViewById(R.id.no_content);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(3).getPageInfo().getPageID() == 18 && !userpermission.getPermission().get(3).getPackageRightinfo().isCreatestatus()){
-            fab_contact.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 18 && !model.getPackageRightinfo().isCreatestatus()){
+                fab_contact.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {

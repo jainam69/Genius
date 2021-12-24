@@ -97,8 +97,10 @@ public class YoutubeVideoFragment extends Fragment {
         linear_create_youtube = root.findViewById(R.id.linear_create_youtube);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(38).getPageInfo().getPageID() == 86 && !userpermission.getPermission().get(38).getPackageRightinfo().isCreatestatus()){
-            linear_create_youtube.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 86 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_youtube.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -364,15 +366,17 @@ public class YoutubeVideoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull YoutubeVideo_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(38).getPageInfo().getPageID() == 86){
-                if (!userpermission.getPermission().get(38).getPackageRightinfo().isCreatestatus()){
-                    holder.youtube_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(38).getPackageRightinfo().isDeletestatus()){
-                    holder.youtube_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(38).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(38).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 86){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.youtube_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.youtube_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             if (linkdetails.get(position).getRowStatus().getRowStatusId() == 1) {

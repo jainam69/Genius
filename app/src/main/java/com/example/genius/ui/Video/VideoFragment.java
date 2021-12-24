@@ -119,8 +119,10 @@ public class VideoFragment extends Fragment {
         linear_create_video = root.findViewById(R.id.linear_create_video);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85 && !userpermission.getPermission().get(37).getPackageRightinfo().isCreatestatus()){
-            linear_create_video.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 85 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_video.setVisibility(View.GONE);
+            }
         }
 
         attachment_video.setOnClickListener(v -> requestPermissionForVideo());
@@ -408,16 +410,18 @@ public class VideoFragment extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull VideoMaster_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85){
-                if (!userpermission.getPermission().get(37).getPackageRightinfo().isCreatestatus()){
-                    holder.video_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(37).getPackageRightinfo().isDeletestatus()){
-                    holder.video_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(37).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(37).getPackageRightinfo().isDeletestatus()){
-                    holder.video_edit.setVisibility(View.GONE);
-                    holder.video_delete.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 85){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.video_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.video_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.video_edit.setVisibility(View.GONE);
+                        holder.video_delete.setVisibility(View.GONE);
+                    }
                 }
             }
             holder.description.setText(galleryDetails.get(position).getRemarks());

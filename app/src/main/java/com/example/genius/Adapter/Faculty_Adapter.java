@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -63,16 +64,19 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Faculty_Adapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(11).getPageInfo().getPageID() == 77){
-            if (!userpermission.getPermission().get(11).getPackageRightinfo().isCreatestatus()){
-                holder.img_edit.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(11).getPackageRightinfo().isDeletestatus()){
-                holder.img_delete.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(11).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(11).getPackageRightinfo().isDeletestatus()){
-                holder.linear_actions.setVisibility(View.GONE);
+    public void onBindViewHolder(@NonNull Faculty_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 77){
+                if (!model.getPackageRightinfo().isCreatestatus()){
+                    holder.img_edit.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isDeletestatus()){
+                    holder.img_delete.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
             }
         }
         Glide.with(context).load(facultyModelList.get(position).getFilePath()).into(holder.faculty_image);

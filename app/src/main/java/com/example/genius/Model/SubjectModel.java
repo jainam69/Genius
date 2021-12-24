@@ -1,6 +1,8 @@
 package com.example.genius.Model;
 
-public class SubjectModel {
+import java.io.Serializable;
+
+public class SubjectModel implements Serializable {
 
     long SubjectID;
     long testID;

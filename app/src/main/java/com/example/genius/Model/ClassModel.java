@@ -34,7 +34,7 @@ public class ClassModel {
         Completed = completed;
     }
 
-    public static class ClassData implements Serializable {
+    public static class ClassData implements Serializable{
 
         long ClassID;
         String ClassName;

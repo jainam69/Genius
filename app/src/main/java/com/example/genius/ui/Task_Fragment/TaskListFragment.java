@@ -79,8 +79,10 @@ public class TaskListFragment extends Fragment {
         no_content = root.findViewById(R.id.no_content);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(34).getPageInfo().getPageID() == 38 && !userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus()){
-            fab_task.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 38 && !model.getPackageRightinfo().isCreatestatus()){
+                fab_task.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {

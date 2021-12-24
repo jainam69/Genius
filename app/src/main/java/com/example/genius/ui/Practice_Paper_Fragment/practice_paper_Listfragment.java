@@ -46,6 +46,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.*;
 import com.example.genius.Model.SubjectData;
+import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -134,8 +135,10 @@ public class practice_paper_Listfragment extends Fragment {
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(23).getPageInfo().getPageID() == 36 && !userpermission.getPermission().get(23).getPackageRightinfo().isCreatestatus()){
-            linear_create_paper.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 36 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_paper.setVisibility(View.GONE);
+            }
         }
 
         if (Function.checkNetworkConnection(context)) {
@@ -332,7 +335,7 @@ public class practice_paper_Listfragment extends Fragment {
                     flag = 1;
                     InputStream imageStream;
                     Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
+                    String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     if (Path != null) {
                         instrumentFileDestination = new File(Path);
                     }
@@ -715,16 +718,18 @@ public class practice_paper_Listfragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PracticePaperMaster_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(23).getPageInfo().getPageID() == 36){
-                if (!userpermission.getPermission().get(23).getPackageRightinfo().isCreatestatus()){
-                    holder.paper_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(23).getPackageRightinfo().isDeletestatus()){
-                    holder.paper_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(23).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(23).getPackageRightinfo().isDeletestatus()){
-                    holder.paper_edit.setVisibility(View.GONE);
-                    holder.paper_delete.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 36){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.paper_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.paper_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.paper_edit.setVisibility(View.GONE);
+                        holder.paper_delete.setVisibility(View.GONE);
+                    }
                 }
             }
             holder.standard.setText(paperModels.get(position).getStandard().getStandard());

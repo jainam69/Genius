@@ -33,9 +33,7 @@ public class GallerySelectorFragment extends Fragment {
     UserModel userpermission;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Gallery");
         root = inflater.inflate(R.layout.fragment_gallery_selector, container, false);
         context = getActivity();
@@ -43,11 +41,14 @@ public class GallerySelectorFragment extends Fragment {
         linear_image = root.findViewById(R.id.linear_image);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(22).getPageInfo().getPageID() == 83 && !userpermission.getPermission().get(22).getPackageRightinfo().isViewstatus()){
-            linear_image.setVisibility(View.GONE);
-        }
-        if (userpermission.getPermission().get(37).getPageInfo().getPageID() == 85 && !userpermission.getPermission().get(37).getPackageRightinfo().isViewstatus()){
-            linear_video.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 83 && !model.getPackageRightinfo().isViewstatus()){
+                linear_image.setVisibility(View.GONE);
+            }
+            if (model.getPageInfo().getPageID() == 85 && !model.getPackageRightinfo().isViewstatus()){
+                linear_video.setVisibility(View.GONE);
+            }
         }
 
         linear_video.setOnClickListener(v -> {

@@ -253,7 +253,7 @@ public class LibraryModel implements Serializable {
         this.list = list;
     }
 
-    public static class ApprovalModel {
+    public static class ApprovalModel implements Serializable{
         public long Approval_id;
         public LibraryModel library;
         public long Branch_id;
@@ -332,7 +332,7 @@ public class LibraryModel implements Serializable {
         }
     }
 
-    public static class LibraryStandardModel {
+    public static class LibraryStandardModel implements Serializable{
         public long library_std_id;
         public long std_id;
         public long sub_id;

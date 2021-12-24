@@ -67,15 +67,18 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(10).getPageInfo().getPageID() == 76){
-            if (!userpermission.getPermission().get(10).getPackageRightinfo().isCreatestatus()){
-                holder.img_edit.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(10).getPackageRightinfo().isDeletestatus()){
-                holder.img_delete.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(10).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(10).getPackageRightinfo().isDeletestatus()){
-                holder.linear_actions.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 76){
+                if (!model.getPackageRightinfo().isCreatestatus()){
+                    holder.img_edit.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isDeletestatus()){
+                    holder.img_delete.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
             }
         }
         holder.txt_branch_name.setText(CourceDataList.get(position).branch.getBranchName());

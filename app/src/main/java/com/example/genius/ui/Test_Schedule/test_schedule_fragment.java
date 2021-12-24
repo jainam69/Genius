@@ -50,6 +50,7 @@ import com.example.genius.Model.TestScheduleModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UploadPaperData;
 import com.example.genius.Model.UploadPaperModel;
+import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -973,7 +974,7 @@ public class test_schedule_fragment extends Fragment {
                     upload_paper = "";
                     InputStream imageStream;
                     Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
+                    String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     instrumentFileDestination = new File(Path);
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     upload_test_paper.setText("Attached");

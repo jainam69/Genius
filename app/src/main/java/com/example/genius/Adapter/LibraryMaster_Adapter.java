@@ -80,12 +80,14 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
         holder.doc_category.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
         holder.doc_desc.setText(libraryDetails.get(position).getDescription());
         if (libraryDetails.get(position).getLibrary_Type() == 1) {
-            if (userpermission.getPermission().get(14).getPageInfo().getPageID() == 30){
-                if (!userpermission.getPermission().get(14).getPackageRightinfo().isCreatestatus()){
-                    holder.library_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(14).getPackageRightinfo().isDeletestatus()){
-                    holder.library_delete.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 30){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.library_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.library_delete.setVisibility(View.GONE);
+                    }
                 }
             }
             holder.library_video_link.setVisibility(View.VISIBLE);
@@ -93,12 +95,15 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             holder.library_download.setVisibility(View.GONE);
             holder.library_video_link.setText(libraryDetails.get(position).getVideoLink());
         } else {
-            if (userpermission.getPermission().get(13).getPageInfo().getPageID() == 78){
-                if (!userpermission.getPermission().get(13).getPackageRightinfo().isCreatestatus()){
-                    holder.library_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(13).getPackageRightinfo().isDeletestatus()){
-                    holder.library_delete.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission())
+            {
+                if (model.getPageInfo().getPageID() == 78){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.library_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.library_delete.setVisibility(View.GONE);
+                    }
                 }
             }
             ViewGroup.LayoutParams params = holder.linear_video.getLayoutParams();

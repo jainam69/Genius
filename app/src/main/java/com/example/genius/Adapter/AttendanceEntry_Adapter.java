@@ -69,15 +69,17 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(3).getPageInfo().getPageID() == 18){
-            if (!userpermission.getPermission().get(3).getPackageRightinfo().isCreatestatus()){
-                holder.atten_edit.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(3).getPackageRightinfo().isDeletestatus()){
-                holder.atten_delete.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(3).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(3).getPackageRightinfo().isDeletestatus()){
-                holder.linear_create_delete.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 18){
+                if (!model.getPackageRightinfo().isCreatestatus()){
+                    holder.atten_edit.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isDeletestatus()){
+                    holder.atten_delete.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    holder.linear_create_delete.setVisibility(View.GONE);
+                }
             }
         }
         String date = attendanceDetails.get(position).getAttendanceDate().replace("T00:00:00","");

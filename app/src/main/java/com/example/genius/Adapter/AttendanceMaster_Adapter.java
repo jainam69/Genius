@@ -52,7 +52,7 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
         mod.setStudentID(studentModels.get(position).getStudentID());
         att.setStudent(mod);
         testlist.add(att);
-        testlist.get(position).setRemarks(" ");
+        testlist.get(position).setRemarks("");
         testlist.get(position).setPresent(true);
         testlist.get(position).setAbsent(false);
 //        AttendanceModel.AttendanceDetailEntity att = new AttendanceModel.AttendanceDetailEntity();

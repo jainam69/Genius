@@ -181,7 +181,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                             , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                             , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 1
                             , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, encodeDecode(library_video_link.getText().toString()), "none,none", "none,none", "none,none", "none,none"
+                            , 0, encodeDecode(library_video_link.getText().toString()), "none,none", "none", "none,none", "none"
                             , false, false, MultipartBody.Part.createFormData("attachment", ""
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
                             , MultipartBody.Part.createFormData("attachment", ""
@@ -224,7 +224,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                             , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                             , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 1
                             , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                            , 0, encodeDecode(library_video_link.getText().toString()), "none,none", "none,none", "none,none", "none,none"
+                            , 0, encodeDecode(library_video_link.getText().toString()), "none,none", "none", "none,none", "none"
                             , false, false, MultipartBody.Part.createFormData("attachment", ""
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), ""))
                             , MultipartBody.Part.createFormData("attachment", ""

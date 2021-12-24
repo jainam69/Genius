@@ -59,37 +59,40 @@ public class MasterSelectorFragment extends Fragment {
         ArrayList<String> pagename = new ArrayList<>();
         ArrayList<Integer> image = new ArrayList<>();
 
-        if (userpermission.getPermission().get(36).getPageInfo().getPageID() == 4 && userpermission.getPermission().get(36).getPackageRightinfo().isViewstatus()){
-            pagename.add("USER MASTER");
-            image.add(R.drawable.staff);
-        }
-        if (userpermission.getPermission().get(26).getPageInfo().getPageID() == 6 && userpermission.getPermission().get(26).getPackageRightinfo().isViewstatus()){
-            pagename.add("SCHOOL MASTER");
-            image.add(R.drawable.school);
-        }
-        if (userpermission.getPermission().get(5).getPageInfo().getPageID() == 73 && userpermission.getPermission().get(5).getPackageRightinfo().isViewstatus()){
-            pagename.add("BANNER MASTER");
-            image.add(R.drawable.banner2);
-        }
-        if (userpermission.getPermission().get(21).getPageInfo().getPageID() == 10 && userpermission.getPermission().get(21).getPackageRightinfo().isViewstatus()){
-            pagename.add("NOTIFICATION MASTER");
-            image.add(R.drawable.noti);
-        }
-        if (userpermission.getPermission().get(9).getPageInfo().getPageID() == 75 && userpermission.getPermission().get(9).getPackageRightinfo().isViewstatus()){
-            pagename.add("BRANCH COURSE MASTER");
-            image.add(R.drawable.course);
-        }
-        if (userpermission.getPermission().get(8).getPageInfo().getPageID() == 74 && userpermission.getPermission().get(8).getPackageRightinfo().isViewstatus()){
-            pagename.add("BRANCH CLASS MASTER");
-            image.add(R.drawable.branchclass);
-        }
-        if (userpermission.getPermission().get(10).getPageInfo().getPageID() == 76 && userpermission.getPermission().get(10).getPackageRightinfo().isViewstatus()){
-            pagename.add("BRANCH SUBJECT MASTER");
-            image.add(R.drawable.branchsubject);
-        }
-        if (userpermission.getPermission().get(11).getPageInfo().getPageID() == 77 && userpermission.getPermission().get(11).getPackageRightinfo().isViewstatus()){
-            pagename.add("FACULTY MASTER");
-            image.add(R.drawable.user);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 4 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("USER MASTER");
+                image.add(R.drawable.staff);
+            }
+            if (model.getPageInfo().getPageID() == 6 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("SCHOOL MASTER");
+                image.add(R.drawable.school);
+            }
+            if (model.getPageInfo().getPageID() == 73 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("BANNER MASTER");
+                image.add(R.drawable.banner2);
+            }
+            if (model.getPageInfo().getPageID() == 10 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("NOTIFICATION MASTER");
+                image.add(R.drawable.noti);
+            }
+            if (model.getPageInfo().getPageID() == 75 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("BRANCH COURSE MASTER");
+                image.add(R.drawable.course);
+            }
+            if (model.getPageInfo().getPageID() == 74 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("BRANCH CLASS MASTER");
+                image.add(R.drawable.branchclass);
+            }
+            if (model.getPageInfo().getPageID() == 76 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("BRANCH SUBJECT MASTER");
+                image.add(R.drawable.branchsubject);
+            }
+            if (model.getPageInfo().getPageID() == 77 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("FACULTY MASTER");
+                image.add(R.drawable.user);
+            }
         }
 
         master_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));

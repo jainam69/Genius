@@ -1,8 +1,9 @@
 package com.example.genius.Model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class BranchModel {
+public class BranchModel implements Serializable {
 
     long BranchID;
     String BranchName;

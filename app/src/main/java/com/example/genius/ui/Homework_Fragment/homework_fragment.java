@@ -7,10 +7,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -399,14 +401,14 @@ public class homework_fragment extends Fragment {
                     flag = 1;
                     InputStream imageStream;
                     Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireActivity(), uri);
+                    String Path = FileUtils.getReadablePathFromUri(requireActivity(),uri);
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     attachment_homework.setText("Attached");
                     attachment_homework.setTextColor(context.getResources().getColor(R.color.black));
                     filename = instrumentFileDestination.getName();
-                    attach = encodeFileToBase64Binary(instrumentFileDestination);
                 } catch (Exception e) {
+                    attachment_homework.setText("");
                     errored();
                 }
             } else {

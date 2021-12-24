@@ -91,8 +91,11 @@ public class master_schoolFragment extends Fragment {
         linear_create_school = root.findViewById(R.id.linear_create_school);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(26).getPageInfo().getPageID() == 6 && !userpermission.getPermission().get(26).getPackageRightinfo().isCreatestatus()){
-            linear_create_school.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 6 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_school.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -297,15 +300,18 @@ public class master_schoolFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull SchoolMaster_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(26).getPageInfo().getPageID() == 6){
-                if (!userpermission.getPermission().get(26).getPackageRightinfo().isCreatestatus()){
-                    holder.school_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(26).getPackageRightinfo().isDeletestatus()){
-                    holder.school_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(26).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(26).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission())
+            {
+                if (model.getPageInfo().getPageID() == 6){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.school_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.school_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             if (schoolDetails.get(position).getRowStatus().getRowStatusId() == 1) {

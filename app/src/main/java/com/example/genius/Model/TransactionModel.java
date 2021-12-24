@@ -1,6 +1,8 @@
 package com.example.genius.Model;
 
-public class TransactionModel {
+import java.io.Serializable;
+
+public class TransactionModel implements Serializable {
 
     long TransactionId;
     String CreatedDate;

@@ -151,8 +151,10 @@ public class FeeStructureFragment extends Fragment {
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
 
-        if (userpermission.getPermission().get(29).getPageInfo().getPageID() == 15 && !userpermission.getPermission().get(29).getPackageRightinfo().isCreatestatus()){
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 15 && !model.getPackageRightinfo().isCreatestatus()){
             linear_create_fee.setVisibility(View.GONE);
+            }
         }
 
         banner_image.setOnClickListener(v -> {
@@ -575,15 +577,17 @@ public class FeeStructureFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull BannerMaster_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(29).getPageInfo().getPageID() == 15){
-                if (!userpermission.getPermission().get(29).getPackageRightinfo().isCreatestatus()){
-                    holder.banner_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(29).getPackageRightinfo().isDeletestatus()){
-                    holder.banner_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(29).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(29).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 15){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.banner_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.banner_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             holder.remark.setText(bannerDetails.get(position).getRemark());

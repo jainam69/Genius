@@ -56,15 +56,18 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
     @Override
     public void onBindViewHolder(@NonNull StaffMaster_Adapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(36).getPageInfo().getPageID() == 4){
-            if (!userpermission.getPermission().get(36).getPackageRightinfo().isCreatestatus()){
-                holder.staff_edit.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(36).getPackageRightinfo().isDeletestatus()){
-                holder.staff_delete.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(36).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(36).getPackageRightinfo().isDeletestatus()){
-                holder.linear_actions.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 4){
+                if (!model.getPackageRightinfo().isCreatestatus()){
+                    holder.staff_edit.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isDeletestatus()){
+                    holder.staff_delete.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    holder.linear_actions.setVisibility(View.GONE);
+                }
             }
         }
         if (staffDetails.get(position).getRowStatus().getRowStatusId()==1){

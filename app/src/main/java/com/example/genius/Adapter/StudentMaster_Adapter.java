@@ -55,8 +55,10 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
 
     @Override
     public void onBindViewHolder(@NonNull StudentMaster_Adapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(30).getPageInfo().getPageID() == 8 && !userpermission.getPermission().get(30).getPackageRightinfo().isCreatestatus()){
-            holder.student_edit.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 8 && !model.getPackageRightinfo().isCreatestatus()){
+                holder.student_edit.setVisibility(View.GONE);
+            }
         }
         holder.student_name.setText(studentDetails.get(position).getFirstName());
         if (studentDetails.get(position).getAdmissionDate() != null) {

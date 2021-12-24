@@ -76,8 +76,11 @@ public class faculty_listfragment extends Fragment {
         clear = root.findViewById(R.id.clear);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(11).getPageInfo().getPageID() == 77 && !userpermission.getPermission().get(11).getPackageRightinfo().isCreatestatus()){
-            fab_contact.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 77 && !model.getPackageRightinfo().isCreatestatus()){
+                fab_contact.setVisibility(View.GONE);
+            }
         }
 
         search.addTextChangedListener(new TextWatcher() {

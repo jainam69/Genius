@@ -60,23 +60,20 @@ public class LoginActivity extends AppCompatActivity {
                                 UserModel.UserData data = response.body();
                                 if (data.isCompleted()) {
                                     UserModel model = data.getData();
-                                    if (model != null && model.getUserID() > 0) {
-                                        Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN, true);
-                                        Preferences.getInstance(context).setLong(Preferences.KEY_USER_ID, model.getUserID());
-                                        Preferences.getInstance(context).setLong(Preferences.KEY_BRANCH_ID, model.getBranchInfo().getBranchID());
-                                        Preferences.getInstance(context).setString(Preferences.KEY_BRANCH_NAME, model.getBranchInfo().getBranchName());
-                                        Preferences.getInstance(context).setString(Preferences.KEY_USER_NAME, model.getUsername());
-                                        Preferences.getInstance(context).setInt(Preferences.KEY_USER_TYPE, Integer.parseInt(model.getUserType()));
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                        LoginActivity.this.finish();
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
+                                    Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN, true);
+                                    Preferences.getInstance(context).setLong(Preferences.KEY_USER_ID, model.getUserID());
+                                    Preferences.getInstance(context).setLong(Preferences.KEY_BRANCH_ID, model.getBranchInfo().getBranchID());
+                                    Preferences.getInstance(context).setString(Preferences.KEY_BRANCH_NAME, model.getBranchInfo().getBranchName());
+                                    Preferences.getInstance(context).setString(Preferences.KEY_USER_NAME, model.getUsername());
+                                    Preferences.getInstance(context).setInt(Preferences.KEY_USER_TYPE, Integer.parseInt(model.getUserType()));
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    LoginActivity.this.finish();
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             } else {
+                                progressBarHelper.hideProgressDialog();
                                 Toast.makeText(LoginActivity.this, "Something Went Wrong..!!", Toast.LENGTH_SHORT).show();
                             }
                         }

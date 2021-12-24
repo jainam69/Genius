@@ -64,21 +64,24 @@ public class LibrarySelectorFragment extends Fragment {
         ArrayList<String> pagename = new ArrayList<>();
         ArrayList<Integer> image = new ArrayList<>();
 
-        if (userpermission.getPermission().get(13).getPageInfo().getPageID() == 78 && userpermission.getPermission().get(13).getPackageRightinfo().isViewstatus()){
-            pagename.add("IMAGES/DOCUMENTS");
-            image.add(R.drawable.library);
-        }
-        if (userpermission.getPermission().get(14).getPageInfo().getPageID() == 30 && userpermission.getPermission().get(14).getPackageRightinfo().isViewstatus()){
-            pagename.add("VIDEOS");
-            image.add(R.drawable.create_library);
-        }
-        if (userpermission.getPermission().get(17).getPageInfo().getPageID() == 80 && userpermission.getPermission().get(17).getPackageRightinfo().isViewstatus()){
-            pagename.add("MANAGE LIBRARY");
-            image.add(R.drawable.course);
-        }
-        if (userpermission.getPermission().get(39).getPageInfo().getPageID() == 88 && userpermission.getPermission().get(39).getPackageRightinfo().isViewstatus()){
-            pagename.add("SHOW LIBRARY");
-            image.add(R.drawable.show_library);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 78 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("IMAGES/DOCUMENTS");
+                image.add(R.drawable.library);
+            }
+            if (model.getPageInfo().getPageID() == 30 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("VIDEOS");
+                image.add(R.drawable.create_library);
+            }
+            if (model.getPageInfo().getPageID() == 80 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("MANAGE LIBRARY");
+                image.add(R.drawable.course);
+            }
+            if (model.getPageInfo().getPageID() == 88 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("SHOW LIBRARY");
+                image.add(R.drawable.show_library);
+            }
         }
 
         library_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));

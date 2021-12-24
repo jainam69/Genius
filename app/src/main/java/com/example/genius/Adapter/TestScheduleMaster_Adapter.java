@@ -80,16 +80,18 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TestScheduleMaster_Adapter.ViewHolder holder, int position) {
-        if (userpermission.getPermission().get(33).getPageInfo().getPageID() == 84){
-            if (!userpermission.getPermission().get(33).getPackageRightinfo().isCreatestatus()){
-                holder.testschedule_edit.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(33).getPackageRightinfo().isDeletestatus()){
-                holder.testschedule_delete.setVisibility(View.GONE);
-            }
-            if (!userpermission.getPermission().get(33).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(33).getPackageRightinfo().isDeletestatus()){
-                holder.testschedule_edit.setVisibility(View.GONE);
-                holder.testschedule_delete.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 84){
+                if (!model.getPackageRightinfo().isCreatestatus()){
+                    holder.testschedule_edit.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isDeletestatus()){
+                    holder.testschedule_delete.setVisibility(View.GONE);
+                }
+                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    holder.testschedule_edit.setVisibility(View.GONE);
+                    holder.testschedule_delete.setVisibility(View.GONE);
+                }
             }
         }
         holder.standard.setText(testScheduleDetails.get(position).getStandard().getStandard());

@@ -111,8 +111,10 @@ public class reminder_fragment extends Fragment {
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
 
-        if (userpermission.getPermission().get(24).getPageInfo().getPageID() == 40 && !userpermission.getPermission().get(24).getPackageRightinfo().isCreatestatus()){
-            linear_create_reminder.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 40 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_reminder.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -347,15 +349,17 @@ public class reminder_fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Reminder_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(24).getPageInfo().getPageID() == 40){
-                if (!userpermission.getPermission().get(24).getPackageRightinfo().isCreatestatus()){
-                    holder.reminder_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(24).getPackageRightinfo().isDeletestatus()){
-                    holder.reminder_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(24).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(24).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 40){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.reminder_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.reminder_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             if (reminderModels.get(position).getReminderDate() != null) {

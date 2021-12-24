@@ -35,7 +35,8 @@ public class BranchClassSingleModel {
         Completed = completed;
     }
 
-    public static class BranchClassData implements Serializable {
+    public static class BranchClassData implements Serializable{
+
         public long Class_dtl_id;
         public BranchModel branch;
         @SerializedName("Class")

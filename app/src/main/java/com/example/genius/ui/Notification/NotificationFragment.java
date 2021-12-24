@@ -105,8 +105,11 @@ public class NotificationFragment extends Fragment {
         linear_create_notification = root.findViewById(R.id.linear_create_notification);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        if (userpermission.getPermission().get(21).getPageInfo().getPageID() == 10 && !userpermission.getPermission().get(21).getPackageRightinfo().isCreatestatus()){
-            linear_create_notification.setVisibility(View.GONE);
+        for (UserModel.UserPermission model : userpermission.getPermission())
+        {
+            if (model.getPageInfo().getPageID() == 10 && !model.getPackageRightinfo().isCreatestatus()){
+                linear_create_notification.setVisibility(View.GONE);
+            }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -443,15 +446,18 @@ public class NotificationFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Notification_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(21).getPageInfo().getPageID() == 10){
-                if (!userpermission.getPermission().get(21).getPackageRightinfo().isCreatestatus()){
-                    holder.noti_edit.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(21).getPackageRightinfo().isDeletestatus()){
-                    holder.noti_delete.setVisibility(View.GONE);
-                }
-                if (!userpermission.getPermission().get(21).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(21).getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+            for (UserModel.UserPermission model : userpermission.getPermission())
+            {
+                if (model.getPageInfo().getPageID() == 10){
+                    if (!model.getPackageRightinfo().isCreatestatus()){
+                        holder.noti_edit.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isDeletestatus()){
+                        holder.noti_delete.setVisibility(View.GONE);
+                    }
+                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                        holder.linear_actions.setVisibility(View.GONE);
+                    }
                 }
             }
             holder.noti_desc.setText("" + notificationDetails.get(position).getNotificationMessage());

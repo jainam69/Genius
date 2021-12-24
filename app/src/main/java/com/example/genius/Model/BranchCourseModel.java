@@ -1,5 +1,6 @@
 package com.example.genius.Model;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class BranchCourseModel {
@@ -32,7 +33,7 @@ public class BranchCourseModel {
         Completed = completed;
     }
 
-    public static class BranchCourceData {
+    public static class BranchCourceData implements Serializable {
 
         private long course_dtl_id;
         private BranchModel branch;

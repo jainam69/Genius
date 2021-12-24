@@ -49,6 +49,7 @@ import com.example.genius.Model.TodoData;
 import com.example.genius.Model.TodoModel;
 import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
+import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -153,8 +154,10 @@ public class TaskFragment extends Fragment {
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
 
-        if (userpermission.getPermission().get(34).getPageInfo().getPageID() == 38 && !userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus()){
+        for (UserModel.UserPermission model : userpermission.getPermission()){
+            if (model.getPageInfo().getPageID() == 38 && !model.getPackageRightinfo().isCreatestatus()){
             linear_create_todo.setVisibility(View.GONE);
+        }
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -551,7 +554,7 @@ public class TaskFragment extends Fragment {
                     flag = 1;
                     InputStream imageStream;
                     Uri uri = result.getData();
-                    String Path = FUtils.getPath(requireContext(), uri);
+                    String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
                     attachment.setText("Attached");
                     attachment.setTextColor(context.getResources().getColor(R.color.black));
@@ -641,17 +644,19 @@ public class TaskFragment extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull TodoMaster_Adapter.ViewHolder holder, int position) {
-            if (userpermission.getPermission().get(34).getPageInfo().getPageID() == 38){
-                if (!userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus()){
+            for (UserModel.UserPermission model : userpermission.getPermission()){
+                if (model.getPageInfo().getPageID() == 38){
+                if (!model.getPackageRightinfo().isCreatestatus()){
                     holder.task_edit.setVisibility(View.GONE);
                 }
-                if (!userpermission.getPermission().get(34).getPackageRightinfo().isDeletestatus()){
+                if (!model.getPackageRightinfo().isDeletestatus()){
                     holder.task_delete.setVisibility(View.GONE);
                 }
-                if (!userpermission.getPermission().get(34).getPackageRightinfo().isCreatestatus() && !userpermission.getPermission().get(34).getPackageRightinfo().isDeletestatus()){
+                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
                     holder.task_edit.setVisibility(View.GONE);
                     holder.task_delete.setVisibility(View.GONE);
                 }
+            }
             }
             if (todoModels.get(position).getToDoDate() != null) {
                 String a = todoModels.get(position).getToDoDate().replace("T00:00:00", "");
