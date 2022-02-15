@@ -69,10 +69,9 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
         }
-
-        holder.standard.setText("" + studentDetails.get(position).getStandardInfo().getStandard());
+        holder.course.setText(""+studentDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.standard.setText(""+studentDetails.get(position).getBranchClass().classModel.getClassName());
         int a = studentDetails.get(position).getBatchInfo().getBatchTime();
         if (a == 1) {
             holder.batch_time.setText("Morning");
@@ -130,7 +129,8 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
                         bundle.putLong("TransactionID", studentDetails.get(position).getTransaction().getTransactionId());
                         bundle.putLong("SchoolName", studentDetails.get(position).getSchoolInfo().getSchoolID());
                         bundle.putInt("SchoolTime", studentDetails.get(position).getSchoolTime());
-                        bundle.putLong("Standard", studentDetails.get(position).getStandardInfo().getStandardID());
+                        bundle.putLong("Course", studentDetails.get(position).getBranchCourse().getCourse_dtl_id());
+                        bundle.putLong("Standard", studentDetails.get(position).getBranchClass().getClass_dtl_id());
                         bundle.putInt("Status", studentDetails.get(position).getRowStatus().getRowStatusId());
                         bundle.putLong("StudentID", studentDetails.get(position).getStudentID());
                         bundle.putString("Grade", studentDetails.get(position).getGrade());
@@ -166,7 +166,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView student_name, admission_date, standard, batch_time, contact_no;
+        TextView student_name, admission_date, standard, batch_time, contact_no,course;
         ImageView student_edit;
 
         public ViewHolder(@NonNull View itemView) {
@@ -178,6 +178,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
             batch_time = itemView.findViewById(R.id.batch_time);
             contact_no = itemView.findViewById(R.id.contact_no);
             student_edit = itemView.findViewById(R.id.student_edit);
+            course = itemView.findViewById(R.id.course);
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

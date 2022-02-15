@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.BranchClassAdapter;
+import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.BranchModel;
@@ -77,8 +79,7 @@ public class BranchClassFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Class Master");
-        // Inflate the layout for this fragment
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Class Master");
         root = inflater.inflate(R.layout.fragment_branch_class, container, false);
 
         context = getActivity();
@@ -90,7 +91,7 @@ public class BranchClassFragment extends Fragment {
 
         bundle = getArguments();
         if (bundle != null) {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
                 GetAllCourse();
             } else {
@@ -98,23 +99,24 @@ public class BranchClassFragment extends Fragment {
             }
             listForBundle = (List<BranchClassSingleModel.BranchClassData>) bundle.getSerializable("COURSE_DTL");
             if (listForBundle.size() > 0) {
-                List<ClassModel.ClassData> data = new ArrayList<>();
+                List<BranchClassSingleModel.BranchClassData> data = new ArrayList<>();
                 for (int i = 0; i < listForBundle.size(); i++) {
                     listForBundle.get(i).setClassModel(new ClassModel.ClassData(listForBundle.get(i).classModel.getClassID()
-                            , listForBundle.get(i).classModel.getClassName()
-                            , listForBundle.get(i).isClass));
-                    data.add(listForBundle.get(i).classModel);
+                            , listForBundle.get(i).classModel.getClassName()));
+                    listForBundle.get(i).setClass(listForBundle.get(i).isClass);
+                    data.add(listForBundle.get(i));
                 }
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 course_rv.setLayoutManager(linearLayoutManager);
                 branchCourceAdapter = new BranchClassAdapter(context, data);
-                branchCourceAdapter.notifyDataSetChanged();
+
                 course_rv.setAdapter(branchCourceAdapter);
+                branchCourceAdapter.notifyDataSetChanged();
             }
         } else {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
-                GetAllClass();
+                GetAllCourse();
             } else {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
@@ -159,37 +161,6 @@ public class BranchClassFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
 
         return root;
-    }
-
-    public void GetAllClass() {
-        Call<ClassModel> call = apiCalling.GetAllClass();
-        call.enqueue(new Callback<ClassModel>() {
-            @Override
-            public void onResponse(@NotNull Call<ClassModel> call, @NotNull Response<ClassModel> response) {
-                if (response.isSuccessful()) {
-                    ClassModel data = response.body();
-                    if (data != null && data.getCompleted()) {
-                        List<ClassModel.ClassData> studentModelList = data.getData();
-                        if (studentModelList != null) {
-                            if (studentModelList.size() > 0) {
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                course_rv.setLayoutManager(linearLayoutManager);
-                                branchCourceAdapter = new BranchClassAdapter(context, studentModelList);
-                                branchCourceAdapter.notifyDataSetChanged();
-                                course_rv.setAdapter(branchCourceAdapter);
-                            }
-                        }
-                    }
-                    GetAllCourse();
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<ClassModel> call, @NotNull Throwable t) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                progressBarHelper.hideProgressDialog();
-            }
-        });
     }
 
     public void GetAllCourse() {
@@ -268,6 +239,9 @@ public class BranchClassFragment extends Fragment {
                         course = couseitem.get(position);
                         courseid = couseiditem.get(position);
                     }
+                    if (spinner_course.getSelectedItemId() != 0){
+                        GetAllClass(courseid);
+                    }
                 }
 
                 @Override
@@ -275,12 +249,44 @@ public class BranchClassFragment extends Fragment {
                 }
             };
 
+    public void GetAllClass(long coursedetailid) {
+        progressBarHelper.showProgressDialog();
+        Call<BranchClassModel> call = apiCalling.Get_All_Class_By_Course(coursedetailid);
+        call.enqueue(new Callback<BranchClassModel>() {
+            @Override
+            public void onResponse(@NotNull Call<BranchClassModel> call, @NotNull Response<BranchClassModel> response) {
+                if (response.isSuccessful()) {
+                    BranchClassModel data = response.body();
+                    if (data != null && data.getCompleted()) {
+                        List<BranchClassSingleModel.BranchClassData> studentModelList = data.getData();
+                        if (studentModelList != null) {
+                            if (studentModelList.size() > 0) {
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                                course_rv.setLayoutManager(linearLayoutManager);
+                                branchCourceAdapter = new BranchClassAdapter(context, studentModelList);
+                                course_rv.setAdapter(branchCourceAdapter);
+                                branchCourceAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                   progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<BranchClassModel> call, @NotNull Throwable t) {
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                progressBarHelper.hideProgressDialog();
+            }
+        });
+    }
+
     public void Save() {
         if (spinner_course.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select course");
         } else {
             progressBarHelper.showProgressDialog();
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 list = new ArrayList<>();
                 if (BranchClassAdapter.CourceDataList.size() > 0) {
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
@@ -289,17 +295,17 @@ public class BranchClassFragment extends Fragment {
                     if (bundle == null) {
                         for (int i = 0; i < BranchClassAdapter.CourceDataList.size(); i++) {
                             BranchClassSingleModel.BranchClassData model = new BranchClassSingleModel.BranchClassData(0
-                                    , branchModel, BranchClassAdapter.CourceDataList.get(i)
+                                    , branchModel, BranchClassAdapter.CourceDataList.get(i).getClassModel()
                                     , transactionModel, rowStatusModel, new BranchCourseModel.BranchCourceData(courseid)
-                                    , BranchClassAdapter.CourceDataList.get(i).getIscourse());
+                                    , BranchClassAdapter.CourceDataList.get(i).isClass());
                             list.add(model);
                         }
                     } else {
                         for (int i = 0; i < BranchClassAdapter.CourceDataList.size(); i++) {
                             BranchClassSingleModel.BranchClassData model = new BranchClassSingleModel.BranchClassData(listForBundle.get(i).Class_dtl_id
-                                    , branchModel, BranchClassAdapter.CourceDataList.get(i)
+                                    , branchModel, listForBundle.get(i).getClassModel()
                                     , transactionModel, rowStatusModel, new BranchCourseModel.BranchCourceData(courseid)
-                                    , BranchClassAdapter.CourceDataList.get(i).getIscourse());
+                                    , BranchClassAdapter.CourceDataList.get(i).isClass());
                             list.add(model);
                         }
                     }

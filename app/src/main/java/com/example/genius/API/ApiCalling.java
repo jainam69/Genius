@@ -1,5 +1,7 @@
 package com.example.genius.API;
 
+import com.example.genius.Model.AnnouncementModel;
+import com.example.genius.Model.AnnouncementSingleModel;
 import com.example.genius.Model.AnswerSheetData;
 import com.example.genius.Model.AttendanceData;
 import com.example.genius.Model.AttendanceModel;
@@ -13,6 +15,7 @@ import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.BranchSubjectSingleModel;
 import com.example.genius.Model.CategoryData;
+import com.example.genius.Model.CircularModel;
 import com.example.genius.Model.ClassModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.CourceModel;
@@ -85,6 +88,9 @@ public interface ApiCalling {
 
     @POST(ApiConstant.CHANGE_PASSWORD)
     Call<CommonModel> ChangePassword(@Query("userID") long userID, @Query("password") String password, @Query("oldPassword") String oldpassword);
+
+    @POST(ApiConstant.FORGOT_PASSWORD)
+    Call<CommonModel.ResponseModel> Forgot_Password(@Body UserModel userModel);
 
     @POST(ApiConstant.UPDATE_PROFILE)
     Call<ProfileModel> UpdateProfile(@Body StaffModel staffModel);
@@ -210,7 +216,7 @@ public interface ApiCalling {
     Call<CommonModel> RemoveLibrary(@Query("libraryID") long libraryID, @Query("lastupdatedby") String lastupdatedby);
 
     @GET(ApiConstant.GET_STUDENT_ATTENDANCE_LIST)
-    Call<StudentData> GetAllStudentForAttendance(@Query("branchID") long branchID, @Query("stdID") long stdID, @Query("batchID") int batchID, @Query("attendanceDate") String attendanceDate);
+    Call<StudentData> GetAllStudentForAttendance(@Query("branchID") long branchID, @Query("stdID") long stdID, @Query("courseid") long courseid,@Query("batchID") int batchID, @Query("attendanceDate") String attendanceDate);
 
     @POST(ApiConstant.ATTENDANCE_MAINTENANCE)
     Call<AttendanceModel.AttendanceData1> AttendanceMaintenance(@Body AttendanceModel attendanceModel);
@@ -265,17 +271,17 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.FEES_MAINTENANCE + "/{FeesID}"
-            + "/{FeesDetailsID}" + "/{StandardID}" + "/{branchID}" + "/{Remark}" + "/{SubmitDate}"
+            + "/{FeesDetailsID}" + "/{CourseID}" +"/{StandardID}" + "/{branchID}" + "/{Remark}" + "/{SubmitDate}"
             + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
     Call<FeeStructureSingleData> FeesMaintenance(@Path("FeesID") long FeesID,
-                                                 @Path("FeesDetailsID") long FeesDetailsID, @Path("StandardID") long StandardID,
+                                                 @Path("FeesDetailsID") long FeesDetailsID, @Path("CourseID") long CourseID,@Path("StandardID") long StandardID,
                                                  @Path("branchID") long branchID, @Path("Remark") String Remark, @Path("SubmitDate") String SubmitDate,
                                                  @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy,
                                                  @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
                                                  @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @GET(ApiConstant.GET_ALL_FEES_BRANCH)
-    Call<FeeStructureData> GetFeesByBranchID(@Query("branchID") long branchID);
+    Call<FeeStructureData> GetFeesByBranchID(@Query("BranchID") long BranchID);
 
     @POST(ApiConstant.REMOVE_FEES)
     Call<CommonModel> RemoveFees(@Query("FeesID") long FeesID, @Query("lastupdatedby") String lastupdatedby);
@@ -297,12 +303,12 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.OldLibraryMaintenance + "/{LibraryID}"
-            + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{StandardID}" + "/{BranchID}" + "/{CreatebyBranch}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
+            + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{CourseID}" + "/{StandardID}" + "/{BranchID}" + "/{CreatebyBranch}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
             + "/{SubjectID}" + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{VideoLink}" + "/{ThumbnailFileName}" + "/{ThumbnailFileExtension}" + "/{DocFileName}"
             + "/{DocFileExtension}" + "/{HasThumbnailFile}" + "/{HasDocFile}")
     Call<LibrarySingleData> OldLibraryMaintenance(@Path("LibraryID") long LibraryID,
                                                   @Path("LibraryDetailID") long LibraryDetailID, @Path("LibraryTitle") String LibraryTitle,
-                                                  @Path("CategoryID") long CategoryID, @Path("StandardID") String StandardID, @Path("BranchID") long BranchID,
+                                                  @Path("CategoryID") long CategoryID, @Path("CourseID") long CourseID,@Path("StandardID") String StandardID, @Path("BranchID") long BranchID,
                                                   @Path("CreatebyBranch") long CreatebyBranch, @Path("Type") int Type, @Path("Library_Type") int Library_Type,
                                                   @Path(value = "Description") String Description, @Path("SubjectID") long SubjectID, @Path("CreateId") int CreateId,
                                                   @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("VideoLink") String VideoLink,
@@ -331,10 +337,10 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.NEW_HOMEWORK_MAINTENANCE + "/{HomeworkID}"
-            + "/{Homework_Date}" + "/{BranchID}" + "/{StandardID}" + "/{SubjectID}" + "/{Batch_TimeID}" + "/{Remark}" + "/{CreateId}" + "/{CreateBy}"
+            + "/{Homework_Date}" + "/{BranchID}" + "/{CourseID}" + "/{StandardID}" + "/{SubjectID}" + "/{Batch_TimeID}" + "/{Remark}" + "/{CreateId}" + "/{CreateBy}"
             + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
     Call<HomeworkModel.HomeworkData1> HomeworkMaintenance(@Path("HomeworkID") long HomeworkID,
-                                                          @Path("Homework_Date") String Homework_Date, @Path("BranchID") long BranchID,
+                                                          @Path("Homework_Date") String Homework_Date, @Path("BranchID") long BranchID,@Path("CourseID") long CourseID,
                                                           @Path("StandardID") long StandardID, @Path("SubjectID") long SubjectID, @Path("Batch_TimeID") int Batch_TimeID,
                                                           @Path("Remark") String Remark, @Path("CreateId") long CreateId,
                                                           @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
@@ -360,8 +366,8 @@ public interface ApiCalling {
                                                             @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @Multipart
-    @POST(ApiConstant.PRACTICE_PAPER_MAINTENANCE + "/{PaperID}/{UniqID}/{BranchID}/{StandardID}/{SubjectID}/{Batch_TimeID}/{Remark}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
-    Call<PaperModel.PaperData1> PaperMaintenance(@Path("PaperID") long PaperID, @Path("UniqID") long UniqID, @Path("BranchID") long BranchID, @Path("StandardID") long StandardID, @Path("SubjectID") long SubjectID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Remark") String Remark,
+    @POST(ApiConstant.PRACTICE_PAPER_MAINTENANCE + "/{PaperID}/{UniqID}/{BranchID}/{CourseID}/{StandardID}/{SubjectID}/{Batch_TimeID}/{Remark}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
+    Call<PaperModel.PaperData1> PaperMaintenance(@Path("PaperID") long PaperID, @Path("UniqID") long UniqID, @Path("BranchID") long BranchID, @Path("CourseID") long CourseID,@Path("StandardID") long StandardID, @Path("SubjectID") long SubjectID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Remark") String Remark,
                                                  @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName,
                                                  @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
@@ -378,11 +384,11 @@ public interface ApiCalling {
                                               @Path("Extension") String Extension, @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @POST(ApiConstant.GET_TEST_MARKS_DATE)
-    Call<MarksModel.MarksData> Get_Test_Marks(@Query("BranchID") long BranchID, @Query("stdID") long stdID, @Query("BatchType") int BatchType);
+    Call<MarksModel.MarksData> Get_Test_Marks(@Query("BranchID") long BranchID, @Query("courseID") long courseID,@Query("stdID") long stdID, @Query("BatchType") int BatchType);
 
     @Multipart
     @POST(ApiConstant.STUDENT_MAINTENANCE + "/{StudentID}/{ParentID}/{Gr_No}/{Name}/{Birth_Date}/{Address}/{BranchID}/{StandardID}/{SchoolID}/{School_TimeID}/{Batch_TimeID}/{Last_Year_Result}/{Grade}/{Class_Name}/{Student_Contact_No}/{Admission_Date}/{Parent_Name}/{Father_Occupation}/{Mother_Occupation}/{Parent_Contact_No}/{CreateId}/{CreateBy}/{TransactionId}/{std_pwd}/{parent_pwd}/{FileName}/{Extension}/{HasFile}")
-    Call<StudentModel.StudentData1> StudentMaintenance(@Path("StudentID") long StudentID, @Path("ParentID") long ParentID, @Path("Gr_No") String Gr_No, @Path("Name") String Name, @Path("Birth_Date") String Birth_Date, @Path("Address") String Address, @Path("BranchID") long BranchID, @Path("StandardID") long StandardID, @Path("SchoolID") long SchoolID,
+    Call<StudentModel.StudentData1> StudentMaintenance(@Path("StudentID") long StudentID, @Path("ParentID") long ParentID, @Path("Gr_No") String Gr_No, @Path("Name") String Name, @Path("Birth_Date") String Birth_Date, @Path("Address") String Address, @Path("BranchID") long BranchID, @Path("StandardID") String StandardID, @Path("SchoolID") long SchoolID,
                                                        @Path("School_TimeID") int School_TimeID, @Path("Batch_TimeID") int Batch_TimeID, @Path("Last_Year_Result") String Last_Year_Result, @Path("Grade") String Grade, @Path("Class_Name") String Class_Name,
                                                        @Path("Student_Contact_No") String Student_Contact_No, @Path("Admission_Date") String Admission_Date, @Path("Parent_Name") String Parent_Name, @Path("Father_Occupation") String Father_Occupation, @Path("Mother_Occupation") String Mother_Occupation,
                                                        @Path("Parent_Contact_No") String Parent_Contact_No, @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("std_pwd") String std_pwd, @Path("parent_pwd") String parent_pwd, @Path("FileName") String FileName,
@@ -404,10 +410,10 @@ public interface ApiCalling {
     Call<StudentModel.StudentDataList> Get_Student_Details(@Query("Std") long Std, @Query("Branch") long Branch, @Query("BatchTime") long BatchTime);
 
     @Multipart
-    @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{BatchtimeID}/{SubjectID}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
+    @POST(ApiConstant.MARKS_MAITENANCE + "/{MarksID}/{Marks_Date}/{TestID}/{BranchID}/{StudentID}/{Achieve_Marks}/{BatchtimeID}/{CourseID}/{StandardID}/{SubjectID}/{CreateId}/{CreateBy}/{TransactionId}/{FileName}/{Extension}/{HasFile}")
     Call<MarksModel.MarksData1> MarksMaintenance(@Path("MarksID") long MarksID, @Path("Marks_Date") String Marks_Date, @Path("TestID") long TestID,
                                                  @Path("BranchID") long BranchID, @Path("StudentID") String StudentID, @Path("Achieve_Marks") String Achieve_Marks,
-                                                 @Path("BatchtimeID") int BatchtimeID, @Path("SubjectID") long SubjectID,
+                                                 @Path("BatchtimeID") int BatchtimeID, @Path("CourseID") long CourseID,@Path("StandardID") long StandardID,@Path("SubjectID") long SubjectID,
                                                  @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
                                                  @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
@@ -433,11 +439,23 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_BRANCH_COURCE_ALL)
     Call<CourceModel> GetAllCourse();
 
+    @GET(ApiConstant.GET_ALL_COURSE_DDL)
+    Call<BranchCourseModel> GetAllCourseDDL(@Query("BranchID") long BranchID);
+
     @GET(ApiConstant.GET_BRANCH_COURSE_SPINNER)
     Call<BranchCourseModel> Get_Course_Spinner(@Query("BranchID") long BranchID);
 
     @GET(ApiConstant.GET_BRANCH_CLASS_SPINNER)
     Call<BranchClassModel> Get_Class_Spinner(@Query("BranchID") long BranchID, @Query("CourseID") long CourseID);
+
+    @GET(ApiConstant.GET_ALL_CLASS_BY_COURSE)
+    Call<BranchClassModel> Get_All_Class_By_Course(@Query("CourseID") long CourseID);
+
+    @GET(ApiConstant.CHECK_CLASS_DETAIL)
+    Call<CommonModel.ResponseModel> Check_Class_Detail(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID);
+
+    @GET(ApiConstant.CHECK_SUBJECT_DETAIL)
+    Call<CommonModel.ResponseModel> Check_Subject_Detail(@Query("Branchid") long Branchid, @Query("subjectdetailis") long subjectdetailis);
 
     @POST(ApiConstant.BRANCH_COURCE_REMOVE)
     Call<CommonModel> RemoveBranchCourse(@Query("BranchCourseID") long BranchCourseID, @Query("lastupdatedby") String lastupdatedby);
@@ -452,8 +470,8 @@ public interface ApiCalling {
     @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID)
     Call<BranchClassModel> GetAllBranchClassByBranchID(@Query("BranchID") long BranchID);
 
-    @POST(ApiConstant.BRANCH_CLASS_REMOVE)
-    Call<CommonModel> RemoveClassDetail(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+    @GET(ApiConstant.BRANCH_CLASS_REMOVE)
+    Call<CommonModel.ResponseModel> RemoveClassDetail(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
 
     //Branch Subject
     @POST(ApiConstant.BRANCH_SUBJECT_MAITENANCE)
@@ -466,10 +484,19 @@ public interface ApiCalling {
     Call<SuperAdminSubjectModel> GetAllSubject();
 
     @POST(ApiConstant.BRANCH_SUBJECT_REMOVE)
-    Call<CommonModel> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
+    Call<CommonModel.ResponseModel> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
 
     @POST(ApiConstant.GET_ALL_BRANCH_SUBJECT)
     Call<BranchSubjectModel> Get_All_Subject(@Query("SubjectID") long SubjectID, @Query("BranchID") long BranchID, @Query("ClassID") long ClassID);
+
+    @GET(ApiConstant.GET_ALL_SUBJECT_DDL)
+    Call<BranchSubjectModel> Get_All_Subject_DDL(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("CourseID") long CourseID);
+
+    @GET(ApiConstant.GET_LIBRARY_SUBJECT_DDL)
+    Call<BranchSubjectModel> Get_Library_Subject_DDL(@Query("CourseID") long CourseID, @Query("BranchID") long BranchID, @Query("ClassID") String ClassID);
+
+    @GET(ApiConstant.GET_ALL_SUBJECT_BY_COURSE)
+    Call<BranchSubjectModel> Get_All_Subject_By_Course(@Query("courseid") long courseid, @Query("classid") long classid);
 
     @GET(ApiConstant.DOWNLOAD_STUDENT_HOMEWORK + "/{HomeworkID}/{StudentID}/{Homework}/{Student}/{Class}")
     Call<HomeworkModel.HomeworkData1> Download_Student_Homework(@Path("HomeworkID") long HomeworkID, @Path("StudentID") long StudentID, @Path("Homework") String Homework,
@@ -493,4 +520,15 @@ public interface ApiCalling {
                                                             @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId, @Path("FileName") String FileName, @Path("Extension") String Extension,
                                                             @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
+    @POST(ApiConstant.AnnouncementMaintenance)
+    Call<AnnouncementSingleModel> AnnouncementMaintenance(@Body AnnouncementModel.AnnouncementData announcementData);
+
+    @GET(ApiConstant.GET_ALL_ANNOUNCEMENT)
+    Call<AnnouncementModel> GetAllAnnouncement(@Query("branchID") long branchID);
+
+    @POST(ApiConstant.REMOVE_ANNOUNCEMENT)
+    Call<CommonModel> RemoveAnnouncement(@Query("annoID") long annoID, @Query("lastupdatedby") String lastupdatedby);
+
+    @GET(ApiConstant.GET_CIRCULAR)
+    Call<CircularModel> GetAllCircular();
 }

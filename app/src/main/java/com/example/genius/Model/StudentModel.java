@@ -31,6 +31,33 @@ public class StudentModel {
     String StudentPassword2;
     String Name;
     String AchieveMarks;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+    String Final_Year;
+
+    public String getFinal_Year() {
+        return Final_Year;
+    }
+
+    public void setFinal_Year(String final_Year) {
+        Final_Year = final_Year;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
 
     public String getAchieveMarks() {
         return AchieveMarks;

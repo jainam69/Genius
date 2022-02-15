@@ -101,8 +101,9 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.standard.setText(homeworkDetails.get(position).getStandardInfo().getStandard());
-        holder.subject.setText(homeworkDetails.get(position).getSubjectInfo().getSubject());
+        holder.course.setText(homeworkDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.standard.setText(homeworkDetails.get(position).getBranchClass().getClassModel().getClassName());
+        holder.subject.setText(homeworkDetails.get(position).getBranchSubject().getSubject().getSubjectName());
         holder.batch_time.setText(homeworkDetails.get(position).getBatchTimeText());
 
         holder.homework_edit.setOnClickListener(v -> {
@@ -125,10 +126,10 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                 homework_fragment orderplace = new homework_fragment();
                 Bundle bundle = new Bundle();
                 bundle.putLong("HomeworkID", homeworkDetails.get(position).getHomeworkID());
-                bundle.putLong("BranchID", homeworkDetails.get(position).getBranchInfo().getBranchID());
                 bundle.putString("HomeworkDate", homeworkDetails.get(position).getHomeworkDate());
-                bundle.putLong("StandardID", homeworkDetails.get(position).getStandardInfo().getStandardID());
-                bundle.putLong("SubjectID", homeworkDetails.get(position).getSubjectInfo().getSubjectID());
+                bundle.putLong("CourseID", homeworkDetails.get(position).getBranchCourse().getCourse_dtl_id());
+                bundle.putLong("StandardID", homeworkDetails.get(position).getBranchClass().getClass_dtl_id());
+                bundle.putLong("SubjectID", homeworkDetails.get(position).getBranchSubject().getSubject_dtl_id());
                 bundle.putString("BatchTimeText", homeworkDetails.get(position).getBatchTimeText());
                 bundle.putString("Remarks", homeworkDetails.get(position).getRemarks());
                 bundle.putLong("TransactionId", homeworkDetails.get(position).getTransaction().getTransactionId());
@@ -175,11 +176,10 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                                         homeworkDetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();
-
                                     }
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
-                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
@@ -240,17 +240,21 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
 
             btn_edit_yes.setOnClickListener(v17 -> {
                 dialog.dismiss();
-                String filetype = homeworkDetails.get(position).getFilePath();
-                Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
-                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse(filetype);
-                DownloadManager.Request request = new DownloadManager.Request(uri);
-                Name = homeworkDetails.get(position).getHomeworkContentFileName();
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                if (homeworkDetails.get(position).getHomeworkContentFileName() != null){
+                    String filetype = homeworkDetails.get(position).getFilePath();
+                    Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                    Uri uri = Uri.parse(filetype);
+                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                    Name = homeworkDetails.get(position).getHomeworkContentFileName();
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                downloadID = dm.enqueue(request);
-                context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                    downloadID = dm.enqueue(request);
+                    context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                }else {
+                    Toast.makeText(context, "Document is not Available.", Toast.LENGTH_SHORT).show();
+                }
             });
             dialog.show();
         });
@@ -263,7 +267,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView date, standard, subject, batch_time;
+        TextView date, standard, subject, batch_time,course;
         ImageView homework_edit, homework_delete, homework_checking, homework_download;
 
         public ViewHolder(@NonNull View itemView) {
@@ -277,6 +281,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             homework_delete = itemView.findViewById(R.id.homework_delete);
             homework_checking = itemView.findViewById(R.id.homework_checking);
             homework_download = itemView.findViewById(R.id.homework_download);
+            course = itemView.findViewById(R.id.course);
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

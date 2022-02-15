@@ -17,13 +17,15 @@ public class TestScheduleModel {
     RowStatusModel RowStatus;
     TransactionModel Transaction;
     boolean marksentered;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+    BranchSubjectModel.BranchSubjectData BranchSubject;
 
-    public TestScheduleModel(long testID, String testName, BranchModel branch, StandardModel standard, SubjectModel subject, int batchTimeID, String batchTimeText, double marks, String testDate, String testStartTime, String testEndTime, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
+    public TestScheduleModel(long testID, String testName, BranchModel branch, int batchTimeID, String batchTimeText, double marks, String testDate, String testStartTime, String testEndTime, String remarks, RowStatusModel rowStatus, TransactionModel transaction
+            ,BranchCourseModel.BranchCourceData course,BranchClassSingleModel.BranchClassData bclass,BranchSubjectModel.BranchSubjectData subject) {
         TestID = testID;
         TestName = testName;
         Branch = branch;
-        Standard = standard;
-        Subject = subject;
         BatchTimeID = batchTimeID;
         BatchTimeText = batchTimeText;
         Marks = marks;
@@ -33,13 +35,15 @@ public class TestScheduleModel {
         Remarks = remarks;
         RowStatus = rowStatus;
         Transaction = transaction;
+        BranchCourse = course;
+        BranchClass = bclass;
+        BranchSubject = subject;
     }
 
-    public TestScheduleModel(String testName, BranchModel branch, StandardModel standard, SubjectModel subject, int batchTimeID, String batchTimeText, double marks, String testDate, String testStartTime, String testEndTime, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
+    public TestScheduleModel(String testName, BranchModel branch, int batchTimeID, String batchTimeText, double marks, String testDate, String testStartTime, String testEndTime, String remarks, RowStatusModel rowStatus, TransactionModel transaction
+    ,BranchCourseModel.BranchCourceData course,BranchClassSingleModel.BranchClassData bclass,BranchSubjectModel.BranchSubjectData subject) {
         TestName = testName;
         Branch = branch;
-        Standard = standard;
-        Subject = subject;
         BatchTimeID = batchTimeID;
         BatchTimeText = batchTimeText;
         Marks = marks;
@@ -49,6 +53,33 @@ public class TestScheduleModel {
         Remarks = remarks;
         RowStatus = rowStatus;
         Transaction = transaction;
+        BranchCourse = course;
+        BranchClass = bclass;
+        BranchSubject = subject;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
+
+    public BranchSubjectModel.BranchSubjectData getBranchSubject() {
+        return BranchSubject;
+    }
+
+    public void setBranchSubject(BranchSubjectModel.BranchSubjectData branchSubject) {
+        BranchSubject = branchSubject;
     }
 
     public boolean isMarksentered() {

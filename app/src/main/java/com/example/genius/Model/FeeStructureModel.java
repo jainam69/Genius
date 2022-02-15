@@ -11,6 +11,24 @@ public class FeeStructureModel {
     RowStatusModel RowStatus;
     String FilePath;
     String Remark;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
 
     public long getFeesID() {
         return FeesID;

@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.crypto.spec.GCMParameterSpec;
 
@@ -51,6 +52,8 @@ public class ShowLibraryFragment extends Fragment {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
+    Bundle bundle;
+    List<LibraryModel> model = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -62,6 +65,15 @@ public class ShowLibraryFragment extends Fragment {
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         view_library = root.findViewById(R.id.view_library);
         txt_nodata = root.findViewById(R.id.txt_nodata);
+
+        bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.getInt("Type") == 1) {
+                Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Show Video Library");
+            } else {
+                Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Show Books Library");
+            }
+        }
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -99,9 +111,14 @@ public class ShowLibraryFragment extends Fragment {
                             if (studentModelList.size() > 0) {
                                 txt_nodata.setVisibility(View.GONE);
                                 view_library.setVisibility(View.VISIBLE);
+                                for (LibraryModel model1 : studentModelList) {
+                                    if (bundle.getInt("Type") == model1.getLibrary_Type()) {
+                                        model.add(model1);
+                                    }
+                                }
                                 view_library.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                                 view_library.setLayoutManager(new GridLayoutManager(context, 2));
-                                viewLibrary_adapter = new ViewLibrary_Adapter(context, studentModelList);
+                                viewLibrary_adapter = new ViewLibrary_Adapter(context, model);
                                 viewLibrary_adapter.notifyDataSetChanged();
                                 view_library.setAdapter(viewLibrary_adapter);
                             }else {

@@ -21,6 +21,7 @@ import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.RecyclerTouchListener;
+import com.example.genius.ui.Announcement.Announcement_Fragment;
 import com.example.genius.ui.Banner.Banner_Fragment;
 import com.example.genius.ui.BranchClass.BranchClassFragment;
 import com.example.genius.ui.BranchClass.BranchClassListFragment;
@@ -65,6 +66,10 @@ public class MasterSelectorFragment extends Fragment {
                 pagename.add("USER MASTER");
                 image.add(R.drawable.staff);
             }
+            if (model.getPageInfo().getPageID() == 14 && model.getPackageRightinfo().isViewstatus()) {
+                pagename.add("ANNOUNCEMENT MASTER");
+                image.add(R.drawable.announcement);
+            }
             if (model.getPageInfo().getPageID() == 6 && model.getPackageRightinfo().isViewstatus()){
                 pagename.add("SCHOOL MASTER");
                 image.add(R.drawable.school);
@@ -78,15 +83,15 @@ public class MasterSelectorFragment extends Fragment {
                 image.add(R.drawable.noti);
             }
             if (model.getPageInfo().getPageID() == 75 && model.getPackageRightinfo().isViewstatus()){
-                pagename.add("BRANCH COURSE MASTER");
+                pagename.add("COURSE MASTER");
                 image.add(R.drawable.course);
             }
             if (model.getPageInfo().getPageID() == 74 && model.getPackageRightinfo().isViewstatus()){
-                pagename.add("BRANCH CLASS MASTER");
+                pagename.add("CLASS MASTER");
                 image.add(R.drawable.branchclass);
             }
             if (model.getPageInfo().getPageID() == 76 && model.getPackageRightinfo().isViewstatus()){
-                pagename.add("BRANCH SUBJECT MASTER");
+                pagename.add("SUBJECT MASTER");
                 image.add(R.drawable.branchsubject);
             }
             if (model.getPageInfo().getPageID() == 77 && model.getPackageRightinfo().isViewstatus()){
@@ -108,6 +113,14 @@ public class MasterSelectorFragment extends Fragment {
                     staff_entry_listfragment orderplace = new staff_entry_listfragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("ANNOUNCEMENT MASTER")) {
+                    Announcement_Fragment orderplace = new Announcement_Fragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
@@ -136,7 +149,7 @@ public class MasterSelectorFragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
-                if (pagename.get(position).equals("BRANCH COURSE MASTER")){
+                if (pagename.get(position).equals("COURSE MASTER")){
                     BranchCourseListFragment orderplace = new BranchCourseListFragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -144,7 +157,7 @@ public class MasterSelectorFragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
-                if (pagename.get(position).equals("BRANCH CLASS MASTER")){
+                if (pagename.get(position).equals("CLASS MASTER")){
                     BranchClassListFragment orderplace = new BranchClassListFragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -152,7 +165,7 @@ public class MasterSelectorFragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
-                if (pagename.get(position).equals("BRANCH SUBJECT MASTER")){
+                if (pagename.get(position).equals("SUBJECT MASTER")){
                     BranchSubjectListFragment orderplace = new BranchSubjectListFragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();

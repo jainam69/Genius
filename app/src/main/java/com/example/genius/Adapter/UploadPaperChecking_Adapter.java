@@ -205,14 +205,14 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
                 progressBarHelper.showProgressDialog();
                 homework = answerSheetModels.get(position).getSubmitDate().replace("T00:00:00", "");
                 student = answerSheetModels.get(position).getStudentInfo().getName().replaceAll("\\s","");
-                classname = answerSheetModels.get(position).getTestInfo().getStandard().getStandard().replaceAll("\\s","");
-                Call<HomeworkModel.HomeworkData1> call = apiCalling.Download_Student_Homework(answerSheetModels.get(position).getTestInfo().getTestID(),
+                String name = answerSheetModels.get(position).getTestInfo().getStandard().getStandard().replaceAll("\\s","");
+                classname = name.replaceAll("\\.","");
+                Call<HomeworkModel.HomeworkData1> call = apiCalling.Download_Student_Test_Paper(answerSheetModels.get(position).getTestInfo().getTestID(),
                         answerSheetModels.get(position).getStudentInfo().getStudentID(),homework,student,classname);
                 call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
                     @Override
                     public void onResponse(Call<HomeworkModel.HomeworkData1> call, Response<HomeworkModel.HomeworkData1> response) {
                         if (response.isSuccessful()){
-                            progressBarHelper.hideProgressDialog();
                             HomeworkModel.HomeworkData1 data = response.body();
                             if (data.isCompleted()){
                                 HomeworkModel model = data.getData();
@@ -227,7 +227,10 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
                                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                                 downloadID = dm.enqueue(request);
                                 context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                            }else {
+                                Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                             }
+                            progressBarHelper.hideProgressDialog();
                         }
                     }
 

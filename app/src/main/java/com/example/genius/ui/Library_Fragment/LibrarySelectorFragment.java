@@ -78,9 +78,11 @@ public class LibrarySelectorFragment extends Fragment {
                 pagename.add("MANAGE LIBRARY");
                 image.add(R.drawable.course);
             }
-            if (model.getPageInfo().getPageID() == 88 && model.getPackageRightinfo().isViewstatus()){
-                pagename.add("SHOW LIBRARY");
+            if (model.getPageInfo().getPageID() == 88 && model.getPackageRightinfo().isViewstatus()) {
+                pagename.add("SHOW BOOKS LIBRARY");
                 image.add(R.drawable.show_library);
+                pagename.add("SHOW VIDEO LIBRARY");
+                image.add(R.drawable.video);
             }
         }
 
@@ -117,10 +119,24 @@ public class LibrarySelectorFragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
-                if (pagename.get(position).equals("SHOW LIBRARY")){
+                if (pagename.get(position).equals("SHOW BOOKS LIBRARY")) {
                     ShowLibraryFragment orderplace = new ShowLibraryFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Type", 2);
+                    orderplace.setArguments(bundle);
                     FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("SHOW VIDEO LIBRARY")) {
+                    ShowLibraryFragment orderplace = new ShowLibraryFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Type", 1);
+                    orderplace.setArguments(bundle);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();

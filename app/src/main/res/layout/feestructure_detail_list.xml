@@ -48,6 +48,29 @@
             <TextView
                 android:layout_width="70sp"
                 android:layout_height="wrap_content"
+                android:text="Course"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70sp"
+                android:layout_height="wrap_content"
                 android:text="Standard"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"

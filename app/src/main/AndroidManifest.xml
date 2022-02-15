@@ -16,6 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Genius"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Activity.ViewDocumentActivity"
+            android:exported="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -26,10 +30,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".Activity.MainActivity">
-
-        </activity>
+        <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".Activity.ForgotPasswordActivity" />
         <activity android:name=".Activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

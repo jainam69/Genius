@@ -59,7 +59,7 @@ public class BranchSubjectListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Subject List");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Subject List");
         root = inflater.inflate(R.layout.fragment_branch_subject_list, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);

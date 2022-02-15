@@ -15,6 +15,33 @@ public class MarksModel {
     TestScheduleModel testEntityInfo;
     long TestID;
     String TestDate;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+    BranchSubjectModel.BranchSubjectData BranchSubject;
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
+
+    public BranchSubjectModel.BranchSubjectData getBranchSubject() {
+        return BranchSubject;
+    }
+
+    public void setBranchSubject(BranchSubjectModel.BranchSubjectData branchSubject) {
+        BranchSubject = branchSubject;
+    }
 
     public SubjectModel getSubjectInfo() {
         return SubjectInfo;

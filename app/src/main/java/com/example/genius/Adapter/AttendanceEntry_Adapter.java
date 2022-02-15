@@ -90,7 +90,8 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
             e.printStackTrace();
         }
         holder.batch_time.setText(attendanceDetails.get(position).getBatchTypeText());
-        holder.std.setText(attendanceDetails.get(position).getStandard().getStandard());
+        holder.std.setText(attendanceDetails.get(position).getBranchClass().getClassModel().getClassName());
+        holder.course.setText(attendanceDetails.get(position).getBranchCourse().getCourse().getCourseName());
 
         holder.atten_edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +123,8 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
                         Bundle bundle = new Bundle();
                         bundle.putLong("AttendanceID",attendanceDetails.get(position).getAttendanceID());
                         bundle.putLong("BranchID",attendanceDetails.get(position).getBranch().getBranchID());
-                        bundle.putLong("StandardID",attendanceDetails.get(position).getStandard().getStandardID());
+                        bundle.putLong("StandardID",attendanceDetails.get(position).getBranchClass().getClass_dtl_id());
+                        bundle.putLong("courseid",attendanceDetails.get(position).getBranchCourse().getCourse_dtl_id());
                         bundle.putString("Date",attendanceDetails.get(position).getAttendanceDate());
                         bundle.putInt("BatchId",attendanceDetails.get(position).getBatchTypeID());
                         bundle.putString("BatchName",attendanceDetails.get(position).getBatchTypeText());
@@ -207,7 +209,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView att_date,batch_time,std;
+        TextView att_date,batch_time,std,course;
         ImageView atten_edit,atten_delete;
         LinearLayout linear_create_delete;
 
@@ -220,6 +222,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
             atten_edit = itemView.findViewById(R.id.atten_edit);
             atten_delete = itemView.findViewById(R.id.atten_delete);
             linear_create_delete = itemView.findViewById(R.id.linear_create_delete);
+            course = itemView.findViewById(R.id.course);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);

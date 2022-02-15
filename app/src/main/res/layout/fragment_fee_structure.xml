@@ -55,22 +55,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
             android:background="@drawable/border">
 
             <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                android:id="@+id/standard"
+                android:id="@+id/course_name"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_toEndOf="@+id/emailimg1"
+                android:layout_toEndOf="@+id/emailimg12"
                 android:background="@android:color/transparent"
-                android:hint="Select Branch"
+                android:hint="Select Course"
                 android:maxLines="1"
                 android:paddingStart="9dp"
                 android:paddingTop="12dp"
@@ -79,15 +83,49 @@
                 tools:ignore="HardcodedText,RtlSymmetry" />
 
             <ImageView
-                android:id="@+id/emailimg1"
+                android:id="@+id/emailimg12"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="12dp"
-                android:src="@drawable/branch"
+                android:src="@drawable/standard"
                 app:tint="@color/blue"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/border">
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/standard"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_toEndOf="@+id/emailimg1"
+                    android:background="@android:color/transparent"
+                    android:hint="Select Standard"
+                    android:maxLines="1"
+                    android:paddingStart="9dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText,RtlSymmetry" />
+
+                <ImageView
+                    android:id="@+id/emailimg1"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/branch"
+                    app:tint="@color/blue"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

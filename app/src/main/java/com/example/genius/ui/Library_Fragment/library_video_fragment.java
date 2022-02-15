@@ -27,6 +27,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Model.BranchClassModel;
+import com.example.genius.Model.BranchClassSingleModel;
+import com.example.genius.Model.BranchCourseModel;
+import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.CategoryData;
 import com.example.genius.Model.CategoryModel;
 import com.example.genius.Model.LibraryModel;
@@ -63,7 +67,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     RadioGroup rg, rg1;
     RadioButton all, branch_1, rb_general, rb_standard, rb1, rb2;
     TextView master_id, lib_id, uniqid, libraryid, transactionid;
-    SearchableSpinner subject;
+    SearchableSpinner subject,course_name;
     MultiSelectionSpinner standard;
     EditText library_description, library_title, library_video_link;
     Button save_library, edit_library;
@@ -73,16 +77,16 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     LinearLayout linear_spinner;
     String Branch, Type;
     int select, type;
-    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>();
-    String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM;
-    Integer[] STANDARDID, SUBJECTID, CATEGORYID;
+    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM,COURSEITEM;
+    Integer[] STANDARDID, SUBJECTID, CATEGORYID,COURSEID;
     String StandardName, SubjectName;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     Bundle bundle;
     OnBackPressedCallback callback;
-    Long StandardId = 0L, SubjectId = 0L, categoryid = 0L;
+    Long StandardId = 0L, SubjectId = 0L, categoryid = 0L,courseID = 0L;
     SearchableSpinner category;
     List<String> categoryitem = new ArrayList<>();
     List<Integer> categoryId = new ArrayList<>();
@@ -120,6 +124,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         library_title = root.findViewById(R.id.library_title);
         library_video_link = root.findViewById(R.id.library_video_link);
+        course_name = root.findViewById(R.id.course_name);
 
         rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
@@ -164,21 +169,23 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             library_video_link.setText(libraryModel.getVideoLink());
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllCategory();
-            GetAllStandard();
-            GetAllSubject();
+            GetAllCourse();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
+        selectStandard();
+        selectSubject();
+
         save_library.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (validation()) {
-                if (Function.checkNetworkConnection(context)) {
+                if (Function.isNetworkAvailable(context)) {
                     Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, encodeDecode(library_title.getText().toString())
-                            , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , categoryid, courseID,StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                             , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 1
                             , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
                             , 0, encodeDecode(library_video_link.getText().toString()), "none,none", "none", "none,none", "none"
@@ -219,9 +226,9 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         edit_library.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (validation()) {
-                if (Function.checkNetworkConnection(context)) {
+                if (Function.isNetworkAvailable(context)) {
                     Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(libraryModel.getLibraryID(), 0, encodeDecode(library_title.getText().toString())
-                            , categoryid, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , categoryid, courseID,StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                             , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 1
                             , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
                             , 0, encodeDecode(library_video_link.getText().toString()), "none,none", "none", "none,none", "none"
@@ -275,47 +282,229 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
         return root;
     }
 
-    public void GetAllSubject() {
-        subjectitem.add("Select Subject");
-        subjectid.add(0);
-        Call<SubjectData> call = apiCalling.GetAllSubject(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<SubjectData>() {
+    public void GetAllCourse()
+    {
+        courseitem.clear();
+        courseid.clear();
+        courseitem.add("Select Course");
+        courseid.add(0);
+
+        Call<BranchCourseModel> call = apiCalling.GetAllCourseDDL(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<BranchCourseModel>() {
             @Override
-            public void onResponse(Call<SubjectData> call, Response<SubjectData> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    SubjectData standardData = response.body();
-                    if (standardData != null) {
-                        if (standardData.isCompleted()) {
-                            List<SubjectModel> respose = standardData.getData();
-                            if (respose.size() > 0) {
-                                List<SubjectModel> list = new ArrayList<>();
-                                for (SubjectModel singleResponseModel : respose) {
-
-                                    String std = singleResponseModel.getSubject();
-                                    subjectitem.add(std);
-
-                                    int stdid = (int) singleResponseModel.getSubjectID();
-                                    subjectid.add(stdid);
-                                }
-                                SUBJECTITEM = new String[subjectitem.size()];
-                                SUBJECTITEM = subjectitem.toArray(SUBJECTITEM);
-
-                                SUBJECTID = new Integer[subjectid.size()];
-                                SUBJECTID = subjectid.toArray(SUBJECTID);
-
-                                bindsubject();
+            public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
+                if (response.isSuccessful()){
+                    BranchCourseModel data = response.body();
+                    if (data.isCompleted()){
+                        List<BranchCourseModel.BranchCourceData> list = data.getData();
+                        if (list != null && list.size() > 0){
+                            for (BranchCourseModel.BranchCourceData model : list) {
+                                String course = model.getCourse().getCourseName();
+                                courseitem.add(course);
+                                int id = (int) model.getCourse_dtl_id();
+                                courseid.add(id);
                             }
+                            COURSEITEM = new String[courseitem.size()];
+                            COURSEITEM = courseitem.toArray(COURSEITEM);
 
-                        } else {
-                            progressBarHelper.hideProgressDialog();
+                            COURSEID = new Integer[courseid.size()];
+                            COURSEID = courseid.toArray(COURSEID);
+
+                            bindcourse();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
             @Override
-            public void onFailure(Call<SubjectData> call, Throwable t) {
+            public void onFailure(Call<BranchCourseModel> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void bindcourse() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        course_name.setAdapter(adapter);
+        if (bundle != null && libraryModel.getList().size() > 0) {
+            selectSpinnerValue(course_name, libraryModel.getList().get(0).getBranchCourse().getCourse().getCourseName());
+        }
+        course_name.setOnItemSelectedListener(selectcourse);
+    }
+
+    AdapterView.OnItemSelectedListener selectcourse =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    courseID = Long.parseLong(courseid.get(position).toString());
+                    if (course_name.getSelectedItem().equals("Select Course")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                    if (course_name.getSelectedItemId() != 0){
+                        GetAllStandard(courseID);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void GetAllStandard(long coursedetailid) {
+        progressBarHelper.showProgressDialog();
+        standarditem.clear();
+        standardid.clear();
+        standarditem.add("Select Standard");
+        standardid.add(0);
+
+        Call<BranchClassModel> call = apiCalling.Get_Class_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),coursedetailid);
+        call.enqueue(new Callback<BranchClassModel>() {
+            @Override
+            public void onResponse(Call<BranchClassModel> call, Response<BranchClassModel> response) {
+                if (response.isSuccessful()) {
+                    BranchClassModel data = response.body();
+                    if (data.getCompleted()) {
+                        List<BranchClassSingleModel.BranchClassData> list = data.getData();
+                        if (list != null && list.size() > 0){
+                            for (BranchClassSingleModel.BranchClassData model : list) {
+                                String std = model.getClassModel().getClassName();
+                                standarditem.add(std);
+                                int stdid = (int) model.getClass_dtl_id();
+                                standardid.add(stdid);
+                            }
+                            STANDARDITEM = new String[standarditem.size()];
+                            STANDARDITEM = standarditem.toArray(STANDARDITEM);
+
+                            STANDARDID = new Integer[standardid.size()];
+                            STANDARDID = standardid.toArray(STANDARDID);
+
+                            bindstandard();
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BranchClassModel> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void bindstandard() {
+        standard.setItems(STANDARDITEM);
+        standard.setListener(this);
+        standard.hasNoneOption(true);
+        standard.setSelection(new int[]{0});
+        if (bundle != null && libraryModel.getList().size() > 0) {
+            List<String> list = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < libraryModel.getList().size(); i++) {
+                list.add(libraryModel.getList().get(i).getStandard());
+                sb.append(libraryModel.getList().get(i).getStd_id());
+                sb.append(",");
+            }
+            StandardIDs = sb.toString().substring(0, sb.length() - 1);
+            standard.setSelection(list);
+            GetAllSubject(courseID,StandardIDs);
+        }
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StandardId = Long.parseLong(standardid.get(position).toString());
+                    if (standard.getSelectedItem().equals("Select Standard")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    @Override
+    public void selectedIndices(List<Integer> indices) {
+        StringBuilder sb = new StringBuilder();
+        if (indices.size() > 0) {
+            for (int i = 0; i < indices.size(); i++) {
+                sb.append(standardid.get(indices.get(i)));
+                sb.append(",");
+            }
+            StandardIDs = sb.toString().substring(0, sb.length() - 1);
+        } else {
+            StandardIDs = "";
+            standard.setSelection(new int[]{0});
+        }
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        /*StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < indices.size(); i++) {
+            sb.append(standardid.get(indices.get(i)));
+            sb.append(",");
+        }
+        StandardIDs = sb.toString().substring(0, sb.length() - 1);*/
+    }
+
+    @Override
+    public void selectedStrings(List<String> strings) {
+        if (!StandardIDs.isEmpty()){
+            GetAllSubject(courseID,StandardIDs);
+        }
+    }
+
+    public void GetAllSubject(long coursedetailid,String classdetailid) {
+        progressBarHelper.showProgressDialog();
+        subjectitem.clear();
+        subjectid.clear();
+        subjectitem.add("Select Subject");
+        subjectid.add(0);
+
+        Call<BranchSubjectModel> call = apiCalling.Get_Library_Subject_DDL(coursedetailid,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),classdetailid);
+        call.enqueue(new Callback<BranchSubjectModel>() {
+            @Override
+            public void onResponse(Call<BranchSubjectModel> call, Response<BranchSubjectModel> response) {
+                if (response.isSuccessful()){
+                    BranchSubjectModel data = response.body();
+                    if (data.isCompleted()){
+                        List<BranchSubjectModel.BranchSubjectData> list = data.getData();
+                        if (list != null && list.size() > 0){
+                            for (BranchSubjectModel.BranchSubjectData model : list){
+                                String name = model.getSubject().getSubjectName();
+                                subjectitem.add(name);
+                                int id = (int) model.getSubject_dtl_id();
+                                subjectid.add(id);
+                            }
+                            SUBJECTITEM = new String[subjectitem.size()];
+                            SUBJECTITEM = subjectitem.toArray(SUBJECTITEM);
+
+                            SUBJECTID = new Integer[subjectid.size()];
+                            SUBJECTID = subjectid.toArray(SUBJECTID);
+
+                            bindsubject();
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BranchSubjectModel> call, Throwable t) {
                 progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -336,94 +525,8 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    SubjectName = subjectitem.get(position);
                     SubjectId = Long.parseLong(subjectid.get(position).toString());
                     if (subject.getSelectedItem().equals("Select Subject")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
-    public void GetAllStandard() {
-        standarditem.add("Select Standard");
-        standardid.add(0);
-
-        Call<StandardData> call = apiCalling.GetAllStandard(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<StandardData>() {
-            @Override
-            public void onResponse(Call<StandardData> call, Response<StandardData> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    StandardData standardData = response.body();
-                    if (standardData != null) {
-                        if (standardData.isCompleted()) {
-                            List<StandardModel> respose = standardData.getData();
-                            for (StandardModel singleResponseModel : respose) {
-
-                                String std = singleResponseModel.getStandard();
-                                standarditem.add(std);
-
-                                int stdid = (int) singleResponseModel.getStandardID();
-                                standardid.add(stdid);
-                            }
-                            STANDARDITEM = new String[standarditem.size()];
-                            STANDARDITEM = standarditem.toArray(STANDARDITEM);
-
-                            STANDARDID = new Integer[standardid.size()];
-                            STANDARDID = standardid.toArray(STANDARDID);
-
-                            bindstandard();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<StandardData> call, Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindstandard() {
-        /*ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-        standard.setItems(STANDARDITEM);
-        standard.setListener(this);
-        standard.hasNoneOption(true);
-        standard.setSelection(new int[]{0});
-        if (bundle != null && libraryModel.getList().size() > 0) {
-            List<String> list = new ArrayList<>();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < libraryModel.getList().size(); i++) {
-                list.add(libraryModel.getList().get(i).getStandard());
-                sb.append(standardid.get(i));
-                sb.append(",");
-            }
-            StandardIDs = sb.toString().substring(0, sb.length() - 1);
-            standard.setSelection(list);
-        }
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
-                    StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -509,21 +612,6 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                 }
             };
 
-    @Override
-    public void selectedIndices(List<Integer> indices) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < indices.size(); i++) {
-            sb.append(standardid.get(indices.get(i)));
-            sb.append(",");
-        }
-        StandardIDs = sb.toString().substring(0, sb.length() - 1);
-    }
-
-    @Override
-    public void selectedStrings(List<String> strings) {
-
-    }
-
     public boolean validation() {
         if (library_title.getText().toString().trim().equals("")) {
             Function.showToast(context, "Please enter library title");
@@ -538,7 +626,11 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             progressBarHelper.hideProgressDialog();
             return false;
         } else if (rb_standard.isChecked()) {
-            if (StandardIDs.equals("")) {
+            if (course_name.getSelectedItemId() == 0){
+                Function.showToast(context,"Please select Course.");
+                progressBarHelper.hideProgressDialog();
+                return false;
+            }else if (StandardIDs.equals("")) {
                 Function.showToast(context, "Please select standard");
                 progressBarHelper.hideProgressDialog();
                 return false;
@@ -562,6 +654,47 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                 break;
             }
         }
+    }
+
+    public void selectStandard() {
+        standarditem.clear();
+        standardid.clear();
+        standarditem.add("Select Standard");
+        standardid.add(0);
+
+        STANDARDITEM = new String[standarditem.size()];
+        STANDARDITEM = standarditem.toArray(STANDARDITEM);
+
+        bindstd();
+    }
+
+    public void bindstd() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        standard.setItems(STANDARDITEM);
+        standard.setListener(this);
+        standard.hasNoneOption(true);
+        standard.setSelection(new int[]{0});
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
+    }
+
+    public void selectSubject() {
+        subjectitem.clear();
+        subjectid.clear();
+        subjectitem.add("Select Subject");
+        subjectid.add(0);
+
+        SUBJECTITEM = new String[subjectitem.size()];
+        SUBJECTITEM = subjectitem.toArray(SUBJECTITEM);
+
+        bindsub();
+    }
+
+    public void bindsub() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subject.setAdapter(adapter);
+        subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
 }

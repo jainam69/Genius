@@ -23,6 +23,10 @@ public class UserModel {
     public UserModel() {
     }
 
+    public UserModel(String username) {
+        Username = username;
+    }
+
     public UserModel(long userID, TransactionModel transaction, List<RolesModel> roles) {
         UserID = userID;
         Transaction = transaction;

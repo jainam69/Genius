@@ -58,7 +58,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     List<LibraryModel> libraryDetails;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String standard;
+    String standard,Course;
     long downloadID;
     String Name;
     UserModel userpermission;
@@ -115,18 +115,22 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             Glide.with(context).load(libraryDetails.get(position).getThumbnailFilePath()).into(holder.image);
         }
         standard = "";
+        Course = "";
         if (libraryDetails.get(position).getList().size() == 0) {
             ViewGroup.LayoutParams params = holder.linear_standard.getLayoutParams();
             params.height = 0;
             params.width = 0;
             holder.linear_standard.setLayoutParams(params);
+            holder.linear_course.setLayoutParams(params);
         } else {
             holder.linear_standard.setVisibility(View.VISIBLE);
+            holder.linear_course.setVisibility(View.VISIBLE);
             for (int i = 0; i < libraryDetails.get(position).getList().size(); i++) {
                 standard += libraryDetails.get(position).getList().get(i).getStandard();
                 standard += "\n";
             }
             holder.standard.setText(standard);
+            holder.course.setText(libraryDetails.get(position).getList().get(0).getBranchCourse().getCourse().getCourseName());
         }
         holder.library_edit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
@@ -256,9 +260,9 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView doc_desc, standard, library_video_link, doc_category;
+        TextView doc_desc, standard, library_video_link, doc_category,course;
         ImageView image, library_edit, library_delete, library_download;
-        LinearLayout linear_standard, linear_video;
+        LinearLayout linear_standard, linear_video,linear_course;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -272,6 +276,8 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             linear_standard = itemView.findViewById(R.id.linear_standard);
             linear_video = itemView.findViewById(R.id.linear_video);
             library_video_link = itemView.findViewById(R.id.library_video_link);
+            linear_course = itemView.findViewById(R.id.linear_course);
+            course = itemView.findViewById(R.id.course);
             doc_category = itemView.findViewById(R.id.doc_category);
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);

@@ -67,7 +67,7 @@ public class HomeWorkCheckingFragment extends Fragment {
             }
         }
 
-        if (Function.checkNetworkConnection(context))
+        if (Function.isNetworkAvailable(context))
         {
             GetHomeworkCheckingList();
         }

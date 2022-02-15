@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.genius.Activity.VideoViewActivity;
+import com.example.genius.Activity.ViewDocumentActivity;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.R;
 import com.example.genius.helper.Preferences;
@@ -53,106 +55,108 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (manageDetails.get(position).getLibrary_Type() == 1){
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        if (manageDetails.get(position).getLibrary_Type() == 1) {
             holder.lib_download.setVisibility(View.GONE);
-            holder.play.setVisibility(View.VISIBLE);
-            holder.lib_image.setVisibility(View.GONE);
+            if (isYoutubeUrl(manageDetails.get(position).getVideoLink())) {
+                holder.lib_image.setVisibility(View.VISIBLE);
+                holder.iv_play.setImageDrawable(context.getResources().getDrawable(R.drawable.youtube_icon, context.getTheme()));
+                Glide.with(context).load("http://img.youtube.com/vi/" + extractYoutubeId(manageDetails.get(position).getVideoLink()) + "/0.jpg").into(holder.lib_image);
+            } else {
+                holder.iv_play.setImageDrawable(context.getResources().getDrawable(R.drawable.play, context.getTheme()));
+            }
+        } else {
+            holder.lib_download.setVisibility(View.VISIBLE);
+            holder.lib_image.setVisibility(View.VISIBLE);
+            holder.iv_play.setVisibility(View.GONE);
+            Glide.with(context).load(manageDetails.get(position).getThumbnailFilePath()).into(holder.lib_image);
         }
         holder.description.setText(manageDetails.get(position).getDescription());
-        Glide.with(context).load(manageDetails.get(position).getThumbnailFilePath()).into(holder.lib_image);
-        holder.lib_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
-                View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
-                builder.setView(dialogView);
-                builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
-                ImageView image = dialogView.findViewById(R.id.image);
-                TextView title = dialogView.findViewById(R.id.title);
-                title.setText("Are you sure that you want to View Document?");
-                image.setImageResource(R.drawable.view);
-                AlertDialog dialog = builder.create();
+        holder.lib_view.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+            View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
+            builder.setView(dialogView);
+            builder.setCancelable(true);
+            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            ImageView image = dialogView.findViewById(R.id.image);
+            TextView title = dialogView.findViewById(R.id.title);
+            title.setText("Are you sure that you want to View Document?");
+            image.setImageResource(R.drawable.view);
+            AlertDialog dialog = builder.create();
 
-                btn_edit_no.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+            btn_edit_no.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
 
-                btn_edit_yes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        if (manageDetails.get(position).getLibrary_Type() == 1){
-                            try {
-                                String url = manageDetails.get(position).getVideoLink();
-                                if (!manageDetails.get(position).getVideoLink().startsWith("http://") && !manageDetails.get(position).getVideoLink().startsWith("https://")){
-                                    url = "http://" + manageDetails.get(position).getVideoLink();
-                                }
-                                Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(webIntent);
-                            } catch (ActivityNotFoundException ex) {
-                                ex.printStackTrace();
+            btn_edit_yes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    if (manageDetails.get(position).getLibrary_Type() == 1) {
+                        try {
+                            String url = manageDetails.get(position).getVideoLink();
+                            if (!manageDetails.get(position).getVideoLink().startsWith("http://") && !manageDetails.get(position).getVideoLink().startsWith("https://")) {
+                                url = "http://" + manageDetails.get(position).getVideoLink();
                             }
-                        }else {
-                            Intent intent = new Intent(context, VideoViewActivity.class);
-                            intent.putExtra("ProIndex", "Images");
-                            intent.putExtra("Description", manageDetails.get(position).getDescription());
-                            Preferences.getInstance(context).setString(Preferences.KEY_VIDEO_BASE, manageDetails.get(position).getThumbnailFilePath());
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
+                            Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(webIntent);
+                        } catch (ActivityNotFoundException ex) {
+                            ex.printStackTrace();
                         }
-
+                    } else {
+                        Intent intent = new Intent(context, ViewDocumentActivity.class);
+                        intent.putExtra("ProIndex",manageDetails.get(position).getDescription());
+                        intent.putExtra("PaperPath",manageDetails.get(position).getDocFilePath());
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
                     }
-                });
-                dialog.show();
-            }
+
+                }
+            });
+            dialog.show();
         });
-        holder.lib_download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
-                View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
-                builder.setView(dialogView);
-                builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
-                ImageView image = dialogView.findViewById(R.id.image);
-                TextView title = dialogView.findViewById(R.id.title);
-                title.setText("Are you sure that you want to Download Library Document?");
-                image.setImageResource(R.drawable.download);
-                AlertDialog dialog = builder.create();
+        holder.lib_download.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
+            View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
+            builder.setView(dialogView);
+            builder.setCancelable(true);
+            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            ImageView image = dialogView.findViewById(R.id.image);
+            TextView title = dialogView.findViewById(R.id.title);
+            title.setText("Are you sure that you want to Download Library Document?");
+            image.setImageResource(R.drawable.download);
+            AlertDialog dialog = builder.create();
 
-                btn_edit_no.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+            btn_edit_no.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
 
-                btn_edit_yes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        String filetype = manageDetails.get(position).getDocFilePath();
-                        Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
-                        DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                        Uri uri = Uri.parse(filetype);
-                        DownloadManager.Request request = new DownloadManager.Request(uri);
-                        Name = manageDetails.get(position).getDocFileName();
-                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
-                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                        downloadID = dm.enqueue(request);
-                        context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-                    }
-                });
-                dialog.show();
-            }
+            btn_edit_yes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    String filetype = manageDetails.get(position).getDocFilePath();
+                    Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
+                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                    Uri uri = Uri.parse(filetype);
+                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                    Name = manageDetails.get(position).getDocFileName();
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/AshirvadStudyCircle/" + Name);
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    downloadID = dm.enqueue(request);
+                    context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                }
+            });
+            dialog.show();
         });
     }
 
@@ -163,9 +167,8 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView lib_image,lib_view,lib_download;
+        ImageView lib_image,lib_view,lib_download,iv_play;;
         TextView description;
-        LinearLayout play;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -174,7 +177,7 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
             lib_image = itemView.findViewById(R.id.lib_image);
             lib_view = itemView.findViewById(R.id.lib_view);
             lib_download = itemView.findViewById(R.id.lib_download);
-            play = itemView.findViewById(R.id.play);
+            iv_play = itemView.findViewById(R.id.iv_play);
         }
     }
 
@@ -187,4 +190,21 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
             }
         }
     };
+
+    public String extractYoutubeId(String ytUrl) {
+        String vId = null;
+        Pattern regex = Pattern.compile("http(?:s)?:\\/\\/(?:m.)?(?:www\\.)?youtu(?:\\.be\\/|be\\.com\\/(?:watch\\?(?:feature=youtu.be\\&)?v=|v\\/|embed\\/|user\\/(?:[\\w#]+\\/)+))([^&#?\\n]+)");
+        Matcher regexMatcher = regex.matcher(ytUrl);
+        if (regexMatcher.find()) {
+            vId = regexMatcher.group(1);
+        }
+        return vId;
+    }
+
+    public static boolean isYoutubeUrl(String youTubeURl) {
+        boolean success;
+        String pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+";
+        success = !youTubeURl.isEmpty() && youTubeURl.matches(pattern);
+        return success;
+    }
 }

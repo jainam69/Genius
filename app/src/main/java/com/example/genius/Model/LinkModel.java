@@ -1,6 +1,7 @@
 package com.example.genius.Model;
 
 public class LinkModel {
+
     long UniqueID;
     BranchModel Branch;
     long StandardID;
@@ -10,30 +11,35 @@ public class LinkModel {
     TransactionModel Transaction;
     String Title;
     String StandardName;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
 
-    public LinkModel(long uniqueID, BranchModel branch, long standardID, String linkURL, RowStatusModel rowStatus, TransactionModel transaction, String title) {
+    public LinkModel(long uniqueID, BranchModel branch, BranchCourseModel.BranchCourceData course,BranchClassSingleModel.BranchClassData bclass, String linkURL, RowStatusModel rowStatus, TransactionModel transaction, String title) {
         UniqueID = uniqueID;
         Branch = branch;
-        StandardID = standardID;
+        BranchCourse = course;
+        BranchClass = bclass;
         LinkURL = linkURL;
         RowStatus = rowStatus;
         Transaction = transaction;
         Title = title;
     }
 
-    public LinkModel(BranchModel branch, long standardID, String linkURL, RowStatusModel rowStatus, TransactionModel transaction, String title) {
+    public LinkModel(BranchModel branch, BranchCourseModel.BranchCourceData course,BranchClassSingleModel.BranchClassData bclass, String linkURL, RowStatusModel rowStatus, TransactionModel transaction, String title) {
         Branch = branch;
-        StandardID = standardID;
+        BranchCourse = course;
+        BranchClass = bclass;
         LinkURL = linkURL;
         RowStatus = rowStatus;
         Transaction = transaction;
         Title = title;
     }
 
-    public LinkModel(long uniqueID, BranchModel branch, long standardID, String linkDesc, String linkURL, RowStatusModel rowStatus, TransactionModel transaction,String title) {
+    public LinkModel(long uniqueID, BranchModel branch, BranchCourseModel.BranchCourceData course,BranchClassSingleModel.BranchClassData bclass, String linkDesc, String linkURL, RowStatusModel rowStatus, TransactionModel transaction,String title) {
         UniqueID = uniqueID;
         Branch = branch;
-        StandardID = standardID;
+        BranchCourse = course;
+        BranchClass = bclass;
         LinkDesc = linkDesc;
         LinkURL = linkURL;
         RowStatus = rowStatus;
@@ -41,14 +47,31 @@ public class LinkModel {
         Title = title;
     }
 
-    public LinkModel(BranchModel branch, long standardID, String linkDesc, String linkURL, RowStatusModel rowStatus, TransactionModel transaction, String title) {
+    public LinkModel(BranchModel branch, BranchCourseModel.BranchCourceData course,BranchClassSingleModel.BranchClassData bclass, String linkDesc, String linkURL, RowStatusModel rowStatus, TransactionModel transaction, String title) {
         Branch = branch;
-        StandardID = standardID;
+        BranchCourse = course;
+        BranchClass = bclass;
         LinkDesc = linkDesc;
         LinkURL = linkURL;
         RowStatus = rowStatus;
         Transaction = transaction;
         Title = title;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
     }
 
     public String getStandardName() {

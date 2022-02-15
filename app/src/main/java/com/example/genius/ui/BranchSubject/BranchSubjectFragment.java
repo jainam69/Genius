@@ -89,7 +89,7 @@ public class BranchSubjectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Subject Master");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Subject Master");
         root = inflater.inflate(R.layout.fragment_branch_subject, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
@@ -109,12 +109,12 @@ public class BranchSubjectFragment extends Fragment {
             }
             listForBundle = (List<BranchSubjectModel.BranchSubjectData>) bundle.getSerializable("COURSE_DTL");
             if (listForBundle.size() > 0) {
-                List<SuperAdminSubjectModel.SuperAdminSubjectData> data = new ArrayList<>();
+                List<BranchSubjectModel.BranchSubjectData> data = new ArrayList<>();
                 for (int i = 0; i < listForBundle.size(); i++) {
                     listForBundle.get(i).setSubject(new SuperAdminSubjectModel.SuperAdminSubjectData(listForBundle.get(i).Subject.getSubjectID()
-                            , listForBundle.get(i).Subject.getSubjectName()
-                            , listForBundle.get(i).isSubject));
-                    data.add(listForBundle.get(i).Subject);
+                            , listForBundle.get(i).Subject.getSubjectName()));
+                    listForBundle.get(i).setSubject(listForBundle.get(i).isSubject);
+                    data.add(listForBundle.get(i));
                 }
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 course_rv.setLayoutManager(linearLayoutManager);
@@ -125,11 +125,13 @@ public class BranchSubjectFragment extends Fragment {
         } else {
             if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
-                GetAllSubject();
+                GetAllCourse();
             } else {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         }
+
+        GetAllSimpleClass();
 
         checkall.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (branchCourceAdapter != null) {
@@ -170,38 +172,6 @@ public class BranchSubjectFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
 
         return root;
-    }
-
-    public void GetAllSubject() {
-        Call<SuperAdminSubjectModel> call = apiCalling.GetAllSubject();
-        call.enqueue(new Callback<SuperAdminSubjectModel>() {
-            @Override
-            public void onResponse(@NotNull Call<SuperAdminSubjectModel> call, @NotNull Response<SuperAdminSubjectModel> response) {
-                if (response.isSuccessful()) {
-                    SuperAdminSubjectModel data = response.body();
-                    if (data != null && data.isCompleted()) {
-                        List<SuperAdminSubjectModel.SuperAdminSubjectData> studentModelList = data.getData();
-                        if (studentModelList != null) {
-                            if (studentModelList.size() > 0) {
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                course_rv.setLayoutManager(linearLayoutManager);
-                                branchCourceAdapter = new BranchSubjectAapter(context, studentModelList);
-                                branchCourceAdapter.notifyDataSetChanged();
-                                course_rv.setAdapter(branchCourceAdapter);
-                            }
-                        }
-                    }
-                    GetAllCourse();
-                    GetAllSimpleClass();
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<SuperAdminSubjectModel> call, @NotNull Throwable t) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-                progressBarHelper.hideProgressDialog();
-            }
-        });
     }
 
     public void GetAllCourse() {
@@ -378,6 +348,9 @@ public class BranchSubjectFragment extends Fragment {
                         class_name = classitem.get(position);
                         classid = classiditem.get(position);
                     }
+                    if (spinner_class.getSelectedItemId() != 0){
+                        GetAllSubject(courseid,classid);
+                    }
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
@@ -391,6 +364,39 @@ public class BranchSubjectFragment extends Fragment {
                 break;
             }
         }
+    }
+
+    public void GetAllSubject(long coursedetailid,long classid) {
+        progressBarHelper.showProgressDialog();
+        Call<BranchSubjectModel> call = apiCalling.Get_All_Subject_By_Course(coursedetailid,classid);
+        call.enqueue(new Callback<BranchSubjectModel>() {
+            @Override
+            public void onResponse(@NotNull Call<BranchSubjectModel> call, @NotNull Response<BranchSubjectModel> response) {
+                if (response.isSuccessful()) {
+                    BranchSubjectModel data = response.body();
+                    if (data != null && data.isCompleted()) {
+                        List<BranchSubjectModel.BranchSubjectData> model = data.getData();
+                        if (model != null) {
+                            if (model.size() > 0) {
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                                course_rv.setLayoutManager(linearLayoutManager);
+                                branchCourceAdapter = new BranchSubjectAapter(context,model);
+                                branchCourceAdapter.notifyDataSetChanged();
+                                course_rv.setAdapter(branchCourceAdapter);
+                            }
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<BranchSubjectModel> call, @NotNull Throwable t) {
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void Save() {
@@ -412,7 +418,7 @@ public class BranchSubjectFragment extends Fragment {
                                     0, branchModel
                                     , new BranchCourseModel.BranchCourceData(courseid)
                                     , new BranchClassSingleModel.BranchClassData(classid), transactionModel
-                                    , rowStatusModel, BranchSubjectAapter.CourceDataList.get(i), BranchSubjectAapter.CourceDataList.get(i).isSubject);
+                                    , rowStatusModel, BranchSubjectAapter.CourceDataList.get(i).getSubject(), BranchSubjectAapter.CourceDataList.get(i).isSubject);
                             list.add(model);
                         }
                     } else {
@@ -422,7 +428,7 @@ public class BranchSubjectFragment extends Fragment {
                                     listForBundle.get(i).Subject_dtl_id, branchModel
                                     , new BranchCourseModel.BranchCourceData(courseid)
                                     , new BranchClassSingleModel.BranchClassData(classid), transactionModel
-                                    , rowStatusModel, BranchSubjectAapter.CourceDataList.get(i), BranchSubjectAapter.CourceDataList.get(i).isSubject);
+                                    , rowStatusModel, listForBundle.get(i).getSubject(), BranchSubjectAapter.CourceDataList.get(i).isSubject);
                             list.add(model);
                         }
                     }

@@ -29,7 +29,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="7dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:background="@drawable/border">
 
@@ -73,16 +73,15 @@
                     android:layout_marginTop="7dp"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/border"
-                    android:visibility="gone">
+                    android:background="@drawable/border">
 
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        android:id="@+id/branch"
+                        android:id="@+id/course_name"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
-                        android:layout_toEndOf="@+id/transprt131"
+                        android:layout_toEndOf="@+id/gst5"
                         android:background="@android:color/transparent"
-                        android:hint="Select Branch"
+                        android:hint="Select Course"
                         android:maxLines="1"
                         android:paddingStart="9dp"
                         android:paddingTop="12dp"
@@ -90,14 +89,13 @@
                         android:textSize="15sp"
                         tools:ignore="HardcodedText,RtlSymmetry" />
 
-
                     <ImageView
-                        android:id="@+id/transprt131"
+                        android:id="@+id/gst5"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="12dp"
-                        android:src="@drawable/branch"
+                        android:src="@drawable/task"
                         app:tint="@color/blue"
                         tools:ignore="ContentDescription" />
                 </RelativeLayout>

@@ -56,6 +56,7 @@ import com.example.genius.ui.Student_Registration_Fragment.student_registration_
 import com.example.genius.ui.Task_Fragment.TaskListFragment;
 import com.example.genius.ui.Test_Schedule.test_Listfragment;
 import com.example.genius.ui.Youtube_Video.YoutubeVideoFragment;
+import com.example.genius.ui.circular.circular_fragment;
 import com.google.gson.Gson;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -120,9 +121,20 @@ public class home_fragment extends Fragment {
                     PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
+        pagename.add("CIRCULAR");
+        image.add(R.drawable.ic_baseline_wysiwyg_24);
+
         home_rv.addOnItemTouchListener(new RecyclerTouchListener(context, home_rv, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
+                if (pagename.get(position).equals("CIRCULAR")) {
+                    circular_fragment orderplace = new circular_fragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
                 if (pagename.get(position).equals("MASTERS")) {
                     MasterSelectorFragment orderplace = new MasterSelectorFragment();
                     FragmentManager fragmentManager = getFragmentManager();
@@ -195,7 +207,7 @@ public class home_fragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
-                if (pagename.get(position).equals("LIVE VIDEO")) {
+                if (pagename.get(position).equals("ONLINE CLASS")) {
                     LiveVideoFragment orderplace = new LiveVideoFragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -387,7 +399,7 @@ public class home_fragment extends Fragment {
                 image.add(R.drawable.youtube);
             }
             if (model.getPageInfo().getPageID() == 79 && model.getPackageRightinfo().isViewstatus()) {
-                pagename.add("LIVE VIDEO");
+                pagename.add("ONLINE CLASS");
                 image.add(R.drawable.live);
             }
             if (model.getPageInfo().getPageID() == 39 && model.getPackageRightinfo().isViewstatus()) {

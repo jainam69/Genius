@@ -1,5 +1,7 @@
 package com.example.genius.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -32,6 +34,15 @@ public class LibraryModel implements Serializable {
     public List<LibraryStandardModel> list;
     public long BranchID;
     int Library_Type;
+    BranchCourseModel.BranchCourceData BranchCourse;
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
 
     public SubjectModel getSubject() {
         return subject;
@@ -333,12 +344,22 @@ public class LibraryModel implements Serializable {
     }
 
     public static class LibraryStandardModel implements Serializable{
+
         public long library_std_id;
         public long std_id;
         public long sub_id;
         public String standard;
         public String subject;
         public long library_id;
+        BranchCourseModel.BranchCourceData BranchCourse;
+
+        public BranchCourseModel.BranchCourceData getBranchCourse() {
+            return BranchCourse;
+        }
+
+        public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+            BranchCourse = branchCourse;
+        }
 
         public long getLibrary_std_id() {
             return library_std_id;

@@ -53,6 +53,10 @@ public class BranchSubjectModel {
         public Boolean isClass;
         public Boolean isSubject;
 
+        public BranchSubjectData(long subject_dtl_id) {
+            Subject_dtl_id = subject_dtl_id;
+        }
+
         public BranchSubjectData(List<BranchSubjectModel.BranchSubjectData> branchSubjectData) {
             this.BranchSubjectData = branchSubjectData;
         }

@@ -62,7 +62,7 @@ public class BranchClassListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Class List");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Class List");
         root = inflater.inflate(R.layout.fragment_branch_class_list, container, false);
 
         context = getActivity();

@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Model.BranchClassModel;
+import com.example.genius.Model.BranchClassSingleModel;
+import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.LinkData;
@@ -55,22 +59,22 @@ import retrofit2.Response;
 
 public class YoutubeVideoFragment extends Fragment {
 
-    SearchableSpinner standard;
+    SearchableSpinner standard,course_name;
     EditText youtube_title, youtube_link;
     Button save_youtube, edit_youtube;
     RecyclerView youtube_rv;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    List<String> standarditem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>();
-    String[] STANDARDITEM;
-    Integer[] STANDARDID;
-    String StandardName;
+    List<String> standarditem = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] STANDARDITEM,COURSEITEM;
+    Integer[] STANDARDID,COURSEID;
     TextView id, text, transaction_id, unique_id;
     OnBackPressedCallback callback;
     NestedScrollView you_scroll;
-    Long StandardId;
+    Long StandardId,courseID;
+    String stdname = "";
     YoutubeVideo_Adapter youtubeVideo_adapter;
     UserModel userpermission;
     LinearLayout linear_create_youtube;
@@ -94,6 +98,7 @@ public class YoutubeVideoFragment extends Fragment {
         id = root.findViewById(R.id.id);
         text = root.findViewById(R.id.text);
         you_scroll = root.findViewById(R.id.you_scroll);
+        course_name = root.findViewById(R.id.course_name);
         linear_create_youtube = root.findViewById(R.id.linear_create_youtube);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
@@ -105,29 +110,34 @@ public class YoutubeVideoFragment extends Fragment {
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
-            GetAllStandard();
+            GetAllCourse();
             GetAllYoutubeVideos();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
+        selectStandard();
+
         save_youtube.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (standard.getSelectedItemId() == 0)
+                if (course_name.getSelectedItemId() == 0){
+                    Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
+                }else if (standard.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 else if (youtube_title.getText().toString().equalsIgnoreCase(""))
-                    Toast.makeText(context, "Please Enter Title", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please Enter Title.", Toast.LENGTH_SHORT).show();
                 else if (youtube_link.getText().toString().equalsIgnoreCase(""))
-                    Toast.makeText(context, "Please Enter Url", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please Enter Url.", Toast.LENGTH_SHORT).show();
                 else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        LinkModel model = new LinkModel(branchModel, StandardId, youtube_link.getText().toString(), rowStatusModel, transactionModel, youtube_title.getText().toString());
+                        BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                        BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
+                        LinkModel model = new LinkModel(branchModel, course,branchclass, youtube_link.getText().toString(), rowStatusModel, transactionModel, youtube_title.getText().toString());
                         Call<LinkModel.LinkData1> call = apiCalling.YoutubeVideoMaintenance(model);
                         call.enqueue(new Callback<LinkModel.LinkData1>() {
                             @Override
@@ -147,6 +157,7 @@ public class YoutubeVideoFragment extends Fragment {
                                                 youtube_link.setText("");
                                                 youtube_title.setText("");
                                                 standard.setSelection(0);
+                                                course_name.setSelection(0);
                                             }
                                         }
                                     }
@@ -170,19 +181,23 @@ public class YoutubeVideoFragment extends Fragment {
         edit_youtube.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (standard.getSelectedItemId() == 0)
+                if (course_name.getSelectedItemId() == 0){
+                    Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
+                }else if (standard.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 else if (youtube_title.getText().toString().equalsIgnoreCase(""))
-                    Toast.makeText(context, "Please Enter Title", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please Enter Title.", Toast.LENGTH_SHORT).show();
                 else if (youtube_link.getText().toString().equalsIgnoreCase(""))
-                    Toast.makeText(context, "Please Enter Url", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please Enter Url.", Toast.LENGTH_SHORT).show();
                 else {
-                    if (Function.checkNetworkConnection(context)) {
+                    if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
                         TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        LinkModel model = new LinkModel(Long.parseLong(unique_id.getText().toString()),branchModel, StandardId, youtube_link.getText().toString(), rowStatusModel, transactionModel, youtube_title.getText().toString());
+                        BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                        BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
+                        LinkModel model = new LinkModel(Long.parseLong(unique_id.getText().toString()),branchModel, course,branchclass, youtube_link.getText().toString(), rowStatusModel, transactionModel, youtube_title.getText().toString());
                         Call<LinkModel.LinkData1> call = apiCalling.YoutubeVideoMaintenance(model);
                         call.enqueue(new Callback<LinkModel.LinkData1>() {
                             @Override
@@ -205,6 +220,8 @@ public class YoutubeVideoFragment extends Fragment {
                                                 youtube_link.setText("");
                                                 youtube_title.setText("");
                                                 standard.setSelection(0);
+                                                course_name.setSelection(0);
+                                                stdname = "";
                                             }
                                         }
                                     }
@@ -274,26 +291,98 @@ public class YoutubeVideoFragment extends Fragment {
         });
     }
 
-    public void GetAllStandard() {
+    public void GetAllCourse()
+    {
+        courseitem.clear();
+        courseid.clear();
+        courseitem.add("Select Course");
+        courseid.add(0);
+
+        Call<BranchCourseModel> call = apiCalling.GetAllCourseDDL(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<BranchCourseModel>() {
+            @Override
+            public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
+                if (response.isSuccessful()){
+                    BranchCourseModel data = response.body();
+                    if (data.isCompleted()){
+                        List<BranchCourseModel.BranchCourceData> list = data.getData();
+                        if (list != null && list.size() > 0){
+                            for (BranchCourseModel.BranchCourceData model : list) {
+                                String course = model.getCourse().getCourseName();
+                                courseitem.add(course);
+                                int id = (int) model.getCourse_dtl_id();
+                                courseid.add(id);
+                            }
+                            COURSEITEM = new String[courseitem.size()];
+                            COURSEITEM = courseitem.toArray(COURSEITEM);
+
+                            COURSEID = new Integer[courseid.size()];
+                            COURSEID = courseid.toArray(COURSEID);
+
+                            bindcourse();
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BranchCourseModel> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void bindcourse() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        course_name.setAdapter(adapter);
+        course_name.setOnItemSelectedListener(selectcourse);
+    }
+
+    AdapterView.OnItemSelectedListener selectcourse =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    courseID = Long.parseLong(courseid.get(position).toString());
+                    if (course_name.getSelectedItem().equals("Select Course")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                    }
+                    if (course_name.getSelectedItemId() != 0){
+                        GetAllStandard(courseID);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void GetAllStandard(long coursedetailid) {
+        progressBarHelper.showProgressDialog();
+        standarditem.clear();
+        standardid.clear();
         standarditem.add("Select Standard");
         standardid.add(0);
 
-        Call<StandardData> call = apiCalling.GetAllStandard(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<StandardData>() {
+        Call<BranchClassModel> call = apiCalling.Get_Class_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),coursedetailid);
+        call.enqueue(new Callback<BranchClassModel>() {
             @Override
-            public void onResponse(Call<StandardData> call, Response<StandardData> response) {
+            public void onResponse(Call<BranchClassModel> call, Response<BranchClassModel> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    StandardData standardData = response.body();
-                    if (standardData != null) {
-                        if (standardData.isCompleted()) {
-                            List<StandardModel> respose = standardData.getData();
-                            for (StandardModel singleResponseModel : respose) {
-
-                                String std = singleResponseModel.getStandard();
+                    BranchClassModel data = response.body();
+                    if (data.getCompleted()) {
+                        List<BranchClassSingleModel.BranchClassData> list = data.getData();
+                        if (list != null && list.size() > 0){
+                            for (BranchClassSingleModel.BranchClassData model : list) {
+                                String std = model.getClassModel().getClassName();
                                 standarditem.add(std);
-
-                                int stdid = (int) singleResponseModel.getStandardID();
+                                int stdid = (int) model.getClass_dtl_id();
                                 standardid.add(stdid);
                             }
                             STANDARDITEM = new String[standarditem.size()];
@@ -303,15 +392,14 @@ public class YoutubeVideoFragment extends Fragment {
                             STANDARDID = standardid.toArray(STANDARDID);
 
                             bindstandard();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
             @Override
-            public void onFailure(Call<StandardData> call, Throwable t) {
+            public void onFailure(Call<BranchClassModel> call, Throwable t) {
                 progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -323,6 +411,9 @@ public class YoutubeVideoFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         standard.setAdapter(adapter);
+        if (stdname != ""){
+            selectSpinnerValue(standard,stdname);
+        }
         standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
@@ -330,7 +421,6 @@ public class YoutubeVideoFragment extends Fragment {
             new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
                     StandardId = Long.parseLong(standardid.get(position).toString());
                     if (standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
@@ -387,7 +477,8 @@ public class YoutubeVideoFragment extends Fragment {
                 } catch (Exception ex) {
 
                 }
-                holder.standardname.setText("" + linkdetails.get(position).getStandardName());
+                holder.course.setText(linkdetails.get(position).getBranchCourse().getCourse().getCourseName());
+                holder.standardname.setText("" + linkdetails.get(position).getBranchClass().getClassModel().getClassName());
                 holder.title.setText("" + linkdetails.get(position).getTitle());
                 holder.youtube_url.setText("" + linkdetails.get(position).getLinkURL());
                 holder.youtube_edit.setOnClickListener(new View.OnClickListener() {
@@ -421,8 +512,10 @@ public class YoutubeVideoFragment extends Fragment {
                                 transaction_id.setText("" + linkdetails.get(position).getTransaction().getTransactionId());
                                 youtube_title.setText("" + linkdetails.get(position).getTitle());
                                 youtube_link.setText("" + linkdetails.get(position).getLinkURL());
-                                int a = standardid.indexOf(Integer.parseInt(String.valueOf(linkdetails.get(position).getStandardID())));
-                                standard.setSelection(a);
+                                int a = courseid.indexOf(Integer.parseInt(String.valueOf(linkdetails.get(position).getBranchCourse().getCourse_dtl_id())));
+                                course_name.setSelection(a);
+                                StandardId = linkdetails.get(position).getBranchClass().getClass_dtl_id();
+                                stdname = linkdetails.get(position).getBranchClass().getClassModel().getClassName();
                             }
                         });
                         dialog.show();
@@ -493,7 +586,7 @@ public class YoutubeVideoFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView standardname, title, youtube_url;
+            TextView standardname, title, youtube_url,course;
             ImageView youtube_delete, youtube_edit;
             LinearLayout linear_actions;
 
@@ -505,9 +598,38 @@ public class YoutubeVideoFragment extends Fragment {
                 youtube_delete = itemView.findViewById(R.id.youtube_delete);
                 youtube_edit = itemView.findViewById(R.id.youtube_edit);
                 linear_actions = itemView.findViewById(R.id.linear_actions);
+                course = itemView.findViewById(R.id.course);
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
+            }
+        }
+    }
+
+    public void selectStandard() {
+        standarditem.clear();
+        standardid.clear();
+        standarditem.add("Select Standard");
+        standardid.add(0);
+
+        STANDARDITEM = new String[standarditem.size()];
+        STANDARDITEM = standarditem.toArray(STANDARDITEM);
+
+        bindstd();
+    }
+
+    public void bindstd() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        standard.setAdapter(adapter);
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
+    }
+
+    private void selectSpinnerValue(Spinner spinner, String myString) {
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
+                spinner.setSelection(i);
+                break;
             }
         }
     }

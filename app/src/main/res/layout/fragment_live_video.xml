@@ -64,49 +64,87 @@
 
                 </RelativeLayout>
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/transaction_id"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/border">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/transaction_id"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                <TextView
+                    android:id="@+id/unique_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/unique_id"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        android:id="@+id/standard"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
-                        android:layout_toRightOf="@+id/caddress"
-                        android:background="@android:color/transparent"
-                        android:hint="Select Role"
-                        android:maxLines="1"
-                        android:paddingLeft="9dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp"
-                        android:textSize="15dp" />
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_weight="1"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/border">
 
-                    <ImageView
-                        android:id="@+id/caddress"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="12dp"
-                        android:src="@drawable/role"
-                        app:tint="@color/blue" />
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            android:id="@+id/course_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_toRightOf="@+id/caddress34"
+                            android:background="@android:color/transparent"
+                            android:hint="Select Course"
+                            android:maxLines="1"
+                            android:paddingLeft="9dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp"
+                            android:textSize="15dp" />
 
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/caddress34"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:src="@drawable/branch"
+                            app:tint="@color/blue" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_weight="1"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/border">
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            android:id="@+id/standard"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_toRightOf="@+id/caddress341"
+                            android:background="@android:color/transparent"
+                            android:hint="Select Standard"
+                            android:maxLines="1"
+                            android:paddingLeft="9dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp"
+                            android:textSize="15dp" />
+
+                        <ImageView
+                            android:id="@+id/caddress341"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12dp"
+                            android:src="@drawable/standard"
+                            app:tint="@color/blue" />
+
+                    </RelativeLayout>                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

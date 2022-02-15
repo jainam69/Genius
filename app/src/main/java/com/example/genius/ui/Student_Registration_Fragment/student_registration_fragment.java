@@ -47,6 +47,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Model.BranchClassModel;
+import com.example.genius.Model.BranchClassSingleModel;
+import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.SchoolData;
 import com.example.genius.Model.SchoolModel;
 import com.example.genius.Model.StandardData;
@@ -99,7 +102,7 @@ public class student_registration_fragment extends Fragment {
     Boolean selectfile = false;
     TextView attachment, uno;
     ImageView imageView;
-    SearchableSpinner standard, school_name, school_time, batch_time;
+    SearchableSpinner standard, school_name, school_time, batch_time,course_name;
     EditText gr_no, addmission_date, first_name, middle_name, last_name, address, percentage, contact_no, class_name, father_occu, mother_occu, parent_name, login_id, password, student_password, parent_password;
     TextView birth_date;
     RadioButton pass, fail, active, inactive, rb1, rb2;
@@ -109,10 +112,10 @@ public class student_registration_fragment extends Fragment {
     byte[] imageVal;
     Bitmap bitmap;
     File instrumentFileDestination;
-    List<String> standarditem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>();
-    String[] STANDARDITEM;
-    Integer[] STANDARDID;
+    List<String> standarditem = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] STANDARDITEM,COURSEITEM;
+    Integer[] STANDARDID,COURSEID;
     List<String> schoolnitem = new ArrayList<>();
     List<Integer> schoolnid = new ArrayList<>();
     String[] SCHOOLNITEM;
@@ -121,10 +124,10 @@ public class student_registration_fragment extends Fragment {
     String[] SCHOOLTITEM, SCHOOLTID;
     List<String> batchitem = new ArrayList<>(), batchid = new ArrayList<>();
     String[] BATCHITEM, BATCHID;
-    String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001", grade = "none", classname = "none", student_contact_no = "none", father_occupation = "none", mother_occupation = "none", Name,
+    String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001", grade = "none", classname = "none", student_contact_no = "none", father_occupation = "none", mother_occupation = "none", Name,Course_Standard,
             FileName = "none", Extension = "none", Address, attach, FinalFileName = "none", RandomFileName, OriginalFileName, Result_Status;
     int select, flag = 0;
-    long SchoolId = -1, StandardId, TransactionID, StudentID, ParentID;
+    long SchoolId = -1, StandardId, TransactionID, StudentID, ParentID,courseID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Bundle bundle;
@@ -136,13 +139,6 @@ public class student_registration_fragment extends Fragment {
     int result1 = -1, status1;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + c;
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -184,6 +180,7 @@ public class student_registration_fragment extends Fragment {
         uno = root.findViewById(R.id.uno);
         student_password = root.findViewById(R.id.student_password);
         parent_password = root.findViewById(R.id.parent_password);
+        course_name = root.findViewById(R.id.course_name);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -243,6 +240,9 @@ public class student_registration_fragment extends Fragment {
                 String file = bundle.getString("FileName");
                 if (file != null) {
                     String Path = bundle.getString("FilePath");
+                    imageView.setVisibility(View.VISIBLE);
+                    attachment.setText("attached");
+                    Glide.with(context).load(Path).into(imageView);
                     if (Path.contains(".") && Path.contains("/")) {
                         Extension = Path.substring(Path.lastIndexOf(".") + 1);
                         String FileNameWithExtension = Path.substring(Path.lastIndexOf("/") + 1);
@@ -251,18 +251,9 @@ public class student_registration_fragment extends Fragment {
                     }
                     FinalFileName = file + "," + RandomFileName;
                 } else {
-                    FinalFileName = "none";
-                }
-            }
-            if (bundle.containsKey("FilePath")) {
-                String Path = bundle.getString("FilePath");
-                if (Path != null && !Path.equals("http://highpack-001-site12.dtempurl.com")) {
-                    imageView.setVisibility(View.VISIBLE);
-                    attachment.setText("attached");
-                    Glide.with(context).load(Path).into(imageView);
-                } else {
                     imageView.setVisibility(View.GONE);
                     attachment.setText("");
+                    FinalFileName = "none";
                 }
             }
             if (bundle.containsKey("AdmissionDate")) {
@@ -309,14 +300,15 @@ public class student_registration_fragment extends Fragment {
 
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
+            GetAllCourse();
             GetAllSchool();
-            GetAllStandard();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
         selectschool_time();
         selectbatch_time();
+        selectStandard();
 
         result_rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
@@ -396,6 +388,8 @@ public class student_registration_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Last Name.", Toast.LENGTH_SHORT).show();
                 } else if (address.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Address.", Toast.LENGTH_SHORT).show();
+                }else if (course_name.getSelectedItemId() ==0){
+                    Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
                 } else if (standard.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
@@ -433,27 +427,28 @@ public class student_registration_fragment extends Fragment {
                         student_contact_no = contact_no.getText().toString();
                     }
                     if (!father_occu.getText().toString().equals("")) {
-                        father_occupation = father_occu.getText().toString();
+                        father_occupation = encodeDecode(father_occu.getText().toString());
                     }
                     if (!mother_occu.getText().toString().equals("")) {
-                        mother_occupation = mother_occu.getText().toString();
+                        mother_occupation = encodeDecode(mother_occu.getText().toString());
                     }
                     Address = encodeDecode(address.getText().toString().trim());
                     Name = first_name.getText().toString().replaceAll("\\s", "") + "," + middle_name.getText().toString().replaceAll("\\s", "") + "," + last_name.getText().toString().replaceAll("\\s", "");
+                    Course_Standard = courseID + "," + StandardId;
                     Result_Status = result1 + "," + status1;
                     if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                         call = apiCalling.StudentMaintenance(0, 0, "1", Name, bdate, Address,
-                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
-                                Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Course_Standard, SchoolId, Integer.parseInt(SchooltimeId),
+                                Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, encodeDecode(parent_name.getText().toString()), father_occupation, mother_occupation, login_id.getText().toString(),
                                 Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, student_password.getText().toString(), student_password.getText().toString(), "0", "0", true, uploadfile);
                     } else {
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                         call = apiCalling.StudentMaintenance(0, 0, "1", Name, bdate, Address,
-                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
-                                Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Course_Standard, SchoolId, Integer.parseInt(SchooltimeId),
+                                Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, encodeDecode(parent_name.getText().toString()), father_occupation, mother_occupation, login_id.getText().toString(),
                                 Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, student_password.getText().toString(), student_password.getText().toString(), FileName, Extension, false, uploadfile);
                     }
                     call.enqueue(new Callback<StudentModel.StudentData1>() {
@@ -499,6 +494,8 @@ public class student_registration_fragment extends Fragment {
                         Toast.makeText(context, "Please enter Last Name.", Toast.LENGTH_SHORT).show();
                     } else if (address.getText().toString().equals("")) {
                         Toast.makeText(context, "Please enter Address.", Toast.LENGTH_SHORT).show();
+                    }else if (course_name.getSelectedItemId() == 0){
+                        Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
                     } else if (standard.getSelectedItemId() == 0) {
                         Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
                     } else if (batch_time.getSelectedItemId() == 0) {
@@ -536,27 +533,28 @@ public class student_registration_fragment extends Fragment {
                             student_contact_no = contact_no.getText().toString();
                         }
                         if (!father_occu.getText().toString().equals("")) {
-                            father_occupation = father_occu.getText().toString();
+                            father_occupation = encodeDecode(father_occu.getText().toString());
                         }
                         if (!mother_occu.getText().toString().equals("")) {
-                            mother_occupation = mother_occu.getText().toString();
+                            mother_occupation = encodeDecode(mother_occu.getText().toString());
                         }
                         Address = encodeDecode(address.getText().toString().trim());
                         Name = first_name.getText().toString().replaceAll("\\s", "") + "," + middle_name.getText().toString().replaceAll("\\s", "") + "," + last_name.getText().toString().replaceAll("\\s", "");
+                        Course_Standard = courseID + "," + StandardId;
                         Result_Status = result1 + "," + status1;
                         if (instrumentFileDestination != null) {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                             call = apiCalling.StudentMaintenance(StudentID, ParentID, "1", Name, bdate, Address,
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
-                                    Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Course_Standard, SchoolId, Integer.parseInt(SchooltimeId),
+                                    Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, encodeDecode(parent_name.getText().toString()), father_occupation, mother_occupation, login_id.getText().toString(),
                                     Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), TransactionID, student_password.getText().toString(), student_password.getText().toString(), "0", "0", true, uploadfile);
                         } else {
                             RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
                             call = apiCalling.StudentMaintenance(StudentID, ParentID, "1", Name, bdate, Address,
-                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), StandardId, SchoolId, Integer.parseInt(SchooltimeId),
-                                    Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, parent_name.getText().toString().trim(), father_occupation, mother_occupation, login_id.getText().toString(),
+                                    Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Course_Standard, SchoolId, Integer.parseInt(SchooltimeId),
+                                    Integer.parseInt(BatchId), Result_Status, grade, classname, student_contact_no, indate, encodeDecode(parent_name.getText().toString()), father_occupation, mother_occupation, login_id.getText().toString(),
                                     Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), TransactionID, student_password.getText().toString(), student_password.getText().toString(), FinalFileName, Extension, false, uploadfile);
                         }
                         call.enqueue(new Callback<StudentModel.StudentData1>() {
@@ -890,7 +888,160 @@ public class student_registration_fragment extends Fragment {
         }
     }
 
+    public void GetAllCourse()
+    {
+        progressBarHelper.showProgressDialog();
+       courseitem.clear();
+       courseid.clear();
+       courseitem.add("Select Course");
+       courseid.add(0);
+       Call<BranchCourseModel> call = apiCalling.GetAllCourseDDL(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+       call.enqueue(new Callback<BranchCourseModel>() {
+           @Override
+           public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
+               if (response.isSuccessful()){
+                   BranchCourseModel data = response.body();
+                   if (data.isCompleted()){
+                       List<BranchCourseModel.BranchCourceData> list = data.getData();
+                       if (list != null && list.size() > 0){
+                           for (BranchCourseModel.BranchCourceData model : list) {
+
+                               String coursename = model.getCourse().getCourseName();
+                               courseitem.add(coursename);
+
+                               int id = (int) model.getCourse_dtl_id();
+                               courseid.add(id);
+                           }
+                           COURSEITEM = new String[courseitem.size()];
+                           COURSEITEM = courseitem.toArray(COURSEITEM);
+
+                           COURSEID = new Integer[courseid.size()];
+                           COURSEID = courseid.toArray(COURSEID);
+                           bindcourse();
+                       }
+                   }
+               }
+           }
+
+           @Override
+           public void onFailure(Call<BranchCourseModel> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+               Toast.makeText(context,t.toString(), Toast.LENGTH_SHORT).show();
+           }
+       });
+    }
+
+    public void bindcourse() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        course_name.setAdapter(adapter);
+        if (bundle != null) {
+            int b = courseid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("Course"))));
+            course_name.setSelection(b);
+        }
+        course_name.setOnItemSelectedListener(selectcourse);
+    }
+
+    AdapterView.OnItemSelectedListener selectcourse =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    courseID = Long.parseLong(courseid.get(position).toString());
+                    if (course_name.getSelectedItem().equals("Select Course")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                    if (course_name.getSelectedItemId() != 0){
+                        GetAllStandard(courseID);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void GetAllStandard(long coursedetailid) {
+        progressBarHelper.showProgressDialog();
+        standarditem.clear();
+        standardid.clear();
+        standarditem.add("Select Standard");
+        standardid.add(0);
+
+        Call<BranchClassModel> call = apiCalling.Get_Class_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),coursedetailid);
+        call.enqueue(new Callback<BranchClassModel>() {
+            @Override
+            public void onResponse(@NotNull Call<BranchClassModel> call, @NotNull Response<BranchClassModel> response) {
+                if (response.isSuccessful()) {
+                    BranchClassModel data = response.body();
+                    if (data.getCompleted()) {
+                        List<BranchClassSingleModel.BranchClassData> list = data.getData();
+                        if (list != null && list.size() > 0)
+                        {
+                            for (BranchClassSingleModel.BranchClassData model : list) {
+                            String std = model.getClassModel().getClassName();
+                            standarditem.add(std);
+                            int stdid = (int) model.getClass_dtl_id();
+                            standardid.add(stdid);
+                        }
+                        STANDARDITEM = new String[standarditem.size()];
+                        STANDARDITEM = standarditem.toArray(STANDARDITEM);
+
+                        STANDARDID = new Integer[standardid.size()];
+                        STANDARDID = standardid.toArray(STANDARDID);
+
+                        bindstandard();
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<BranchClassModel> call, @NotNull Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void bindstandard() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        standard.setAdapter(adapter);
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        if (bundle != null) {
+            int b = standardid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("Standard"))));
+            standard.setSelection(b);
+        }
+    }
+
+    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StandardName = standarditem.get(position);
+                    StandardId = Long.parseLong(standardid.get(position).toString());
+                    if (standard.getSelectedItem().equals("Select Standard")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
     public void GetAllSchool() {
+        schoolnitem.clear();
+        schoolnid.clear();
         schoolnitem.add("Select School");
         schoolnid.add(0);
 
@@ -899,7 +1050,6 @@ public class student_registration_fragment extends Fragment {
             @Override
             public void onResponse(@NotNull Call<SchoolData> call, @NotNull Response<SchoolData> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
                     SchoolData schoolData = response.body();
                     if (schoolData != null) {
                         if (schoolData.isCompleted()) {
@@ -919,10 +1069,9 @@ public class student_registration_fragment extends Fragment {
                             SCHOOLNID = schoolnid.toArray(SCHOOLNID);
 
                             bindschool();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -966,81 +1115,6 @@ public class student_registration_fragment extends Fragment {
                 }
             };
 
-    public void GetAllStandard() {
-        standarditem.add("Select Standard");
-        standardid.add(0);
-
-        Call<StandardData> call = apiCalling.GetAllStandard(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<StandardData>() {
-            @Override
-            public void onResponse(@NotNull Call<StandardData> call, @NotNull Response<StandardData> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    StandardData standardData = response.body();
-                    if (standardData != null) {
-                        if (standardData.isCompleted()) {
-                            List<StandardModel> respose = standardData.getData();
-                            for (StandardModel singleResponseModel : respose) {
-
-                                String std = singleResponseModel.getStandard();
-                                standarditem.add(std);
-
-                                int stdid = (int) singleResponseModel.getStandardID();
-                                standardid.add(stdid);
-                            }
-                            STANDARDITEM = new String[standarditem.size()];
-                            STANDARDITEM = standarditem.toArray(STANDARDITEM);
-
-                            STANDARDID = new Integer[standardid.size()];
-                            STANDARDID = standardid.toArray(STANDARDID);
-
-                            bindstandard();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<StandardData> call, @NotNull Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindstandard() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
-        if (bundle != null) {
-            int b = standardid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("Standard"))));
-            standard.setSelection(b);
-        }
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener7 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
-                    StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
 
     private File getPictureFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -1158,7 +1232,53 @@ public class student_registration_fragment extends Fragment {
 
             };
 
+    public void selectStandard() {
+        standarditem.clear();
+        standardid.clear();
+        standarditem.add("Select Standard");
+        standardid.add(0);
+
+        STANDARDITEM = new String[standarditem.size()];
+        STANDARDITEM = standarditem.toArray(STANDARDITEM);
+
+        bindstd();
+    }
+
+    public void bindstd() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        standard.setAdapter(adapter);
+        standard.setOnItemSelectedListener(selectstandard);
+    }
+
+    AdapterView.OnItemSelectedListener selectstandard =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    StandardId = standardid.get(position);
+                    if (standard.getSelectedItem().equals("Select Standard")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+
+            };
+
     public String encodeDecode(String text) {
         return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
+    }
+
+    private static String pad(int c) {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + c;
     }
 }

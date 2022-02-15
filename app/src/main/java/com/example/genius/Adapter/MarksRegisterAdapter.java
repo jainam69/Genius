@@ -60,7 +60,7 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
             }
         }
         holder.student_name.setText(marksModels.get(position).getStudent().getName());
-        holder.subject_name.setText(marksModels.get(position).getSubjectInfo().getSubject());
+        holder.subject_name.setText(marksModels.get(position).getBranchSubject().getSubject().getSubjectName());
         holder.total_marks.setText(""+marksModels.get(position).getTestEntityInfo().getMarks());
         holder.ach_marks.setText(marksModels.get(position).getAchieveMarks());
         holder.edit.setOnClickListener(new View.OnClickListener() {

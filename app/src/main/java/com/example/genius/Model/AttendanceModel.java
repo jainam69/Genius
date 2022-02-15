@@ -13,28 +13,48 @@ public class AttendanceModel {
     TransactionModel Transaction;
     RowStatusModel RowStatus;
     List<AttendanceDetailEntity> AttendanceDetail;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
 
-    public AttendanceModel(long attendanceID, BranchModel branch, StandardModel standard, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail) {
+    public AttendanceModel(long attendanceID, BranchModel branch, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail,BranchCourseModel.BranchCourceData Course, BranchClassSingleModel.BranchClassData bclass) {
         AttendanceID = attendanceID;
         Branch = branch;
-        Standard = standard;
         BatchTypeID = batchTypeID;
         BatchTypeText = batchTypeText;
         AttendanceDate = attendanceDate;
         Transaction = transaction;
         RowStatus = rowStatus;
         AttendanceDetail = attendanceDetail;
+        BranchCourse = Course;
+        BranchClass = bclass;
     }
 
-    public AttendanceModel(BranchModel branch, StandardModel standard, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail) {
+    public AttendanceModel(BranchModel branch, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail, BranchCourseModel.BranchCourceData Course, BranchClassSingleModel.BranchClassData bclass) {
         Branch = branch;
-        Standard = standard;
         BatchTypeID = batchTypeID;
         BatchTypeText = batchTypeText;
         AttendanceDate = attendanceDate;
         Transaction = transaction;
         RowStatus = rowStatus;
         AttendanceDetail = attendanceDetail;
+        BranchCourse = Course;
+        BranchClass = bclass;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
     }
 
     public long getAttendanceID() {

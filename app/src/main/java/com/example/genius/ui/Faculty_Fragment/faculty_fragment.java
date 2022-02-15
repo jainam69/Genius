@@ -516,7 +516,7 @@ public class faculty_fragment extends Fragment {
         progressBarHelper.showProgressDialog();
         classitem.clear();
         classid.clear();
-        classitem.add("Select Class Name");
+        classitem.add("Select Standard");
         classid.add(0);
         Call<BranchClassModel> call = apiCalling.Get_Class_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),course_id);
         call.enqueue(new Callback<BranchClassModel>() {
@@ -570,7 +570,7 @@ public class faculty_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     class_id = classid.get(position);
-                    if (sp_class.getSelectedItem().equals("Select Class Name")) {
+                    if (sp_class.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -679,7 +679,7 @@ public class faculty_fragment extends Fragment {
     {
         classitem.clear();
         classid.clear();
-        classitem.add("Select Class Name");
+        classitem.add("Select Standard");
         classid.add(0);
 
         CLASSITEM = new String[classitem.size()];

@@ -136,29 +136,33 @@ public class BranchClassListAdapter extends RecyclerView.Adapter<BranchClassList
 
             btn_delete.setOnClickListener(v14 -> {
                 progressBarHelper.showProgressDialog();
-                Call<CommonModel> call = apiCalling.RemoveClassDetail(CourceDataList.get(position).BranchCourse.getCourse_dtl_id()
+                Call<CommonModel.ResponseModel> call = apiCalling.RemoveClassDetail(CourceDataList.get(position).BranchCourse.getCourse_dtl_id()
                         , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
                         , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID));
-                call.enqueue(new Callback<CommonModel>() {
+                call.enqueue(new Callback<CommonModel.ResponseModel>() {
                     @Override
-                    public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
+                    public void onResponse(@NotNull Call<CommonModel.ResponseModel> call, @NotNull Response<CommonModel.ResponseModel> response) {
                         if (response.isSuccessful()) {
-                            CommonModel model = response.body();
-                            if (model != null && model.isCompleted()) {
-                                if (model.isData()) {
-                                    Toast.makeText(context, "Class deleted successfully.", Toast.LENGTH_SHORT).show();
+                            CommonModel.ResponseModel data = response.body();
+                            if (data.isCompleted()) {
+                                CommonModel model = data.getData();
+                                if (model.isStatus()) {
+                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     CourceDataList.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
+                                }else {
+                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
+                            progressBarHelper.hideProgressDialog();
                         }
-                        progressBarHelper.hideProgressDialog();
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<CommonModel> call, @NotNull Throwable t) {
+                    public void onFailure(@NotNull Call<CommonModel.ResponseModel> call, @NotNull Throwable t) {
                         progressBarHelper.hideProgressDialog();
+                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 dialog.dismiss();

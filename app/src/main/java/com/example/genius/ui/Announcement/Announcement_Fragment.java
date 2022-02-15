@@ -8,95 +8,163 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 
+import com.example.genius.API.ApiCalling;
+import com.example.genius.Model.AnnouncementModel;
+import com.example.genius.Model.AnnouncementSingleModel;
+import com.example.genius.Model.BranchModel;
+import com.example.genius.Model.RowStatusModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
+import com.example.genius.helper.Function;
+import com.example.genius.helper.MyApplication;
+import com.example.genius.helper.Preferences;
+import com.example.genius.helper.ProgressBarHelper;
+import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Announcement_Fragment extends Fragment {
 
-    EditText announcement_title,announcement_description;
+    EditText announcement_description;
     Button add_announcement;
     Context context;
     private static final String TAG = "Announcement";
+    ProgressBarHelper progressBarHelper;
+    ApiCalling apiCalling;
+    long annID = 0L, transaction_id = 0L;
+    OnBackPressedCallback callback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Announcement");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Announcement Master");
         View root = inflater.inflate(R.layout.fragment_announcement, container, false);
         context = getActivity();
-        announcement_title = root.findViewById(R.id.announcement_title);
+        progressBarHelper = new ProgressBarHelper(context, false);
+        apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         announcement_description = root.findViewById(R.id.announcement_description);
         add_announcement = root.findViewById(R.id.add_announcement);
-//        branch_type_spinner = root.findViewById(R.id.branch_type_spinner);
-//        user_type_spinner = root.findViewById(R.id.user_type_spinner);
-//        final List<String> branchlist = Arrays.asList(getResources().getStringArray(R.array.branch));
-//        final List<String> userlist = Arrays.asList(getResources().getStringArray(R.array.user));
 
-//        final List<KeyPairBoolData> listArray0 = new ArrayList<>();
-  /*      for (int i = 0; i < branchlist.size(); i++) {
-            KeyPairBoolData h = new KeyPairBoolData();
-            h.setId(i + 1);
-            h.setName(branchlist.get(i));
-            h.setSelected(false);
-            listArray0.add(h);
-        }
-        final List<KeyPairBoolData> listArray1 = new ArrayList<>();
-        for (int i = 0; i < branchlist.size(); i++) {
-            KeyPairBoolData h = new KeyPairBoolData();
-            h.setId(i + 1);
-            h.setName(branchlist.get(i));
-//            h.setSelected(i < 5);
-            listArray1.add(h);
-        }
+        if (Function.isNetworkAvailable(context)) {
+            progressBarHelper.showProgressDialog();
+            GetAnnouncement();
+        } else
+            Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
 
-        final List<KeyPairBoolData> listArray01 = new ArrayList<>();
-        for (int i = 0; i < userlist.size(); i++) {
-            KeyPairBoolData h = new KeyPairBoolData();
-            h.setId(i + 1);
-            h.setName(userlist.get(i));
-            h.setSelected(false);
-            listArray01.add(h);
-        }
-        final List<KeyPairBoolData> listArray11 = new ArrayList<>();
-        for (int i = 0; i < userlist.size(); i++) {
-            KeyPairBoolData h = new KeyPairBoolData();
-            h.setId(i + 1);
-            h.setName(userlist.get(i));
-//            h.setSelected(i < 5);
-            listArray11.add(h);
-        }
+        add_announcement.setOnClickListener(v -> {
+            if (Function.isNetworkAvailable(context)) {
+                if (announcement_description.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Enter Announcement.", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressBarHelper.showProgressDialog();
+                    AnnouncementModel.AnnouncementData model;
+                    if (annID == 0) {
+                        model = new AnnouncementModel.AnnouncementData(annID
+                                , new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))
+                                , new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME))
+                                , new RowStatusModel(1)
+                                , announcement_description.getText().toString());
+                    } else {
+                        model = new AnnouncementModel.AnnouncementData(annID
+                                , new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))
+                                , new TransactionModel(transaction_id, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0)
+                                , new RowStatusModel(1)
+                                , announcement_description.getText().toString());
+                    }
+                    Call<AnnouncementSingleModel> call = apiCalling.AnnouncementMaintenance(model);
+                    call.enqueue(new Callback<AnnouncementSingleModel>() {
+                        @Override
+                        public void onResponse(Call<AnnouncementSingleModel> call, Response<AnnouncementSingleModel> response) {
+                            if (response.isSuccessful()) {
+                                AnnouncementSingleModel data = response.body();
+                                if (data != null && data.isCompleted()) {
+                                    AnnouncementModel.AnnouncementData notimodel = data.getData();
+                                    if (notimodel != null) {
+                                        if (annID == 0 && notimodel.AnnouncementID > 0) {
+                                            GetAnnouncement();
+                                            Toast.makeText(context, "Announcement inserted successfully.", Toast.LENGTH_SHORT).show();
+                                        } else if (annID > 0) {
+                                            GetAnnouncement();
+                                            Toast.makeText(context, "Announcement updated successfully.", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, "Announcement not Inserted.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "Announcement not Inserted.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                progressBarHelper.hideProgressDialog();
+                            }
+                        }
 
-        branch_type_spinner.setSearchEnabled(true);
-        branch_type_spinner.setHintText("Branch");
-        branch_type_spinner.setSearchHint("Select Branch");
-        branch_type_spinner.setShowSelectAllButton(true);
-
-        branch_type_spinner.setItems(listArray1, items -> {
-            //The followings are selected items.
-            for (int i = 0; i < items.size(); i++) {
-                Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+                        @Override
+                        public void onFailure(Call<AnnouncementSingleModel> call, Throwable t) {
+                            progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
-        user_type_spinner.setSearchEnabled(true);
-        user_type_spinner.setHintText("Select User");
-        user_type_spinner.setSearchHint("Select User");
-        user_type_spinner.setShowSelectAllButton(true);
-
-        user_type_spinner.setItems(listArray11, items -> {
-            //The followings are selected items.
-            for (int i = 0; i < items.size(); i++) {
-                Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+        callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                MasterSelectorFragment profileFragment = new MasterSelectorFragment();
+                FragmentManager fm = requireActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.nav_host_fragment, profileFragment);
+                ft.addToBackStack(null);
+                ft.commit();
             }
-        });*/
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
         return root;
+    }
+
+    public void GetAnnouncement() {
+        Call<AnnouncementModel> call = apiCalling.GetAllAnnouncement(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<AnnouncementModel>() {
+            @Override
+            public void onResponse(@NotNull Call<AnnouncementModel> call, @NotNull Response<AnnouncementModel> response) {
+                if (response.isSuccessful()) {
+                    AnnouncementModel data = response.body();
+                    if (data != null && data.isCompleted()) {
+                        List<AnnouncementModel.AnnouncementData> notimodel = data.getData();
+                        if (notimodel != null && notimodel.size() > 0) {
+                            annID = notimodel.get(0).AnnouncementID;
+                            transaction_id = notimodel.get(0).TransactionData.getTransactionId();
+                            announcement_description.setText(notimodel.get(0).AnnouncementText);
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<AnnouncementModel> call, @NotNull Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

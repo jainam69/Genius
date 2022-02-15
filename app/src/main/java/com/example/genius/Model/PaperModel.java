@@ -12,6 +12,9 @@ public class PaperModel {
     RowStatusModel RowStatus;
     TransactionModel Transaction;
     PaperData PaperData;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+    BranchSubjectModel.BranchSubjectData BranchSubject;
 
     public PaperModel(long paperID, BranchModel branch, StandardModel standard, SubjectModel subject, int batchTypeID, String batchTypeText, String remarks, RowStatusModel rowStatus, TransactionModel transaction, com.example.genius.Model.PaperData paperData) {
         PaperID = paperID;
@@ -36,6 +39,30 @@ public class PaperModel {
         RowStatus = rowStatus;
         Transaction = transaction;
         PaperData = paperData;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
+
+    public BranchSubjectModel.BranchSubjectData getBranchSubject() {
+        return BranchSubject;
+    }
+
+    public void setBranchSubject(BranchSubjectModel.BranchSubjectData branchSubject) {
+        BranchSubject = branchSubject;
     }
 
     public long getPaperID() {

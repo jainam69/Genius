@@ -40,10 +40,12 @@ public class SuperAdminSubjectModel {
         public RowStatusModel RowStatus;
         public boolean isSubject;
 
-        public SuperAdminSubjectData(long subjectID, String subjectName, boolean isSubject) {
+        public SuperAdminSubjectData() {
+        }
+
+        public SuperAdminSubjectData(long subjectID, String subjectName) {
             SubjectID = subjectID;
             SubjectName = subjectName;
-            this.isSubject = isSubject;
         }
 
         public boolean isSubject() {

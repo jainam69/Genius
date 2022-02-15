@@ -19,6 +19,9 @@ public class HomeworkModel {
     String FilePath;
     StudentModel StudentInfo;
     int Status;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+    BranchSubjectModel.BranchSubjectData BranchSubject;
 
     public HomeworkModel(long homeworkID, BranchModel branchInfo, String homeworkDate, StandardModel standardInfo, SubjectModel subjectInfo, int batchTimeID, String batchTimeText, String remarks, String homeworkContentText, String homeworkContentFileName, TransactionModel transaction, RowStatusModel rowStatus) {
         HomeworkID = homeworkID;
@@ -47,6 +50,30 @@ public class HomeworkModel {
         HomeworkContentFileName = homeworkContentFileName;
         Transaction = transaction;
         RowStatus = rowStatus;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
+
+    public BranchSubjectModel.BranchSubjectData getBranchSubject() {
+        return BranchSubject;
+    }
+
+    public void setBranchSubject(BranchSubjectModel.BranchSubjectData branchSubject) {
+        BranchSubject = branchSubject;
     }
 
     public int getStatus() {

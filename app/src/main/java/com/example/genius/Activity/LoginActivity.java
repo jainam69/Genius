@@ -3,8 +3,10 @@ package com.example.genius.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     Button btn_login;
+    TextView forgot_password;
     EditText mobile_no, password;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -43,9 +46,17 @@ public class LoginActivity extends AppCompatActivity {
         progressBarHelper = new ProgressBarHelper(this, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         context = LoginActivity.this;
+        forgot_password = findViewById(R.id.forgot_password);
+
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),ForgotPasswordActivity.class));
+            }
+        });
 
         btn_login.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(LoginActivity.this)) {
+            if (Function.isNetworkAvailable(LoginActivity.this)) {
                 if (mobile_no.getText().toString().length() > 0 && password.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please enter Password", Toast.LENGTH_LONG).show();
                 } else if (mobile_no.getText().toString().length() == 0 && password.getText().toString().length() > 0) {

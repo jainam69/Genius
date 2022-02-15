@@ -94,7 +94,8 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
                 }
             }
         }
-        holder.standard.setText(testScheduleDetails.get(position).getStandard().getStandard());
+        holder.course.setText(testScheduleDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.standard.setText(testScheduleDetails.get(position).getBranchClass().getClassModel().getClassName());
         holder.batch_time.setText(testScheduleDetails.get(position).getBatchTimeText());
         String a = testScheduleDetails.get(position).getTestDate().replace("T00:00:00", "");
         try {
@@ -104,7 +105,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             e.printStackTrace();
         }
         holder.test_time.setText(testScheduleDetails.get(position).getTestStartTime() + "  -  " + testScheduleDetails.get(position).getTestEndTime());
-        holder.subject.setText(testScheduleDetails.get(position).getSubject().getSubject());
+        holder.subject.setText(testScheduleDetails.get(position).getBranchSubject().getSubject().getSubjectName());
         holder.total_marks.setText("" + testScheduleDetails.get(position).getMarks());
 
         holder.testschedule_edit.setOnClickListener(v -> {
@@ -133,9 +134,10 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
                     dialog.dismiss();
                     test_schedule_fragment orderplace = new test_schedule_fragment();
                     Bundle bundle = new Bundle();
-                    bundle.putLong("Standard", testScheduleDetails.get(position).getStandard().getStandardID());
+                    bundle.putLong("Standard", testScheduleDetails.get(position).getBranchClass().getClass_dtl_id());
                     bundle.putInt("BatchTime", testScheduleDetails.get(position).getBatchTimeID());
-                    bundle.putLong("TestSubject", testScheduleDetails.get(position).getSubject().getSubjectID());
+                    bundle.putLong("TestSubject", testScheduleDetails.get(position).getBranchSubject().getSubject_dtl_id());
+                    bundle.putLong("Course", testScheduleDetails.get(position).getBranchCourse().getCourse_dtl_id());
                     bundle.putString("TestDate", testScheduleDetails.get(position).getTestDate());
                     bundle.putString("StartTime", testScheduleDetails.get(position).getTestStartTime());
                     bundle.putString("EndTime", testScheduleDetails.get(position).getTestEndTime());
@@ -218,7 +220,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
                 Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
-                title.setText("Are you sure that you want to View Test Paper?");
+                title.setText("Are you sure that you want to Download Test Paper?");
                 image.setImageResource(R.drawable.document);
                 AlertDialog dialog = builder.create();
 
@@ -330,7 +332,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView standard, batch_time, test_date, test_time, subject, total_marks;
+        TextView standard, batch_time, test_date, test_time, subject, total_marks,course;
         ImageView testschedule_edit, testschedule_delete, paper_view,test_paper;
 
         public ViewHolder(@NonNull View itemView) {
@@ -346,6 +348,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             testschedule_delete = itemView.findViewById(R.id.testschedule_delete);
             paper_view = itemView.findViewById(R.id.paper_view);
             test_paper = itemView.findViewById(R.id.test_paper);
+            course = itemView.findViewById(R.id.course);
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

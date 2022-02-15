@@ -31,6 +31,9 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.AttendanceCheck_Adapter;
 import com.example.genius.Adapter.AttendanceMaster_Adapter;
 import com.example.genius.Model.AttendanceModel;
+import com.example.genius.Model.BranchClassModel;
+import com.example.genius.Model.BranchClassSingleModel;
+import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
@@ -63,7 +66,7 @@ import retrofit2.Response;
 @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
 public class attendance_fragment extends Fragment {
 
-    SearchableSpinner standard, batch_time, branch;
+    SearchableSpinner standard, batch_time, branch,course_name;
     EditText attendance_date;
     Button submit_attendance, save_attendance, edit_attendance;
     RecyclerView attendance_rv, attendance_edit_rv;
@@ -77,13 +80,13 @@ public class attendance_fragment extends Fragment {
     private int month;
     private int day;
     String indate;
-    List<String> standarditem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(), branchid = new ArrayList<>();
-    String[] STANDARDITEM, BRANCHITEM, BATCHITEM;
-    Integer[] STANDARDID, BRANCHID;
-    String StandardName, BatchTime, BranchName, BranchID, BatchId;
+    List<String> standarditem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(), branchid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] STANDARDITEM, BRANCHITEM, BATCHITEM,COURSEITEM;
+    Integer[] STANDARDID, BRANCHID,COURSEID;
+    String BatchTime, BranchName, BranchID, BatchId;
     OnBackPressedCallback callback;
-    Long StandardId;
+    Long StandardId,courseID;
     List<AttendanceModel.AttendanceDetailEntity> attandance;
     List<AttendanceModel.AttendanceDetailEntity> attandance_edit;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -91,7 +94,6 @@ public class attendance_fragment extends Fragment {
     Bundle bundle;
     LinearLayout linear_edit_attendance, linear_create_attendance;
     List<AttendanceModel.AttendanceDetailEntity> attendanceDetailEntityList;
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -115,6 +117,7 @@ public class attendance_fragment extends Fragment {
         linear_create_attendance = root.findViewById(R.id.linear_create_attendance);
         attendance_id = root.findViewById(R.id.attendance_id);
         transactionid = root.findViewById(R.id.transactionid);
+        course_name = root.findViewById(R.id.course_name);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -171,6 +174,9 @@ public class attendance_fragment extends Fragment {
             if (bundle.containsKey("StandardID")) {
                 StandardId = bundle.getLong("StandardID");
             }
+            if (bundle.containsKey("courseid")) {
+                courseID = bundle.getLong("courseid");
+            }
             if (bundle.containsKey("TransactionId")) {
                 transactionid.setText("" + bundle.getLong("TransactionId"));
             }
@@ -181,10 +187,12 @@ public class attendance_fragment extends Fragment {
         if (Function.checkNetworkConnection(context)) {
             progressBarHelper.showProgressDialog();
             selectbatch_time();
-            GetAllStandard();
+            GetAllCourse();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
+        selectStandard();
 
         attendance_date.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
@@ -214,7 +222,9 @@ public class attendance_fragment extends Fragment {
 
         submit_attendance.setOnClickListener(v -> {
             if (Function.checkNetworkConnection(context)) {
-                if (standard.getSelectedItemId() == 0)
+                if (course_name.getSelectedItemId() == 0){
+                    Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
+                }else if (standard.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 else if (batch_time.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
@@ -223,7 +233,7 @@ public class attendance_fragment extends Fragment {
                 else {
                     progressBarHelper.showProgressDialog();
                     BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    Call<StudentData> call = apiCalling.GetAllStudentForAttendance(Long.parseLong(BranchID), StandardId, Integer.parseInt(BatchId),indate);
+                    Call<StudentData> call = apiCalling.GetAllStudentForAttendance(Long.parseLong(BranchID), StandardId, courseID,Integer.parseInt(BatchId),indate);
                     call.enqueue(new Callback<StudentData>() {
                         @Override
                         public void onResponse(@NotNull Call<StudentData> call, @NotNull Response<StudentData> response) {
@@ -249,8 +259,8 @@ public class attendance_fragment extends Fragment {
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_LONG).show();
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
-                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
@@ -266,26 +276,22 @@ public class attendance_fragment extends Fragment {
         });
 
         save_attendance.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
             if (Function.checkNetworkConnection(context)) {
-                if (branch.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Select Branch.", Toast.LENGTH_SHORT).show();
+                if (course_name.getSelectedItemId() == 0) {
+                    Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
                 } else if (standard.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (batch_time.getSelectedItemId() == 0) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
                 } else if (attendance_date.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please enter attendance date.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     attandance = new ArrayList<>();
                     BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StandardModel standardModel = new StandardModel(StandardId);
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     if (AttendanceMaster_Adapter.testlist.size() > 0) {
@@ -297,7 +303,7 @@ public class attendance_fragment extends Fragment {
                         }
                     }
                     AttendanceMaster_Adapter.testlist.clear();
-                    AttendanceModel attendanceModel = new AttendanceModel(branchModel, standardModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance);
+                    AttendanceModel attendanceModel = new AttendanceModel(branchModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance,course,branchclass);
                     Call<AttendanceModel.AttendanceData1> call = apiCalling.AttendanceMaintenance(attendanceModel);
                     call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
                         @Override
@@ -336,12 +342,12 @@ public class attendance_fragment extends Fragment {
         });
 
         edit_attendance.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
                 attandance_edit = new ArrayList<>();
                 BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                StandardModel standardModel = new StandardModel(StandardId);
+                BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
                 TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                 RowStatusModel rowStatusModel = new RowStatusModel(1);
                 if (AttendanceCheck_Adapter.testlist_edit.size() > 0) {
@@ -354,7 +360,7 @@ public class attendance_fragment extends Fragment {
                     }
                 }
                 AttendanceCheck_Adapter.testlist_edit.clear();
-                AttendanceModel attendanceModel = new AttendanceModel(Long.parseLong(attendance_id.getText().toString()), branchModel, standardModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance_edit);
+                AttendanceModel attendanceModel = new AttendanceModel(Long.parseLong(attendance_id.getText().toString()), branchModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance_edit,course,branchclass);
                 Call<AttendanceModel.AttendanceData1> call = apiCalling.AttendanceMaintenance(attendanceModel);
                 call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
                     @Override
@@ -485,26 +491,102 @@ public class attendance_fragment extends Fragment {
                 }
             };
 
-    public void GetAllStandard() {
+    public void GetAllCourse()
+    {
+        progressBarHelper.showProgressDialog();
+        courseitem.clear();
+        courseid.clear();
+        courseitem.add("Select Course");
+        courseid.add(0);
+
+        Call<BranchCourseModel> call = apiCalling.GetAllCourseDDL(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<BranchCourseModel>() {
+            @Override
+            public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
+                if (response.isSuccessful()){
+                    BranchCourseModel data = response.body();
+                    if (data.isCompleted()){
+                        List<BranchCourseModel.BranchCourceData> list = data.getData();
+                        if (list != null && list.size() >0){
+                            for (BranchCourseModel.BranchCourceData model : list) {
+                                String course = model.getCourse().getCourseName();
+                                courseitem.add(course);
+                                int id = (int) model.getCourse_dtl_id();
+                                courseid.add(id);
+                            }
+                            COURSEITEM = new String[courseitem.size()];
+                            COURSEITEM = courseitem.toArray(COURSEITEM);
+
+                            COURSEID = new Integer[courseid.size()];
+                            COURSEID = courseid.toArray(COURSEID);
+
+                            bindcourse();
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BranchCourseModel> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void bindcourse() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        course_name.setAdapter(adapter);
+        course_name.setOnItemSelectedListener(selectcourse);
+    }
+
+    AdapterView.OnItemSelectedListener selectcourse =
+            new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    courseID = Long.parseLong(courseid.get(position).toString());
+                    if (course_name.getSelectedItem().equals("Select Course")) {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    } else {
+                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    }
+                    if (course_name.getSelectedItemId() != 0){
+                        GetAllStandard(courseID);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            };
+
+    public void GetAllStandard(long coursedetailid) {
+        progressBarHelper.showProgressDialog();
+        standarditem.clear();
+        standardid.clear();
         standarditem.add("Select Standard");
         standardid.add(0);
 
-        Call<StandardData> call = apiCalling.GetAllStandard(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<StandardData>() {
+        Call<BranchClassModel> call = apiCalling.Get_Class_Spinner(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),coursedetailid);
+        call.enqueue(new Callback<BranchClassModel>() {
             @Override
-            public void onResponse(@NotNull Call<StandardData> call, @NotNull Response<StandardData> response) {
+            public void onResponse(@NotNull Call<BranchClassModel> call, @NotNull Response<BranchClassModel> response) {
                 if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    StandardData standardData = response.body();
-                    if (standardData != null) {
-                        if (standardData.isCompleted()) {
-                            List<StandardModel> respose = standardData.getData();
-                            for (StandardModel singleResponseModel : respose) {
+                    BranchClassModel data = response.body();
+                    if (data.getCompleted()) {
+                        List<BranchClassSingleModel.BranchClassData> list = data.getData();
+                        if (list != null && list.size() >0)
+                        {
+                            for (BranchClassSingleModel.BranchClassData model : list) {
 
-                                String std = singleResponseModel.getStandard();
+                                String std = model.getClassModel().getClassName();
                                 standarditem.add(std);
 
-                                int stdid = (int) singleResponseModel.getStandardID();
+                                int stdid = (int) model.getClass_dtl_id();
                                 standardid.add(stdid);
                             }
                             STANDARDITEM = new String[standarditem.size()];
@@ -514,15 +596,14 @@ public class attendance_fragment extends Fragment {
                             STANDARDID = standardid.toArray(STANDARDID);
 
                             bindstandard();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
                         }
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
             }
 
             @Override
-            public void onFailure(@NotNull Call<StandardData> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<BranchClassModel> call, @NotNull Throwable t) {
                 progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -530,7 +611,6 @@ public class attendance_fragment extends Fragment {
     }
 
     public void bindstandard() {
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         standard.setAdapter(adapter);
@@ -541,14 +621,13 @@ public class attendance_fragment extends Fragment {
             new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    StandardName = standarditem.get(position);
                     StandardId = Long.parseLong(standardid.get(position).toString());
                     if (standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
+                        ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
                 }
 
@@ -609,11 +688,23 @@ public class attendance_fragment extends Fragment {
 
             };
 
-    public static String yesterday() {
-        Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        cal.add(Calendar.DATE, 0);
-        return dateFormat.format(cal.getTime());
+    public void selectStandard() {
+        standarditem.clear();
+        standardid.clear();
+        standarditem.add("Select Standard");
+        standardid.add(0);
+
+        STANDARDITEM = new String[standarditem.size()];
+        STANDARDITEM = standarditem.toArray(STANDARDITEM);
+
+        bindstd();
+    }
+
+    public void bindstd() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        standard.setAdapter(adapter);
+        standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
 }

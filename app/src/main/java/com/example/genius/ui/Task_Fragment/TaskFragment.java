@@ -120,13 +120,6 @@ public class TaskFragment extends Fragment {
     LinearLayout linear_create_todo;
     UserModel userpermission;
 
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + c;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Task");
@@ -168,8 +161,10 @@ public class TaskFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
+        selectUser();
+
         save_task.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (date_task.getText().toString().isEmpty())
                     Toast.makeText(context, "Please Select Task Date.", Toast.LENGTH_SHORT).show();
                 else if(user.getSelectedItemId() == 0)
@@ -221,7 +216,7 @@ public class TaskFragment extends Fragment {
         });
 
         edit_task.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (date_task.getText().toString().isEmpty())
                     Toast.makeText(context, "Please Select Task Date.", Toast.LENGTH_SHORT).show();
                 else if(user.getSelectedItemId() == 0)
@@ -505,7 +500,6 @@ public class TaskFragment extends Fragment {
     }
 
     public void binduser() {
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, USERITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user.setAdapter(adapter);
@@ -868,4 +862,31 @@ public class TaskFragment extends Fragment {
         return Base64.encodeToString(text.getBytes(), Base64.DEFAULT).replace("\n", "");
     }
 
+    private static String pad(int c) {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + c;
+    }
+
+    public void selectUser()
+    {
+        useritem.clear();
+        userid.clear();
+        useritem.add("Select User");
+        userid.add(0);
+
+        USERITEM = new String[useritem.size()];
+        USERITEM = useritem.toArray(USERITEM);
+
+        bindselectuser();
+    }
+
+    public void bindselectuser()
+    {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, USERITEM);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        user.setAdapter(adapter);
+        user.setOnItemSelectedListener(UserItemListener);
+    }
 }

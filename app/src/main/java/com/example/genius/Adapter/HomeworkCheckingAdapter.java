@@ -44,7 +44,7 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
 
     List<HomeworkModel> homeworkModels;
     Context context;
-    String pending_done,remarks,created_by,classname,homework,student,Name;
+    String pending_done,remarks,created_by,classname,homework,student,Name,final_classname;
     int select,status;
     long hwID,StdID,created_id,downloadID;
     ProgressBarHelper progressBarHelper;
@@ -74,7 +74,8 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.standard.setText(homeworkModels.get(position).getStandardInfo().getStandard());
+        holder.course.setText(homeworkModels.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.standard.setText(homeworkModels.get(position).getBranchClass().getClassModel().getClassName());
         holder.student_name.setText(homeworkModels.get(position).getStudentInfo().getName());
         int st = homeworkModels.get(position).getStatus();
         if (st == 2){
@@ -201,7 +202,10 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
                 progressBarHelper.showProgressDialog();
                 homework = homeworkModels.get(position).getHomeworkDate().replace("T00:00:00", "");
                 student = homeworkModels.get(position).getStudentInfo().getName().replaceAll("\\s","");
-                classname = homeworkModels.get(position).getStandardInfo().getStandard().replaceAll("\\s","");
+                classname = homeworkModels.get(position).getBranchClass().getClassModel().getClassName().replaceAll("\\s","");
+                if (classname.contains(".")){
+                    classname = classname.replaceAll("\\.","");
+                }
                 Call<HomeworkModel.HomeworkData1> call = apiCalling.Download_Student_Homework(homeworkModels.get(position).getHomeworkID(),
                         homeworkModels.get(position).getStudentInfo().getStudentID(),homework,student,classname);
                 call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
@@ -246,7 +250,7 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView submit_date,standard,student_name,status,remark;
+        TextView submit_date,standard,student_name,status,remark,course;
         ImageView img_edit,img_download;
         RadioButton rb1;
 
@@ -259,6 +263,7 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
             status = itemView.findViewById(R.id.status);
             remark = itemView.findViewById(R.id.remark);
             img_edit = itemView.findViewById(R.id.img_edit);
+            course = itemView.findViewById(R.id.course);
             img_download = itemView.findViewById(R.id.img_download);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

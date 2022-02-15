@@ -67,7 +67,7 @@ public class BranchCourseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Branch Course Master");
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Course Master");
         root = inflater.inflate(R.layout.fragment_branch_cource, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);

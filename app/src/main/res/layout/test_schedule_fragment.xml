@@ -32,12 +32,12 @@
                     android:background="@drawable/border">
 
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        android:id="@+id/standard"
+                        android:id="@+id/course_name"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
-                        android:layout_toRightOf="@+id/caddress"
+                        android:layout_toRightOf="@+id/caddress1"
                         android:background="@android:color/transparent"
-                        android:hint="Select Standard"
+                        android:hint="Select Course"
                         android:maxLines="1"
                         android:paddingLeft="9dp"
                         android:paddingTop="12dp"
@@ -45,7 +45,7 @@
                         android:textSize="15dp" />
 
                     <ImageView
-                        android:id="@+id/caddress"
+                        android:id="@+id/caddress1"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_centerVertical="true"
@@ -65,12 +65,12 @@
                     android:background="@drawable/border">
 
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        android:id="@+id/batch_time"
+                        android:id="@+id/standard"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
-                        android:layout_toRightOf="@+id/gst"
+                        android:layout_toRightOf="@+id/gst1"
                         android:background="@android:color/transparent"
-                        android:hint="Batch Time"
+                        android:hint="Select Standard"
                         android:maxLines="1"
                         android:paddingLeft="9dp"
                         android:paddingTop="12dp"
@@ -78,7 +78,7 @@
                         android:textSize="15dp" />
 
                     <ImageView
-                        android:id="@+id/gst"
+                        android:id="@+id/gst1"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_centerVertical="true"
@@ -106,7 +106,7 @@
                         android:id="@+id/subject"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
-                        android:layout_toRightOf="@+id/caddress3"
+                        android:layout_toRightOf="@+id/caddress13"
                         android:background="@android:color/transparent"
                         android:hint="Select Subject"
                         android:maxLines="1"
@@ -116,12 +116,12 @@
                         android:textSize="15dp" />
 
                     <ImageView
-                        android:id="@+id/caddress3"
+                        android:id="@+id/caddress13"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="12dp"
-                        android:src="@drawable/branch"
+                        android:src="@drawable/sales_no"
                         app:tint="@color/blue" />
 
                 </RelativeLayout>
@@ -162,12 +162,17 @@
                 </RelativeLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="7dp"
-                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/border">
 
                 <EditText
@@ -198,6 +203,38 @@
                     app:tint="#0074AA" />
 
             </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/border">
+
+                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                        android:id="@+id/batch_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_toRightOf="@+id/gst100"
+                        android:background="@android:color/transparent"
+                        android:hint="Batch Time"
+                        android:maxLines="1"
+                        android:paddingLeft="9dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="15dp" />
+
+                    <ImageView
+                        android:id="@+id/gst100"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="12dp"
+                        android:src="@drawable/branch"
+                        app:tint="@color/blue" />
+                </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
