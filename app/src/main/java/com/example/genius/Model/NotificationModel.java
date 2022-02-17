@@ -3,31 +3,43 @@ package com.example.genius.Model;
 import java.util.List;
 
 public class NotificationModel {
+
      long NotificationID;
      List<NotificationTypeModel> NotificationType;
      BranchModel Branch;
      RowStatusModel RowStatus;
      TransactionModel Transaction;
      String NotificationMessage;
+     String Notification_Date;
 
     public NotificationModel() {
     }
 
-    public NotificationModel(List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage) {
+    public NotificationModel(List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage,String noti_date) {
         NotificationType = notificationType;
         Branch = branch;
         RowStatus = rowStatus;
         Transaction = transaction;
         NotificationMessage = notificationMessage;
+        Notification_Date = noti_date;
     }
 
-    public NotificationModel(long notificationID, List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage) {
+    public NotificationModel(long notificationID, List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage,String noti_date) {
         NotificationID = notificationID;
         NotificationType = notificationType;
         Branch = branch;
         RowStatus = rowStatus;
         Transaction = transaction;
         NotificationMessage = notificationMessage;
+        Notification_Date = noti_date;
+    }
+
+    public String getNotification_Date() {
+        return Notification_Date;
+    }
+
+    public void setNotification_Date(String notification_Date) {
+        Notification_Date = notification_Date;
     }
 
     public long getNotificationID() {

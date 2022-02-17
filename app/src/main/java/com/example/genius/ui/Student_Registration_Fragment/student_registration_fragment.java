@@ -124,9 +124,9 @@ public class student_registration_fragment extends Fragment {
     String[] SCHOOLNITEM;
     Integer[] SCHOOLNID;
     List<String> schooltitem = new ArrayList<>(), schooltid = new ArrayList<>();
-    String[] SCHOOLTITEM, SCHOOLTID;
+    String[] SCHOOLTITEM;
     List<String> batchitem = new ArrayList<>(), batchid = new ArrayList<>();
-    String[] BATCHITEM, BATCHID;
+    String[] BATCHITEM;
     String indate = "01-01-0001", StandardName, SchoolName, Result, Status, SchoolTime, BatchTime, BatchId, SchooltimeId = "-1", bdate = "01-01-0001", grade = "none", classname = "none", student_contact_no = "none", father_occupation = "none", mother_occupation = "none", Name,Course_Standard,
             FileName = "none", Extension = "none", Address, attach, FinalFileName = "none", RandomFileName, OriginalFileName, Result_Status;
     int select, flag = 0;

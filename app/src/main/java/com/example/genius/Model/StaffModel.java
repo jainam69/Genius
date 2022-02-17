@@ -1,6 +1,7 @@
 package com.example.genius.Model;
 
 public class StaffModel {
+
     long StaffID;
     String Name;
     String Education;
@@ -14,6 +15,7 @@ public class StaffModel {
     String MobileNo;
     String Userrole;
     long UserID;
+    String User_Password;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
     BranchModel BranchInfo;
@@ -21,7 +23,7 @@ public class StaffModel {
     public StaffModel() {
     }
 
-    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid) {
+    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid,String password) {
         StaffID = staffID;
         Name = name;
         Education = education;
@@ -37,9 +39,10 @@ public class StaffModel {
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
         UserID = userid;
+        User_Password = password;
     }
 
-    public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole) {
+    public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole,String password) {
         Name = name;
         Education = education;
         this.DOB = DOB;
@@ -54,6 +57,7 @@ public class StaffModel {
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
         Userrole = Userrole;
+        User_Password = password;
     }
 
     public StaffModel(long staffID, long userID, String name, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo) {
@@ -65,6 +69,14 @@ public class StaffModel {
         Transaction = transaction;
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
+    }
+
+    public String getUser_Password() {
+        return User_Password;
+    }
+
+    public void setUser_Password(String user_Password) {
+        User_Password = user_Password;
     }
 
     public String getUserrole() {

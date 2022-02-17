@@ -1,6 +1,8 @@
 package com.example.genius.ui.Notification;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -48,7 +50,12 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -66,7 +73,7 @@ public class NotificationFragment extends Fragment {
     Button save_notification, edit_notification;
     Context context;
     ProgressBarHelper progressBarHelper;
-    EditText notification_message;
+    EditText notification_message,notification_date;
     ApiCalling apiCalling;
     List<String> branchitem = new ArrayList<>();
     List<Integer> branchid = new ArrayList<>();
@@ -75,9 +82,14 @@ public class NotificationFragment extends Fragment {
     int check_value_admin, check_value_teacher, check_value_student;
     OnBackPressedCallback callback;
     NestedScrollView notification_scroll;
-    String BranchName, BranchID;
+    String BranchName, BranchID,noti_date;
     Notification_Adapter notification_adapter;
     UserModel userpermission;
+    private int year;
+    private int month;
+    private int day;
+    DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,6 +113,7 @@ public class NotificationFragment extends Fragment {
         notification_id = root.findViewById(R.id.notification_id);
         transaction_id = root.findViewById(R.id.transaction_id);
         notification_scroll = root.findViewById(R.id.notification_scroll);
+        notification_date = root.findViewById(R.id.notification_date);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         linear_create_notification = root.findViewById(R.id.linear_create_notification);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
@@ -119,6 +132,27 @@ public class NotificationFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
+        notification_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                day = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog picker = new DatePickerDialog(getActivity(),
+                        (view, year2, monthOfYear, dayOfMonth) -> {
+                            year = year2;
+                            month = monthOfYear;
+                            day = dayOfMonth;
+                            noti_date = year + "-" + pad(month + 1) + "-" + pad(day);
+                            notification_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        }, year, month, day);
+                picker.show();
+            }
+        });
+
         ch_admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -129,6 +163,7 @@ public class NotificationFragment extends Fragment {
                 }
             }
         });
+
         ch_teacher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -156,6 +191,8 @@ public class NotificationFragment extends Fragment {
                 if (Function.isNetworkAvailable(context)) {
                     if (notification_message.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
+                    }else if (notification_date.getText().toString().isEmpty()){
+                        Toast.makeText(context, "Please enter Notification Date.", Toast.LENGTH_SHORT).show();
                     }else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
@@ -175,7 +212,7 @@ public class NotificationFragment extends Fragment {
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                        NotificationModel model = new NotificationModel(typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString());
+                        NotificationModel model = new NotificationModel(typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString(),noti_date);
                         Call<NotificationModel.NotificationData1> call = apiCalling.NotificationMaintanance(model);
 
                         call.enqueue(new Callback<NotificationModel.NotificationData1>() {
@@ -204,6 +241,7 @@ public class NotificationFragment extends Fragment {
                             @Override
                             public void onFailure(@NotNull Call<NotificationModel.NotificationData1> call, @NotNull Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }else {
@@ -222,6 +260,8 @@ public class NotificationFragment extends Fragment {
                 if (Function.checkNetworkConnection(context)) {
                     if (notification_message.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
+                    }else if (notification_date.getText().toString().isEmpty()){
+                        Toast.makeText(context, "Please enter Notification Date.", Toast.LENGTH_SHORT).show();
                     }else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
@@ -259,7 +299,7 @@ public class NotificationFragment extends Fragment {
                         TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                        NotificationModel model = new NotificationModel(Long.parseLong(notification_id.getText().toString()), typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString());
+                        NotificationModel model = new NotificationModel(Long.parseLong(notification_id.getText().toString()), typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString(),noti_date);
                         Call<NotificationModel.NotificationData1> call = apiCalling.NotificationMaintanance(model);
 
                         call.enqueue(new Callback<NotificationModel.NotificationData1>() {
@@ -290,6 +330,7 @@ public class NotificationFragment extends Fragment {
                             @Override
                             public void onFailure(Call<NotificationModel.NotificationData1> call, Throwable t) {
                                 progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }else {
@@ -445,7 +486,7 @@ public class NotificationFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull Notification_Adapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull Notification_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             for (UserModel.UserPermission model : userpermission.getPermission())
             {
                 if (model.getPageInfo().getPageID() == 10){
@@ -459,6 +500,13 @@ public class NotificationFragment extends Fragment {
                         holder.linear_actions.setVisibility(View.GONE);
                     }
                 }
+            }
+            String date = notificationDetails.get(position).getNotification_Date();
+            try {
+                Date d = actualdate.parse(date);
+                holder.ndate.setText(displaydate.format(d));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
             holder.noti_desc.setText("" + notificationDetails.get(position).getNotificationMessage());
             List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
@@ -502,6 +550,13 @@ public class NotificationFragment extends Fragment {
                             id.setText("" + notificationDetails.get(position).getNotificationID());
                             notification_id.setText("" + notificationDetails.get(position).getNotificationID());
                             notification_message.setText(" " + notificationDetails.get(position).getNotificationMessage());
+                            try {
+                                Date d = actualdate.parse(notificationDetails.get(position).getNotification_Date());
+                                notification_date.setText("" + displaydate.format(d));
+                                noti_date = actualdate.format(d);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
                             for (NotificationModel.NotificationTypeModel model : notitypelist) {
                                 if (model.getTypeID() == 1) {
@@ -589,7 +644,7 @@ public class NotificationFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView noti_desc, sub_type;
+            TextView noti_desc, sub_type,ndate;
             ImageView noti_delete, noti_edit;
             LinearLayout linear_actions;
 
@@ -600,10 +655,18 @@ public class NotificationFragment extends Fragment {
                 noti_delete = itemView.findViewById(R.id.noti_delete);
                 noti_edit = itemView.findViewById(R.id.noti_edit);
                 linear_actions = itemView.findViewById(R.id.linear_actions);
+                ndate = itemView.findViewById(R.id.ndate);
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }
         }
+    }
+
+    private static String pad(int c) {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + c;
     }
 }

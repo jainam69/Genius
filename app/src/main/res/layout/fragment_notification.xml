@@ -59,6 +59,44 @@
                 app:tint="@color/blue" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/border">
+
+            <EditText
+                android:id="@+id/notification_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tlimit11"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:editable="false"
+                android:focusable="false"
+                android:hint="Notification Date"
+                android:maxLines="1"
+                android:paddingLeft="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:singleLine="true"
+                android:textSize="15dp" />
+
+
+            <ImageView
+                android:id="@+id/tlimit11"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:src="@drawable/date"
+                app:tint="@color/blue" />
+
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/linear_create_notification"
             android:layout_width="match_parent"

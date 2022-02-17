@@ -5,6 +5,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -55,23 +58,23 @@ import retrofit2.Response;
 @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
 public class staff_entry_fragment extends Fragment {
 
-    EditText date_of_birth, date_of_appo, date_of_join, date_of_leaving, fullname, education_qua, address, email, mobile_no, password;
+    EditText date_of_birth, date_of_appo, date_of_join, date_of_leaving, fullname, education_qua, address, email, mobile_no, password,user_password;
     Button save_staff, edit_staff;
     RadioGroup gender_rg, status_rg;
     RadioButton active, inactive, male, female, rb1, rb2;
     SearchableSpinner role, branch;
     TextView id_reg, id_branch, transaction_id;
+    ImageView hide_password;
     private int year;
     private int month;
     private int day;
-    String indate, gender, status, BranchName, RoleName, BranchID;
+    String gender, status, BranchName, RoleName, BranchID;
     String ddate, apdate, jodate, ledate;
     int select;
     Context context;
     List<String> roleitem = new ArrayList<>();
     List<Integer> roleid = new ArrayList<>();
     String[] ROLEITEM;
-    Integer[] ROLEID;
     List<String> branchitem = new ArrayList<>();
     List<Integer> branchid = new ArrayList<>();
     String[] BRANCHITEM;
@@ -115,6 +118,8 @@ public class staff_entry_fragment extends Fragment {
         id_reg = root.findViewById(R.id.id_reg);
         id_branch = root.findViewById(R.id.id_branch);
         transaction_id = root.findViewById(R.id.transaction_id);
+        user_password = root.findViewById(R.id.user_password);
+        hide_password = root.findViewById(R.id.hide_password);
         GetStaffRole();
 
         bundle = getArguments();
@@ -198,6 +203,9 @@ public class staff_entry_fragment extends Fragment {
             if (bundle.containsKey("Password")) {
                 password.setText(bundle.getString("Password"));
             }
+            if (bundle.containsKey("USER_PASSWORD")){
+                user_password.setText(bundle.getString("USER_PASSWORD"));
+            }
             if (bundle.containsKey("Status")) {
                 int st = bundle.getInt("Status");
                 if (st == 1) {
@@ -210,6 +218,19 @@ public class staff_entry_fragment extends Fragment {
                 }
             }
         }
+
+        hide_password.setOnClickListener(v -> {
+            if (user_password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                hide_password.setImageResource(R.drawable.eye_on);
+                user_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                user_password.setSelection(user_password.length());
+            } else {
+                hide_password.setImageResource(R.drawable.eye_off);
+                user_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                user_password.setSelection(user_password.length());
+            }
+        });
+
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         gender_rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
@@ -306,6 +327,8 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
                 } else if (mobile_no.getText().toString().length() < 10){
                     Toast.makeText(context, "Please enter valid mobile number.", Toast.LENGTH_SHORT).show();
+                }else if (user_password.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
@@ -313,7 +336,8 @@ public class staff_entry_fragment extends Fragment {
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(fullname.getText().toString()
                             , education_qua.getText().toString(), ddate, gender, address.getText().toString(), apdate, jodate
-                            , ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, "Staff");
+                            , ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, "Staff",
+                            user_password.getText().toString());
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
@@ -362,6 +386,8 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
                 }else if (mobile_no.getText().toString().length() < 10){
                     Toast.makeText(context, "Please enter valid mobile number.", Toast.LENGTH_SHORT).show();
+                }else if (user_password.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
@@ -369,7 +395,8 @@ public class staff_entry_fragment extends Fragment {
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(Long.parseLong(id_reg.getText().toString())
                             , fullname.getText().toString(), education_qua.getText().toString(), ddate, gender, address.getText().toString()
-                            , apdate, jodate, ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, userid);
+                            , apdate, jodate, ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, userid,
+                            user_password.getText().toString());
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
