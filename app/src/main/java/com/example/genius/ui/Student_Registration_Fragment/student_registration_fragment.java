@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,6 +110,7 @@ public class student_registration_fragment extends Fragment {
     RadioButton pass, fail, active, inactive, rb1, rb2;
     RadioGroup result_rg, status_rg;
     Button save_student_regi, edit_student_regi;
+    ImageView hide_password;
     Context context;
     byte[] imageVal;
     Bitmap bitmap;
@@ -181,6 +184,7 @@ public class student_registration_fragment extends Fragment {
         student_password = root.findViewById(R.id.student_password);
         parent_password = root.findViewById(R.id.parent_password);
         course_name = root.findViewById(R.id.course_name);
+        hide_password = root.findViewById(R.id.hide_password);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -310,6 +314,18 @@ public class student_registration_fragment extends Fragment {
         selectbatch_time();
         selectStandard();
 
+        hide_password.setOnClickListener(v -> {
+            if (student_password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                hide_password.setImageResource(R.drawable.eye_on);
+                student_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                student_password.setSelection(student_password.length());
+            } else {
+                hide_password.setImageResource(R.drawable.eye_off);
+                student_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                student_password.setSelection(student_password.length());
+            }
+        });
+
         result_rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
             Result = rb1.getText().toString();
@@ -399,7 +415,7 @@ public class student_registration_fragment extends Fragment {
                 } else if (login_id.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
                 } else if (student_password.getText().toString().isEmpty())
-                    Toast.makeText(context, "Please enter Student Password.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 else if (login_id.getText().toString().length() < 10) {
                     Toast.makeText(context, "Please enter valid Contact No(Login Id).", Toast.LENGTH_SHORT).show();
                 } else if (contact_no.getText().toString().length() < 10) {
@@ -465,8 +481,8 @@ public class student_registration_fragment extends Fragment {
                                     ft.addToBackStack(null);
                                     ft.commit();
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
-                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
@@ -475,7 +491,6 @@ public class student_registration_fragment extends Fragment {
                             Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
-
                 }
             } else {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
@@ -505,7 +520,7 @@ public class student_registration_fragment extends Fragment {
                     } else if (login_id.getText().toString().equals("")) {
                         Toast.makeText(context, "Please enter Contact No(Login Id).", Toast.LENGTH_SHORT).show();
                     } else if (student_password.getText().toString().isEmpty())
-                        Toast.makeText(context, "Please enter Student Password.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                     else if (login_id.getText().toString().length() < 10) {
                         Toast.makeText(context, "Please enter valid Contact No(Login Id).", Toast.LENGTH_SHORT).show();
                     } else if (contact_no.getText().toString().length() < 10) {
@@ -571,8 +586,8 @@ public class student_registration_fragment extends Fragment {
                                         ft.addToBackStack(null);
                                         ft.commit();
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
-                                progressBarHelper.hideProgressDialog();
                             }
 
                             @Override

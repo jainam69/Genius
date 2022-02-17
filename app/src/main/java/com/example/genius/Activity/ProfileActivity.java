@@ -75,13 +75,14 @@ public class ProfileActivity extends AppCompatActivity {
                             email.setText(model.getData().getEmailID());
                             TransactionId = model.getData().getTransaction().getTransactionId();
                         }
+                        progressBarHelper.hideProgressDialog();
                     }
-                    progressBarHelper.hideProgressDialog();
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<StaffModel.StaffData1> call, @NonNull Throwable t) {
                     progressBarHelper.hideProgressDialog();
+                    Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -130,13 +131,14 @@ public class ProfileActivity extends AppCompatActivity {
                                         Function.showToast(context, model.getMessage());
                                     }
                                 }
+                                progressBarHelper.hideProgressDialog();
                             }
-                            progressBarHelper.hideProgressDialog();
                         }
 
                         @Override
                         public void onFailure(@NonNull Call<ProfileModel> call, @NonNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {

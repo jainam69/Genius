@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.helper.Function;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
@@ -51,44 +52,50 @@ public class ChangePasswordActivity extends AppCompatActivity {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                oldpwd = old_pwd.getText().toString();
-                newpwd = new_pwd.getText().toString();
-                retypepwd = retype_pwd.getText().toString();
-                if (oldpwd.equalsIgnoreCase(""))
-                    Toast.makeText(ChangePasswordActivity.this, "Please enter Old Password.", Toast.LENGTH_SHORT).show();
-                else if (newpwd.equalsIgnoreCase(""))
-                    Toast.makeText(ChangePasswordActivity.this, "Please enter New Password.", Toast.LENGTH_SHORT).show();
-                else if (retypepwd.equalsIgnoreCase(""))
-                    Toast.makeText(ChangePasswordActivity.this, "Please fill Re-type new Password.", Toast.LENGTH_SHORT).show();
-                else if (!retypepwd.equals(newpwd))
-                    Toast.makeText(ChangePasswordActivity.this, "Password and Re-enter Password not match.", Toast.LENGTH_SHORT).show();
-                else {
-                    progressBarHelper.showProgressDialog();
-                    Call<CommonModel> call = apiCalling.ChangePassword(Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), newpwd, oldpwd);
-                    call.enqueue(new Callback<CommonModel>() {
-                        @Override
-                        public void onResponse(Call<CommonModel> call, Response<CommonModel> response) {
-                            if (response.isSuccessful()) {
-                                CommonModel model = response.body();
-                                if (model.isCompleted()) {
-                                    if (model.isData()) {
-                                        Toast.makeText(ChangePasswordActivity.this, "Password Updated Successfully.", Toast.LENGTH_SHORT).show();
-                                        Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN,false);
-                                        startActivity(new Intent(context, LoginActivity.class));
-                                        finish();
-                                    } else {
-                                        Toast.makeText(ChangePasswordActivity.this, "Password Not Changed.", Toast.LENGTH_SHORT).show();
+                if (Function.isNetworkAvailable(context)){
+                    oldpwd = old_pwd.getText().toString();
+                    newpwd = new_pwd.getText().toString();
+                    retypepwd = retype_pwd.getText().toString();
+                    if (oldpwd.equalsIgnoreCase(""))
+                        Toast.makeText(ChangePasswordActivity.this, "Please enter Old Password.", Toast.LENGTH_SHORT).show();
+                    else if (newpwd.equalsIgnoreCase(""))
+                        Toast.makeText(ChangePasswordActivity.this, "Please enter New Password.", Toast.LENGTH_SHORT).show();
+                    else if (retypepwd.equalsIgnoreCase(""))
+                        Toast.makeText(ChangePasswordActivity.this, "Please fill Re-type new Password.", Toast.LENGTH_SHORT).show();
+                    else if (!retypepwd.equals(newpwd))
+                        Toast.makeText(ChangePasswordActivity.this, "Password and Re-enter Password not match.", Toast.LENGTH_SHORT).show();
+                    else {
+                        progressBarHelper.showProgressDialog();
+                        Call<CommonModel> call = apiCalling.ChangePassword(Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), newpwd, oldpwd);
+                        call.enqueue(new Callback<CommonModel>() {
+                            @Override
+                            public void onResponse(Call<CommonModel> call, Response<CommonModel> response) {
+                                if (response.isSuccessful()) {
+                                    CommonModel model = response.body();
+                                    if (model.isCompleted()) {
+                                        if (model.isData()) {
+                                            Toast.makeText(ChangePasswordActivity.this, "Password Updated Successfully.", Toast.LENGTH_SHORT).show();
+                                            Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN,false);
+                                            startActivity(new Intent(context, LoginActivity.class));
+                                            finish();
+                                        } else {
+                                            Toast.makeText(ChangePasswordActivity.this, "Password Not Changed.", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
+                                    progressBarHelper.hideProgressDialog();
                                 }
                             }
-                            progressBarHelper.hideProgressDialog();
-                        }
 
-                        @Override
-                        public void onFailure(Call<CommonModel> call, Throwable t) {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<CommonModel> call, Throwable t) {
+                                progressBarHelper.hideProgressDialog();
+                                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+                else {
+                    Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
         });

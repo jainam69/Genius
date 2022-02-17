@@ -7,6 +7,8 @@ public class BannerData {
     boolean Completed;
     List<BannerModel> Data;
 
+
+
     public boolean isCompleted() {
         return Completed;
     }

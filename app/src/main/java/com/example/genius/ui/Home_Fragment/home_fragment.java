@@ -49,7 +49,6 @@ import com.example.genius.ui.Library_Fragment.LibrarySelectorFragment;
 import com.example.genius.ui.Live_Video.LiveVideoFragment;
 import com.example.genius.ui.Marks_Entry_Fragment.marks_entry_Listfragment;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
-import com.example.genius.ui.Permission.PermissionListFragment;
 import com.example.genius.ui.Practice_Paper_Fragment.practice_paper_Listfragment;
 import com.example.genius.ui.Reminder_Fragment.reminder_fragment;
 import com.example.genius.ui.Student_Registration_Fragment.student_registration_Listfragment;
@@ -310,8 +309,8 @@ public class home_fragment extends Fragment {
 
             @Override
             public void onFailure(@NotNull Call<BannerData> call, @NotNull Throwable t) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show();
                 progressBarHelper.hideProgressDialog();
+                Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -335,9 +334,9 @@ public class home_fragment extends Fragment {
                     } else {
                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                     }
+                    progressBarHelper.hideProgressDialog();
                 }
                 SetUserPermission();
-                progressBarHelper.hideProgressDialog();
             }
 
             @Override

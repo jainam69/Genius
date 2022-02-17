@@ -158,7 +158,7 @@ public class homework_fragment extends Fragment {
             if (!(bundle.getString("Remarks") == null)) {
                 remarks.setText(bundle.getString("Remarks"));
             }
-            if (!(bundle.getString("FileName") == null)) {
+            if (bundle.getString("FileName") != null) {
                 attachment_homework.setText("Attached");
                 attachment_homework.setTextColor(context.getResources().getColor(R.color.black));
                 if (bundle.getString("FilePath").contains(".") && bundle.getString("FilePath").contains("/")) {
