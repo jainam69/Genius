@@ -23,6 +23,7 @@ import com.example.genius.helper.Preferences;
 import com.example.genius.helper.RecyclerTouchListener;
 import com.example.genius.ui.Announcement.Announcement_Fragment;
 import com.example.genius.ui.Banner.Banner_Fragment;
+import com.example.genius.ui.Batch_Fragment.batch_list_fragment;
 import com.example.genius.ui.BranchClass.BranchClassFragment;
 import com.example.genius.ui.BranchClass.BranchClassListFragment;
 import com.example.genius.ui.BranchCource.BranchCourseFragment;
@@ -74,6 +75,10 @@ public class MasterSelectorFragment extends Fragment {
                 pagename.add("SCHOOL MASTER");
                 image.add(R.drawable.school);
             }
+            if (model.getPageInfo().getPageID() == 11 && model.getPackageRightinfo().isViewstatus()){
+                pagename.add("BATCH MASTER");
+                image.add(R.drawable.date);
+            }
             if (model.getPageInfo().getPageID() == 73 && model.getPackageRightinfo().isViewstatus()){
                 pagename.add("BANNER MASTER");
                 image.add(R.drawable.banner2);
@@ -111,6 +116,14 @@ public class MasterSelectorFragment extends Fragment {
             public void onClick(View view, int position) {
                 if (pagename.get(position).equals("USER MASTER")){
                     staff_entry_listfragment orderplace = new staff_entry_listfragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("BATCH MASTER")){
+                    batch_list_fragment orderplace = new batch_list_fragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
                     fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);

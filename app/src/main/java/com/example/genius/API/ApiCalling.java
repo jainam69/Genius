@@ -7,6 +7,7 @@ import com.example.genius.Model.AttendanceData;
 import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.BannerData;
 import com.example.genius.Model.BannerModel;
+import com.example.genius.Model.BatchModel;
 import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
@@ -531,4 +532,13 @@ public interface ApiCalling {
 
     @GET(ApiConstant.GET_CIRCULAR)
     Call<CircularModel> GetAllCircular();
+
+    @POST(ApiConstant.GET_ALL_BATCH_LIST)
+    Call<BatchModel.BatchData> Get_All_Batch_List(@Query("branchID") long branchID);
+
+    @POST(ApiConstant.BATCH_MAINTAINANCE)
+    Call<BatchModel.BatchResponseModel> Save_Batch(@Body BatchModel batchModel);
+
+    @POST(ApiConstant.REMOVE_BATCH)
+    Call<CommonModel> Remove_Batch(@Query("BatchID") long BatchID,@Query("lastupdatedby") String lastupdatedby);
 }

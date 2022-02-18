@@ -163,4 +163,8 @@ public class ApiConstant {
     public static final String REMOVE_ANNOUNCEMENT = "announcement/v1/RemoveAnnouncement";
 
     public static final String GET_CIRCULAR = "circular/v1/GetAllCircular";
+
+    public static final String GET_ALL_BATCH_LIST = "batch/v1/GetAllBatches";
+    public static final String BATCH_MAINTAINANCE = "batch/v1/BatchMaintenance";
+    public static final String REMOVE_BATCH = "batch/v1/RemoveBatch";
 }

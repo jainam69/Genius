@@ -2,7 +2,11 @@ package com.example.genius.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class BatchModel {
+import java.io.Serializable;
+import java.net.PortUnreachableException;
+import java.util.List;
+
+public class BatchModel implements Serializable {
     @SerializedName("BatchID")
      long BatchID;
     @SerializedName("BatchTime")
@@ -19,10 +23,39 @@ public class BatchModel {
      RowStatusModel RowStatus;
     @SerializedName("BranchInfo")
      BranchModel BranchInfo;
-    @SerializedName("StandardInfo")
-     StandardModel StandardInfo;
     @SerializedName("BatchType")
      String BatchType;
+    BranchCourseModel.BranchCourceData BranchCourse;
+    BranchClassSingleModel.BranchClassData BranchClass;
+
+    public BatchModel(long batchID, int batchTime, String monFriBatchTime, String satBatchTime, String sunBatchTime, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, BranchCourseModel.BranchCourceData branchCourse, BranchClassSingleModel.BranchClassData branchClass) {
+        BatchID = batchID;
+        BatchTime = batchTime;
+        MonFriBatchTime = monFriBatchTime;
+        SatBatchTime = satBatchTime;
+        SunBatchTime = sunBatchTime;
+        Transaction = transaction;
+        RowStatus = rowStatus;
+        BranchInfo = branchInfo;
+        BranchCourse = branchCourse;
+        BranchClass = branchClass;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public BranchClassSingleModel.BranchClassData getBranchClass() {
+        return BranchClass;
+    }
+
+    public void setBranchClass(BranchClassSingleModel.BranchClassData branchClass) {
+        BranchClass = branchClass;
+    }
 
     public BatchModel() {
     }
@@ -99,19 +132,54 @@ public class BatchModel {
         BranchInfo = branchInfo;
     }
 
-    public StandardModel getStandardInfo() {
-        return StandardInfo;
-    }
-
-    public void setStandardInfo(StandardModel standardInfo) {
-        StandardInfo = standardInfo;
-    }
-
     public String getBatchType() {
         return BatchType;
     }
 
     public void setBatchType(String batchType) {
         BatchType = batchType;
+    }
+
+    public static class BatchData{
+
+        boolean Completed;
+        List<BatchModel> Data;
+
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
+
+        public List<BatchModel> getData() {
+            return Data;
+        }
+
+        public void setData(List<BatchModel> data) {
+            Data = data;
+        }
+    }
+
+    public static class BatchResponseModel{
+        boolean Completed;
+        BatchModel Data;
+
+        public boolean isCompleted() {
+            return Completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            Completed = completed;
+        }
+
+        public BatchModel getData() {
+            return Data;
+        }
+
+        public void setData(BatchModel data) {
+            Data = data;
+        }
     }
 }

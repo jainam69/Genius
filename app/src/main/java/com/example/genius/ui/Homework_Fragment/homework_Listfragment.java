@@ -99,7 +99,7 @@ public class homework_Listfragment extends Fragment {
             }
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllHomework();
         } else {
