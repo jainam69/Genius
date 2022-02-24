@@ -41,6 +41,7 @@ import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.helper.RecyclerTouchListener;
+import com.example.genius.ui.AddUpiDetail.Add_Upi_Fragment;
 import com.example.genius.ui.Attendance_Fragment.attendance_Listfragment;
 import com.example.genius.ui.FeeStructure.FeeStructureFragment;
 import com.example.genius.ui.Gallery.GallerySelectorFragment;
@@ -136,6 +137,14 @@ public class home_fragment extends Fragment {
                 }
                 if (pagename.get(position).equals("MASTERS")) {
                     MasterSelectorFragment orderplace = new MasterSelectorFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("ADD UPI DETAILS")) {
+                    Add_Upi_Fragment orderplace = new Add_Upi_Fragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
                     fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
@@ -361,6 +370,10 @@ public class home_fragment extends Fragment {
                     pagename.add("MASTERS");
                     image.add(R.drawable.master);
                 }
+            }
+            if (model.getPageInfo().getPageID() == 17 && model.getPackageRightinfo().isViewstatus()) {
+                pagename.add("ADD UPI DETAILS");
+                image.add(R.drawable.subject);
             }
             if (model.getPageInfo().getPageID() == 9 && model.getPackageRightinfo().isViewstatus()) {
                 pagename.add("STUDENTS");

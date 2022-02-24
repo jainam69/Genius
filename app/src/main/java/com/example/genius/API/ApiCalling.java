@@ -57,6 +57,7 @@ import com.example.genius.Model.TestScheduleModel;
 import com.example.genius.Model.ToDoByIdData;
 import com.example.genius.Model.TodoData;
 import com.example.genius.Model.TodoModel;
+import com.example.genius.Model.UPIModel;
 import com.example.genius.Model.UploadPaperData;
 import com.example.genius.Model.UploadPaperModel;
 import com.example.genius.Model.UserData1;
@@ -541,4 +542,13 @@ public interface ApiCalling {
 
     @POST(ApiConstant.REMOVE_BATCH)
     Call<CommonModel> Remove_Batch(@Query("BatchID") long BatchID,@Query("lastupdatedby") String lastupdatedby);
+
+    @GET(ApiConstant.GET_ALL_UPI_DETAILS)
+    Call<UPIModel.UPIData> Get_All_UPI_Details(@Query("branchid") long branchid);
+
+    @POST(ApiConstant.UPI_MAINTENANCE)
+    Call<UPIModel.UPIResponse> Save_UPI_ID(@Body UPIModel upiModel);
+
+    @POST(ApiConstant.REMOVE_UPI_DETAIL)
+    Call<CommonModel> RemoveUPI(@Query("UPIID") long UPIID, @Query("lastupdatedby") String lastupdatedby);
 }

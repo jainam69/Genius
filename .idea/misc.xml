@@ -22,6 +22,7 @@
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/dialog_edit_manage_library.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/dialog_edit_staff.xml" value="0.16944444444444445" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/feestructure_detail_list.xml" value="0.17314814814814813" />
+        <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_add__upi_.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_announcement.xml" value="0.17314814814814813" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_attendance__listfragment.xml" value="0.17407407407407408" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_banner.xml" value="0.16944444444444445" />
@@ -35,6 +36,7 @@
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_branch_subject_list.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_circular.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_fee_structure.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_gallery.xml" value="0.16574074074074074" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_homework_fragment.xml" value="0.17685185185185184" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_library_approve.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/fragment_live_video.xml" value="0.20416666666666666" />
@@ -73,6 +75,7 @@
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/row_circular.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/row_layout_noti.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/row_library_approval_detail.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/row_upi_details.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/school_master_deatil_list.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/show_library_fragment.xml" value="0.1712962962962963" />
         <entry key="..\:/Users/Uniqtech/AndroidStudioProjects/New_Genius/app/src/main/res/layout/staff_entry_deatil_list.xml" value="0.17592592592592593" />

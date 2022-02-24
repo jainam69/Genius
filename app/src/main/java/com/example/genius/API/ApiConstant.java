@@ -2,9 +2,9 @@ package com.example.genius.API;
 
 public class ApiConstant {
 
-    //public static final String BASE_URL = "http://highpack-001-site13.dtempurl.com/api/";
     //public static final String BASE_URL = "http://192.168.29.212:45459/api/";
-    public static final String BASE_URL = "http://43.241.39.136:86/api/";
+    //public static final String BASE_URL = "http://43.241.39.136:86/api/";
+    public static final String BASE_URL = "http://43.241.39.136:84/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String FORGOT_PASSWORD = "user/v1/CheckUserName";
@@ -167,4 +167,8 @@ public class ApiConstant {
     public static final String GET_ALL_BATCH_LIST = "batch/v1/GetAllBatches";
     public static final String BATCH_MAINTAINANCE = "batch/v1/BatchMaintenance";
     public static final String REMOVE_BATCH = "batch/v1/RemoveBatch";
+
+    public static final String GET_ALL_UPI_DETAILS = "user/v1/GetAllUPIs";
+    public static final String UPI_MAINTENANCE = "user/v1/UPIMaintenance";
+    public static final String REMOVE_UPI_DETAIL = "user/v1/RemoveUPI";
 }
