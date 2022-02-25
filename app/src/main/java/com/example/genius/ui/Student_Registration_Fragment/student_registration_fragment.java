@@ -52,6 +52,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
+import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.SchoolData;
 import com.example.genius.Model.SchoolModel;
 import com.example.genius.Model.StandardData;
@@ -306,6 +307,7 @@ public class student_registration_fragment extends Fragment {
             progressBarHelper.showProgressDialog();
             GetAllCourse();
             GetAllSchool();
+            CheckPackageLimit();
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
@@ -1086,7 +1088,6 @@ public class student_registration_fragment extends Fragment {
                             bindschool();
                         }
                     }
-                    progressBarHelper.hideProgressDialog();
                 }
             }
 
@@ -1295,5 +1296,42 @@ public class student_registration_fragment extends Fragment {
             return String.valueOf(c);
         else
             return "0" + c;
+    }
+
+    public void CheckPackageLimit()
+    {
+        Call<CommonModel.ResponseModel> call = apiCalling.Check_Package_Limit(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<CommonModel.ResponseModel>() {
+            @Override
+            public void onResponse(Call<CommonModel.ResponseModel> call, Response<CommonModel.ResponseModel> response) {
+                if (response.isSuccessful()){
+                    CommonModel.ResponseModel data = response.body();
+                    if (data.isCompleted()){
+                        CommonModel model = data.getData();
+                        if (!model.isStatus()){
+                            Toast.makeText(context,model.getMessage(), Toast.LENGTH_SHORT).show();
+                            if (bundle!= null){
+                                edit_student_regi.setVisibility(View.GONE);
+                            }else {
+                                save_student_regi.setVisibility(View.GONE);
+                            }
+                        }else {
+                            if (bundle!= null){
+                                edit_student_regi.setVisibility(View.VISIBLE);
+                            }else {
+                                save_student_regi.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                    progressBarHelper.hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonModel.ResponseModel> call, Throwable t) {
+                progressBarHelper.hideProgressDialog();
+                Toast.makeText(context,t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

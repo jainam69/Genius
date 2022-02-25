@@ -21,6 +21,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -124,9 +127,12 @@ public class test_schedule_fragment extends Fragment {
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
-    int flag = 0, type;
+    int flag = 0, type,select,statusid;
+    LinearLayout linear_status;
+    RadioGroup status_rg;
+    RadioButton rb2,active,inactive;
     List<UploadPaperModel> studentModelList;
-    String Description = "none", Extension = "none",FinalFileName,OriginFileName,RandomFileName;
+    String Description = "none", Extension = "none",FinalFileName,OriginFileName,RandomFileName,status;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -161,6 +167,10 @@ public class test_schedule_fragment extends Fragment {
         linear_edit = root.findViewById(R.id.linear_edit);
         linear_save = root.findViewById(R.id.linear_save);
         course_name = root.findViewById(R.id.course_name);
+        linear_status = root.findViewById(R.id.linear_status);
+        status_rg = root.findViewById(R.id.status_rg);
+        active = root.findViewById(R.id.active);
+        inactive = root.findViewById(R.id.inactive);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -205,6 +215,7 @@ public class test_schedule_fragment extends Fragment {
                                             b = studentModelList.get(0).getTestPaperID();
                                             c = studentModelList.get(0).getTestID();
                                             type = studentModelList.get(0).getPaperTypeID();
+                                            statusid = studentModelList.get(0).getRowStatus().getRowStatusId();
                                             if (type == 1) {
                                                 paper_type.setSelection(1);
                                                 upload_test_paper.setText("Attached");
@@ -232,6 +243,14 @@ public class test_schedule_fragment extends Fragment {
                                             }else {
                                                 upload_link.setText(studentModelList.get(0).getDocLink());
                                             }
+                                            if (statusid == 1){
+                                                active.setChecked(true);
+                                                inactive.setChecked(false);
+                                            }
+                                            if (statusid == 2){
+                                                active.setChecked(false);
+                                                inactive.setChecked(true);
+                                            }
                                         }
                                         GetPaperType();
                                     }
@@ -252,7 +271,7 @@ public class test_schedule_fragment extends Fragment {
             }
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             selectbatch_time();
             GetAllCourse();
@@ -262,6 +281,14 @@ public class test_schedule_fragment extends Fragment {
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
+
+        status_rg.setOnCheckedChangeListener((group, checkedId) -> {
+            rb2 = root.findViewById(checkedId);
+            status = rb2.getText().toString();
+        });
+        select = status_rg.getCheckedRadioButtonId();
+        rb2 = root.findViewById(select);
+        status = rb2.getText().toString();
 
         selectStandard();
         selectSubject();
@@ -390,6 +417,7 @@ public class test_schedule_fragment extends Fragment {
                                                 linear_link.setVisibility(View.VISIBLE);
                                             }
                                             linear_remarks.setVisibility(View.VISIBLE);
+                                            linear_status.setVisibility(View.VISIBLE);
                                             save_test_paper.setVisibility(View.VISIBLE);
                                         }
                                     } else {
@@ -491,29 +519,35 @@ public class test_schedule_fragment extends Fragment {
                     if (!paper_remarks.getText().toString().isEmpty()){
                         Description = encodeDecode(paper_remarks.getText().toString());
                     }
+                    if (status.equals("Active")){
+                        statusid = 1;
+                    }
+                    if (status.equals("InActive")){
+                        statusid = 2;
+                    }
                     Call<UploadPaperModel.UploadPaperData1> call;
                     if (bundle != null) {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                             call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id), "none"
-                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Description, statusid ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "0", "0", true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
                             call = apiCalling.TestPaperMaintenance(Long.parseLong(id.getText().toString()), 0, Integer.parseInt(PaperType_Id)
-                                    , encodeDecode(upload_link.getText().toString().trim()), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , encodeDecode(upload_link.getText().toString().trim()), Description, statusid ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
                                     , MultipartBody.Part.createFormData("attachment", "", RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     } else {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                             call = apiCalling.TestPaperMaintenance(a, 0, Integer.parseInt(PaperType_Id), "none"
-                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Description, statusid ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "0", "0", true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
                             call = apiCalling.TestPaperMaintenance(a, 0, Integer.parseInt(PaperType_Id)
-                                    , encodeDecode(upload_link.getText().toString().trim()), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , encodeDecode(upload_link.getText().toString().trim()), Description, statusid ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "none", "none", false
                                     , MultipartBody.Part.createFormData("attachment", ""
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
@@ -566,25 +600,31 @@ public class test_schedule_fragment extends Fragment {
                     if (!paper_remarks.getText().toString().isEmpty()){
                         Description = encodeDecode(paper_remarks.getText().toString());
                     }
+                    if (status.equals("Active")){
+                        statusid = 1;
+                    }
+                    if (status.equals("InActive")){
+                        statusid = 2;
+                    }
                     Call<UploadPaperModel.UploadPaperData1> call;
                     if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                         if (instrumentFileDestination != null) {
                             call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id), "none"
-                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Description, statusid ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), "0", "0", true
                                     , MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                         } else {
                             FinalFileName = OriginFileName + "," + RandomFileName;
                             call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id), "none"
-                                    , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                    , Description,statusid,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                     , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), FinalFileName, Extension, false
                                     , MultipartBody.Part.createFormData("attachment", ""
                                             , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                         }
                     } else {
                         call = apiCalling.TestPaperMaintenance(c, b, Integer.parseInt(PaperType_Id)
-                                , encodeDecode(upload_link.getText().toString().trim()), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
+                                , encodeDecode(upload_link.getText().toString().trim()), Description, statusid ,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
                                 , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), bundle.getLong("TransactionId"), "none", "none", false
                                 , MultipartBody.Part.createFormData("attachment", ""
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
@@ -990,6 +1030,7 @@ public class test_schedule_fragment extends Fragment {
                             linear_doc.setVisibility(View.GONE);
                         }
                         linear_remarks.setVisibility(View.VISIBLE);
+                        linear_status.setVisibility(View.VISIBLE);
                         save_test_paper.setVisibility(View.VISIBLE);
                         edit_test_paper.setVisibility(View.GONE);
                     } else if (bundle != null && paper_type.getSelectedItemId() != 0 && studentModelList.size() > 0) {
@@ -1001,6 +1042,7 @@ public class test_schedule_fragment extends Fragment {
                             linear_doc.setVisibility(View.GONE);
                         }
                         linear_remarks.setVisibility(View.VISIBLE);
+                        linear_status.setVisibility(View.VISIBLE);
                         save_test_paper.setVisibility(View.GONE);
                         edit_test_paper.setVisibility(View.VISIBLE);
                     }

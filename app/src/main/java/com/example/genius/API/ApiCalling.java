@@ -351,11 +351,11 @@ public interface ApiCalling {
 
     @Multipart
     @POST(ApiConstant.NEW_UPLOAD_PAPER_MAINTENANCE + "/{TestID}"
-            + "/{TestPaperID}" + "/{Paper_Type}" + "/{Doc_Link}" + "/{Paper_Remark}" + "/{CreateId}" + "/{CreateBy}"
+            + "/{TestPaperID}" + "/{Paper_Type}" + "/{Doc_Link}" + "/{Paper_Remark}" + "/{statusID}" + "/{CreateId}" + "/{CreateBy}"
             + "/{TransactionId}" + "/{FileName}" + "/{Extension}" + "/{HasFile}")
     Call<UploadPaperModel.UploadPaperData1> TestPaperMaintenance(@Path("TestID") long TestID,
                                                                  @Path("TestPaperID") long TestPaperID, @Path("Paper_Type") int Paper_Type,
-                                                                 @Path("Doc_Link") String Doc_Link, @Path("Paper_Remark") String Paper_Remark,
+                                                                 @Path("Doc_Link") String Doc_Link, @Path("Paper_Remark") String Paper_Remark,@Path("statusID") int statusID,
                                                                  @Path("CreateId") long CreateId, @Path("CreateBy") String CreateBy,
                                                                  @Path("TransactionId") long TransactionId,
                                                                  @Path("FileName") String FileName, @Path("Extension") String Extension,
@@ -551,4 +551,7 @@ public interface ApiCalling {
 
     @POST(ApiConstant.REMOVE_UPI_DETAIL)
     Call<CommonModel> RemoveUPI(@Query("UPIID") long UPIID, @Query("lastupdatedby") String lastupdatedby);
+
+    @GET(ApiConstant.CHECK_PACKAGE_STUDENT_LIMIT)
+    Call<CommonModel.ResponseModel> Check_Package_Limit(@Query("branchID") long branchID);
 }
