@@ -55,6 +55,7 @@ public class Preferences {
     public static final String KEY_VIDEO_PERMISSION = "KEY_VIDEO_PERMISSION";
     public static final String KEY_LIVE_VIDEO_PERMISSION = "KEY_LIVE_VIDEO_PERMISSION";
     public static final String KEY_UPLOAD_PAPER_PERMISSION = "KEY_UPLOAD_PAPER_PERMISSION";
+    public static final String KEY_FIRE_NOTIFICATION = "KEY_FIRE_NOTIFICATION";
 
     private static final String PREF_NAME = "com.ashirvadstudycircle.app";
     private static Preferences instance;

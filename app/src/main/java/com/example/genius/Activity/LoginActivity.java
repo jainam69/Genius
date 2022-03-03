@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.genius.API.ApiCalling;
@@ -19,6 +20,9 @@ import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -35,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Context context;
+    String deviceToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,13 @@ public class LoginActivity extends AppCompatActivity {
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         context = LoginActivity.this;
         forgot_password = findViewById(R.id.forgot_password);
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                deviceToken = task.getResult();
+            }
+        });
 
         forgot_password.setOnClickListener(new View.OnClickListener() {
             @Override

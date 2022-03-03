@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +18,9 @@ import android.widget.TextView;
 
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
+import com.example.genius.ui.Notification.NotificationFragment;
+
+import java.lang.reflect.Array;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         branchname = findViewById(R.id.branchname);
         context = MainActivity.this;
+
+        if (Preferences.getInstance(context).getString(Preferences.KEY_FIRE_NOTIFICATION).equals("notification")){
+            Fragment fragment = new NotificationFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment).commit();
+            Preferences.getInstance(context).setString(Preferences.KEY_FIRE_NOTIFICATION,"");
+        }
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         branchname.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
