@@ -80,13 +80,16 @@ public interface ApiCalling {
     Call<BranchModel> GetAllBranch();
 
     @GET(ApiConstant.VALIDATE_USER)
-    Call<UserModel.UserData> ValidateUser(@Query("userName") String userName, @Query("password") String password);
+    Call<UserModel.UserData> ValidateUser(@Query("userName") String userName, @Query("password") String password,@Query("fcmtoken") String fcmtoken);
 
     @GET(ApiConstant.GET_USER_PERMISSION)
     Call<UserModel.UserData> Get_User_Permission(@Query("BranchID") long BranchID);
 
     @GET(ApiConstant.GET_ALL_NOTIFICATION_BRANCH)
     Call<NotificationData> GetAllNotificationBranch(@Query("branchID") long branchID);
+
+    @GET(ApiConstant.GET_ALL_MOBILE_NOTIFICATION)
+    Call<NotificationData> GetAllMobileNotificationBranch(@Query("branchID") long branchID);
 
     @POST(ApiConstant.CHANGE_PASSWORD)
     Call<CommonModel> ChangePassword(@Query("userID") long userID, @Query("password") String password, @Query("oldPassword") String oldpassword);

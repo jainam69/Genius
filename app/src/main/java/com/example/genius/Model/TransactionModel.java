@@ -11,6 +11,7 @@ public class TransactionModel implements Serializable {
     String LastUpdateDate;
     String LastUpdateBy;
     long LastUpdateId;
+    String FinancialYear;
 
     public TransactionModel(long transactionId, String createdBy, long createdId, String lastUpdateBy, long lastUpdateId) {
         TransactionId = transactionId;
@@ -23,16 +24,18 @@ public class TransactionModel implements Serializable {
     public TransactionModel() {
     }
 
-    public TransactionModel(long transactionId, String lastUpdateBy, long lastUpdateId) {
+    public TransactionModel(long transactionId, String lastUpdateBy, long lastUpdateId,String year) {
         TransactionId = transactionId;
         LastUpdateBy = lastUpdateBy;
         LastUpdateId = lastUpdateId;
+        FinancialYear = year;
     }
 
-    public TransactionModel(String createdBy, long createdId, String lastUpdateDate) {
+    public TransactionModel(String createdBy, long createdId, String lastUpdateDate,String year) {
         CreatedBy = createdBy;
         CreatedId = createdId;
         LastUpdateDate = lastUpdateDate;
+        FinancialYear = year;
     }
 
 

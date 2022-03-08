@@ -637,7 +637,7 @@ public class TaskFragment extends Fragment {
 
         @SuppressLint("SetTextI18n")
         @Override
-        public void onBindViewHolder(@NonNull TodoMaster_Adapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull TodoMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 38){
                 if (!model.getPackageRightinfo().isCreatestatus()){

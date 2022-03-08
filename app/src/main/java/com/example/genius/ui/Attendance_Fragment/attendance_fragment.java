@@ -292,7 +292,8 @@ public class attendance_fragment extends Fragment {
                     BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
                     BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     if (AttendanceMaster_Adapter.testlist.size() > 0) {
                         for (int i = 0; i < AttendanceMaster_Adapter.testlist.size(); i++) {
@@ -348,7 +349,8 @@ public class attendance_fragment extends Fragment {
                 BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                 BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
                 BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
-                TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                        Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                 RowStatusModel rowStatusModel = new RowStatusModel(1);
                 if (AttendanceCheck_Adapter.testlist_edit.size() > 0) {
                     for (int i = 0; i < AttendanceCheck_Adapter.testlist_edit.size(); i++) {

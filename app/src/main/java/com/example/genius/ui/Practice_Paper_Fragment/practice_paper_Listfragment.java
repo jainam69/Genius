@@ -788,7 +788,7 @@ public class practice_paper_Listfragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull PracticePaperMaster_Adapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull PracticePaperMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 36){
                     if (!model.getPackageRightinfo().isCreatestatus()){

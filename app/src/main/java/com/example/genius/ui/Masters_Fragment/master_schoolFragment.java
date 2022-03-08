@@ -1,5 +1,6 @@
 package com.example.genius.ui.Masters_Fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -113,7 +114,8 @@ public class master_schoolFragment extends Fragment {
                 } else {
                     if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
+                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         SchoolModel model = new SchoolModel(school_name.getText().toString(), transactionModel, rowStatusModel, branchModel);
@@ -159,7 +161,8 @@ public class master_schoolFragment extends Fragment {
                 } else {
                     if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         SchoolModel model = new SchoolModel(Long.parseLong(id.getText().toString()), school_name.getText().toString(), transactionModel, rowStatusModel, branchModel);
@@ -299,7 +302,7 @@ public class master_schoolFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SchoolMaster_Adapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull SchoolMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             for (UserModel.UserPermission model : userpermission.getPermission())
             {
                 if (model.getPageInfo().getPageID() == 6){

@@ -289,7 +289,8 @@ public class BranchClassFragment extends Fragment {
             if (Function.isNetworkAvailable(context)) {
                 list = new ArrayList<>();
                 if (BranchClassAdapter.CourceDataList.size() > 0) {
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                     RowStatusModel rowStatusModel = new RowStatusModel(1, "Active");
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     if (bundle == null) {

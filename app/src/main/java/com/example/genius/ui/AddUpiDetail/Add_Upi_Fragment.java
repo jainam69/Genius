@@ -104,7 +104,8 @@ public class Add_Upi_Fragment extends Fragment {
                         progressBarHelper.showProgressDialog();
                         BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         RowStatusModel rowmodel = new RowStatusModel(1);
-                        TransactionModel transmodel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                        TransactionModel transmodel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
+                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                         UPIModel model = new UPIModel(0,edt_upiid.getText().toString(),branch,rowmodel,transmodel);
                         Call<UPIModel.UPIResponse> call = apiCalling.Save_UPI_ID(model);
                         call.enqueue(new Callback<UPIModel.UPIResponse>() {
@@ -146,7 +147,7 @@ public class Add_Upi_Fragment extends Fragment {
                         progressBarHelper.showProgressDialog();
                         BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         RowStatusModel rowmodel = new RowStatusModel(1);
-                        TransactionModel transactionModel = new TransactionModel(transactionid, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        TransactionModel transactionModel = new TransactionModel(transactionid, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                         UPIModel model = new UPIModel(id,edt_upiid.getText().toString(),branch,rowmodel,transactionModel);
                         Call<UPIModel.UPIResponse> call = apiCalling.Save_UPI_ID(model);
                         call.enqueue(new Callback<UPIModel.UPIResponse>() {

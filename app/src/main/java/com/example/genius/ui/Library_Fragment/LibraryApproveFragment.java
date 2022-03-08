@@ -242,7 +242,8 @@ public class LibraryApproveFragment extends Fragment {
                     dialog1.show();
                     edit.setOnClickListener(v121 -> {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
+                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         LibraryModel libraryModel = new LibraryModel(libraryModels.get(position).getLibraryID());
                         LibraryModel.ApprovalModel model = new LibraryModel.ApprovalModel(libraryModels.get(position).getApproval().getApproval_id(), libraryModel,

@@ -81,7 +81,6 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>();
     String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM,COURSEITEM;
     Integer[] STANDARDID, SUBJECTID, CATEGORYID,COURSEID;
-    String StandardName, SubjectName;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     Bundle bundle;

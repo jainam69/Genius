@@ -5,6 +5,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
@@ -232,6 +234,7 @@ public class staff_entry_fragment extends Fragment {
         });
 
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+
         gender_rg.setOnCheckedChangeListener((group, checkedId) -> {
             rb1 = root.findViewById(checkedId);
             gender = rb1.getText().toString();
@@ -331,7 +334,8 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(fullname.getText().toString()
@@ -390,7 +394,8 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(Long.parseLong(id_reg.getText().toString())

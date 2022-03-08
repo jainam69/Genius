@@ -137,7 +137,8 @@ public class LiveVideoFragment extends Fragment {
                     Toast.makeText(context, "Please Enter Live URL Description.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), "");
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), "",
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
@@ -196,7 +197,8 @@ public class LiveVideoFragment extends Fragment {
                     Toast.makeText(context, "Please Enter Live URL Description.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
@@ -454,7 +456,7 @@ public class LiveVideoFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull LiveVideo_Adapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull LiveVideo_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 79){
                     if (!model.getPackageRightinfo().isCreatestatus()){

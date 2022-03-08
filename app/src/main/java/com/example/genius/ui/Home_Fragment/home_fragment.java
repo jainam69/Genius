@@ -137,7 +137,7 @@ public class home_fragment extends Fragment {
                 }
                 if (pagename.get(position).equals("MASTERS")) {
                     MasterSelectorFragment orderplace = new MasterSelectorFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
                     fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                     fragmentTransaction.addToBackStack(null);

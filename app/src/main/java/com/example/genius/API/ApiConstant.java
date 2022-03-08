@@ -2,9 +2,9 @@ package com.example.genius.API;
 
 public class ApiConstant {
 
-    //public static final String BASE_URL = "http://192.168.29.212:45459/api/";
-    public static final String BASE_URL = "http://43.241.39.136:86/api/";
-    //public static final String BASE_URL = "http://43.241.39.136:84/api/";
+    //public static final String BASE_URL = "http://192.168.29.212:45455/api/";
+    //public static final String BASE_URL = "http://43.241.39.136:86/api/";
+    public static final String BASE_URL = "http://43.241.39.136:84/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String FORGOT_PASSWORD = "user/v1/CheckUserName";
@@ -36,6 +36,7 @@ public class ApiConstant {
 
     public static final String STUDENT_MAINTENANCE = "student/v1/StudentMaintenance";
     public static final String GET_ALL_NOTIFICATION_BRANCH = "notification/v1/GetAllNotificationByBranch";
+    public static final String GET_ALL_MOBILE_NOTIFICATION = "notification/v1/GetMobileNotification";
     public static final String NOTIFICATION_MAINTENANCE = "notification/v1/NotificationMaintenance";
     public static final String REMOVE_NOTIFICATION = "notification/v1/RemoveNotification";
     public static final String CHECK_PACKAGE_STUDENT_LIMIT = "student/v1/CheckPackage";

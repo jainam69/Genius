@@ -11,20 +11,25 @@ public class NotificationModel {
      TransactionModel Transaction;
      String NotificationMessage;
      String Notification_Date;
+     String stdID;
+     BranchCourseModel.BranchCourceData BranchCourse;
+     List<NotificationStandardEntity> list;
 
     public NotificationModel() {
     }
 
-    public NotificationModel(List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage,String noti_date) {
+    public NotificationModel(List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage, String noti_date, String stdID, BranchCourseModel.BranchCourceData BranchCourse) {
         NotificationType = notificationType;
         Branch = branch;
         RowStatus = rowStatus;
         Transaction = transaction;
         NotificationMessage = notificationMessage;
         Notification_Date = noti_date;
+        this.stdID = stdID;
+        this.BranchCourse = BranchCourse;
     }
 
-    public NotificationModel(long notificationID, List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage,String noti_date) {
+    public NotificationModel(long notificationID, List<NotificationTypeModel> notificationType, BranchModel branch, RowStatusModel rowStatus, TransactionModel transaction, String notificationMessage,String noti_date,String stdID,BranchCourseModel.BranchCourceData BranchCourse) {
         NotificationID = notificationID;
         NotificationType = notificationType;
         Branch = branch;
@@ -32,6 +37,24 @@ public class NotificationModel {
         Transaction = transaction;
         NotificationMessage = notificationMessage;
         Notification_Date = noti_date;
+        this.stdID = stdID;
+        this.BranchCourse = BranchCourse;
+    }
+
+    public BranchCourseModel.BranchCourceData getBranchCourse() {
+        return BranchCourse;
+    }
+
+    public void setBranchCourse(BranchCourseModel.BranchCourceData branchCourse) {
+        BranchCourse = branchCourse;
+    }
+
+    public List<NotificationStandardEntity> getList() {
+        return list;
+    }
+
+    public void setList(List<NotificationStandardEntity> list) {
+        this.list = list;
     }
 
     public String getNotification_Date() {
@@ -56,6 +79,14 @@ public class NotificationModel {
 
     public void setNotificationType(List<NotificationTypeModel> notificationType) {
         NotificationType = notificationType;
+    }
+
+    public String getStdID() {
+        return stdID;
+    }
+
+    public void setStdID(String stdID) {
+        this.stdID = stdID;
     }
 
     public BranchModel getBranch() {
@@ -150,5 +181,16 @@ public class NotificationModel {
         public void setData(NotificationModel data) {
             Data = data;
         }
+    }
+
+    public static class NotificationStandardEntity{
+
+        public long notification_std_id;
+        public long std_id;
+        public long sub_id;
+        public String standard;
+        public String subject;
+        public long notif_id;
+        public BranchCourseModel.BranchCourceData BranchCourse;
     }
 }
