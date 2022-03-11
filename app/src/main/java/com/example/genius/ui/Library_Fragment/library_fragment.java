@@ -677,7 +677,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             if (resultCode == RESULT_CANCELED) {
                 userCancelled();
             } else if (resultCode == RESULT_OK) {
-                Uri image = result.getData();
                 try {
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireActivity(),uri);
@@ -759,7 +758,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;

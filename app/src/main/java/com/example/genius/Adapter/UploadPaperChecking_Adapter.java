@@ -281,25 +281,4 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
         }
     };
 
-    public static String getOnlyDigits(String s) {
-        Pattern pattern = Pattern.compile("[^0-9]");
-        Matcher matcher = pattern.matcher(s);
-        String number = matcher.replaceAll("");
-        return number;
-    }
-
-    public boolean accept(String pathname) {
-        final String name = pathname;
-        String ext = null;
-        int i = name.lastIndexOf('.');
-
-
-        if (i > 0 && i < name.length() - 1) {
-            ext = name.substring(i + 1).toLowerCase();
-        }
-
-        if (ext == null)
-            return false;
-        else return ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("gif");
-    }
 }

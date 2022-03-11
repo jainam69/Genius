@@ -54,7 +54,6 @@ public class VideoViewActivity extends AppCompatActivity {
         ProIndex = intent.getStringExtra("ProIndex");
         Description = intent.getStringExtra("Description");
         String a  = Preferences.getInstance(VideoViewActivity.this).getString(Preferences.KEY_VIDEO_BASE);
-        //imageVal = Base64.decode(a, Base64.DEFAULT);
 
         subject.setText(Description);
         image = findViewById(R.id.image);
@@ -70,7 +69,6 @@ public class VideoViewActivity extends AppCompatActivity {
             image.setVisibility(View.VISIBLE);
             video.setVisibility(View.GONE);
             rl.setVisibility(View.GONE);
-            //Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);
             Glide.with(VideoViewActivity.this).load(a).into(image);
         }else{
             try {
@@ -79,7 +77,6 @@ public class VideoViewActivity extends AppCompatActivity {
                     apkStorage.mkdir();
                     Log.e("TAG", "Directory Created.");
                 }
-
                 outputFile = File.createTempFile("Convert",".mp4",apkStorage);//Create Output file in Main File
                 if (!outputFile.exists()) {
                     outputFile.createNewFile();
@@ -96,7 +93,6 @@ public class VideoViewActivity extends AppCompatActivity {
             image.setVisibility(View.GONE);
             video.setVisibility(View.VISIBLE);
             rl.setVisibility(View.VISIBLE);
-
             mProgressBar = (ProgressBar) findViewById(R.id.progrss);
             mProgressBar.setProgress(0);
             mProgressBar.setMax(100);
@@ -105,9 +101,7 @@ public class VideoViewActivity extends AppCompatActivity {
         }
 
         video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
             public void onPrepared(MediaPlayer mediaPlayer) {
-
                 video.seekTo(position);
                 if (position == 0) {
                     video.start();
@@ -141,86 +135,5 @@ public class VideoViewActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         finish();
     }
-
-    /*Intent intent;
-    ProgressBar mProgressBar;
-    String ProIndex;
-    PhotoView image;
-    VideoView video;
-    FrameLayout rl;
-    TextView subject;
-    String Description;
-    byte[] imageVal;
-    private MediaController mediaController;
-    private int position = 0;
-    String path;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_view);
-        subject = findViewById(R.id.subject);
-
-        intent = getIntent();
-        ProIndex = intent.getStringExtra("ProIndex");
-        Description = intent.getStringExtra("Description");
-        String a  = Preferences.getInstance(VideoViewActivity.this).getString(Preferences.KEY_VIDEO_BASE);
-        imageVal = Base64.decode(a, Base64.DEFAULT);
-        try {
-            FileOutputStream out = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Convert.mp4");
-            out.write(imageVal);
-            out.close();
-        } catch (Exception e) {
-            Log.e("Error", e.toString());
-
-        }
-        path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/Convert.mp4";
-        subject.setText(Description);
-        image = findViewById(R.id.image);
-        video = findViewById(R.id.video);
-        rl = findViewById(R.id.rl);
-
-        if (mediaController == null) {
-            mediaController = new MediaController(VideoViewActivity.this);
-            mediaController.setAnchorView(video);
-            video.setMediaController(mediaController);
-        }
-        video.setVisibility(View.VISIBLE);
-        rl.setVisibility(View.VISIBLE);
-        mProgressBar = findViewById(R.id.progrss);
-        mProgressBar.setProgress(0);
-        mProgressBar.setMax(100);
-        video.setVideoPath(a);
-        video.requestFocus();
-        video.setOnPreparedListener(mediaPlayer -> {
-            video.seekTo(position);
-            if (position == 0) {
-                video.start();
-            }
-           mediaPlayer.setOnVideoSizeChangedListener((mp, width, height) -> {
-                mediaController.setAnchorView(video);
-            });
-        });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("CurrentPosition", video.getCurrentPosition());
-        video.pause();
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        position = savedInstanceState.getInt("CurrentPosition");
-        video.seekTo(position);
-    }
-
-    @Override
-    public void onBackPressed() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        finish();
-    }*/
 
 }

@@ -616,26 +616,10 @@ public class student_registration_fragment extends Fragment {
                 ft.addToBackStack(null);
                 ft.commit();
             }
-        }
-
-        ;
-
-        getActivity().
-
-                getOnBackPressedDispatcher().
-
-                addCallback(getActivity(), callback);
+        };
+        getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
 
         return root;
-    }
-
-    private void selectSpinnerValue(Spinner spinner, String myString) {
-        for (int i = 0; i < spinner.getCount(); i++) {
-            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
-                spinner.setSelection(i);
-                break;
-            }
-        }
     }
 
     private void showAddProfilePicDialog() {
@@ -744,7 +728,6 @@ public class student_registration_fragment extends Fragment {
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
-//        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         File pictureFile = null;
         try {
             pictureFile = getPictureFile();
@@ -794,7 +777,6 @@ public class student_registration_fragment extends Fragment {
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;
@@ -841,13 +823,7 @@ public class student_registration_fragment extends Fragment {
     private void onCameraImageResultInstrument() {
         Bitmap rotatedBitmap;
         Bitmap bitmap = null;
-
-        //Uri uri = data.getData();
         Uri uri = FUtils.getUri(instrumentFileDestination);
-        /*        String Path = FUtils.getPath(requireContext(), uri);
-                if (Path != null) {
-                    instrumentFileDestination = new File(Path);
-                }*/
         try {
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
         } catch (IOException e) {
@@ -864,7 +840,6 @@ public class student_registration_fragment extends Fragment {
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;

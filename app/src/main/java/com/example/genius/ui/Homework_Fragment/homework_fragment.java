@@ -413,11 +413,9 @@ public class homework_fragment extends Fragment {
                 Uri image = result.getData();
                 try {
                     flag = 1;
-                    InputStream imageStream;
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireActivity(), uri);
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
-                    imageStream = requireActivity().getContentResolver().openInputStream(image);
                     attachment_homework.setText("Attached");
                     attachment_homework.setTextColor(context.getResources().getColor(R.color.black));
                     filename = instrumentFileDestination.getName();
@@ -429,23 +427,6 @@ public class homework_fragment extends Fragment {
                 errored();
             }
         }
-    }
-
-    private String encodeFileToBase64Binary(File yourFile) {
-        int size = (int) yourFile.length();
-        byte[] bytes = new byte[size];
-        String encoded = "";
-        try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        encoded = Base64.encodeToString(bytes, Base64.DEFAULT);
-        return encoded;
     }
 
     private void pickImage() {

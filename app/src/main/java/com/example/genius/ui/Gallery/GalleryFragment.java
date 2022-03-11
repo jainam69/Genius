@@ -332,7 +332,6 @@ public class GalleryFragment extends Fragment {
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
-//        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         File pictureFile;
         try {
             pictureFile = getPictureFile();
@@ -356,11 +355,6 @@ public class GalleryFragment extends Fragment {
                     selectfile = true;
                     imageVal = null;
                     imageView.setVisibility(View.VISIBLE);
-                   /* Bitmap image = (Bitmap) Objects.requireNonNull(result.getExtras()).get("data");
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(image);
-                    imageVal = ImageUtility.using(getActivity()).toBase64FromBitmap(image);
-                   */
                     attachment_gallery.setText("Attached");
                     attachment_gallery.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
@@ -494,13 +488,7 @@ public class GalleryFragment extends Fragment {
     private void onCameraImageResultInstrument() {
         Bitmap rotatedBitmap;
         Bitmap bitmap = null;
-
-        //Uri uri = data.getData();
         Uri uri = FUtils.getUri(instrumentFileDestination);
-        /*        String Path = FUtils.getPath(requireContext(), uri);
-                if (Path != null) {
-                    instrumentFileDestination = new File(Path);
-                }*/
         try {
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
         } catch (IOException e) {
@@ -517,7 +505,6 @@ public class GalleryFragment extends Fragment {
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;
@@ -556,10 +543,6 @@ public class GalleryFragment extends Fragment {
                 }
             }
         }
-    }
-
-    private String encodeImage(byte[] b) {
-        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
     private File getPictureFile() throws IOException {

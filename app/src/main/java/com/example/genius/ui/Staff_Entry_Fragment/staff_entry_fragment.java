@@ -70,17 +70,12 @@ public class staff_entry_fragment extends Fragment {
     private int year;
     private int month;
     private int day;
-    String gender, status, BranchName, RoleName, BranchID;
+    String gender, status,RoleName, BranchID;
     String ddate, apdate, jodate, ledate;
     int select;
     Context context;
     List<String> roleitem = new ArrayList<>();
-    List<Integer> roleid = new ArrayList<>();
     String[] ROLEITEM;
-    List<String> branchitem = new ArrayList<>();
-    List<Integer> branchid = new ArrayList<>();
-    String[] BRANCHITEM;
-    Integer[] BRANCHID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -493,106 +488,11 @@ public class staff_entry_fragment extends Fragment {
                 }
             };
 
-    public void GetAllBranch() {
-        branchitem.add("Select Branch");
-        branchid.add(0);
-
-        Call<BranchModel> call = apiCalling.GetAllBranch();
-        call.enqueue(new Callback<BranchModel>() {
-            @Override
-            public void onResponse(Call<BranchModel> call, Response<BranchModel> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    BranchModel branchModel = response.body();
-                    if (branchModel != null) {
-                        if (branchModel.isCompleted()) {
-                            List<BranchModel.BranchData> respose = branchModel.getData();
-                            for (BranchModel.BranchData singleResponseModel : respose) {
-
-                                String building_name = singleResponseModel.getBranchName();
-                                branchitem.add(building_name);
-
-                                int building_id = Integer.parseInt(String.valueOf(singleResponseModel.getBranchID()));
-                                branchid.add(building_id);
-                            }
-                            BRANCHITEM = new String[branchitem.size()];
-                            BRANCHITEM = branchitem.toArray(BRANCHITEM);
-
-                            BRANCHID = new Integer[branchid.size()];
-                            BRANCHID = branchid.toArray(BRANCHID);
-
-                            bindbranch();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BranchModel> call, Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindbranch() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        branch.setAdapter(adapter);
-        branch.setOnItemSelectedListener(onItemSelectedListener6);
-        if (bundle != null) {
-            if (bundle.containsKey("Branch_ID")) {
-                id_branch.setText("" + bundle.getLong("Branch_ID"));
-                int a = branchid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("Branch_ID"))));
-                branch.setSelection(a);
-            }
-        }
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = branchitem.get(position);
-                    BranchID = branchid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
     private static String pad(int c) {
         if (c >= 10)
             return String.valueOf(c);
         else
             return "0" + c;
-    }
-
-    public static String yesterday() {
-        Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        cal.add(Calendar.DATE, 0);
-        return dateFormat.format(cal.getTime());
-    }
-
-    private void selectSpinnerValue(Spinner spinner, String myString) {
-        for (int i = 0; i < spinner.getCount(); i++) {
-            if (spinner.getItemAtPosition(i).toString().equals(myString)) {
-                spinner.setSelection(i);
-                break;
-            }
-        }
     }
 
 }

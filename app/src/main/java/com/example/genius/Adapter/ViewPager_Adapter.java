@@ -20,6 +20,7 @@ import com.example.genius.R;
 import java.util.List;
 
 public class ViewPager_Adapter extends PagerAdapter {
+
     private final Context context;
     public List<BannerModel> list;
 
@@ -38,9 +39,6 @@ public class ViewPager_Adapter extends PagerAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.imageview_list, container, false);
         ImageView imageView = view.findViewById(R.id.imageView);
         Glide.with(context).load(list.get(position).getFilePath()).into(imageView);
-        /*byte[] imageVal = Base64.decode(list.get(position).getBannerImageText(), Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(imageVal, 0, imageVal.length);
-        imageView.setImageBitmap(decodedByte);*/
         container.addView(view);
         return view;
     }

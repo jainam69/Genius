@@ -1,8 +1,10 @@
 package com.example.genius.Activity;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -82,8 +84,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+       /*if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+            ((ActivityManager) context.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData();
+            return;
+       }*/
+
         btn_login.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(LoginActivity.this)) {
+                //if (!password.getText().toString().matches( "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$") || !password.getText().toString().matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$"))
                 if (mobile_no.getText().toString().length() > 0 && password.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please enter Password", Toast.LENGTH_LONG).show();
                 } else if (mobile_no.getText().toString().length() == 0 && password.getText().toString().length() > 0) {

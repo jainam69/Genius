@@ -88,11 +88,11 @@ public class marks_entry_fragment extends Fragment {
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(), dateitem = new ArrayList<>(),courseitem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(), dateid = new ArrayList<>(),courseid = new ArrayList<>();
-    String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM, DATEITEM,COURSEITEM;
-    Integer[] STANDARDID, SUBJECTID, BRANCHID, TESTID,COURSEID;
-    String SubjectName, BatchTime, BranchName, BranchID, SubjectId, BatchId, TestDate;
+    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(), dateitem = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), dateid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] STANDARDITEM, SUBJECTITEM, BATCHITEM, DATEITEM,COURSEITEM;
+    Integer[] STANDARDID, SUBJECTID, TESTID,COURSEID;
+    String SubjectName, BatchTime, SubjectId, BatchId, TestDate;
     Long StandardId, TestID,courseID;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
@@ -366,19 +366,9 @@ public class marks_entry_fragment extends Fragment {
                 try {
                     flag = 1;
                     imageVal = null;
-                   /* Bitmap image = (Bitmap) Objects.requireNonNull(result.getExtras()).get("data");
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(image);
-                    imageVal = ImageUtility.using(getActivity()).toBase64FromBitmap(image);
-                   */
                     upload_image.setText("Attached");
                     upload_image.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
-                    try {
-//                        imageView.setImageURI(Uri.fromFile(instrumentFileDestination));
-                    } catch (Exception e) {
-
-                    }
                     Toast.makeText(context, "" + instrumentFileDestination, Toast.LENGTH_SHORT).show();
                     onCameraImageResultInstrument();
                 } catch (Exception ex) {
@@ -440,7 +430,6 @@ public class marks_entry_fragment extends Fragment {
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
-//        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         File pictureFile = null;
         try {
             pictureFile = getPictureFile();
@@ -458,13 +447,7 @@ public class marks_entry_fragment extends Fragment {
     private void onCameraImageResultInstrument() {
         Bitmap rotatedBitmap;
         Bitmap bitmap = null;
-
-        //Uri uri = data.getData();
         Uri uri = FUtils.getUri(instrumentFileDestination);
-        /*        String Path = FUtils.getPath(requireContext(), uri);
-                if (Path != null) {
-                    instrumentFileDestination = new File(Path);
-                }*/
         try {
             bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
         } catch (IOException e) {
@@ -481,7 +464,6 @@ public class marks_entry_fragment extends Fragment {
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;
@@ -521,79 +503,6 @@ public class marks_entry_fragment extends Fragment {
             }
         }
     }
-
-    public void GetAllBranch() {
-        branchitem.add("Select Branch");
-        branchid.add(0);
-
-        Call<BranchModel> call = apiCalling.GetAllBranch();
-        call.enqueue(new Callback<BranchModel>() {
-            @Override
-            public void onResponse(Call<BranchModel> call, Response<BranchModel> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    BranchModel branchModel = response.body();
-                    if (branchModel != null) {
-                        if (branchModel.isCompleted()) {
-                            List<BranchModel.BranchData> respose = branchModel.getData();
-                            for (BranchModel.BranchData singleResponseModel : respose) {
-
-                                String building_name = singleResponseModel.getBranchName();
-                                branchitem.add(building_name);
-
-                                int building_id = Integer.parseInt(String.valueOf(singleResponseModel.getBranchID()));
-                                branchid.add(building_id);
-                            }
-                            BRANCHITEM = new String[branchitem.size()];
-                            BRANCHITEM = branchitem.toArray(BRANCHITEM);
-
-                            BRANCHID = new Integer[branchid.size()];
-                            BRANCHID = branchid.toArray(BRANCHID);
-
-                            bindbranch();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BranchModel> call, Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindbranch() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        branch.setAdapter(adapter);
-        branch.setOnItemSelectedListener(onItemSelectedListener6);
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = branchitem.get(position);
-                    BranchID = branchid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
 
     public void GetAllSubject() {
         progressBarHelper.showProgressDialog();
@@ -878,7 +787,6 @@ public class marks_entry_fragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         batch_time.setAdapter(adapter);
         batch_time.setOnItemSelectedListener(onItemSelectedListener77);
-
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener77 =
@@ -1046,13 +954,8 @@ public class marks_entry_fragment extends Fragment {
                         }
                     }
                 }
-//                imageVal = ImageUtility.using(context).toBase64(instrumentFileDestination.getPath());
             }
         }
-    }
-
-    private String encodeImage(byte[] b) {
-        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
     public void SelectTestDate() {

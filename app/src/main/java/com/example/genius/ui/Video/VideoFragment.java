@@ -258,13 +258,11 @@ public class VideoFragment extends Fragment {
 
 
     private void requestPermissionForVideo() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean hasPermission = (ContextCompat.checkSelfPermission(context,
                     Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(context,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-
             if (!hasPermission) {
                 ActivityCompat.requestPermissions(requireActivity(),
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -277,10 +275,7 @@ public class VideoFragment extends Fragment {
                 startActivityForResult(Intent.createChooser(intent, "Select Video"), 4);
             }
         } else {
-            /*Intent intent = new Intent();
-            intent.setType("video/*");*/
             Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            //intent.setAction(Intent.ACTION_GET_CONTENT);
             getActivity().startActivityForResult(intent, 4);
         }
     }
@@ -297,23 +292,17 @@ public class VideoFragment extends Fragment {
                 Uri image = result.getData();
                 try {
                     flag = 1;
-                    InputStream imageStream;
                     Uri uri = result.getData();
                     String Path = FUtils.getPath(requireContext(), uri);
                     if (Path != null) {
                         instrumentFileDestination = new File(Path);
-                        imageStream = requireActivity().getContentResolver().openInputStream(image);
                         attachment_video.setText("Attached");
                         attachment_video.setTextColor(context.getResources().getColor(R.color.black));
-
-                        //Conversion Code
                         Uri selectedVideoUri = result.getData();
                         String[] projection = {MediaStore.Video.Media.DATA, MediaStore.Video.Media.SIZE, MediaStore.Video.Media.DURATION};
                         @SuppressLint("Recycle") Cursor cursor = context.getContentResolver().query(selectedVideoUri, projection, null, null, null);
-
                         cursor.moveToFirst();
                         InputStream inputStream = null;
-                        // Converting the video in to the bytes
                         try {
                             inputStream = context.getContentResolver().openInputStream(selectedVideoUri);
                         } catch (Exception e) {
@@ -333,8 +322,6 @@ public class VideoFragment extends Fragment {
                             e.printStackTrace();
                         }
                         System.out.println("converted!");
-
-                        //Converting bytes into base64
                         videoData = Base64.encodeToString(byteBuffer.toByteArray(), Base64.DEFAULT);
                         Log.d("VideoData**>  ", videoData);
                     }

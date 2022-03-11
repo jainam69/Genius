@@ -10,8 +10,8 @@ import com.example.genius.R;
 
 public class SplashActivity extends AppCompatActivity {
 
-Preferences preferences;
-Boolean a;
+    Preferences preferences;
+    Boolean a;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

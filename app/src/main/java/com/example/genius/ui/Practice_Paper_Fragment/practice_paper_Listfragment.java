@@ -90,13 +90,13 @@ public class practice_paper_Listfragment extends Fragment {
     RecyclerView practice_paper_rv;
     LinearLayout linear_create_paper;
     PracticePaperMaster_Adapter practicePaperMaster_adapter;
-    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), branchitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(),courseitem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), branchid = new ArrayList<>(),courseid = new ArrayList<>();
-    String[] STANDARDITEM, SUBJECTITEM, BRANCHITEM, BATCHITEM,COURSEITEM;
-    Integer[] STANDARDID, SUBJECTID, BRANCHID,COURESID;
+    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] STANDARDITEM, SUBJECTITEM, BATCHITEM,COURSEITEM;
+    Integer[] STANDARDID, SUBJECTID, COURESID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String BatchTime, BranchName, BranchID, BatchId, SubjectId;
+    String BatchTime, BranchID, BatchId, SubjectId;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
@@ -339,16 +339,13 @@ public class practice_paper_Listfragment extends Fragment {
             if (resultCode == RESULT_CANCELED) {
                 userCancelled();
             } else if (resultCode == RESULT_OK) {
-                Uri image = result.getData();
                 try {
                     flag = 1;
-                    InputStream imageStream;
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     if (Path != null) {
                         instrumentFileDestination = new File(Path);
                     }
-                    imageStream = requireActivity().getContentResolver().openInputStream(image);
                     attach_paper.setText("Attached");
                     attach_paper.setTextColor(context.getResources().getColor(R.color.black));
                     path = instrumentFileDestination.getName();
@@ -388,80 +385,6 @@ public class practice_paper_Listfragment extends Fragment {
         intent.putExtra(ERROR, true);
         intent.putExtra(ERROR_MSG, "Error while opening the image file. Please try again.");
     }
-
-    public void GetAllBranch() {
-        branchitem.clear();
-        branchid.clear();
-        branchitem.add("Select Branch");
-        branchid.add(0);
-
-        Call<BranchModel> call = apiCalling.GetAllBranch();
-        call.enqueue(new Callback<BranchModel>() {
-            @Override
-            public void onResponse(@NotNull Call<BranchModel> call, @NotNull Response<BranchModel> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    BranchModel branchModel = response.body();
-                    if (branchModel != null) {
-                        if (branchModel.isCompleted()) {
-                            List<BranchModel.BranchData> respose = branchModel.getData();
-                            for (BranchModel.BranchData singleResponseModel : respose) {
-
-                                String building_name = singleResponseModel.getBranchName();
-                                branchitem.add(building_name);
-
-                                int building_id = Integer.parseInt(String.valueOf(singleResponseModel.getBranchID()));
-                                branchid.add(building_id);
-                            }
-                            BRANCHITEM = new String[branchitem.size()];
-                            BRANCHITEM = branchitem.toArray(BRANCHITEM);
-
-                            BRANCHID = new Integer[branchid.size()];
-                            BRANCHID = branchid.toArray(BRANCHID);
-
-                            bindbranch();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<BranchModel> call, @NotNull Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindbranch() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        branch.setAdapter(adapter);
-        branch.setOnItemSelectedListener(onItemSelectedListener6);
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = branchitem.get(position);
-                    BranchID = branchid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
 
     public void GetAllCourse()
     {

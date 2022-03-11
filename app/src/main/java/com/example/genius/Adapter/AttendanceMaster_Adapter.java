@@ -55,14 +55,6 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
         testlist.get(position).setRemarks("");
         testlist.get(position).setPresent(true);
         testlist.get(position).setAbsent(false);
-//        AttendanceModel.AttendanceDetailEntity att = new AttendanceModel.AttendanceDetailEntity();
-//        att.setPresent(false);
-//        att.setAbsent(true);
-//        att.setRemarks(" ");
-//        StudentModel mod = new StudentModel();
-//        mod.setStudentID(studentModels.get(position).getStudentID());
-//        att.setStudent(mod);
-//        testlist.add(att);
         holder.present_absent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

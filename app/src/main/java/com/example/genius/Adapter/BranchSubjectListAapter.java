@@ -108,7 +108,6 @@ public class BranchSubjectListAapter extends RecyclerView.Adapter<BranchSubjectL
                 bundle.putSerializable("COURSE_DTL", (Serializable) CourceDataList.get(position).BranchSubjectData);
                 bundle.putSerializable("COURSE_NAME", CourceDataList.get(position).BranchCourse.getCourse().getCourseName());
                 bundle.putSerializable("CLASS_NAME", CourceDataList.get(position).getClassModel().getClassName());
-                //bundle.putParcelable("COURSE_DTL_PARSE", (Parcelable) branchCourceData.get(position));
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();

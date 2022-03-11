@@ -45,7 +45,6 @@ public class BranchClassAdapter  extends RecyclerView.Adapter<BranchClassAdapter
     public BranchClassAdapter(Context context, List<BranchClassSingleModel.BranchClassData> courceDataList) {
         this.context = context;
         CourceDataList = courceDataList;
-
     }
 
     @NotNull
@@ -64,7 +63,6 @@ public class BranchClassAdapter  extends RecyclerView.Adapter<BranchClassAdapter
         data.setClassModel(da);
         holder.chk_line.setTag(position);
         holder.chk_line.setChecked(data.isClass);
-        //holder.chk_line.setOnCheckedChangeListener((buttonView, isChecked) -> CourceDataList.get(position).setClass(holder.chk_line.isChecked()));
         holder.chk_line.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -100,16 +98,6 @@ public class BranchClassAdapter  extends RecyclerView.Adapter<BranchClassAdapter
             }
         });
     }
-
-   /* @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }*/
 
     @Override
     public int getItemCount() {

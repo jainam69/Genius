@@ -46,10 +46,6 @@ public class BranchCourseAdapter extends RecyclerView.Adapter<BranchCourseAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.course_name.setText(CourceDataList.get(position).getCourseName());
         holder.chk_line.setChecked(CourceDataList.get(position).getIscourse());
-        /*BranchCourseModel.BranchCourceData model = new BranchCourseModel.BranchCourceData();
-        model.setIscourse(CourceDataList.get(position).getIscourse());
-        model.setCourse(new CourceModel.CourceData(CourceDataList.get(position).getCourseID()));
-        branchCourceData.add(model);*/
         holder.chk_line.setOnCheckedChangeListener((buttonView, isChecked) -> CourceDataList.get(position).setIscourse(holder.chk_line.isChecked()));
     }
 

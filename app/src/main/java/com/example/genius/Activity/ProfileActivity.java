@@ -55,7 +55,6 @@ public class ProfileActivity extends AppCompatActivity {
         context = ProfileActivity.this;
         progressBarHelper = new ProgressBarHelper(ProfileActivity.this, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-
         name = findViewById(R.id.name);
         mobile_no = findViewById(R.id.mobile_no);
         email = findViewById(R.id.email);
@@ -102,7 +101,8 @@ public class ProfileActivity extends AppCompatActivity {
                     Call<ProfileModel> call = apiCalling.UpdateProfile(new StaffModel(Preferences.getInstance(context).getLong(Preferences.KEY_STAFF_ID)
                             , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), name.getText().toString().trim()
                             , email.getText().toString().trim(), mobile_no.getText().toString().trim()
-                            , new TransactionModel(TransactionId, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID))
+                            , new TransactionModel(TransactionId, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),
+                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR))
                             , new RowStatusModel(1), new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))));
                     call.enqueue(new Callback<ProfileModel>() {
                         @Override

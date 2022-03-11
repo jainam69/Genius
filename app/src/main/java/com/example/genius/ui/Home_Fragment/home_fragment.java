@@ -302,14 +302,12 @@ public class home_fragment extends Fragment {
                                 };
 
                                 Timer swiptimer = new Timer();
-
                                 swiptimer.schedule(new TimerTask() {
                                     @Override
                                     public void run() {
                                         handler.post(update);
                                     }
                                 }, 4000, 4000);
-
                             }
                         }
                     }

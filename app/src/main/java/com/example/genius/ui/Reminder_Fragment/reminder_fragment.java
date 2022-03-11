@@ -105,7 +105,6 @@ public class reminder_fragment extends Fragment {
         linear_create_reminder = root.findViewById(R.id.linear_create_reminder);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
-        //date_reminder.setText(yesterday());
         Calendar cal2 = Calendar.getInstance();
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
         cal2.add(Calendar.DATE, 0);
@@ -485,7 +484,6 @@ public class reminder_fragment extends Fragment {
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }
         }
-
     }
 
 }

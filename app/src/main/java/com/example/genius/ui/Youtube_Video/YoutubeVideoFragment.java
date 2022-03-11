@@ -579,7 +579,6 @@ public class YoutubeVideoFragment extends Fragment {
                     }
                 });
             }
-
         }
 
         @Override

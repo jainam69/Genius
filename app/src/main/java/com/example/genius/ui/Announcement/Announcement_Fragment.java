@@ -45,7 +45,6 @@ public class Announcement_Fragment extends Fragment {
     EditText announcement_description;
     Button add_announcement;
     Context context;
-    private static final String TAG = "Announcement";
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     long annID = 0L, transaction_id = 0L;

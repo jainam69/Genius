@@ -60,7 +60,6 @@ public class BranchSubjectAapter extends RecyclerView.Adapter<BranchSubjectAapte
         da.setSubjectName(CourceDataList.get(position).getSubject().getSubjectName());
         CourceDataList.get(position).setSubject(da);
         holder.chk_line.setChecked(CourceDataList.get(position).isSubject);
-        //holder.chk_line.setOnCheckedChangeListener((buttonView, isChecked) -> CourceDataList.get(position).setSubject(holder.chk_line.isChecked()));
         holder.chk_line.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -45,16 +45,12 @@ public class ViewDocumentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_document);
 
-        //getSupportActionBar().setTitle("View Document");
         intent = getIntent();
         PaperPath = intent.getStringExtra("PaperPath");
         Subject  = intent.getStringExtra("ProIndex");
         isImage = accept(PaperPath);
         image_name = findViewById(R.id.image_name);
         image = findViewById(R.id.image);
-
-        image_name.setText(Subject);
-
         webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -63,12 +59,12 @@ public class ViewDocumentActivity extends AppCompatActivity {
         webView.getSettings().setPluginState(WebSettings.PluginState.ON);
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setSupportZoom(true);
+        image_name.setText(Subject);
 
         webView.addJavascriptInterface(new TawkJavaScriptInterface(ViewDocumentActivity.this),"com_ashirvadstudycircle_tawk");
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -76,7 +72,6 @@ public class ViewDocumentActivity extends AppCompatActivity {
                         webView.loadUrl(js1);
                     }
                 }, 3000);
-
             }
         });
 
@@ -119,17 +114,13 @@ public class ViewDocumentActivity extends AppCompatActivity {
 
     public class TawkJavaScriptInterface {
         private Context context;
-
         public TawkJavaScriptInterface(Context context){
             this.context=context;
         }
-
         @JavascriptInterface
         public void backButtonPressed()
         {
-
             finish();
-
             Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
         }
 
@@ -143,12 +134,9 @@ public class ViewDocumentActivity extends AppCompatActivity {
         final String name = pathname;
         String ext = null;
         int i = name.lastIndexOf('.');
-
-
         if (i > 0 && i < name.length() - 1) {
             ext = name.substring(i + 1).toLowerCase();
         }
-
         if (ext == null)
             return false;
         else if (!ext.equals("jpg") && !ext.equals("jpeg") && !ext.equals("png") && !ext.equals("gif"))
@@ -201,19 +189,16 @@ public class ViewDocumentActivity extends AppCompatActivity {
         webView.setHorizontalScrollBarEnabled(false);
         webView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-
                 if (event.getPointerCount() > 1) {
                     //Multi touch detected
                     return true;
                 }
-
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         // save the x
                         m_downX = event.getX();
                     }
                     break;
-
                     case MotionEvent.ACTION_MOVE:
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP: {
@@ -222,7 +207,6 @@ public class ViewDocumentActivity extends AppCompatActivity {
                     }
                     break;
                 }
-
                 return false;
             }
         });
@@ -230,7 +214,6 @@ public class ViewDocumentActivity extends AppCompatActivity {
 
     private class MyWebChromeClient extends WebChromeClient {
         Context context;
-
         public MyWebChromeClient(Context context) {
             super();
             this.context = context;

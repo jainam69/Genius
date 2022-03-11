@@ -76,10 +76,8 @@ public class BranchSubjectFragment extends Fragment {
     String[] COURSEITEM;
     Long[] CLASSID;
     String[] CLASSITEM;
-    String course;
-    long courseid;
-    String class_name;
-    long classid;
+    String course, class_name;
+    long courseid,classid;
     Bundle bundle = null;
     List<BranchSubjectModel.BranchSubjectData> list;
     List<BranchSubjectModel.BranchSubjectData> listForBundle;

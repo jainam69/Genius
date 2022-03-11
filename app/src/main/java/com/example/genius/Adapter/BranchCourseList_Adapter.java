@@ -67,7 +67,7 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull BranchCourseList_Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BranchCourseList_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 75){
@@ -105,8 +105,6 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
                 BranchCourseFragment orderplace = new BranchCourseFragment();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("COURSE_DTL", (Serializable) branchCourceData.getData());
-                //bundle.putSerializable("COURSE_DTL", new Gson().toJson(branchCourceData));
-                //bundle.putParcelable("COURSE_DTL_PARSE", (Parcelable) branchCourceData.get(position));
                 orderplace.setArguments(bundle);
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();

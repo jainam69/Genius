@@ -1094,11 +1094,9 @@ public class test_schedule_fragment extends Fragment {
                 try {
                     flag = 1;
                     upload_paper = "";
-                    InputStream imageStream;
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     instrumentFileDestination = new File(Path);
-                    imageStream = requireActivity().getContentResolver().openInputStream(image);
                     upload_test_paper.setText("Attached");
                     upload_test_paper.setTextColor(context.getResources().getColor(R.color.black));
                     String name = instrumentFileDestination.getName();

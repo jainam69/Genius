@@ -559,7 +559,6 @@ public class FeeStructureFragment extends Fragment {
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;

@@ -79,7 +79,6 @@ public class TaskRegister_Adapter extends RecyclerView.Adapter<TaskRegister_Adap
         holder.bname.setText("" + todoModels.get(position).getBranchInfo().getBranchName());
         holder.task_date.setText("" + todoModels.get(position).getToDoDate());
         holder.staff_name.setText("" + todoModels.get(position).getUserInfo().getUsername());
-//        holder.status.setText(""+todoModels.get(position).getStatus());
         holder.task_reg_edit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
@@ -107,17 +106,6 @@ public class TaskRegister_Adapter extends RecyclerView.Adapter<TaskRegister_Adap
                 RadioButton done = dialogView1.findViewById(R.id.done);
                 EditText remark = dialogView1.findViewById(R.id.remarks);
                 AlertDialog dialog1 = builder1.create();
-//                        String st = todoModels.get(position).getStatus();
-//                        if (st.equals("Pending"))
-//                        {
-//                            pending.setChecked(true);
-//                            done.setChecked(false);
-//                        }
-//                        if (st.equals("Done"))
-//                        {
-//                            pending.setChecked(false);
-//                            done.setChecked(true);
-//                        }
                 rg.setOnCheckedChangeListener((group, checkedId) -> {
                     holder.rb1 = dialogView1.findViewById(checkedId);
                     sts = holder.rb1.getText().toString();
@@ -128,7 +116,6 @@ public class TaskRegister_Adapter extends RecyclerView.Adapter<TaskRegister_Adap
 
                 dialog1.show();
                 edit.setOnClickListener(v121 -> {
-//                                progressBarHelper.showProgressDialog();
                     id = (int) todoModels.get(position).getToDoID();
                 });
             });

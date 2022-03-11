@@ -452,12 +452,6 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
             standard.setSelection(new int[]{0});
         }
         standard.setOnItemSelectedListener(onItemSelectedListener7);
-        /*StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < indices.size(); i++) {
-            sb.append(standardid.get(indices.get(i)));
-            sb.append(",");
-        }
-        StandardIDs = sb.toString().substring(0, sb.length() - 1);*/
     }
 
     @Override

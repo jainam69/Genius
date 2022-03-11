@@ -56,11 +56,7 @@ public class attendance_Listfragment extends Fragment {
     AttendanceEntry_Adapter attendanceEntry_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    List<String> branchitem = new ArrayList<>();
-    List<Integer> branchid = new ArrayList<>();
-    String[] BRANCHITEM;
-    Integer[] BRANCHID;
-    String BranchName, BranchID;
+    String BranchID;
     OnBackPressedCallback callback;
     UserModel userpermission;
 

@@ -101,10 +101,6 @@ public class Banner_Fragment extends Fragment {
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    List<String> branchitem = new ArrayList<>();
-    List<Integer> branchid = new ArrayList<>();
-    String[] BRANCHITEM;
-    Integer[] BRANCHID;
     int flag = 0;
     byte[] imageVal;
     Bitmap bitmap;
@@ -340,78 +336,6 @@ public class Banner_Fragment extends Fragment {
         return root;
     }
 
-    public void GetAllBranch() {
-        branchitem.add("Select Branch");
-        branchid.add(0);
-
-        Call<BranchModel> call = apiCalling.GetAllBranch();
-        call.enqueue(new Callback<BranchModel>() {
-            @Override
-            public void onResponse(@NotNull Call<BranchModel> call, @NotNull Response<BranchModel> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    BranchModel branchModel = response.body();
-                    if (branchModel != null) {
-                        if (branchModel.isCompleted()) {
-                            List<BranchModel.BranchData> respose = branchModel.getData();
-                            for (BranchModel.BranchData singleResponseModel : respose) {
-
-                                String building_name = singleResponseModel.getBranchName();
-                                branchitem.add(building_name);
-
-                                int building_id = Integer.parseInt(String.valueOf(singleResponseModel.getBranchID()));
-                                branchid.add(building_id);
-                            }
-                            BRANCHITEM = new String[branchitem.size()];
-                            BRANCHITEM = branchitem.toArray(BRANCHITEM);
-
-                            BRANCHID = new Integer[branchid.size()];
-                            BRANCHID = branchid.toArray(BRANCHID);
-
-                            bindbranch();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<BranchModel> call, @NotNull Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindbranch() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        branch.setAdapter(adapter);
-        branch.setOnItemSelectedListener(onItemSelectedListener6);
-
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchID = branchid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
@@ -495,7 +419,6 @@ public class Banner_Fragment extends Fragment {
             orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
         }
-
         int rotationDegree;
         if (orientation >= 0 && orientation <= 1) {
             rotationDegree = 0;

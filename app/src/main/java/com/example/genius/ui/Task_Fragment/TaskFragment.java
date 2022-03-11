@@ -101,11 +101,11 @@ public class TaskFragment extends Fragment {
     SearchableSpinner status;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    List<String> branchitem = new ArrayList<>(), useritem = new ArrayList<>();
-    List<Integer> branchid = new ArrayList<>(), userid = new ArrayList<>();
-    String[] BRANCHITEM, USERITEM;
-    Integer[] BRANCHID, USERID;
-    String BranchName, BranchID, UserName, UserId;
+    List<String> useritem = new ArrayList<>();
+    List<Integer> userid = new ArrayList<>();
+    String[] USERITEM;
+    Integer[] USERID;
+    String BranchID, UserName, UserId;
     int flag = 0;
     List<String> statusitem = new ArrayList<>();
     String[] STATUSITEM;
@@ -373,79 +373,6 @@ public class TaskFragment extends Fragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            };
-
-    public void GetAllBranch() {
-        branchitem.add("Select Branch");
-        branchid.add(0);
-
-        Call<BranchModel> call = apiCalling.GetAllBranch();
-        call.enqueue(new Callback<BranchModel>() {
-            @Override
-            public void onResponse(@NotNull Call<BranchModel> call, @NotNull Response<BranchModel> response) {
-                if (response.isSuccessful()) {
-                    progressBarHelper.hideProgressDialog();
-                    BranchModel branchModel = response.body();
-                    if (branchModel != null) {
-                        if (branchModel.isCompleted()) {
-                            List<BranchModel.BranchData> respose = branchModel.getData();
-                            for (BranchModel.BranchData singleResponseModel : respose) {
-
-                                String building_name = singleResponseModel.getBranchName();
-                                branchitem.add(building_name);
-
-                                int building_id = Integer.parseInt(String.valueOf(singleResponseModel.getBranchID()));
-                                branchid.add(building_id);
-                            }
-                            BRANCHITEM = new String[branchitem.size()];
-                            BRANCHITEM = branchitem.toArray(BRANCHITEM);
-
-                            BRANCHID = new Integer[branchid.size()];
-                            BRANCHID = branchid.toArray(BRANCHID);
-
-                            bindbranch();
-                        } else {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<BranchModel> call, @NotNull Throwable t) {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void bindbranch() {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        branch.setAdapter(adapter);
-        branch.setOnItemSelectedListener(onItemSelectedListener6);
-    }
-
-    AdapterView.OnItemSelectedListener onItemSelectedListener6 =
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    BranchName = branchitem.get(position);
-                    BranchID = branchid.get(position).toString();
-                    if (branch.getSelectedItem().equals("Select Branch")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
-                        GetAllUser(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    } else {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                        ((TextView) parent.getChildAt(0)).setTextSize(14);
-                        GetAllUser(Long.parseLong(BranchID));
                     }
                 }
                 @Override
