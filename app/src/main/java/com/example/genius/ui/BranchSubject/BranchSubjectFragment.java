@@ -410,8 +410,7 @@ public class BranchSubjectFragment extends Fragment {
                     RowStatusModel rowStatusModel = new RowStatusModel(1, "Active");
                     BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     if (bundle == null) {
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         for (int i = 0; i < BranchSubjectAapter.CourceDataList.size(); i++) {
                             BranchSubjectModel.BranchSubjectData model = new BranchSubjectModel.BranchSubjectData(
                                     0, branchModel
@@ -421,8 +420,7 @@ public class BranchSubjectFragment extends Fragment {
                             list.add(model);
                         }
                     } else {
-                        TransactionModel transactionModel = new TransactionModel(0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         for (int i = 0; i < BranchSubjectAapter.CourceDataList.size(); i++) {
                             BranchSubjectModel.BranchSubjectData model = new BranchSubjectModel.BranchSubjectData(
                                     listForBundle.get(i).Subject_dtl_id, branchModel

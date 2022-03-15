@@ -329,8 +329,7 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(fullname.getText().toString()
@@ -389,8 +388,7 @@ public class staff_entry_fragment extends Fragment {
                     Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                     StaffModel model = new StaffModel(Long.parseLong(id_reg.getText().toString())

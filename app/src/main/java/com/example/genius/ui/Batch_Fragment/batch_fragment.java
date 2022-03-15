@@ -302,8 +302,7 @@ public class batch_fragment extends Fragment {
                         monday_time = mon_start_time.getText().toString() + " - " + mon_end_time.getText().toString();
                         saturday_time = sat_start_time.getText().toString() + " - " + sat_end_time.getText().toString();
                         sunday_time = sun_start_time.getText().toString() + " - " + sun_end_time.getText().toString();
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
@@ -373,8 +372,7 @@ public class batch_fragment extends Fragment {
                         monday_time = mon_start_time.getText().toString() + " - " + mon_end_time.getText().toString();
                         saturday_time = sat_start_time.getText().toString() + " - " + sat_end_time.getText().toString();
                         sunday_time = sun_start_time.getText().toString() + " - " + sun_end_time.getText().toString();
-                        TransactionModel transactionModel = new TransactionModel(batchModel.getTransaction().getTransactionId(), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(batchModel.getTransaction().getTransactionId(), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);

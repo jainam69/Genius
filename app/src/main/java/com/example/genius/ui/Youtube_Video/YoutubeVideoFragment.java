@@ -133,8 +133,7 @@ public class YoutubeVideoFragment extends Fragment {
                 else {
                     if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
@@ -194,8 +193,7 @@ public class YoutubeVideoFragment extends Fragment {
                 else {
                     if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);

@@ -77,15 +77,13 @@ public class Announcement_Fragment extends Fragment {
                     if (annID == 0) {
                         model = new AnnouncementModel.AnnouncementData(annID
                                 , new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))
-                                , new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR))
+                                , new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME))
                                 , new RowStatusModel(1)
                                 , announcement_description.getText().toString());
                     } else {
                         model = new AnnouncementModel.AnnouncementData(annID
                                 , new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))
-                                , new TransactionModel(transaction_id, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR))
+                                , new TransactionModel(transaction_id, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0)
                                 , new RowStatusModel(1)
                                 , announcement_description.getText().toString());
                     }

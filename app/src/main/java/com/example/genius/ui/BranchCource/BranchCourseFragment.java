@@ -113,8 +113,7 @@ public class BranchCourseFragment extends Fragment {
             progressBarHelper.showProgressDialog();
             list = new ArrayList<>();
             if (BranchCourseAdapter.CourceDataList.size() > 0) {
-                TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                        Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                 RowStatusModel rowStatusModel = new RowStatusModel(1, "Active");
                 BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                 if (bundle == null) {

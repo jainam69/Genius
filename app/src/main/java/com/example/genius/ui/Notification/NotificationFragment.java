@@ -235,8 +235,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                             NotificationModel.NotificationTypeModel model1 = new NotificationModel.NotificationTypeModel("Student", 3);
                             typeModel.add(model1);
                         }
-                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
@@ -324,8 +323,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                 typeModel.add(model1);
                             }
                         }
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                                Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);

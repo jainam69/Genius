@@ -67,9 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         forgot_password = findViewById(R.id.forgot_password);
         financial_year = findViewById(R.id.financial_year);
 
-        GetFinancialYear();
-        GetAllFinancialYear();
-
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
             @Override
             public void onComplete(@NonNull Task<String> task) {
@@ -96,8 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please enter Password", Toast.LENGTH_LONG).show();
                 } else if (mobile_no.getText().toString().length() == 0 && password.getText().toString().length() > 0) {
                     Toast.makeText(getApplicationContext(), "Please enter User Name", Toast.LENGTH_LONG).show();
-                }else if (financial_year.getSelectedItemId() == 0){
-                    Toast.makeText(context, "Please select Financial Year.", Toast.LENGTH_SHORT).show();
                 }else if (mobile_no.getText().toString().length() > 0 && password.getText().toString().length() > 0) {
                     progressBarHelper.showProgressDialog();
                     Call<UserModel.UserData> call = apiCalling.ValidateUser(mobile_no.getText().toString(), password.getText().toString(),"");

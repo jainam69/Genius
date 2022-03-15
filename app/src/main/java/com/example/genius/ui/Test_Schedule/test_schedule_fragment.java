@@ -385,8 +385,7 @@ public class test_schedule_fragment extends Fragment {
                     BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
                     BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
                     BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(Long.parseLong(SubjectId));
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     TestScheduleModel testScheduleModel = new TestScheduleModel("Demo", branchModel,Integer.parseInt(BatchId), BatchTime,
                             Double.parseDouble(marks.getText().toString()), indate, start_time.getText().toString(), end_time.getText().toString(),
@@ -462,8 +461,7 @@ public class test_schedule_fragment extends Fragment {
                     BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
                     BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
                     BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(Long.parseLong(SubjectId));
-                    TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0,
-                            Preferences.getInstance(context).getString(Preferences.KEY_FINANCIAL_YEAR));
+                    TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     TestScheduleModel testScheduleModel = new TestScheduleModel(Long.parseLong(id.getText().toString()), "Demo", branchModel, Integer.parseInt(BatchId), BatchTime,
                             Double.parseDouble(marks.getText().toString()), indate, start_time.getText().toString(), end_time.getText().toString(),
