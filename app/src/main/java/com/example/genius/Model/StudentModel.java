@@ -35,6 +35,32 @@ public class StudentModel {
     BranchClassSingleModel.BranchClassData BranchClass;
     String Final_Year;
 
+    public StudentModel(long studentID, String firstName, String middleName, String lastName, String DOB, String admissionDate, String address, int lastYearResult, String grade, String lastYearClassName, String contactNo, SchoolModel schoolInfo, BranchModel branchInfo, TransactionModel transaction, RowStatusModel rowStatus, BatchModel batchInfo, StudentMaintModel studentMaint, String fileName, String filePath, String studentPassword, BranchCourseModel.BranchCourceData branchCourse, BranchClassSingleModel.BranchClassData branchClass,int schoolTime) {
+        StudentID = studentID;
+        FirstName = firstName;
+        MiddleName = middleName;
+        LastName = lastName;
+        this.DOB = DOB;
+        AdmissionDate = admissionDate;
+        Address = address;
+        LastYearResult = lastYearResult;
+        Grade = grade;
+        LastYearClassName = lastYearClassName;
+        ContactNo = contactNo;
+        SchoolInfo = schoolInfo;
+        BranchInfo = branchInfo;
+        Transaction = transaction;
+        RowStatus = rowStatus;
+        BatchInfo = batchInfo;
+        StudentMaint = studentMaint;
+        FileName = fileName;
+        FilePath = filePath;
+        StudentPassword = studentPassword;
+        BranchCourse = branchCourse;
+        BranchClass = branchClass;
+        SchoolTime = schoolTime;
+    }
+
     public String getFinal_Year() {
         return Final_Year;
     }
@@ -77,53 +103,6 @@ public class StudentModel {
 
     public StudentModel(long studentID) {
         StudentID = studentID;
-    }
-
-    public StudentModel(long studentID, String grNo, String firstName, String middleName, String lastName, String DOB, String admissionDate, String address, int schoolTime, int lastYearResult, String grade, String lastYearClassName, String contactNo, String studImage, StandardModel standardInfo, SchoolModel schoolInfo, BranchModel branchInfo, TransactionModel transaction, RowStatusModel rowStatus, BatchModel batchInfo, StudentMaintModel studentMaint) {
-        StudentID = studentID;
-        GrNo = grNo;
-        FirstName = firstName;
-        MiddleName = middleName;
-        LastName = lastName;
-        this.DOB = DOB;
-        AdmissionDate = admissionDate;
-        Address = address;
-        SchoolTime = schoolTime;
-        LastYearResult = lastYearResult;
-        Grade = grade;
-        LastYearClassName = lastYearClassName;
-        ContactNo = contactNo;
-        StudImage = studImage;
-        StandardInfo = standardInfo;
-        SchoolInfo = schoolInfo;
-        BranchInfo = branchInfo;
-        Transaction = transaction;
-        RowStatus = rowStatus;
-        BatchInfo = batchInfo;
-        StudentMaint = studentMaint;
-    }
-
-    public StudentModel(String grNo, String firstName, String middleName, String lastName, String DOB, String admissionDate, String address, int schoolTime, int lastYearResult, String grade, String lastYearClassName, String contactNo, String studImage, StandardModel standardInfo, SchoolModel schoolInfo, BranchModel branchInfo, TransactionModel transaction, RowStatusModel rowStatus, BatchModel batchInfo, StudentMaintModel studentMaint) {
-        GrNo = grNo;
-        FirstName = firstName;
-        MiddleName = middleName;
-        LastName = lastName;
-        this.DOB = DOB;
-        AdmissionDate = admissionDate;
-        Address = address;
-        SchoolTime = schoolTime;
-        LastYearResult = lastYearResult;
-        Grade = grade;
-        LastYearClassName = lastYearClassName;
-        ContactNo = contactNo;
-        StudImage = studImage;
-        StandardInfo = standardInfo;
-        SchoolInfo = schoolInfo;
-        BranchInfo = branchInfo;
-        Transaction = transaction;
-        RowStatus = rowStatus;
-        BatchInfo = batchInfo;
-        StudentMaint = studentMaint;
     }
 
     public StudentModel() {
@@ -330,6 +309,7 @@ public class StudentModel {
     }
 
     public static class StudentMaintModel {
+
         public long StudentID;
         public String ParentName;
         public String FatherOccupation;
@@ -342,20 +322,13 @@ public class StudentModel {
         public StudentMaintModel() {
         }
 
-        public StudentMaintModel(String parentName, String fatherOccupation, String motherOccupation, String contactNo) {
-            ParentName = parentName;
-            FatherOccupation = fatherOccupation;
-            MotherOccupation = motherOccupation;
-            ContactNo = contactNo;
-        }
-
-        public StudentMaintModel(long studentID, String parentName, String fatherOccupation, String motherOccupation, String contactNo, long parentID) {
-            StudentID = studentID;
+        public StudentMaintModel(String parentName, String fatherOccupation, String motherOccupation, String contactNo, long parentID, String parentPassword) {
             ParentName = parentName;
             FatherOccupation = fatherOccupation;
             MotherOccupation = motherOccupation;
             ContactNo = contactNo;
             ParentID = parentID;
+            ParentPassword = parentPassword;
         }
 
         public String getParentPassword() {

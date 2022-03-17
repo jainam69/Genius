@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.net.PortUnreachableException;
 import java.util.List;
 
-public class FacultyModel implements Serializable {
+public class FacultyModel{
 
     long FacultyID;
     UserModel user;
@@ -20,6 +20,32 @@ public class FacultyModel implements Serializable {
     BranchSubjectModel.BranchSubjectData branchSubject;
     BranchCourseModel.BranchCourceData BranchCourse;
     BranchClassSingleModel.BranchClassData BranchClass;
+
+    public FacultyModel(long facultyID, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, StaffModel staff, String descripation, BranchSubjectModel.BranchSubjectData branchSubject, BranchCourseModel.BranchCourceData branchCourse, BranchClassSingleModel.BranchClassData branchClass) {
+        FacultyID = facultyID;
+        Transaction = transaction;
+        RowStatus = rowStatus;
+        BranchInfo = branchInfo;
+        this.staff = staff;
+        Descripation = descripation;
+        this.branchSubject = branchSubject;
+        BranchCourse = branchCourse;
+        BranchClass = branchClass;
+    }
+
+    public FacultyModel(long facultyID, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, StaffModel staff, String descripation, String facultyContentFileName, String filePath, BranchSubjectModel.BranchSubjectData branchSubject, BranchCourseModel.BranchCourceData branchCourse, BranchClassSingleModel.BranchClassData branchClass) {
+        FacultyID = facultyID;
+        Transaction = transaction;
+        RowStatus = rowStatus;
+        BranchInfo = branchInfo;
+        this.staff = staff;
+        Descripation = descripation;
+        FacultyContentFileName = facultyContentFileName;
+        FilePath = filePath;
+        this.branchSubject = branchSubject;
+        BranchCourse = branchCourse;
+        BranchClass = branchClass;
+    }
 
     public long getFacultyID() {
         return FacultyID;

@@ -23,7 +23,11 @@ public class StaffModel {
     public StaffModel() {
     }
 
-    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid,String password) {
+    public StaffModel(long staffID) {
+        StaffID = staffID;
+    }
+
+    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid, String password) {
         StaffID = staffID;
         Name = name;
         Education = education;

@@ -44,9 +44,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
+import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.ToDoByIdData;
 import com.example.genius.Model.TodoData;
 import com.example.genius.Model.TodoModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
 import com.example.genius.helper.FileUtils;
@@ -95,23 +97,18 @@ public class TaskFragment extends Fragment {
     Context context;
     EditText date_task, edt_taskDescription;
     TextView attachment, text, id, photo, no_content, todoid, transactionid;
-    SearchableSpinner branch, user;
+    SearchableSpinner branch, user,status;
     Button save_task, edit_task;
     RecyclerView task_rv;
-    SearchableSpinner status;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    List<String> useritem = new ArrayList<>();
+    List<String> useritem = new ArrayList<>(),statusitem = new ArrayList<>();
     List<Integer> userid = new ArrayList<>();
-    String[] USERITEM;
+    String[] USERITEM,STATUSITEM;
     Integer[] USERID;
-    String BranchID, UserName, UserId;
+    String BranchID, UserName, UserId,date,OriginFileName,FilePath,StatusName = "Pending";
     int flag = 0;
-    List<String> statusitem = new ArrayList<>();
-    String[] STATUSITEM;
-    String StatusName = "Pending",Description = "none";
     NestedScrollView scroll;
-    String attach, date, filename ,Extension,FinalFileName,OriginFileName,RandomFileName;
     int userid1 = 0;
     private int year;
     private int month;
@@ -173,14 +170,16 @@ public class TaskFragment extends Fragment {
                     Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
-                    if(!edt_taskDescription.getText().toString().isEmpty()){
-                        Description = encodeDecode(edt_taskDescription.getText().toString());
-                    }
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    UserModel usermodel = new UserModel(Long.parseLong(UserId));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    TodoModel model = new TodoModel(0,date,branch,usermodel,edt_taskDescription.getText().toString(),
+                            OriginFileName,rowStatusModel,transactionModel,FilePath);
+                    String data = new Gson().toJson(model);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                    Call<TodoModel.TodoData1> call = apiCalling.ToDoMaintenance(0,date,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(UserId),
-                            Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0
-                            , "0", "0",true,uploadfile);
+                    Call<TodoModel.TodoData1> call = apiCalling.ToDoMaintenance(data,true,uploadfile);
                     call.enqueue(new Callback<TodoModel.TodoData1>() {
                         @Override
                         public void onResponse(@NotNull Call<TodoModel.TodoData1> call, @NotNull Response<TodoModel.TodoData1> response) {
@@ -193,9 +192,6 @@ public class TaskFragment extends Fragment {
                                         edt_taskDescription.setText("");
                                         date_task.setText("");
                                         attachment.setText("");
-                                        filename = "";
-                                        attach = "";
-                                        branch.setSelection(0);
                                         user.setSelection(0);
                                         GetAllTask();
                                     }
@@ -225,23 +221,22 @@ public class TaskFragment extends Fragment {
                     Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
-                    if(!edt_taskDescription.getText().toString().isEmpty()){
-                        Description = encodeDecode(edt_taskDescription.getText().toString());
-                    }
                     Call<TodoModel.TodoData1> call;
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    UserModel usermodel = new UserModel(Long.parseLong(UserId));
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    TodoModel model = new TodoModel(Long.parseLong(todoid.getText().toString()),date,branch,usermodel,edt_taskDescription.getText().toString(),
+                            OriginFileName,rowStatusModel,transactionModel,FilePath);
+                    String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        call = apiCalling.ToDoMaintenance(Long.parseLong(todoid.getText().toString()),date,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(UserId),
-                                Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
-                                , "0", "0",true,uploadfile);
+                        call = apiCalling.ToDoMaintenance(data,true,uploadfile);
                     }else {
-                        FinalFileName = OriginFileName + "," + RandomFileName;
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                        call = apiCalling.ToDoMaintenance(Long.parseLong(todoid.getText().toString()),date, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),Long.parseLong(UserId),
-                                Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
-                                , FinalFileName, Extension, false, uploadfile);
+                        call = apiCalling.ToDoMaintenance(data,false, uploadfile);
                     }
                     call.enqueue(new Callback<TodoModel.TodoData1>() {
                         @Override
@@ -255,10 +250,7 @@ public class TaskFragment extends Fragment {
                                         edt_taskDescription.setText("");
                                         date_task.setText("");
                                         attachment.setText("");
-                                        filename = "";
-                                        attach = "";
                                         userid1 = 0;
-                                        branch.setSelection(0);
                                         user.setSelection(0);
                                         GetAllTask();
                                     }
@@ -479,7 +471,6 @@ public class TaskFragment extends Fragment {
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
                     attachment.setText("Attached");
                     attachment.setTextColor(context.getResources().getColor(R.color.black));
-                    filename = instrumentFileDestination.getName();
                 } catch (Exception e) {
                     errored();
                 }
@@ -624,16 +615,11 @@ public class TaskFragment extends Fragment {
                                             userid1 = userid.indexOf(az);
                                             user.setSelection(userid1);
                                         }
-                                        if (todoModels.get(position).getFilePath().contains(".") && todoModels.get(position).getFilePath().contains("/")) {
-                                            Extension = todoModels.get(position).getFilePath().substring(todoModels.get(position).getFilePath().lastIndexOf(".") + 1);
-                                            String FileNameWithExtension = todoModels.get(position).getFilePath().substring(todoModels.get(position).getFilePath().lastIndexOf("/") + 1);
-                                            String[] FileNameArray = FileNameWithExtension.split("\\.");
-                                            RandomFileName = FileNameArray[0];
-                                        }
                                         transactionid.setText("" + todoModels.get(position).getTransaction().getTransactionId());
                                         todoid.setText("" + todoModels.get(position).getToDoID());
                                         edt_taskDescription.setText("" + todoModels.get(position).getToDoDescription());
                                         attachment.setText("Attached");
+                                        FilePath = todoModels.get(position).getFilePath().replace("https://mastermind.org.in","");
                                         OriginFileName = todoModels.get(position).getToDoFileName();
                                         attachment.setTextColor(context.getResources().getColor(R.color.black));
                                         String a = todoModels.get(position).getToDoDate().replace("T00:00:00", "");

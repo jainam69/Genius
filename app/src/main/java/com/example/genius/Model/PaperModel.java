@@ -16,29 +16,17 @@ public class PaperModel {
     BranchClassSingleModel.BranchClassData BranchClass;
     BranchSubjectModel.BranchSubjectData BranchSubject;
 
-    public PaperModel(long paperID, BranchModel branch, StandardModel standard, SubjectModel subject, int batchTypeID, String batchTypeText, String remarks, RowStatusModel rowStatus, TransactionModel transaction, com.example.genius.Model.PaperData paperData) {
+    public PaperModel(long paperID, BranchModel branch, int batchTypeID, String remarks, RowStatusModel rowStatus, TransactionModel transaction, com.example.genius.Model.PaperData paperData, BranchCourseModel.BranchCourceData branchCourse, BranchClassSingleModel.BranchClassData branchClass, BranchSubjectModel.BranchSubjectData branchSubject) {
         PaperID = paperID;
         Branch = branch;
-        Standard = standard;
-        Subject = subject;
         BatchTypeID = batchTypeID;
-        BatchTypeText = batchTypeText;
         Remarks = remarks;
         RowStatus = rowStatus;
         Transaction = transaction;
         PaperData = paperData;
-    }
-
-    public PaperModel(BranchModel branch, StandardModel standard, SubjectModel subject, int batchTypeID, String batchTypeText, String remarks, RowStatusModel rowStatus, TransactionModel transaction, PaperData paperData) {
-        Branch = branch;
-        Standard = standard;
-        Subject = subject;
-        BatchTypeID = batchTypeID;
-        BatchTypeText = batchTypeText;
-        Remarks = remarks;
-        RowStatus = rowStatus;
-        Transaction = transaction;
-        PaperData = paperData;
+        BranchCourse = branchCourse;
+        BranchClass = branchClass;
+        BranchSubject = branchSubject;
     }
 
     public BranchCourseModel.BranchCourceData getBranchCourse() {

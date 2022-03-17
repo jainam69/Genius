@@ -103,7 +103,7 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
                 btn_edit_yes.setOnClickListener(v12 -> {
                     faculty_fragment orderplace = new faculty_fragment();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("FACULTY_LIST", facultyModelList.get(position));
+                    bundle.putString("FACULTY_LIST", new Gson().toJson(facultyModelList.get(position)));
                     orderplace.setArguments(bundle);
                     FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();

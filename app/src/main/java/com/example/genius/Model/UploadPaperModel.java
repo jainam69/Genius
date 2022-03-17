@@ -18,6 +18,18 @@ public class UploadPaperModel {
     RowStatusModel RowStatus;
     TransactionModel Transaction;
 
+    public UploadPaperModel(long testPaperID, long testID, int paperTypeID, String fileName, String filePath, String docLink, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
+        TestPaperID = testPaperID;
+        TestID = testID;
+        PaperTypeID = paperTypeID;
+        FileName = fileName;
+        FilePath = filePath;
+        DocLink = docLink;
+        Remarks = remarks;
+        RowStatus = rowStatus;
+        Transaction = transaction;
+    }
+
     public String getFilePath() {
         return FilePath;
     }
@@ -155,6 +167,15 @@ public class UploadPaperModel {
 
         boolean Completed;
         UploadPaperModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

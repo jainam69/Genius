@@ -12,16 +12,10 @@ public class PaperData {
     boolean Completed;
     List<PaperModel> Data;
 
-    public PaperData(long uniqueID, long paperID, String paperPath, String paperContentText) {
+    public PaperData(long uniqueID, String paperPath, String filePath) {
         UniqueID = uniqueID;
-        PaperID = paperID;
         PaperPath = paperPath;
-        PaperContentText = paperContentText;
-    }
-
-    public PaperData(String paperPath, String paperContentText) {
-        PaperPath = paperPath;
-        PaperContentText = paperContentText;
+        FilePath = filePath;
     }
 
     public String getFilePath() {

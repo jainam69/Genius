@@ -12,14 +12,6 @@ public class TransactionModel implements Serializable {
     String LastUpdateBy;
     long LastUpdateId;
 
-    public TransactionModel(long transactionId, String createdBy, long createdId, String lastUpdateBy, long lastUpdateId) {
-        TransactionId = transactionId;
-        CreatedBy = createdBy;
-        CreatedId = createdId;
-        LastUpdateBy = lastUpdateBy;
-        LastUpdateId = lastUpdateId;
-    }
-
     public TransactionModel() {
     }
 

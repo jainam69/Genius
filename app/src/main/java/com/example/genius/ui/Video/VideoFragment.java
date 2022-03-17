@@ -40,9 +40,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
+import com.example.genius.Model.RowStatusModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -92,7 +95,7 @@ public class VideoFragment extends Fragment {
     NestedScrollView video_scroll;
     String videoData;
     ByteArrayOutputStream byteBuffer;
-    String Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
+    String OriginFileName,FilePath;
     VideoMaster_Adapter videoMaster_adapter;
     UserModel userpermission;
     LinearLayout linear_create_video;
@@ -140,14 +143,15 @@ public class VideoFragment extends Fragment {
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    if (!video_description.getText().toString().isEmpty()){
-                        Description = encodeDecode(video_description.getText().toString());
-                    }
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    GalleryModel model = new GalleryModel(0,branch,video_description.getText().toString(),
+                            rowStatusModel,transactionModel,2,FilePath,OriginFileName);
+                    String data = new Gson().toJson(model);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                    Call<GalleryModel.GallaryData1> call = apiCalling.GalleryImageMaintenance(0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Description
-                            , 2, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0
-                            , "0", "0",true,uploadfile);
+                    Call<GalleryModel.GallaryData1> call = apiCalling.GalleryImageMaintenance(data,true,uploadfile);
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
@@ -188,23 +192,21 @@ public class VideoFragment extends Fragment {
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
                 }else {
                     progressBarHelper.showProgressDialog();
-                    if (!video_description.getText().toString().isEmpty()){
-                        Description = encodeDecode(video_description.getText().toString());
-                    }
                     Call<GalleryModel.GallaryData1> call;
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    GalleryModel model = new GalleryModel(Long.parseLong(unique_id.getText().toString()),branch,video_description.getText().toString(),
+                            rowStatusModel,transactionModel,2,FilePath,OriginFileName);
+                    String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        call = apiCalling.GalleryImageMaintenance(Long.parseLong(unique_id.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Description
-                                , 2, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transaction_id.getText().toString())
-                                , "0", "0", true, uploadfile);
+                        call = apiCalling.GalleryImageMaintenance(data,true, uploadfile);
                     }else {
-                        FinalFileName = OriginFileName + "," + RandomFileName;
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                        call = apiCalling.GalleryImageMaintenance(Long.parseLong(unique_id.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Description
-                                , 2, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transaction_id.getText().toString())
-                                , FinalFileName, Extension, false, uploadfile);
+                        call = apiCalling.GalleryImageMaintenance(data, false, uploadfile);
                     }
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
@@ -289,7 +291,6 @@ public class VideoFragment extends Fragment {
             if (resultCode == RESULT_CANCELED) {
                 userCancelled();
             } else if (resultCode == RESULT_OK) {
-                Uri image = result.getData();
                 try {
                     flag = 1;
                     Uri uri = result.getData();
@@ -298,7 +299,7 @@ public class VideoFragment extends Fragment {
                         instrumentFileDestination = new File(Path);
                         attachment_video.setText("Attached");
                         attachment_video.setTextColor(context.getResources().getColor(R.color.black));
-                        Uri selectedVideoUri = result.getData();
+                        /*Uri selectedVideoUri = result.getData();
                         String[] projection = {MediaStore.Video.Media.DATA, MediaStore.Video.Media.SIZE, MediaStore.Video.Media.DURATION};
                         @SuppressLint("Recycle") Cursor cursor = context.getContentResolver().query(selectedVideoUri, projection, null, null, null);
                         cursor.moveToFirst();
@@ -323,7 +324,7 @@ public class VideoFragment extends Fragment {
                         }
                         System.out.println("converted!");
                         videoData = Base64.encodeToString(byteBuffer.toByteArray(), Base64.DEFAULT);
-                        Log.d("VideoData**>  ", videoData);
+                        Log.d("VideoData**>  ", videoData);*/
                     }
                 } catch (Exception e) {
                     errored();
@@ -431,16 +432,11 @@ public class VideoFragment extends Fragment {
                     dialog.dismiss();
                     save_video.setVisibility(View.GONE);
                     edit_video.setVisibility(View.VISIBLE);
-                    if (galleryDetails.get(position).getFilePath().contains(".") && galleryDetails.get(position).getFilePath().contains("/")) {
-                        Extension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf(".") + 1);
-                        String FileNameWithExtension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf("/") + 1);
-                        String[] FileNameArray = FileNameWithExtension.split("\\.");
-                        RandomFileName = FileNameArray[0];
-                    }
                     attachment_video.setText("Attached");
                     attachment_video.setTextColor(context.getResources().getColor(R.color.black));
                     video_description.setText(galleryDetails.get(position).getRemarks());
                     OriginFileName = galleryDetails.get(position).getFileName();
+                    FilePath = galleryDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
                     unique_id.setText("" + galleryDetails.get(position).getUniqueID());
                     transaction_id.setText("" + galleryDetails.get(position).getTransaction().getTransactionId());
                     video_scroll.fullScroll(View.FOCUS_UP);

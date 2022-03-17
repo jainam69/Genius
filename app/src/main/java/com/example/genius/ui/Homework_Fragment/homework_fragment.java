@@ -43,10 +43,12 @@ import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.HomeworkByIdData;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.Model.MarksModel;
+import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -54,6 +56,7 @@ import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -113,7 +116,7 @@ public class homework_fragment extends Fragment {
     Long StandardId,courseID,subjectID;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    String Description = "none", Extension, FinalFileName, OriginFileName, RandomFileName;
+    String FilePath, OriginFileName;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -161,15 +164,8 @@ public class homework_fragment extends Fragment {
             if (bundle.getString("FileName") != null) {
                 attachment_homework.setText("Attached");
                 attachment_homework.setTextColor(context.getResources().getColor(R.color.black));
-                if (bundle.getString("FilePath").contains(".") && bundle.getString("FilePath").contains("/")) {
-                    Extension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf(".") + 1);
-                    String FileNameWithExtension = bundle.getString("FilePath").substring(bundle.getString("FilePath").lastIndexOf("/") + 1);
-                    String[] FileNameArray = FileNameWithExtension.split("\\.");
-                    RandomFileName = FileNameArray[0];
-                }
-            }
-            if (bundle.containsKey("FileName")) {
                 OriginFileName = bundle.getString("FileName");
+                FilePath = bundle.getString("FilePath").replace("https://mastermind.org.in","");
             }
             if (bundle.containsKey("TransactionId")) {
                 transactionid.setText("" + bundle.getLong("TransactionId"));
@@ -185,6 +181,7 @@ public class homework_fragment extends Fragment {
 
         selectStandard();
         selectSubject();
+        selectbatch_time();
 
         attachment_homework.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -218,26 +215,24 @@ public class homework_fragment extends Fragment {
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    if (!remarks.getText().toString().isEmpty()) {
-                        Description = encodeDecode(remarks.getText().toString());
-                    }
                     Call<HomeworkModel.HomeworkData1> call;
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(StandardId);
+                    BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(subjectID);
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    HomeworkModel model = new HomeworkModel(0,branch,indate,Integer.parseInt(BatchId),remarks.getText().toString(),
+                            OriginFileName,transactionModel,rowStatusModel,FilePath,course,classmodel,subject);
+                    String data = new Gson().toJson(model);
                     if (instrumentFileDestination == null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", requestBody);
-                        call = apiCalling.HomeworkMaintenance(0
-                                , indate,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID
-                                , StandardId, subjectID, Integer.parseInt(BatchId), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , 0, "0", "0", false, uploadfile);
+                        call = apiCalling.HomeworkMaintenance(data,false, uploadfile);
                     } else {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        call = apiCalling.HomeworkMaintenance(0
-                                , indate, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID
-                                , StandardId, subjectID, Integer.parseInt(BatchId), Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , 0, "0", "0", true, uploadfile);
+                        call = apiCalling.HomeworkMaintenance(data,true, uploadfile);
                     }
                     call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
                         @Override
@@ -290,25 +285,20 @@ public class homework_fragment extends Fragment {
                 } else {
                     progressBarHelper.showProgressDialog();
                     Call<HomeworkModel.HomeworkData1> call;
-                    if (!remarks.getText().toString().isEmpty()) {
-                        Description = encodeDecode(remarks.getText().toString());
-                    }
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(StandardId);
+                    BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(subjectID);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    HomeworkModel model = new HomeworkModel(bundle.getLong("HomeworkID"),branch,indate,Integer.parseInt(BatchId),remarks.getText().toString(),
+                            OriginFileName,transactionModel,rowStatusModel,FilePath,course,classmodel,subject);
+                    String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
-                        call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
-                                , indate, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID
-                                , StandardId, subjectID, Integer.parseInt(BatchId)
-                                , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , Long.parseLong(transactionid.getText().toString()), "0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                        call = apiCalling.HomeworkMaintenance(data,true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
-                        FinalFileName = OriginFileName + "," + RandomFileName;
-                        call = apiCalling.HomeworkMaintenance(bundle.getLong("HomeworkID")
-                                , indate, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID
-                                , StandardId, subjectID, Integer.parseInt(BatchId)
-                                , Description, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , Long.parseLong(transactionid.getText().toString()), FinalFileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
+                        call = apiCalling.HomeworkMaintenance(data,false, MultipartBody.Part.createFormData("attachment", ""
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
                     call.enqueue(new Callback<HomeworkModel.HomeworkData1>() {
@@ -348,9 +338,6 @@ public class homework_fragment extends Fragment {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-        selectbatch_time();
 
         homework_date.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();

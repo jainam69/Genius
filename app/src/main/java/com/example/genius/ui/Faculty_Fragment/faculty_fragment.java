@@ -43,8 +43,12 @@ import com.example.genius.Model.BannerModel;
 import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
+import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.FacultyModel;
+import com.example.genius.Model.RowStatusModel;
+import com.example.genius.Model.StaffModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
@@ -55,6 +59,7 @@ import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
 import com.example.genius.ui.Student_Registration_Fragment.student_registration_Listfragment;
+import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
@@ -95,7 +100,7 @@ public class faculty_fragment extends Fragment {
     ImageView view_image;
     Bitmap bitmap;
     FacultyModel facultyModel;
-    String FinalFileName, OriginFileName, RandomFileName, Extension;
+    String OriginFileName,FilePath;
     long uniq_id = 0, transaction_id;
 
     @Override
@@ -121,17 +126,12 @@ public class faculty_fragment extends Fragment {
         {
             save_faculty.setVisibility(View.GONE);
             edit_faculty.setVisibility(View.VISIBLE);
-            facultyModel = (FacultyModel) bundle.getSerializable("FACULTY_LIST");
+            facultyModel = new Gson().fromJson(bundle.getString("FACULTY_LIST"),FacultyModel.class);
             attachment.setText("Attached");
             view_image.setVisibility(View.VISIBLE);
             Glide.with(context).load(facultyModel.getFilePath()).into(view_image);
             faculty_description.setText(facultyModel.getDescripation());
-            if (facultyModel.getFilePath().contains(".") && facultyModel.getFilePath().contains("/")) {
-                Extension = facultyModel.getFilePath().substring(facultyModel.getFilePath().lastIndexOf(".") + 1);
-                String FileNameWithExtension = facultyModel.getFilePath().substring(facultyModel.getFilePath().lastIndexOf("/") + 1);
-                String[] FileNameArray = FileNameWithExtension.split("\\.");
-                RandomFileName = FileNameArray[0];
-            }
+            FilePath = facultyModel.getFilePath().replace("https://mastermind.org.in","");
             OriginFileName = facultyModel.getFacultyContentFileName();
             uniq_id = facultyModel.getFacultyID();
             transaction_id = facultyModel.getTransaction().getTransactionId();
@@ -187,11 +187,19 @@ public class faculty_fragment extends Fragment {
                         Toast.makeText(context, "Please upload faculty image.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
+                        BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                        StaffModel staff = new StaffModel(faculty_id);
+                        BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(subject_id);
+                        BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(course_id);
+                        BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(class_id);
+                        TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                        RowStatusModel rowStatusModel = new RowStatusModel(1);
+                        FacultyModel model = new FacultyModel(0,transactionModel,rowStatusModel,branch,staff,
+                                faculty_description.getText().toString(),subject,course,classmodel);
+                        String data = new Gson().toJson(model);
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        Call<FacultyModel.FacultyModelData> call = apiCalling.Faculty_Maintanance(uniq_id,faculty_id,subject_id,course_id,class_id,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
-                                faculty_description.getText().toString().isEmpty() ? "none" : encodeDecode(faculty_description.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
-                                "0","0",true,uploadfile);
+                        Call<FacultyModel.FacultyModelData> call = apiCalling.Faculty_Maintanance(data,true,uploadfile);
                         call.enqueue(new Callback<FacultyModel.FacultyModelData>() {
                             @Override
                             public void onResponse(Call<FacultyModel.FacultyModelData> call, Response<FacultyModel.FacultyModelData> response) {
@@ -242,19 +250,27 @@ public class faculty_fragment extends Fragment {
                     }else {
                         progressBarHelper.showProgressDialog();
                         Call<FacultyModel.FacultyModelData> call;
-                        FinalFileName = OriginFileName + "," + RandomFileName;
+                        BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                        StaffModel staff = new StaffModel(faculty_id);
+                        BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(subject_id);
+                        BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(course_id);
+                        BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(class_id);
+                        TransactionModel transactionModel = new TransactionModel(transaction_id, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        RowStatusModel rowStatusModel = new RowStatusModel(1);
                         if (instrumentFileDestination != null){
+                            FacultyModel model = new FacultyModel(uniq_id,transactionModel,rowStatusModel,branch,staff,
+                                    faculty_description.getText().toString(),subject,course,classmodel);
+                            String data = new Gson().toJson(model);
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                            call = apiCalling.Faculty_Maintanance(uniq_id,faculty_id,subject_id,course_id,class_id,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
-                                    faculty_description.getText().toString().isEmpty() ? "none" : encodeDecode(faculty_description.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),transaction_id,
-                                    "0","0",true,uploadfile);
+                            call = apiCalling.Faculty_Maintanance(data,true,uploadfile);
                         }else {
+                            FacultyModel model = new FacultyModel(uniq_id,transactionModel,rowStatusModel,branch,staff,
+                                    faculty_description.getText().toString(),OriginFileName,FilePath,subject,course,classmodel);
+                            String data = new Gson().toJson(model);
                             RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                            call = apiCalling.Faculty_Maintanance(uniq_id,faculty_id,subject_id,course_id,class_id,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),
-                                    faculty_description.getText().toString().isEmpty() ? "none" : encodeDecode(faculty_description.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),transaction_id,
-                                    FinalFileName,Extension,false,uploadfile);
+                            call = apiCalling.Faculty_Maintanance(data,false,uploadfile);
                         }
                         call.enqueue(new Callback<FacultyModel.FacultyModelData>() {
                             @Override
@@ -325,14 +341,16 @@ public class faculty_fragment extends Fragment {
                 try {
                     Uri uri = result.getData();
                     String Path = FUtils.getPath(requireContext(), uri);
-                    instrumentFileDestination = new File(Path);
-                    InputStream imageStream;
-                    imageStream = requireActivity().getContentResolver().openInputStream(image);
-                    bitmap = BitmapFactory.decodeStream(imageStream);
-                    view_image.setVisibility(View.VISIBLE);
-                    view_image.setImageBitmap(bitmap);
-                    attachment.setText("Attached");
-                    attachment.setTextColor(context.getResources().getColor(R.color.black));
+                    if (Path != null){
+                        instrumentFileDestination = new File(Path);
+                        InputStream imageStream;
+                        imageStream = requireActivity().getContentResolver().openInputStream(image);
+                        bitmap = BitmapFactory.decodeStream(imageStream);
+                        view_image.setVisibility(View.VISIBLE);
+                        view_image.setImageBitmap(bitmap);
+                        attachment.setText("Attached");
+                        attachment.setTextColor(context.getResources().getColor(R.color.black));
+                    }
                 } catch (Exception e) {
                     errored();
                 }
@@ -442,7 +460,7 @@ public class faculty_fragment extends Fragment {
         courseid.clear();
         courseitem.add("Select Course");
         courseid.add(0);
-        Call<BranchCourseModel> call = apiCalling.Get_All_Branch_Course(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        Call<BranchCourseModel> call = apiCalling.GetAllCourseDDL(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<BranchCourseModel>() {
             @Override
             public void onResponse(Call<BranchCourseModel> call, Response<BranchCourseModel> response) {
@@ -594,7 +612,7 @@ public class faculty_fragment extends Fragment {
         subjectid.clear();
         subjectitem.add("Select Subject");
         subjectid.add(0);
-        Call<BranchSubjectModel> call = apiCalling.Get_All_Subject(class_id,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),course_id);
+        Call<BranchSubjectModel> call = apiCalling.Get_All_Subject_DDL(class_id,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),course_id);
         call.enqueue(new Callback<BranchSubjectModel>() {
             @Override
             public void onResponse(Call<BranchSubjectModel> call, Response<BranchSubjectModel> response) {
@@ -603,14 +621,11 @@ public class faculty_fragment extends Fragment {
                     if (data.isCompleted()){
                         List<BranchSubjectModel.BranchSubjectData> list = data.getData();
                         if (list != null && list.size() > 0){
-                            for (BranchSubjectModel.BranchSubjectData model : list){
-                                for (int i = 0; i < model.getBranchSubjectData().size(); i++){
-                                    String name = model.getBranchSubjectData().get(i).getSubject().getSubjectName();
-                                    subjectitem.add(name);
-
-                                    int id = Integer.parseInt(String.valueOf(model.getBranchSubjectData().get(i).getSubject_dtl_id()));
-                                    subjectid.add(id);
-                                }
+                            for (BranchSubjectModel.BranchSubjectData model : list) {
+                                String std = model.getSubject().getSubjectName();
+                                subjectitem.add(std);
+                                int stdid = (int) model.getSubject_dtl_id();
+                                subjectid.add(stdid);
                             }
                             SUBJECTITEM = new String[subjectitem.size()];
                             SUBJECTITEM = subjectitem.toArray(SUBJECTITEM);

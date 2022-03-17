@@ -45,9 +45,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.genius.API.ApiCalling;
+import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.GalleryData;
 import com.example.genius.Model.GalleryModel;
+import com.example.genius.Model.RowStatusModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -107,7 +110,7 @@ public class GalleryFragment extends Fragment {
     byte[] imageVal;
     Bitmap bitmap;
     GalleryMaster_Adapter galleryMaster_adapter;
-    String Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName;
+    String OriginFileName,FilePath;
     UserModel userpermission;
     LinearLayout linear_create_image;
 
@@ -172,14 +175,15 @@ public class GalleryFragment extends Fragment {
                     Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    if (!gallery_description.getText().toString().isEmpty()){
-                        Description = encodeDecode(gallery_description.getText().toString());
-                    }
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    GalleryModel model = new GalleryModel(0,branch,gallery_description.getText().toString(),
+                            rowStatusModel,transactionModel,1,FilePath,OriginFileName);
+                    String data = new Gson().toJson(model);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                    Call<GalleryModel.GallaryData1> call = apiCalling.GalleryImageMaintenance(0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Description
-                            , 1, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0
-                            , "0", "0",true,uploadfile);
+                    Call<GalleryModel.GallaryData1> call = apiCalling.GalleryImageMaintenance(data,true,uploadfile);
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
@@ -221,23 +225,21 @@ public class GalleryFragment extends Fragment {
                     Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                 }else {
                     progressBarHelper.showProgressDialog();
-                    if (!gallery_description.getText().toString().isEmpty()){
-                        Description = encodeDecode(gallery_description.getText().toString());
-                    }
                     Call<GalleryModel.GallaryData1> call;
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    GalleryModel model = new GalleryModel(Long.parseLong(bid.getText().toString()),branch,gallery_description.getText().toString(),
+                            rowStatusModel,transactionModel,1,FilePath,OriginFileName);
+                    String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        call = apiCalling.GalleryImageMaintenance(Long.parseLong(bid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Description
-                                , 1, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
-                                , "0", "0", true, uploadfile);
+                        call = apiCalling.GalleryImageMaintenance(data,true, uploadfile);
                     } else {
-                        FinalFileName = OriginFileName + "," + RandomFileName;
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                        call = apiCalling.GalleryImageMaintenance(Long.parseLong(bid.getText().toString()), Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), Description
-                                , 1, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Long.parseLong(transactionid.getText().toString())
-                                , FinalFileName, Extension, false, uploadfile);
+                        call = apiCalling.GalleryImageMaintenance(data,false, uploadfile);
                     }
                     call.enqueue(new Callback<GalleryModel.GallaryData1>() {
                         @Override
@@ -641,16 +643,11 @@ public class GalleryFragment extends Fragment {
                     dialog.dismiss();
                     save_gallery.setVisibility(View.GONE);
                     edit_gallery.setVisibility(View.VISIBLE);
-                    if (galleryDetails.get(position).getFilePath().contains(".") && galleryDetails.get(position).getFilePath().contains("/")) {
-                        Extension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf(".") + 1);
-                        String FileNameWithExtension = galleryDetails.get(position).getFilePath().substring(galleryDetails.get(position).getFilePath().lastIndexOf("/") + 1);
-                        String[] FileNameArray = FileNameWithExtension.split("\\.");
-                        RandomFileName = FileNameArray[0];
-                    }
                     imageView.setVisibility(View.VISIBLE);
                     Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(imageView);
                     attachment_gallery.setText("Attached");
                     OriginFileName = galleryDetails.get(position).getFileName();
+                    FilePath = galleryDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
                     attachment_gallery.setTextColor(context.getResources().getColor(R.color.black));
                     gallery_description.setText(galleryDetails.get(position).getRemarks());
                     bid.setText("" + galleryDetails.get(position).getUniqueID());

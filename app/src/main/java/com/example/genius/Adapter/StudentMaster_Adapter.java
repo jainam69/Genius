@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -54,13 +55,13 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StudentMaster_Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StudentMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 8 && !model.getPackageRightinfo().isCreatestatus()){
                 holder.student_edit.setVisibility(View.GONE);
             }
         }
-        holder.student_name.setText(studentDetails.get(position).getFirstName());
+        holder.student_name.setText(studentDetails.get(position).getFirstName() + " " + studentDetails.get(position).getLastName());
         if (studentDetails.get(position).getAdmissionDate() != null) {
             String a = studentDetails.get(position).getAdmissionDate().replace("T00:00:00", "");
             try {
@@ -109,36 +110,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
                         dialog.dismiss();
                         student_registration_fragment orderplace = new student_registration_fragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString("Address", studentDetails.get(position).getAddress());
-                        if (studentDetails.get(position).getAdmissionDate() != null)
-                            bundle.putString("AdmissionDate", studentDetails.get(position).getAdmissionDate().replace("T00:00:00", ""));
-                        bundle.putString("BatchTime", studentDetails.get(position).getBatchInfo().getBatchType());
-                        if (studentDetails.get(position).getDOB() != null)
-                            bundle.putString("BirthDate", studentDetails.get(position).getDOB().replace("T00:00:00", ""));
-                        bundle.putLong("Branch_ID", studentDetails.get(position).getBranchInfo().getBranchID());
-                        bundle.putString("ClassName", studentDetails.get(position).getLastYearClassName());
-                        bundle.putString("ContactNo", studentDetails.get(position).getContactNo());
-                        bundle.putString("FatherOccupation", studentDetails.get(position).getStudentMaint().getFatherOccupation());
-                        bundle.putString("FirstName", studentDetails.get(position).getFirstName());
-                        bundle.putString("LastName", studentDetails.get(position).getLastName());
-                        bundle.putString("MiddleName", studentDetails.get(position).getMiddleName());
-                        bundle.putString("MotherOccupation", studentDetails.get(position).getStudentMaint().getMotherOccupation());
-                        bundle.putString("ParentContactNo", studentDetails.get(position).getStudentMaint().getContactNo());
-                        bundle.putString("ParentName", studentDetails.get(position).getStudentMaint().getParentName());
-                        bundle.putLong("ParentID", studentDetails.get(position).getStudentMaint().getParentID());
-                        bundle.putLong("TransactionID", studentDetails.get(position).getTransaction().getTransactionId());
-                        bundle.putLong("SchoolName", studentDetails.get(position).getSchoolInfo().getSchoolID());
-                        bundle.putInt("SchoolTime", studentDetails.get(position).getSchoolTime());
-                        bundle.putLong("Course", studentDetails.get(position).getBranchCourse().getCourse_dtl_id());
-                        bundle.putLong("Standard", studentDetails.get(position).getBranchClass().getClass_dtl_id());
-                        bundle.putInt("Status", studentDetails.get(position).getRowStatus().getRowStatusId());
-                        bundle.putLong("StudentID", studentDetails.get(position).getStudentID());
-                        bundle.putString("Grade", studentDetails.get(position).getGrade());
-                        bundle.putInt("LastYearResult", studentDetails.get(position).getLastYearResult());
-                        bundle.putString("FileName", studentDetails.get(position).getFileName());
-                        bundle.putString("FilePath", studentDetails.get(position).getFilePath());
-                        bundle.putString("STUDENT_PASSWORD", studentDetails.get(position).getStudentPassword());
-                        bundle.putString("PARENT_PASSWORD", studentDetails.get(position).getStudentPassword2());
+                        bundle.putString("STUDENT_DATA", new Gson().toJson(studentDetails.get(position)));
                         orderplace.setArguments(bundle);
                         FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                         FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();

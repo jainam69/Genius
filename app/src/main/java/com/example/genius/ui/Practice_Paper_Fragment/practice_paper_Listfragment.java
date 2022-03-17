@@ -96,7 +96,7 @@ public class practice_paper_Listfragment extends Fragment {
     Integer[] STANDARDID, SUBJECTID, COURESID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String BatchTime, BranchID, BatchId, SubjectId;
+    String BatchTime, BranchID, BatchId, SubjectId,OriginFileName,stdname = "",subname = "",FilePath;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
@@ -104,7 +104,6 @@ public class practice_paper_Listfragment extends Fragment {
     Long StandardId,courseID;
     OnBackPressedCallback callback;
     NestedScrollView paper_scroll;
-    String attach = "", path = "",Description = "none", Extension,FinalFileName,OriginFileName,RandomFileName,stdname = "",subname = "";
     EditText remarks;
     UserModel userpermission;
 
@@ -143,7 +142,7 @@ public class practice_paper_Listfragment extends Fragment {
             }
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllCourse();
             selectbatch_time();
@@ -169,14 +168,19 @@ public class practice_paper_Listfragment extends Fragment {
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    if (!remarks.getText().toString().isEmpty()){
-                        Description = encodeDecode(remarks.getText().toString());
-                    }
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(StandardId);
+                    BranchSubjectModel.BranchSubjectData branchsubject = new BranchSubjectModel.BranchSubjectData(Long.parseLong(SubjectId));
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    PaperData paperData = new PaperData(0,OriginFileName,FilePath);
+                    PaperModel model = new PaperModel(0,branch,Integer.parseInt(BatchId),remarks.getText().toString(),rowStatusModel,transactionModel,
+                            paperData,course,classmodel,branchsubject);
+                    String data = new Gson().toJson(model);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                     MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                    Call<PaperModel.PaperData1> call = apiCalling.PaperMaintenance(0,0,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID,StandardId,
-                            Long.parseLong(SubjectId),Integer.parseInt(BatchId),Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
-                            "0","0",true,uploadfile);
+                    Call<PaperModel.PaperData1> call = apiCalling.PaperMaintenance(data,true,uploadfile);
                     call.enqueue(new Callback<PaperModel.PaperData1>() {
                         @Override
                         public void onResponse(@NotNull Call<PaperModel.PaperData1> call, @NotNull Response<PaperModel.PaperData1> response) {
@@ -189,7 +193,6 @@ public class practice_paper_Listfragment extends Fragment {
                                         GetPracticePaperDetails();
                                         course_name.setSelection(0);
                                         subject.setSelection(0);
-                                        branch.setSelection(0);
                                         standard.setSelection(0);
                                         batch_time.setSelection(0);
                                         attach_paper.setText("");
@@ -216,7 +219,7 @@ public class practice_paper_Listfragment extends Fragment {
         });
 
         edit_practice_paper.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (standard.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
                 } else if (subject.getSelectedItemId() == 0) {
@@ -227,23 +230,25 @@ public class practice_paper_Listfragment extends Fragment {
                     Toast.makeText(context, "Please Upload Practice Paper.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    if (!remarks.getText().toString().isEmpty()){
-                        Description = encodeDecode(remarks.getText().toString());
-                    }
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(StandardId);
+                    BranchSubjectModel.BranchSubjectData branchsubject = new BranchSubjectModel.BranchSubjectData(Long.parseLong(SubjectId));
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    PaperData paperData = new PaperData(Long.parseLong(uniq_id.getText().toString()),OriginFileName,FilePath);
+                    PaperModel model = new PaperModel(Long.parseLong(paper_id.getText().toString()),branch,Integer.parseInt(BatchId),remarks.getText().toString(),rowStatusModel,transactionModel,
+                            paperData,course,classmodel,branchsubject);
+                    String data = new Gson().toJson(model);
                     Call<PaperModel.PaperData1> call;
                     if (instrumentFileDestination != null) {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                        call = apiCalling.PaperMaintenance(Long.parseLong(paper_id.getText().toString()),Long.parseLong(uniq_id.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID,StandardId,
-                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
-                                "0","0",true,uploadfile);
+                        call = apiCalling.PaperMaintenance(data,true,uploadfile);
                     }else {
-                        FinalFileName = OriginFileName + "," + RandomFileName;
                         RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
-                        call = apiCalling.PaperMaintenance(Long.parseLong(paper_id.getText().toString()),Long.parseLong(uniq_id.getText().toString()),Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID),courseID,StandardId,
-                                Long.parseLong(SubjectId),Integer.parseInt(BatchId),Description,Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),0,
-                                FinalFileName,Extension,false,uploadfile);
+                        call = apiCalling.PaperMaintenance(data,false,uploadfile);
                     }
                     call.enqueue(new Callback<PaperModel.PaperData1>() {
                         @Override
@@ -259,7 +264,6 @@ public class practice_paper_Listfragment extends Fragment {
                                         subname = "";
                                         course_name.setSelection(0);
                                         subject.setSelection(0);
-                                        branch.setSelection(0);
                                         standard.setSelection(0);
                                         batch_time.setSelection(0);
                                         attach_paper.setText("");
@@ -306,13 +310,11 @@ public class practice_paper_Listfragment extends Fragment {
     }
 
     private void requestPermissionForAll() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean hasPermission = (ContextCompat.checkSelfPermission(context,
                     Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(context,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-
             if (!hasPermission) {
                 ActivityCompat.requestPermissions(requireActivity(),
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -348,8 +350,6 @@ public class practice_paper_Listfragment extends Fragment {
                     }
                     attach_paper.setText("Attached");
                     attach_paper.setTextColor(context.getResources().getColor(R.color.black));
-                    path = instrumentFileDestination.getName();
-                    attach = encodeFileToBase64Binary(instrumentFileDestination);
                 } catch (Exception e) {
                     errored();
                 }
@@ -357,23 +357,6 @@ public class practice_paper_Listfragment extends Fragment {
                 errored();
             }
         }
-    }
-
-    private String encodeFileToBase64Binary(File yourFile) {
-        int size = (int) yourFile.length();
-        byte[] bytes = new byte[size];
-        String encoded = "";
-        try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        encoded = Base64.encodeToString(bytes, Base64.DEFAULT);
-        return encoded;
     }
 
     public void userCancelled() {
@@ -775,21 +758,14 @@ public class practice_paper_Listfragment extends Fragment {
                                         subname = paperModels.get(position).getBranchSubject().getSubject().getSubjectName();
                                         int de = batchid.indexOf(String.valueOf(paperModels.get(position).getBatchTypeID()));
                                         batch_time.setSelection(de);
-                                        attach = paperModelList.getPaperData().getPaperContentText();
-                                        path = paperModels.get(position).getPaperData().getPaperPath();
+                                        FilePath = paperModelList.getPaperData().getFilePath().replace("https://mastermind.org.in","");
+                                        OriginFileName = paperModels.get(position).getPaperData().getPaperPath();
                                         attach_paper.setText("Attached");
-                                        if (paperModels.get(position).getPaperData().getFilePath().contains(".") && paperModels.get(position).getPaperData().getFilePath().contains("/")) {
-                                            Extension = paperModels.get(position).getPaperData().getFilePath().substring(paperModels.get(position).getPaperData().getFilePath().lastIndexOf(".") + 1);
-                                            String FileNameWithExtension = paperModels.get(position).getPaperData().getFilePath().substring(paperModels.get(position).getPaperData().getFilePath().lastIndexOf("/") + 1);
-                                            String[] FileNameArray = FileNameWithExtension.split("\\.");
-                                            RandomFileName = FileNameArray[0];
-                                        }
                                         attach_paper.setTextColor(context.getResources().getColor(R.color.black));
                                         uniq_id.setText("" + paperModels.get(position).getPaperData().getUniqueID());
                                         paper_id.setText("" + paperModels.get(position).getPaperID());
                                         id.setText("" + paperModels.get(position).getTransaction().getTransactionId());
                                         remarks.setText(paperModels.get(position).getRemarks());
-                                        OriginFileName = paperModels.get(position).getPaperData().getPaperPath();
                                         paper_scroll.scrollTo(0, 0);
                                         paper_scroll.fullScroll(View.FOCUS_UP);
                                     }

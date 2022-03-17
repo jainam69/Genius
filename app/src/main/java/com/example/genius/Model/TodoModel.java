@@ -15,6 +15,18 @@ public class TodoModel {
      TransactionModel Transaction;
      String FilePath;
 
+    public TodoModel(long toDoID, String toDoDate, BranchModel branchInfo, UserModel userInfo, String toDoDescription, String toDoFileName, RowStatusModel rowStatus, TransactionModel transaction, String filePath) {
+        ToDoID = toDoID;
+        ToDoDate = toDoDate;
+        BranchInfo = branchInfo;
+        UserInfo = userInfo;
+        ToDoDescription = toDoDescription;
+        ToDoFileName = toDoFileName;
+        RowStatus = rowStatus;
+        Transaction = transaction;
+        FilePath = filePath;
+    }
+
     public String getFilePath() {
         return FilePath;
     }

@@ -49,12 +49,15 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.BranchClassModel;
 import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchCourseModel;
+import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.FeeStructureData;
 import com.example.genius.Model.FeeStructureModel;
 import com.example.genius.Model.FeeStructureSingleData;
+import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
+import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -98,8 +101,6 @@ public class FeeStructureFragment extends Fragment {
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
-    Boolean selectfile = false;
-    String BranchID, attach = "";
     SearchableSpinner branch, standard,course_name;
     TextView banner_image, text, id, image, transactionid, bannerid;
     RecyclerView banner_rv;
@@ -121,10 +122,9 @@ public class FeeStructureFragment extends Fragment {
     NestedScrollView banner_scroll;
     Long courseID = Long.valueOf(0), studentid = Long.valueOf(0);
     EditText remarks;
-    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
     ImageView imageView;
     long TransactionId, FeesId, FeesDetailId;
-    String Description = "none", Extension,FinalFileName,RandomFileName,OriginFilename,stdname = "";
+    String OriginFilename,stdname = "",FilePath;
     UserModel userpermission;
 
     @Override
@@ -153,7 +153,6 @@ public class FeeStructureFragment extends Fragment {
         linear_create_fee = root.findViewById(R.id.linear_create_fee);
         course_name = root.findViewById(R.id.course_name);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
-        BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 15 && !model.getPackageRightinfo().isCreatestatus()){
@@ -201,14 +200,15 @@ public class FeeStructureFragment extends Fragment {
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    if (!remarks.getText().toString().isEmpty()){
-                        Description = encodeDecode(remarks.getText().toString());
-                    }
-                    Call<FeeStructureSingleData> call = apiCalling.FeesMaintenance(0, 0, courseID,studentid
-                            , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
-                            , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                            , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME),
-                            0, "0", "0", true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(studentid);
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    FeeStructureModel model = new FeeStructureModel(0,0,OriginFilename,branch,
+                            transactionModel,rowStatusModel,FilePath,remarks.getText().toString(),course,classmodel);
+                    String data = new Gson().toJson(model);
+                    Call<FeeStructureSingleData> call = apiCalling.FeesMaintenance(data,true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     call.enqueue(new Callback<FeeStructureSingleData>() {
                         @Override
@@ -223,7 +223,6 @@ public class FeeStructureFragment extends Fragment {
                                        standard.setSelection(0);
                                        remarks.setText("");
                                        banner_image.setText("");
-                                       branch.setSelection(0);
                                        imageView.setVisibility(View.GONE);
                                        GetBannerDetails();
                                    }else {
@@ -243,7 +242,6 @@ public class FeeStructureFragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -258,24 +256,20 @@ public class FeeStructureFragment extends Fragment {
                     Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
                 }else {
                     progressBarHelper.showProgressDialog();
-                    if (!remarks.getText().toString().isEmpty()){
-                        Description = encodeDecode(remarks.getText().toString());
-                    }
                     Call<FeeStructureSingleData> call;
+                    BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
+                    BranchClassSingleModel.BranchClassData classmodel = new BranchClassSingleModel.BranchClassData(studentid);
+                    TransactionModel transactionModel = new TransactionModel(TransactionId, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    FeeStructureModel model = new FeeStructureModel(FeesId,FeesDetailId,OriginFilename,branch,
+                            transactionModel,rowStatusModel,FilePath,remarks.getText().toString(),course,classmodel);
+                    String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
-                        call = apiCalling.FeesMaintenance(FeesId, FeesDetailId, courseID,studentid
-                                , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
-                                , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , TransactionId,"0", "0", true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
+                        call = apiCalling.FeesMaintenance(data,true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
                     } else {
-                        FinalFileName = OriginFilename + "," + RandomFileName;
-                        call = apiCalling.FeesMaintenance(FeesId, FeesDetailId, courseID,studentid
-                                , Long.parseLong(BranchID), Description, actualdate.format(Calendar.getInstance().getTime())
-                                , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID)
-                                , Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
-                                , TransactionId, FinalFileName, Extension, false, MultipartBody.Part.createFormData("attachment", ""
+                        call = apiCalling.FeesMaintenance(data,false, MultipartBody.Part.createFormData("attachment", ""
                                         , RequestBody.create(MediaType.parse("multipart/form-data"), "")));
                     }
                     call.enqueue(new Callback<FeeStructureSingleData>() {
@@ -292,7 +286,6 @@ public class FeeStructureFragment extends Fragment {
                                         standard.setSelection(0);
                                         remarks.setText("");
                                         banner_image.setText("");
-                                        branch.setSelection(0);
                                         imageView.setVisibility(View.GONE);
                                         GetBannerDetails();
                                     }else {
@@ -312,7 +305,6 @@ public class FeeStructureFragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -494,7 +486,6 @@ public class FeeStructureFragment extends Fragment {
                 try {
                     flag = 1;
                     imageVal = null;
-                    selectfile = true;
                     Uri uri = result.getData();
                     String Path = FUtils.getPath(requireContext(), uri);
                     instrumentFileDestination = new File(Path);
@@ -505,7 +496,6 @@ public class FeeStructureFragment extends Fragment {
                     imageView.setImageBitmap(bitmap);
                     banner_image.setText("Attached");
                     banner_image.setTextColor(context.getResources().getColor(R.color.black));
-                    attach = onGalleryImageResultInstrument(result);
                 } catch (Exception e) {
                     errored();
                 }
@@ -714,14 +704,9 @@ public class FeeStructureFragment extends Fragment {
                     edit_banner.setVisibility(View.VISIBLE);
                     banner_image.setText("Attached");
                     banner_image.setTextColor(context.getResources().getColor(R.color.black));
-                    if (bannerDetails.get(position).getFilePath().contains(".") && bannerDetails.get(position).getFilePath().contains("/")) {
-                        Extension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf(".") + 1);
-                        String FileNameWithExtension = bannerDetails.get(position).getFilePath().substring(bannerDetails.get(position).getFilePath().lastIndexOf("/") + 1);
-                        String[] FileNameArray = FileNameWithExtension.split("\\.");
-                        RandomFileName = FileNameArray[0];
-                    }
                     TransactionId = bannerDetails.get(position).getTransaction().getTransactionId();
                     OriginFilename = bannerDetails.get(position).getFileName();
+                    FilePath = bannerDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
                     FeesId = bannerDetails.get(position).getFeesID();
                     FeesDetailId = bannerDetails.get(position).getFeesDetailID();
                     studentid = bannerDetails.get(position).getBranchClass().getClass_dtl_id();

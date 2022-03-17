@@ -12,21 +12,15 @@ public class GalleryModel {
     String FilePath;
     String FileName;
 
-    public GalleryModel(long uniqueID, BranchModel branch, String fileEncoded, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
+    public GalleryModel(long uniqueID, BranchModel branch, String remarks, RowStatusModel rowStatus, TransactionModel transaction, int galleryType, String filePath, String fileName) {
         UniqueID = uniqueID;
         Branch = branch;
-        FileEncoded = fileEncoded;
         Remarks = remarks;
         RowStatus = rowStatus;
         Transaction = transaction;
-    }
-
-    public GalleryModel(BranchModel branch, String fileEncoded, String remarks, RowStatusModel rowStatus, TransactionModel transaction) {
-        Branch = branch;
-        FileEncoded = fileEncoded;
-        Remarks = remarks;
-        RowStatus = rowStatus;
-        Transaction = transaction;
+        GalleryType = galleryType;
+        FilePath = filePath;
+        FileName = fileName;
     }
 
     public String getFilePath() {

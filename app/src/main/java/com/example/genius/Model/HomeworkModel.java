@@ -23,33 +23,19 @@ public class HomeworkModel {
     BranchClassSingleModel.BranchClassData BranchClass;
     BranchSubjectModel.BranchSubjectData BranchSubject;
 
-    public HomeworkModel(long homeworkID, BranchModel branchInfo, String homeworkDate, StandardModel standardInfo, SubjectModel subjectInfo, int batchTimeID, String batchTimeText, String remarks, String homeworkContentText, String homeworkContentFileName, TransactionModel transaction, RowStatusModel rowStatus) {
+    public HomeworkModel(long homeworkID, BranchModel branchInfo, String homeworkDate, int batchTimeID, String remarks, String homeworkContentFileName, TransactionModel transaction, RowStatusModel rowStatus, String filePath, BranchCourseModel.BranchCourceData branchCourse, BranchClassSingleModel.BranchClassData branchClass, BranchSubjectModel.BranchSubjectData branchSubject) {
         HomeworkID = homeworkID;
         BranchInfo = branchInfo;
         HomeworkDate = homeworkDate;
-        StandardInfo = standardInfo;
-        SubjectInfo = subjectInfo;
         BatchTimeID = batchTimeID;
-        BatchTimeText = batchTimeText;
         Remarks = remarks;
-        HomeworkContentText = homeworkContentText;
         HomeworkContentFileName = homeworkContentFileName;
         Transaction = transaction;
         RowStatus = rowStatus;
-    }
-
-    public HomeworkModel(BranchModel branchInfo, String homeworkDate, StandardModel standardInfo, SubjectModel subjectInfo, int batchTimeID, String batchTimeText, String remarks, String homeworkContentText, String homeworkContentFileName, TransactionModel transaction, RowStatusModel rowStatus) {
-        BranchInfo = branchInfo;
-        HomeworkDate = homeworkDate;
-        StandardInfo = standardInfo;
-        SubjectInfo = subjectInfo;
-        BatchTimeID = batchTimeID;
-        BatchTimeText = batchTimeText;
-        Remarks = remarks;
-        HomeworkContentText = homeworkContentText;
-        HomeworkContentFileName = homeworkContentFileName;
-        Transaction = transaction;
-        RowStatus = rowStatus;
+        FilePath = filePath;
+        BranchCourse = branchCourse;
+        BranchClass = branchClass;
+        BranchSubject = branchSubject;
     }
 
     public BranchCourseModel.BranchCourceData getBranchCourse() {

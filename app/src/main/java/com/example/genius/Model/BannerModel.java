@@ -7,27 +7,20 @@ public class BannerModel {
     long BannerID;
     String BannerImageText;
     List<BannerTypeEntity> BannerType;
-    BranchModel Branch;
+    BranchModel BranchInfo;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
     String FilePath;
     String FileName;
 
-    public BannerModel(long bannerID, List<BannerTypeEntity> bannerType, BranchModel branchModel,RowStatusModel rowStatus, TransactionModel transaction,String bannerImageText) {
+    public BannerModel(long bannerID, List<BannerTypeEntity> bannerType, BranchModel branch, TransactionModel transaction, RowStatusModel rowStatus, String filePath, String fileName) {
         BannerID = bannerID;
-        BannerImageText = bannerImageText;
         BannerType = bannerType;
-        this.Branch = branchModel;
+        BranchInfo = branch;
         Transaction = transaction;
         RowStatus = rowStatus;
-    }
-
-    public BannerModel(List<BannerTypeEntity> bannerType, BranchModel branchModel, RowStatusModel rowStatus, TransactionModel transaction, String bannerImageText) {
-        BannerImageText = bannerImageText;
-        BannerType = bannerType;
-        this.Branch = branchModel;
-        Transaction = transaction;
-        RowStatus = rowStatus;
+        FilePath = filePath;
+        FileName = fileName;
     }
 
     public String getFileName() {
@@ -47,11 +40,11 @@ public class BannerModel {
     }
 
     public BranchModel getBranch() {
-        return Branch;
+        return BranchInfo;
     }
 
     public void setBranch(BranchModel branch) {
-        Branch = branch;
+        BranchInfo = branch;
     }
 
     public TransactionModel getTransaction() {
@@ -100,14 +93,15 @@ public class BannerModel {
         String TypeText;
         int TypeID;
 
-        public BannerTypeEntity(long ID, String typeText, int typeID) {
+        public BannerTypeEntity() {
+        }
+
+        public BannerTypeEntity(long ID, int typeID) {
             this.ID = ID;
-            TypeText = typeText;
             TypeID = typeID;
         }
 
-        public BannerTypeEntity(String typeText, int typeID) {
-            TypeText = typeText;
+        public BannerTypeEntity(int typeID) {
             TypeID = typeID;
         }
 
