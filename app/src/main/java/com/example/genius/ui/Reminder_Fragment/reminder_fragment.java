@@ -152,7 +152,7 @@ public class reminder_fragment extends Fragment {
                                     if (reminderModel.getReminderID() > 0) {
                                         edt_reminderDescription.setText("");
                                         reminder_time.setText("");
-                                        date_reminder.setText(yesterday());
+                                        date_reminder.setText("");
                                         GetReminderDetails();
                                         Toast.makeText(context, "Reminder Added Successfully.", Toast.LENGTH_SHORT).show();
                                     }
@@ -201,7 +201,7 @@ public class reminder_fragment extends Fragment {
                                     if (reminderModel.getReminderID() > 0) {
                                         edt_reminderDescription.setText("");
                                         reminder_time.setText("");
-                                        date_reminder.setText(yesterday());
+                                        date_reminder.setText("");
                                         save_reminder.setVisibility(View.VISIBLE);
                                         edit_reminder.setVisibility(View.GONE);
                                         GetReminderDetails();

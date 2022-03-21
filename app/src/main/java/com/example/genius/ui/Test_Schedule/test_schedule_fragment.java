@@ -100,27 +100,19 @@ public class test_schedule_fragment extends Fragment {
     EditText marks, start_time, end_time, remarks, test_date, paper_remarks, upload_link;
     TextView id, upload_test_paper, test_id, paper_id;
     Button save_testschedule, edit_testschedule, save_test_paper, edit_test_paper;
-    List<String> standarditem = new ArrayList<>(),courseitem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(),courseid = new ArrayList<>();
-    String[] STANDARDITEM,COURSEITEM;
-    Integer[] STANDARDID,COURSEID;
-    List<String> batchitem = new ArrayList<>(), batchid = new ArrayList<>();
-    String[] BATCHITEM;
-    List<String> subjectitem = new ArrayList<>();
-    List<Integer> subjectid = new ArrayList<>();
-    String[] SUBJECTITEM;
-    Integer[] SUBJECTID;
-    List<String> typeitem = new ArrayList<>(), typeid = new ArrayList<>();
-    String[] TYPEITEM;
+    List<String> subjectitem = new ArrayList<>(),typeitem = new ArrayList<>(), typeid = new ArrayList<>(),batchitem = new ArrayList<>(), batchid = new ArrayList<>(),
+            standarditem = new ArrayList<>(),courseitem = new ArrayList<>();
+    List<Integer> subjectid = new ArrayList<>(),standardid = new ArrayList<>(),courseid = new ArrayList<>();
+    String[] SUBJECTITEM,TYPEITEM,BATCHITEM,STANDARDITEM,COURSEITEM;
+    Integer[] SUBJECTID,STANDARDID,COURSEID;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String format, BatchTime, SubjectId, BatchId, indate, PaperType_Id, PaperType_Name, upload_paper, paper_ext, papername;
+    String format, BatchTime, SubjectId, BatchId, indate, PaperType_Id, PaperType_Name, upload_paper, paper_ext, papername,OriginFileName,status,FilePath;
     private int year;
     private int month;
     private int day;
     Bundle bundle;
-    long a, b, c,testid = 0;
-    Long StandardId,courseID;
+    long StandardId,courseID,a, b, c,testid = 0;
     OnBackPressedCallback callback;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
@@ -133,7 +125,6 @@ public class test_schedule_fragment extends Fragment {
     RadioGroup status_rg;
     RadioButton rb2,active,inactive;
     List<UploadPaperModel> studentModelList;
-    String Description = "none", Extension = "none",FinalFileName,OriginFileName,RandomFileName,status,FilePath;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -234,13 +225,8 @@ public class test_schedule_fragment extends Fragment {
                                                 paper_remarks.setText(studentModelList.get(0).getRemarks());
                                             }
                                             if (!studentModelList.get(0).getFilePath().equals("") && studentModelList.get(0).getFilePath() != null) {
-                                                if (studentModelList.get(0).getFilePath().contains(".") && studentModelList.get(0).getFilePath().contains("/")) {
-                                                    Extension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf(".") + 1);
-                                                    String FileNameWithExtension = studentModelList.get(0).getFilePath().substring(studentModelList.get(0).getFilePath().lastIndexOf("/") + 1);
-                                                    String[] FileNameArray = FileNameWithExtension.split("\\.");
-                                                    RandomFileName = FileNameArray[0];
-                                                }
                                                 OriginFileName = studentModelList.get(0).getFileName();
+                                                FilePath = studentModelList.get(0).getFilePath().replace("https://mastermind.org.in","");
                                             }else {
                                                 upload_link.setText(studentModelList.get(0).getDocLink());
                                             }
