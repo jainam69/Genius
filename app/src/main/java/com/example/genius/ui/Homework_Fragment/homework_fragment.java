@@ -142,6 +142,13 @@ public class homework_fragment extends Fragment {
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         course_name = root.findViewById(R.id.course_name);
 
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        indate = dateFormat1.format(cal2.getTime());
+
+        homework_date.setText(yesterday());
+
         bundle = getArguments();
         if (bundle != null) {
             save_homework.setVisibility(View.GONE);
@@ -172,7 +179,7 @@ public class homework_fragment extends Fragment {
             }
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllCourse();
         } else {
@@ -239,21 +246,16 @@ public class homework_fragment extends Fragment {
                         public void onResponse(@NotNull Call<HomeworkModel.HomeworkData1> call, @NotNull Response<HomeworkModel.HomeworkData1> response) {
                             if (response.isSuccessful()) {
                                 HomeworkModel.HomeworkData1 data = response.body();
-                                if (data != null) {
-                                    if (data.isCompleted()) {
-                                        HomeworkModel notimodel = data.getData();
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        if (notimodel != null) {
-                                            homework_Listfragment orderplace = new homework_Listfragment();
-                                            FragmentManager fragmentManager = getFragmentManager();
-                                            FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-                                            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                            fragmentTransaction.addToBackStack(null);
-                                            fragmentTransaction.commit();
-                                        }
-                                    } else {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    homework_Listfragment orderplace = new homework_Listfragment();
+                                    FragmentManager fragmentManager = getFragmentManager();
+                                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -267,13 +269,12 @@ public class homework_fragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         edit_homework.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (homework_date.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Select Homework Date.", Toast.LENGTH_SHORT).show();
                 } else if (course_name.getSelectedItemId() == 0) {
@@ -307,18 +308,13 @@ public class homework_fragment extends Fragment {
                             if (response.isSuccessful()) {
                                 HomeworkModel.HomeworkData1 data = response.body();
                                 if (data.isCompleted()) {
-                                    HomeworkModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        homework_Listfragment orderplace = new homework_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
-                                    } else {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    homework_Listfragment orderplace = new homework_Listfragment();
+                                    FragmentManager fragmentManager = getFragmentManager();
+                                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
                                 } else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -334,14 +330,12 @@ public class homework_fragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
 
         homework_date.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
@@ -774,6 +768,13 @@ public class homework_fragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subject.setAdapter(adapter);
         subject.setOnItemSelectedListener(onItemSelectedListener8);
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 
 }

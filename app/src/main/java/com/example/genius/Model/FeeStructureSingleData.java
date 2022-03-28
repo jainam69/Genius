@@ -1,6 +1,7 @@
 package com.example.genius.Model;
 
 public class FeeStructureSingleData {
+
     boolean Completed;
     FeeStructureModel Data;
     String Message;

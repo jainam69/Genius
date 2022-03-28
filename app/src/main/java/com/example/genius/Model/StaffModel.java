@@ -212,8 +212,18 @@ public class StaffModel {
     }
 
     public static class StaffData1 {
+
         boolean Completed;
         StaffModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

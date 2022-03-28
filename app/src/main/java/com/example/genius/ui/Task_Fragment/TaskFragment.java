@@ -146,9 +146,16 @@ public class TaskFragment extends Fragment {
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 38 && !model.getPackageRightinfo().isCreatestatus()){
-            linear_create_todo.setVisibility(View.GONE);
+                linear_create_todo.setVisibility(View.GONE);
+            }
         }
-        }
+
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        date = dateFormat1.format(cal2.getTime());
+
+        date_task.setText(yesterday());
 
         if (Function.isNetworkAvailable(context)) {
             selectstatus();
@@ -159,6 +166,22 @@ public class TaskFragment extends Fragment {
         }
 
         selectUser();
+
+        date_task.setOnClickListener(v -> {
+            final Calendar c = Calendar.getInstance();
+            year = c.get(Calendar.YEAR);
+            month = c.get(Calendar.MONTH);
+            day = c.get(Calendar.DAY_OF_MONTH);
+            DatePickerDialog picker = new DatePickerDialog(context,
+                    (view, year2, monthOfYear, dayOfMonth) -> {
+                        year = year2;
+                        month = monthOfYear;
+                        day = dayOfMonth;
+                        date_task.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        date = year + "-" + pad(month + 1) + "-" + pad(day);
+                    }, year, month, day);
+            picker.show();
+        });
 
         save_task.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
@@ -186,15 +209,14 @@ public class TaskFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 TodoModel.TodoData1 data1 = response.body();
                                 if (data1.isCompleted()) {
-                                    TodoModel model = data1.getData();
-                                    if (model != null) {
-                                        Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
-                                        edt_taskDescription.setText("");
-                                        date_task.setText("");
-                                        attachment.setText("");
-                                        user.setSelection(0);
-                                        GetAllTask();
-                                    }
+                                    Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                    edt_taskDescription.setText("");
+                                    date_task.setText(yesterday());
+                                    attachment.setText("");
+                                    user.setSelection(0);
+                                    GetAllTask();
+                                }else {
+                                    Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -203,6 +225,7 @@ public class TaskFragment extends Fragment {
                         @Override
                         public void onFailure(@NotNull Call<TodoModel.TodoData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -244,16 +267,17 @@ public class TaskFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 TodoModel.TodoData1 data1 = response.body();
                                 if (data1.isCompleted()) {
-                                    TodoModel model = data1.getData();
-                                    if (model != null) {
-                                        Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
-                                        edt_taskDescription.setText("");
-                                        date_task.setText("");
-                                        attachment.setText("");
-                                        userid1 = 0;
-                                        user.setSelection(0);
-                                        GetAllTask();
-                                    }
+                                    Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                    edt_taskDescription.setText("");
+                                    date_task.setText(yesterday());
+                                    attachment.setText("");
+                                    userid1 = 0;
+                                    user.setSelection(0);
+                                    save_task.setVisibility(View.VISIBLE);
+                                    edit_task.setVisibility(View.GONE);
+                                    GetAllTask();
+                                }else {
+                                    Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -261,33 +285,14 @@ public class TaskFragment extends Fragment {
 
                         @Override
                         public void onFailure(@NotNull Call<TodoModel.TodoData1> call, @NotNull Throwable t) {
-
+                            progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
-        });
-
-        Calendar cal2 = Calendar.getInstance();
-        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-        cal2.add(Calendar.DATE, 0);
-        date = dateFormat1.format(cal2.getTime());
-        date_task.setOnClickListener(v -> {
-            final Calendar c = Calendar.getInstance();
-            year = c.get(Calendar.YEAR);
-            month = c.get(Calendar.MONTH);
-            day = c.get(Calendar.DAY_OF_MONTH);
-            DatePickerDialog picker = new DatePickerDialog(context,
-                    (view, year2, monthOfYear, dayOfMonth) -> {
-                        year = year2;
-                        month = monthOfYear;
-                        day = dayOfMonth;
-                        date_task.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
-                        date = year + "-" + pad(month + 1) + "-" + pad(day);
-                    }, year, month, day);
-            picker.show();
         });
 
         attachment.setOnClickListener(v -> {
@@ -801,5 +806,12 @@ public class TaskFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         user.setAdapter(adapter);
         user.setOnItemSelectedListener(UserItemListener);
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 }

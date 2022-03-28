@@ -93,21 +93,11 @@ public class Announcement_Fragment extends Fragment {
                         public void onResponse(Call<AnnouncementSingleModel> call, Response<AnnouncementSingleModel> response) {
                             if (response.isSuccessful()) {
                                 AnnouncementSingleModel data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    AnnouncementModel.AnnouncementData notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        if (annID == 0 && notimodel.AnnouncementID > 0) {
-                                            GetAnnouncement();
-                                            Toast.makeText(context, "Announcement inserted successfully.", Toast.LENGTH_SHORT).show();
-                                        } else if (annID > 0) {
-                                            GetAnnouncement();
-                                            Toast.makeText(context, "Announcement updated successfully.", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(context, "Announcement not Inserted.", Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else {
-                                        Toast.makeText(context, "Announcement not Inserted.", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    GetAnnouncement();
+                                }else {
+                                    Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }

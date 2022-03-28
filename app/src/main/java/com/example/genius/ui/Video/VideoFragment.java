@@ -93,8 +93,6 @@ public class VideoFragment extends Fragment {
     File instrumentFileDestination;
     OnBackPressedCallback callback;
     NestedScrollView video_scroll;
-    String videoData;
-    ByteArrayOutputStream byteBuffer;
     String OriginFileName,FilePath;
     VideoMaster_Adapter videoMaster_adapter;
     UserModel userpermission;
@@ -157,17 +155,14 @@ public class VideoFragment extends Fragment {
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
                             if (response.isSuccessful()) {
                                 GalleryModel.GallaryData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    GalleryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        video_description.setText("");
-                                        attachment_video.setText("");
-                                        imageView.setVisibility(View.GONE);
-                                        GetVideoDetails();
-                                    } else {
-                                        Toast.makeText(context, "Video not Inserted...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    video_description.setText("");
+                                    attachment_video.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    GetVideoDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -181,7 +176,6 @@ public class VideoFragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -213,19 +207,16 @@ public class VideoFragment extends Fragment {
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
                             if (response.isSuccessful()) {
                                 GalleryModel.GallaryData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    GalleryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        save_video.setVisibility(View.VISIBLE);
-                                        edit_video.setVisibility(View.GONE);
-                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        video_description.setText("");
-                                        attachment_video.setText("");
-                                        imageView.setVisibility(View.GONE);
-                                        GetVideoDetails();
-                                    } else {
-                                        Toast.makeText(context, "Video not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    save_video.setVisibility(View.VISIBLE);
+                                    edit_video.setVisibility(View.GONE);
+                                    video_description.setText("");
+                                    attachment_video.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    GetVideoDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();

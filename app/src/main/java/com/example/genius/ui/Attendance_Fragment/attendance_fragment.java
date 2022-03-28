@@ -79,12 +79,11 @@ public class attendance_fragment extends Fragment {
     private int year;
     private int month;
     private int day;
-    String indate;
     List<String> standarditem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(),courseitem = new ArrayList<>();
     List<Integer> standardid = new ArrayList<>(), courseid = new ArrayList<>();
     String[] STANDARDITEM, BATCHITEM,COURSEITEM;
     Integer[] STANDARDID, COURSEID;
-    String BatchTime, BranchID, BatchId;
+    String BatchTime, BranchID, BatchId,indate;
     OnBackPressedCallback callback;
     Long StandardId,courseID;
     List<AttendanceModel.AttendanceDetailEntity> attandance;
@@ -125,7 +124,7 @@ public class attendance_fragment extends Fragment {
             linear_edit_attendance.setVisibility(View.VISIBLE);
             if (bundle.containsKey("AttendanceID")) {
                 attendance_id.setText("" + bundle.getLong("AttendanceID"));
-                if (Function.checkNetworkConnection(context)) {
+                if (Function.isNetworkAvailable(context)) {
                     progressBarHelper.showProgressDialog();
                     Call<AttendanceModel.AttendanceData1> call = apiCalling.GetAttendanceByID(Long.parseLong(attendance_id.getText().toString()));
                     call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
@@ -184,7 +183,7 @@ public class attendance_fragment extends Fragment {
             indate = actualdate.format(Calendar.getInstance().getTime());
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             selectbatch_time();
             GetAllCourse();
@@ -194,9 +193,15 @@ public class attendance_fragment extends Fragment {
 
         selectStandard();
 
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        indate = dateFormat1.format(cal2.getTime());
+
+        attendance_date.setText(yesterday());
+
         attendance_date.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
@@ -221,7 +226,7 @@ public class attendance_fragment extends Fragment {
         });
 
         submit_attendance.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (course_name.getSelectedItemId() == 0){
                     Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
                 }else if (standard.getSelectedItemId() == 0)
@@ -276,7 +281,7 @@ public class attendance_fragment extends Fragment {
         });
 
         save_attendance.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (course_name.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
                 } else if (standard.getSelectedItemId() == 0) {
@@ -310,19 +315,16 @@ public class attendance_fragment extends Fragment {
                         public void onResponse(@NotNull Call<AttendanceModel.AttendanceData1> call, @NotNull Response<AttendanceModel.AttendanceData1> response) {
                             if (response.isSuccessful()) {
                                 AttendanceModel.AttendanceData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    AttendanceModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, "Attendance Inserted Successfully...", Toast.LENGTH_SHORT).show();
-                                        attendance_Listfragment orderplace = new attendance_Listfragment();
-                                        FragmentManager fragmentManager = getFragmentManager();
-                                        FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-                                        fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                        fragmentTransaction.addToBackStack(null);
-                                        fragmentTransaction.commit();
-                                    } else {
-                                        Toast.makeText(context, "Attendance not Inserted...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    attendance_Listfragment orderplace = new attendance_Listfragment();
+                                    FragmentManager fragmentManager = getFragmentManager();
+                                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -367,19 +369,16 @@ public class attendance_fragment extends Fragment {
                     public void onResponse(@NotNull Call<AttendanceModel.AttendanceData1> call, @NotNull Response<AttendanceModel.AttendanceData1> response) {
                         if (response.isSuccessful()) {
                             AttendanceModel.AttendanceData1 data = response.body();
-                            if (data != null && data.isCompleted()) {
-                                AttendanceModel notimodel = data.getData();
-                                if (notimodel != null) {
-                                    Toast.makeText(context, "Attendance Updated Successfully...", Toast.LENGTH_SHORT).show();
-                                    attendance_Listfragment orderplace = new attendance_Listfragment();
-                                    FragmentManager fragmentManager = getFragmentManager();
-                                    FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
-                                    fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                    fragmentTransaction.addToBackStack(null);
-                                    fragmentTransaction.commit();
-                                } else {
-                                    Toast.makeText(context, "Attendance not Updated...!", Toast.LENGTH_SHORT).show();
-                                }
+                            if (data.isCompleted()) {
+                                Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                attendance_Listfragment orderplace = new attendance_Listfragment();
+                                FragmentManager fragmentManager = getFragmentManager();
+                                FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
+                                fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            }else {
+                                Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                         progressBarHelper.hideProgressDialog();
@@ -633,6 +632,13 @@ public class attendance_fragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         standard.setAdapter(adapter);
         standard.setOnItemSelectedListener(onItemSelectedListener7);
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 
 }

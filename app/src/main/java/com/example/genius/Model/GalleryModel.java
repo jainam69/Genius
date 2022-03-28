@@ -96,6 +96,7 @@ public class GalleryModel {
     }
 
     public static class GallaryData1{
+
         boolean Completed;
         GalleryModel Data;
         String Message;

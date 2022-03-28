@@ -145,22 +145,15 @@ public class YoutubeVideoFragment extends Fragment {
                             public void onResponse(Call<LinkModel.LinkData1> call, Response<LinkModel.LinkData1> response) {
                                 if (response.isSuccessful()) {
                                     LinkModel.LinkData1 data1 = response.body();
-                                    if (data1 != null) {
-                                        if (data1.isCompleted()) {
-                                            LinkModel model1 = data1.getData();
-                                            if (model1 != null) {
-                                                if (model1.getUniqueID() > 0) {
-                                                    Toast.makeText(context, "Youtube Video URL inserted successfully.", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    Toast.makeText(context, "Youtube Video URL Not Inserted.", Toast.LENGTH_SHORT).show();
-                                                }
-                                                GetAllYoutubeVideos();
-                                                youtube_link.setText("");
-                                                youtube_title.setText("");
-                                                standard.setSelection(0);
-                                                course_name.setSelection(0);
-                                            }
-                                        }
+                                    if (data1.isCompleted()) {
+                                        Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                        GetAllYoutubeVideos();
+                                        youtube_link.setText("");
+                                        youtube_title.setText("");
+                                        standard.setSelection(0);
+                                        course_name.setSelection(0);
+                                    }else {
+                                        Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                                 progressBarHelper.hideProgressDialog();
@@ -205,26 +198,18 @@ public class YoutubeVideoFragment extends Fragment {
                             public void onResponse(Call<LinkModel.LinkData1> call, Response<LinkModel.LinkData1> response) {
                                 if (response.isSuccessful()) {
                                     LinkModel.LinkData1 data1 = response.body();
-                                    if (data1 != null) {
-                                        if (data1.isCompleted()) {
-                                            LinkModel model1 = data1.getData();
-                                            if (model1 != null) {
-                                                if (model1.getUniqueID() > 0) {
-                                                    Toast.makeText(context, "Youtube Video URL updated successfully...!!!", Toast.LENGTH_SHORT).show();
-
-                                                } else {
-                                                    Toast.makeText(context, "Youtube Video URL Not Updated..!", Toast.LENGTH_SHORT).show();
-                                                }
-                                                save_youtube.setVisibility(View.VISIBLE);
-                                                edit_youtube.setVisibility(View.GONE);
-                                                GetAllYoutubeVideos();
-                                                youtube_link.setText("");
-                                                youtube_title.setText("");
-                                                standard.setSelection(0);
-                                                course_name.setSelection(0);
-                                                stdname = "";
-                                            }
-                                        }
+                                    if (data1.isCompleted()) {
+                                        Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                        save_youtube.setVisibility(View.VISIBLE);
+                                        edit_youtube.setVisibility(View.GONE);
+                                        GetAllYoutubeVideos();
+                                        youtube_link.setText("");
+                                        youtube_title.setText("");
+                                        standard.setSelection(0);
+                                        course_name.setSelection(0);
+                                        stdname = "";
+                                    }else {
+                                        Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                                 progressBarHelper.hideProgressDialog();

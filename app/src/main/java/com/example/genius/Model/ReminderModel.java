@@ -107,9 +107,20 @@ public class ReminderModel {
     public void setRowStatus(RowStatusModel rowStatus) {
         RowStatus = rowStatus;
     }
+
     public class ReminderData1{
+
         boolean Completed;
         ReminderModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

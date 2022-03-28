@@ -181,6 +181,13 @@ public class student_registration_fragment extends Fragment {
         course_name = root.findViewById(R.id.course_name);
         hide_password = root.findViewById(R.id.hide_password);
 
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        indate = dateFormat1.format(cal2.getTime());
+
+        addmission_date.setText(yesterday());
+
         bundle = getArguments();
         if (bundle != null) {
             save_student_regi.setVisibility(View.GONE);
@@ -416,6 +423,8 @@ public class student_registration_fragment extends Fragment {
                                     ft.replace(R.id.nav_host_fragment, profileFragment);
                                     ft.addToBackStack(null);
                                     ft.commit();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -436,7 +445,7 @@ public class student_registration_fragment extends Fragment {
         edit_student_regi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Function.checkNetworkConnection(context)) {
+                if (Function.isNetworkAvailable(context)) {
                     if (first_name.getText().toString().equals("")) {
                         Toast.makeText(context, "Please enter First Name.", Toast.LENGTH_SHORT).show();
                     } else if (middle_name.getText().toString().equals("")) {
@@ -510,6 +519,8 @@ public class student_registration_fragment extends Fragment {
                                         ft.replace(R.id.nav_host_fragment, profileFragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -1230,5 +1241,12 @@ public class student_registration_fragment extends Fragment {
                 Toast.makeText(context,t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 }

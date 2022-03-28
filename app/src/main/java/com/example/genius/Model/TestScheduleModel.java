@@ -206,6 +206,15 @@ public class TestScheduleModel {
 
         boolean Completed;
         TestScheduleModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

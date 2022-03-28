@@ -92,7 +92,7 @@ public class marks_entry_fragment extends Fragment {
     List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(), dateid = new ArrayList<>(),courseid = new ArrayList<>();
     String[] STANDARDITEM, SUBJECTITEM, BATCHITEM, DATEITEM,COURSEITEM;
     Integer[] STANDARDID, SUBJECTID, TESTID,COURSEID;
-    String SubjectName, BatchTime, SubjectId, BatchId, TestDate;
+    String SubjectName, BatchTime, SubjectId, BatchId, TestDate,pictureFilePath, Achieve_Marks = "", StudentID = "", Subject_Date, Marks_Date;
     Long StandardId, TestID,courseID;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
@@ -105,7 +105,6 @@ public class marks_entry_fragment extends Fragment {
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     byte[] imageVal;
     Bitmap bitmap;
-    String pictureFilePath, Achieve_Marks = "", StudentID = "", Subject_Date, Marks_Date;
     boolean marksentered;
     MarksEnterAdapter marksEnterAdapter;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
@@ -279,18 +278,16 @@ public class marks_entry_fragment extends Fragment {
                             public void onResponse(@NonNull Call<MarksModel.MarksData1> call, @NonNull Response<MarksModel.MarksData1> response) {
                                 if (response.isSuccessful()) {
                                     MarksModel.MarksData1 data = response.body();
-                                    if (data != null) {
-                                        if (data.isCompleted()) {
-                                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                            marks_entry_Listfragment profileFragment = new marks_entry_Listfragment();
-                                            FragmentManager fm = requireActivity().getSupportFragmentManager();
-                                            FragmentTransaction ft = fm.beginTransaction();
-                                            ft.replace(R.id.nav_host_fragment, profileFragment);
-                                            ft.addToBackStack(null);
-                                            ft.commit();
-                                        } else {
-                                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
+                                    if (data.isCompleted()) {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        marks_entry_Listfragment profileFragment = new marks_entry_Listfragment();
+                                        FragmentManager fm = requireActivity().getSupportFragmentManager();
+                                        FragmentTransaction ft = fm.beginTransaction();
+                                        ft.replace(R.id.nav_host_fragment, profileFragment);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
+                                    } else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }

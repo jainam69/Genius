@@ -68,14 +68,10 @@ public class BranchSubjectFragment extends Fragment {
     Button save_course, delete_course;
     CheckBox checkall;
     SearchableSpinner spinner_course, spinner_class;
-    List<String> couseitem = new ArrayList<>();
-    List<Long> couseiditem = new ArrayList<>();
-    List<String> classitem = new ArrayList<>();
-    List<Long> classiditem = new ArrayList<>();
-    Long[] COURSEID;
-    String[] COURSEITEM;
-    Long[] CLASSID;
-    String[] CLASSITEM;
+    List<String> couseitem = new ArrayList<>(),classitem = new ArrayList<>();
+    List<Long> couseiditem = new ArrayList<>(),classiditem = new ArrayList<>();
+    Long[] COURSEID,CLASSID;
+    String[] COURSEITEM,CLASSITEM;
     String course, class_name;
     long courseid,classid;
     Bundle bundle = null;
@@ -437,18 +433,16 @@ public class BranchSubjectFragment extends Fragment {
                         public void onResponse(@NotNull Call<BranchSubjectSingleModel> call, @NotNull Response<BranchSubjectSingleModel> response) {
                             if (response.isSuccessful()) {
                                 BranchSubjectSingleModel data = response.body();
-                                if (data != null) {
-                                    if (data.getCompleted()) {
-                                        Function.showToast(context, data.getMessage());
-                                        BranchSubjectListFragment profileFragment = new BranchSubjectListFragment();
-                                        FragmentManager fm = requireActivity().getSupportFragmentManager();
-                                        FragmentTransaction ft = fm.beginTransaction();
-                                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                                        ft.addToBackStack(null);
-                                        ft.commit();
-                                    } else {
-                                        Function.showToast(context, data.getMessage());
-                                    }
+                                if (data.getCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    BranchSubjectListFragment profileFragment = new BranchSubjectListFragment();
+                                    FragmentManager fm = requireActivity().getSupportFragmentManager();
+                                    FragmentTransaction ft = fm.beginTransaction();
+                                    ft.replace(R.id.nav_host_fragment, profileFragment);
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                } else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }

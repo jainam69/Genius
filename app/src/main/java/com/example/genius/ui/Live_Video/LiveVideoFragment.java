@@ -149,23 +149,16 @@ public class LiveVideoFragment extends Fragment {
                         public void onResponse(@NotNull Call<LinkModel.LinkData1> call, @NotNull Response<LinkModel.LinkData1> response) {
                             if (response.isSuccessful()) {
                                 LinkModel.LinkData1 data1 = response.body();
-                                if (data1 != null) {
-                                    if (data1.isCompleted()) {
-                                        LinkModel model1 = data1.getData();
-                                        if (model1 != null) {
-                                            if (model1.getUniqueID() > 0) {
-                                                Toast.makeText(context, "Live Video URL inserted successfully.", Toast.LENGTH_SHORT).show();
-                                                video_title.setText("");
-                                                video_description.setText("");
-                                                live_url.setText("");
-                                                standard.setSelection(0);
-                                                course_name.setSelection(0);
-                                                GetAllLiveVideo();
-                                            } else {
-                                                Toast.makeText(context, "Live Video URL Not Inserted.", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    }
+                                if (data1.isCompleted()){
+                                    Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                    video_title.setText("");
+                                    video_description.setText("");
+                                    live_url.setText("");
+                                    standard.setSelection(0);
+                                    course_name.setSelection(0);
+                                    GetAllLiveVideo();
+                                }else {
+                                    Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -174,12 +167,11 @@ public class LiveVideoFragment extends Fragment {
                         @Override
                         public void onFailure(@NotNull Call<LinkModel.LinkData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
-                            Toast.makeText(context, "" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -208,22 +200,19 @@ public class LiveVideoFragment extends Fragment {
                         public void onResponse(@NotNull Call<LinkModel.LinkData1> call, @NotNull Response<LinkModel.LinkData1> response) {
                             if (response.isSuccessful()) {
                                 LinkModel.LinkData1 data1 = response.body();
-                                if (data1 != null) {
-                                    if (data1.isCompleted()) {
-                                        LinkModel model1 = data1.getData();
-                                        if (model1 != null) {
-                                            save_live_video.setVisibility(View.VISIBLE);
-                                            edit_live_video.setVisibility(View.GONE);
-                                            Toast.makeText(context, "Live Video URL updated successfully...!!!", Toast.LENGTH_SHORT).show();
-                                            GetAllLiveVideo();
-                                            video_title.setText("");
-                                            video_description.setText("");
-                                            live_url.setText("");
-                                            standard.setSelection(0);
-                                            course_name.setSelection(0);
-                                            stdname = "";
-                                        }
-                                    }
+                                if (data1.isCompleted()){
+                                    Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
+                                    save_live_video.setVisibility(View.VISIBLE);
+                                    edit_live_video.setVisibility(View.GONE);
+                                    GetAllLiveVideo();
+                                    video_title.setText("");
+                                    video_description.setText("");
+                                    live_url.setText("");
+                                    standard.setSelection(0);
+                                    course_name.setSelection(0);
+                                    stdname = "";
+                                }else {
+                                    Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -232,12 +221,11 @@ public class LiveVideoFragment extends Fragment {
                         @Override
                         public void onFailure(@NotNull Call<LinkModel.LinkData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
-                            Toast.makeText(context, "" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

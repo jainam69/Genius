@@ -243,17 +243,14 @@ public class Banner_Fragment extends Fragment {
                                 if (response.isSuccessful()) {
                                     BannerModel.BannerlData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        BannerModel notimodel = data.getData();
-                                        if (notimodel != null) {
-                                            Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                            banner_image.setText("");
-                                            ch_admin.setChecked(false);
-                                            ch_student.setChecked(false);
-                                            ch_teacher.setChecked(false);
-                                            GetBannerDetails();
-                                        } else {
-                                            Toast.makeText(context, "Banner not inserted.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        banner_image.setText("");
+                                        ch_admin.setChecked(false);
+                                        ch_student.setChecked(false);
+                                        ch_teacher.setChecked(false);
+                                        GetBannerDetails();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -305,19 +302,16 @@ public class Banner_Fragment extends Fragment {
                                 if (response.isSuccessful()) {
                                     BannerModel.BannerlData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        BannerModel bannerModel = data.getData();
-                                        if (bannerModel != null) {
-                                            Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                            banner_image.setText("");
-                                            ch_admin.setChecked(false);
-                                            ch_student.setChecked(false);
-                                            ch_teacher.setChecked(false);
-                                            save_banner.setVisibility(View.VISIBLE);
-                                            edit_banner.setVisibility(View.GONE);
-                                            GetBannerDetails();
-                                        } else {
-                                            Toast.makeText(context, "Banner not updated.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        banner_image.setText("");
+                                        ch_admin.setChecked(false);
+                                        ch_student.setChecked(false);
+                                        ch_teacher.setChecked(false);
+                                        save_banner.setVisibility(View.VISIBLE);
+                                        edit_banner.setVisibility(View.GONE);
+                                        GetBannerDetails();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }

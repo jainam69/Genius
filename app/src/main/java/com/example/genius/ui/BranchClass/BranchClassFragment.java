@@ -109,7 +109,6 @@ public class BranchClassFragment extends Fragment {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 course_rv.setLayoutManager(linearLayoutManager);
                 branchCourceAdapter = new BranchClassAdapter(context, data);
-
                 course_rv.setAdapter(branchCourceAdapter);
                 branchCourceAdapter.notifyDataSetChanged();
             }
@@ -316,18 +315,16 @@ public class BranchClassFragment extends Fragment {
                         public void onResponse(@NotNull Call<BranchClassSingleModel> call, @NotNull Response<BranchClassSingleModel> response) {
                             if (response.isSuccessful()) {
                                 BranchClassSingleModel data = response.body();
-                                if (data != null) {
-                                    if (data.getCompleted()) {
-                                        Function.showToast(context, data.getMessage());
-                                        BranchClassListFragment profileFragment = new BranchClassListFragment();
-                                        FragmentManager fm = requireActivity().getSupportFragmentManager();
-                                        FragmentTransaction ft = fm.beginTransaction();
-                                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                                        ft.addToBackStack(null);
-                                        ft.commit();
-                                    } else {
-                                        Function.showToast(context, data.getMessage());
-                                    }
+                                if (data.getCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    BranchClassListFragment profileFragment = new BranchClassListFragment();
+                                    FragmentManager fm = requireActivity().getSupportFragmentManager();
+                                    FragmentTransaction ft = fm.beginTransaction();
+                                    ft.replace(R.id.nav_host_fragment, profileFragment);
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                } else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }

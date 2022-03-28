@@ -108,6 +108,7 @@ public class TodoModel {
     }
 
     public class TodoData1{
+
        boolean Completed;
        TodoModel Data;
        String Message;

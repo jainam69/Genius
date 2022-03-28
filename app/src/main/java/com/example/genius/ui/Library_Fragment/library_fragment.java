@@ -105,13 +105,12 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     LinearLayout linear_spinner;
-    String Branch, Type, thunm_name, doc_name;
+    String Branch, Type, thunm_name, doc_name,attach = "", attach_doc = "", thumb_ext, doc_ext,BranchID,StandardIDs = "none";
     int select, type;
-    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(),courseitem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>();
+    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(),courseitem = new ArrayList<>(),categoryitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>(),categoryId = new ArrayList<>();
     String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM,COURSEITEM;
     Integer[] STANDARDID, SUBJECTID, CATEGORYID,COURSEID;
-    String attach = "", attach_doc = "", thumb_ext, doc_ext;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final int REQUEST_CODE_PICK_GALLERY1 = 0x11;
@@ -123,10 +122,6 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     OnBackPressedCallback callback;
     Long StandardId = 0L, SubjectId = 0L, categoryid = 0L,courseID = 0L;
     SearchableSpinner category;
-    List<String> categoryitem = new ArrayList<>();
-    List<Integer> categoryId = new ArrayList<>();
-    String BranchID;
-    String StandardIDs = "none";
     LibraryModel libraryModel;
 
     @Override
@@ -275,15 +270,15 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
                                 if (response.body() != null && response.body().isCompleted()) {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                     library_Listfragment contact = new library_Listfragment();
                                     FragmentManager fragmentManager = getFragmentManager();
                                     FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
                                     fragmentTransaction.replace(R.id.nav_host_fragment, contact);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
-                                }
-                                if (response.body() != null) {
-                                    Function.showToast(context, response.body().getMessage());
+                                }else {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -345,15 +340,15 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
                                 if (response.body() != null && response.body().isCompleted()) {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                     library_Listfragment contact = new library_Listfragment();
                                     FragmentManager fragmentManager = getFragmentManager();
                                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                                     fragmentTransaction.replace(R.id.nav_host_fragment, contact);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
-                                }
-                                if (response.body() != null) {
-                                    Function.showToast(context, response.body().getMessage());
+                                }else {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();

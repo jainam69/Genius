@@ -134,6 +134,7 @@ public class PaperModel {
     }
 
     public static class PaperData1 {
+
         boolean Completed;
         PaperModel Data;
         String Message;

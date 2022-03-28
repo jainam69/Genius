@@ -186,20 +186,17 @@ public class practice_paper_Listfragment extends Fragment {
                         public void onResponse(@NotNull Call<PaperModel.PaperData1> call, @NotNull Response<PaperModel.PaperData1> response) {
                             if (response.isSuccessful()) {
                                 PaperModel.PaperData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    PaperModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        GetPracticePaperDetails();
-                                        course_name.setSelection(0);
-                                        subject.setSelection(0);
-                                        standard.setSelection(0);
-                                        batch_time.setSelection(0);
-                                        attach_paper.setText("");
-                                        remarks.setText("");
-                                    } else {
-                                        Toast.makeText(context, "Practice Paper not Inserted...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    GetPracticePaperDetails();
+                                    course_name.setSelection(0);
+                                    subject.setSelection(0);
+                                    standard.setSelection(0);
+                                    batch_time.setSelection(0);
+                                    attach_paper.setText("");
+                                    remarks.setText("");
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -213,7 +210,6 @@ public class practice_paper_Listfragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -255,24 +251,21 @@ public class practice_paper_Listfragment extends Fragment {
                         public void onResponse(@NotNull Call<PaperModel.PaperData1> call, @NotNull Response<PaperModel.PaperData1> response) {
                             if (response.isSuccessful()) {
                                 PaperModel.PaperData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    PaperModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        GetPracticePaperDetails();
-                                        stdname = "";
-                                        subname = "";
-                                        course_name.setSelection(0);
-                                        subject.setSelection(0);
-                                        standard.setSelection(0);
-                                        batch_time.setSelection(0);
-                                        attach_paper.setText("");
-                                        remarks.setText("");
-                                        save_practice_paper.setVisibility(View.VISIBLE);
-                                        edit_practice_paper.setVisibility(View.GONE);
-                                    } else {
-                                        Toast.makeText(context, "Practice Paper not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    GetPracticePaperDetails();
+                                    stdname = "";
+                                    subname = "";
+                                    course_name.setSelection(0);
+                                    subject.setSelection(0);
+                                    standard.setSelection(0);
+                                    batch_time.setSelection(0);
+                                    attach_paper.setText("");
+                                    remarks.setText("");
+                                    save_practice_paper.setVisibility(View.VISIBLE);
+                                    edit_practice_paper.setVisibility(View.GONE);
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -286,7 +279,6 @@ public class practice_paper_Listfragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });

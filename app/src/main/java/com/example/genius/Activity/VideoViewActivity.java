@@ -32,16 +32,14 @@ public class VideoViewActivity extends AppCompatActivity {
 
     Intent intent;
     ProgressBar mProgressBar;
-    String ProIndex;
+    String ProIndex,Description,path;
     PhotoView image;
     VideoView video;
     FrameLayout rl;
     TextView subject;
-    String Description;
     byte[] imageVal;
     private MediaController mediaController;
     private int position = 0;
-    String path;
     File outputFile,apkStorage;
 
     @Override

@@ -220,6 +220,15 @@ public class AttendanceModel {
 
         boolean Completed;
         AttendanceModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

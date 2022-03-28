@@ -147,8 +147,18 @@ public class LinkModel {
     }
 
     public static class LinkData1 {
+
         boolean Completed;
         LinkModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

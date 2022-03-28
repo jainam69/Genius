@@ -113,11 +113,11 @@ public class Add_Upi_Fragment extends Fragment {
                                 if (response.isSuccessful()){
                                     UPIModel.UPIResponse data = response.body();
                                     if (data.isCompleted()){
-                                        Toast.makeText(context, "UPI inserted Successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                         edt_upiid.setText("");
                                         GetAllUPIDetails();
                                     }else {
-                                        Toast.makeText(context, "Please try again!!!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -155,11 +155,11 @@ public class Add_Upi_Fragment extends Fragment {
                                 if (response.isSuccessful()){
                                     UPIModel.UPIResponse data = response.body();
                                     if (data.isCompleted()){
-                                        Toast.makeText(context, "UPI updated Successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                         edt_upiid.setText("");
                                         GetAllUPIDetails();
                                     }else {
-                                        Toast.makeText(context, "Please try again!!!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }

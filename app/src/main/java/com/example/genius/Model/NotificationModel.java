@@ -163,8 +163,18 @@ public class NotificationModel {
     }
 
     public static class NotificationData1{
+
         boolean Completed;
         NotificationModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

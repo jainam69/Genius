@@ -164,6 +164,13 @@ public class test_schedule_fragment extends Fragment {
         active = root.findViewById(R.id.active);
         inactive = root.findViewById(R.id.inactive);
 
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        indate = dateFormat1.format(cal2.getTime());
+
+        test_date.setText(yesterday());
+
         bundle = getArguments();
         if (bundle != null) {
             linear_save.setVisibility(View.GONE);
@@ -387,7 +394,7 @@ public class test_schedule_fragment extends Fragment {
                                     TestScheduleModel notimodel = data.getData();
                                     if (notimodel.getTestID() > 0) {
                                         if (paper_type.getSelectedItemId() == 0) {
-                                            Toast.makeText(context, "Test Schedule Inserted Successfully.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                             test_Listfragment orderplace = new test_Listfragment();
                                             FragmentManager fragmentManager = getFragmentManager();
                                             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -395,7 +402,7 @@ public class test_schedule_fragment extends Fragment {
                                             fragmentTransaction.addToBackStack(null);
                                             fragmentTransaction.commit();
                                         } else {
-                                            Toast.makeText(context, "Test Schedule Inserted Successfully.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                             save_testschedule.setVisibility(View.GONE);
                                             a = notimodel.getTestID();
                                             if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
@@ -408,8 +415,10 @@ public class test_schedule_fragment extends Fragment {
                                             save_test_paper.setVisibility(View.VISIBLE);
                                         }
                                     } else {
-                                        Toast.makeText(context, "Test Schedule Already Exists!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();
@@ -423,7 +432,6 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -461,21 +469,16 @@ public class test_schedule_fragment extends Fragment {
                                 TestScheduleModel.TestScheduleData1 data = response.body();
                                 if (data.isCompleted()) {
                                     TestScheduleModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        if (notimodel.getTestID() > 0)
-                                        {
-                                            Toast.makeText(context, "Test Schedule Updated Successfully.", Toast.LENGTH_SHORT).show();
-                                            test_Listfragment orderplace = new test_Listfragment();
-                                            FragmentManager fragmentManager = getFragmentManager();
-                                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                            fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
-                                            fragmentTransaction.addToBackStack(null);
-                                            fragmentTransaction.commit();
-                                        }else {
-                                            Toast.makeText(context, "Test Schedule Already Exists!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else {
-                                        Toast.makeText(context, "Test Schedule not Updated...!", Toast.LENGTH_SHORT).show();
+                                    if (notimodel.getTestID() > 0){
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        test_Listfragment orderplace = new test_Listfragment();
+                                        FragmentManager fragmentManager = getFragmentManager();
+                                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                        fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
+                                        fragmentTransaction.addToBackStack(null);
+                                        fragmentTransaction.commit();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -490,7 +493,6 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -570,7 +572,7 @@ public class test_schedule_fragment extends Fragment {
         });
 
         edit_test_paper.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
+            if (Function.isNetworkAvailable(context)) {
                 if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
                 } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
@@ -632,7 +634,6 @@ public class test_schedule_fragment extends Fragment {
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -1147,5 +1148,12 @@ public class test_schedule_fragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subject.setAdapter(adapter);
         subject.setOnItemSelectedListener(onItemSelectedListener8);
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 }

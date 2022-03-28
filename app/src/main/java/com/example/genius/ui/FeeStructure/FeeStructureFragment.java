@@ -216,20 +216,16 @@ public class FeeStructureFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 FeeStructureSingleData data = response.body();
                                 if (data.isCompleted()) {
-                                    FeeStructureModel feemodel = data.getData();
-                                   if (feemodel.getFeesID() > 0){
-                                       Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                       course_name.setSelection(0);
-                                       standard.setSelection(0);
-                                       remarks.setText("");
-                                       banner_image.setText("");
-                                       imageView.setVisibility(View.GONE);
-                                       GetBannerDetails();
-                                   }else {
-                                       Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                   }
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    course_name.setSelection(0);
+                                    standard.setSelection(0);
+                                    remarks.setText("");
+                                    banner_image.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    GetBannerDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                                Function.showToast(context, data.getMessage());
                                 progressBarHelper.hideProgressDialog();
                             }
                         }
@@ -278,21 +274,17 @@ public class FeeStructureFragment extends Fragment {
                             if (response.isSuccessful()) {
                                 FeeStructureSingleData data = response.body();
                                 if (data.isCompleted()) {
-                                    FeeStructureModel notimodel = data.getData();
-                                    if (notimodel.getFeesID() > 0) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        stdname = "";
-                                        course_name.setSelection(0);
-                                        standard.setSelection(0);
-                                        remarks.setText("");
-                                        banner_image.setText("");
-                                        imageView.setVisibility(View.GONE);
-                                        GetBannerDetails();
-                                    }else {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    stdname = "";
+                                    course_name.setSelection(0);
+                                    standard.setSelection(0);
+                                    remarks.setText("");
+                                    banner_image.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    GetBannerDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                                Function.showToast(context, data.getMessage());
                                 progressBarHelper.hideProgressDialog();
                             }
                         }

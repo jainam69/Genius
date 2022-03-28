@@ -145,11 +145,17 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
 
         selectStandard();
 
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        noti_date = dateFormat1.format(cal2.getTime());
+
+        notification_date.setText(yesterday());
+
         notification_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Calendar c = Calendar.getInstance();
-
                 year = c.get(Calendar.YEAR);
                 month = c.get(Calendar.MONTH);
                 day = c.get(Calendar.DAY_OF_MONTH);
@@ -247,18 +253,15 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                 if (response.isSuccessful()) {
                                     NotificationModel.NotificationData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        NotificationModel notimodel = data.getData();
-                                        if (notimodel != null) {
-                                            Toast.makeText(context, "Notification inserted successfully.", Toast.LENGTH_SHORT).show();
-                                            notification_message.setText("");
-                                            notification_date.setText("");
-                                            ch_admin.setChecked(false);
-                                            ch_student.setChecked(false);
-                                            ch_teacher.setChecked(false);
-                                            GetAllNotification();
-                                        } else {
-                                            Toast.makeText(context, "Notification not Inserted.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        notification_message.setText("");
+                                        notification_date.setText(yesterday());
+                                        ch_admin.setChecked(false);
+                                        ch_student.setChecked(false);
+                                        ch_teacher.setChecked(false);
+                                        GetAllNotification();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -274,7 +277,6 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                         Toast.makeText(context, "Please Select SubType.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -283,7 +285,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
         edit_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Function.checkNetworkConnection(context)) {
+                if (Function.isNetworkAvailable(context)) {
                     if (notification_message.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
                     }else if (notification_date.getText().toString().isEmpty()){
@@ -335,20 +337,17 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                 if (response.isSuccessful()) {
                                     NotificationModel.NotificationData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        NotificationModel notimodel = data.getData();
-                                        if (notimodel != null) {
-                                            Toast.makeText(context, "Notification updated successfully.", Toast.LENGTH_SHORT).show();
-                                            notification_message.setText("");
-                                            notification_date.setText("");
-                                            ch_admin.setChecked(false);
-                                            ch_student.setChecked(false);
-                                            ch_teacher.setChecked(false);
-                                            GetAllNotification();
-                                        } else {
-                                            Toast.makeText(context, "Notification not Updated.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        notification_message.setText("");
+                                        notification_date.setText(yesterday());
+                                        ch_admin.setChecked(false);
+                                        ch_student.setChecked(false);
+                                        ch_teacher.setChecked(false);
+                                        GetAllNotification();
                                         save_notification.setVisibility(View.VISIBLE);
                                         edit_notification.setVisibility(View.GONE);
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -364,7 +363,6 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                         Toast.makeText(context, "Please Select SubType.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    progressBarHelper.hideProgressDialog();
                     Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -852,5 +850,12 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                 break;
             }
         }
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 }

@@ -315,18 +315,15 @@ public class batch_fragment extends Fragment {
                                 if (response.isSuccessful()){
                                     BatchModel.BatchResponseModel data = response.body();
                                     if (data.isCompleted()){
-                                        BatchModel list = data.getData();
-                                        if (list.getBatchID() > 0){
-                                            Toast.makeText(context, "Batch inserted successfully.", Toast.LENGTH_SHORT).show();
-                                            batch_list_fragment profileFragment = new batch_list_fragment();
-                                            FragmentManager fm = getActivity().getSupportFragmentManager();
-                                            FragmentTransaction ft = fm.beginTransaction();
-                                            ft.replace(R.id.nav_host_fragment, profileFragment);
-                                            ft.addToBackStack(null);
-                                            ft.commit();
-                                        }else {
-                                            Toast.makeText(context, "Batch Already Exists!!!", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        batch_list_fragment profileFragment = new batch_list_fragment();
+                                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                                        FragmentTransaction ft = fm.beginTransaction();
+                                        ft.replace(R.id.nav_host_fragment, profileFragment);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -385,18 +382,15 @@ public class batch_fragment extends Fragment {
                                 if (response.isSuccessful()){
                                     BatchModel.BatchResponseModel data = response.body();
                                     if (data.isCompleted()){
-                                        BatchModel list = data.getData();
-                                        if (list.getBatchID() > 0){
-                                            Toast.makeText(context, "Batch Updated successfully.", Toast.LENGTH_SHORT).show();
-                                            batch_list_fragment profileFragment = new batch_list_fragment();
-                                            FragmentManager fm = getActivity().getSupportFragmentManager();
-                                            FragmentTransaction ft = fm.beginTransaction();
-                                            ft.replace(R.id.nav_host_fragment, profileFragment);
-                                            ft.addToBackStack(null);
-                                            ft.commit();
-                                        }else {
-                                            Toast.makeText(context, "Batch Already Exists!!!", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        batch_list_fragment profileFragment = new batch_list_fragment();
+                                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                                        FragmentTransaction ft = fm.beginTransaction();
+                                        ft.replace(R.id.nav_host_fragment, profileFragment);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }

@@ -67,7 +67,7 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     RadioGroup rg, rg1;
     RadioButton all, branch_1, rb_general, rb_standard, rb1, rb2;
     TextView master_id, lib_id, uniqid, libraryid, transactionid;
-    SearchableSpinner subject,course_name;
+    SearchableSpinner subject,course_name,category;
     MultiSelectionSpinner standard;
     EditText library_description, library_title, library_video_link;
     Button save_library, edit_library;
@@ -75,10 +75,10 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     LinearLayout linear_spinner;
-    String Branch, Type;
+    String Branch, Type,BranchID,StandardIDs = "none";
     int select, type;
-    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(),courseitem = new ArrayList<>();
-    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>();
+    List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(),courseitem = new ArrayList<>(),categoryitem = new ArrayList<>();
+    List<Integer> standardid = new ArrayList<>(), subjectid = new ArrayList<>(),courseid = new ArrayList<>(),categoryId = new ArrayList<>();
     String[] SUBJECTITEM, CATEGORYITEM, STANDARDITEM,COURSEITEM;
     Integer[] STANDARDID, SUBJECTID, CATEGORYID,COURSEID;
     public static final String ERROR_MSG = "error_msg";
@@ -86,11 +86,6 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
     Bundle bundle;
     OnBackPressedCallback callback;
     Long StandardId = 0L, SubjectId = 0L, categoryid = 0L,courseID = 0L;
-    SearchableSpinner category;
-    List<String> categoryitem = new ArrayList<>();
-    List<Integer> categoryId = new ArrayList<>();
-    String BranchID;
-    String StandardIDs = "none";
     LibraryModel libraryModel;
 
     @Override
@@ -197,14 +192,16 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
                                 if (response.body().isCompleted()) {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                     library_videolist_fragment contact = new library_videolist_fragment();
                                     FragmentManager fragmentManager = getFragmentManager();
                                     FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();
                                     fragmentTransaction.replace(R.id.nav_host_fragment, contact);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
+                                }else {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                                Function.showToast(context, response.body().getMessage());
                             }
                             progressBarHelper.hideProgressDialog();
                         }
@@ -240,14 +237,16 @@ public class library_video_fragment extends Fragment implements MultiSelectionSp
                         public void onResponse(@NotNull Call<LibrarySingleData> call, @NotNull Response<LibrarySingleData> response) {
                             if (response.isSuccessful()) {
                                 if (response.body().isCompleted()) {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                     library_videolist_fragment contact = new library_videolist_fragment();
                                     FragmentManager fragmentManager = getFragmentManager();
                                     FragmentTransaction fragmentTransaction = (fragmentManager).beginTransaction();
                                     fragmentTransaction.replace(R.id.nav_host_fragment, contact);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
+                                }else {
+                                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                                Function.showToast(context, response.body().getMessage());
                             }
                             progressBarHelper.hideProgressDialog();
                         }

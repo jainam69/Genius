@@ -49,8 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     ApiCalling apiCalling;
     Context context;
     String deviceToken,year;
-    List<String> financialyearlist = new ArrayList<>();
-    List<String> yearname = new ArrayList<>();
+    List<String> financialyearlist = new ArrayList<>(),yearname = new ArrayList<>();
     String[] YEARNAME;
 
     @Override

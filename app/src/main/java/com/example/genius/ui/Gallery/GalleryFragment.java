@@ -96,7 +96,7 @@ public class GalleryFragment extends Fragment {
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String pictureFilePath, attach = "";
+    String pictureFilePath, attach = "",OriginFileName,FilePath;
     int flag = 0;
     Boolean selectfile = false;
     public static final String ERROR_MSG = "error_msg";
@@ -110,7 +110,6 @@ public class GalleryFragment extends Fragment {
     byte[] imageVal;
     Bitmap bitmap;
     GalleryMaster_Adapter galleryMaster_adapter;
-    String OriginFileName,FilePath;
     UserModel userpermission;
     LinearLayout linear_create_image;
 
@@ -189,32 +188,27 @@ public class GalleryFragment extends Fragment {
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
                             if (response.isSuccessful()) {
                                 GalleryModel.GallaryData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    GalleryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        gallery_description.setText("");
-                                        attachment_gallery.setText("");
-                                        imageView.setVisibility(View.GONE);
-                                        GetGalleryDetails();
-                                    } else {
-                                        progressBarHelper.hideProgressDialog();
-                                        Toast.makeText(context, "Image not Inserted...!", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else
-                                    progressBarHelper.hideProgressDialog();
-                            } else
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    gallery_description.setText("");
+                                    attachment_gallery.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    GetGalleryDetails();
+                                } else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                                 progressBarHelper.hideProgressDialog();
+                            }
                         }
 
                         @Override
                         public void onFailure(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
-                progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
             }
         });
@@ -246,19 +240,16 @@ public class GalleryFragment extends Fragment {
                         public void onResponse(@NotNull Call<GalleryModel.GallaryData1> call, @NotNull Response<GalleryModel.GallaryData1> response) {
                             if (response.isSuccessful()) {
                                 GalleryModel.GallaryData1 data = response.body();
-                                if (data != null && data.isCompleted()) {
-                                    GalleryModel notimodel = data.getData();
-                                    if (notimodel != null) {
-                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        gallery_description.setText("");
-                                        attachment_gallery.setText("");
-                                        imageView.setVisibility(View.GONE);
-                                        save_gallery.setVisibility(View.VISIBLE);
-                                        edit_gallery.setVisibility(View.GONE);
-                                        GetGalleryDetails();
-                                    } else {
-                                        Toast.makeText(context, "Image not Updated...!", Toast.LENGTH_SHORT).show();
-                                    }
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    gallery_description.setText("");
+                                    attachment_gallery.setText("");
+                                    imageView.setVisibility(View.GONE);
+                                    save_gallery.setVisibility(View.VISIBLE);
+                                    edit_gallery.setVisibility(View.GONE);
+                                    GetGalleryDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }

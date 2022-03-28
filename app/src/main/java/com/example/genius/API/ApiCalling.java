@@ -76,17 +76,11 @@ import retrofit2.http.Query;
 
 public interface ApiCalling {
 
-    @GET(ApiConstant.GET_ALL_BRANCH)
-    Call<BranchModel> GetAllBranch();
-
     @GET(ApiConstant.VALIDATE_USER)
     Call<UserModel.UserData> ValidateUser(@Query("userName") String userName, @Query("password") String password,@Query("fcmtoken") String fcmtoken);
 
     @GET(ApiConstant.GET_USER_PERMISSION)
     Call<UserModel.UserData> Get_User_Permission(@Query("BranchID") long BranchID);
-
-    @GET(ApiConstant.GET_ALL_NOTIFICATION_BRANCH)
-    Call<NotificationData> GetAllNotificationBranch(@Query("branchID") long branchID);
 
     @GET(ApiConstant.GET_ALL_MOBILE_NOTIFICATION)
     Call<NotificationData> GetAllMobileNotificationBranch(@Query("branchID") long branchID);
@@ -109,9 +103,6 @@ public interface ApiCalling {
     @POST(ApiConstant.GET_ALL_STANDARD)
     Call<StandardData> GetAllStandard(@Query("BranchID") long BranchID);
 
-    @POST(ApiConstant.GET_ALL_SUBJECT)
-    Call<SubjectData> GetAllSubject(@Query("BranchID") long BranchID);
-
     @POST(ApiConstant.GET_ALL_STAFF)
     Call<StaffData> GetAllStaff(@Query("BranchID") long BranchID);
 
@@ -123,9 +114,6 @@ public interface ApiCalling {
 
     @POST(ApiConstant.GET_ALL_INACTIVE_STUDENT_WITHOUT_CONTENT)
     Call<StudentData> GetAllInActiveStudentWithoutContent(@Query("BranchID") long BranchID);
-
-    @POST(ApiConstant.GET_ALL_USER)
-    Call<UserData1> GetAllUsers(@Query("branchID") long BranchID);
 
     @GET(ApiConstant.GET_ALL_USER_DDL)
     Call<UserData1> GetAllUsersddl(@Query("branchID") long BranchID);
@@ -142,35 +130,17 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_TODO_BY_ID)
     Call<ToDoByIdData> GetToDoByHWID(@Query("todoID") long todoID);
 
-    @POST(ApiConstant.GET_USER_ROLE_LIST)
-    Call<UserRolesModel> GetUserRoleList();
-
-    @POST(ApiConstant.USER_ROLE_MANAGEMENT)
-    Call<CommonModel> UserRoleManagement(@Body UserModel userModel);
-
-    @POST(ApiConstant.REMOVE_SUBJECT)
-    Call<CommonModel> RemoveSubject(@Query("SubjectID") long SubjectID, @Query("lastupdatedby") String lastupdatedby);
-
     @POST(ApiConstant.REMOVE_SCHOOL)
     Call<CommonModel> RemoveSchool(@Query("SchoolID") long SchoolID, @Query("lastupdatedby") String lastupdatedby);
 
     @POST(ApiConstant.REMOVE_STAFF)
     Call<CommonModel> RemoveStaff(@Query("StaffID") long StaffID, @Query("lastupdatedby") String lastupdatedby);
 
-    @POST(ApiConstant.REMOVE_STANDARD)
-    Call<CommonModel> RemoveStandard(@Query("StandardID") long StandardID, @Query("lastupdatedby") String lastupdatedby);
-
     @POST(ApiConstant.REMOVE_NOTIFICATION)
     Call<CommonModel> RemoveNotification(@Query("notifID") long StandardID, @Query("lastupdatedby") String lastupdatedby);
 
-    @POST(ApiConstant.STANDARD_MAINTENANCE)
-    Call<StandardModel.StandardData1> StandardMaintenance(@Body StandardModel standardModel);
-
     @POST(ApiConstant.SCHOOL_MAINTENANCE)
     Call<SchoolModel.SchoolData1> SchoolMaintanance(@Body SchoolModel schoolModel);
-
-    @POST(ApiConstant.SUBJECT_MAINTENANCE)
-    Call<SubjectModel.SubjectData1> SubjectMaintanance(@Body SubjectModel subjectModel);
 
     @POST(ApiConstant.STAFF_MAINTENANCE)
     Call<StaffModel.StaffData1> StaffMaintanance(@Body StaffModel staffModel);
@@ -238,9 +208,6 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_TESTSCHEDULE_BY_BRANCH_API)
     Call<TestScheduleData> GetAllTestByBranchAPI(@Query("branchID") long branchID);
 
-    @POST(ApiConstant.UPLOAD_PAPER_MAINTENANCE)
-    Call<UploadPaperModel.UploadPaperData1> TestPaperMaintenance(@Body UploadPaperModel uploadPaperModel);
-
     @GET(ApiConstant.GET_EDIT_PAPER_DATA)
     Call<UploadPaperData> GetAllTestPapaerByTest(@Query("testID") long testID);
 
@@ -288,18 +255,6 @@ public interface ApiCalling {
     Call<CategoryData> GetAllCategory(@Query("BranchID") long BranchID);
 
     @Multipart
-    @POST(ApiConstant.LibraryMaintenance + "/{LibraryID}"
-            + "/{LibraryDetailID}" + "/{Title}" + "/{link}" + "/{FileName}" + "/{Extension}" + "/{Description}" + "/{BranchID}" + "/{CategoryID}"
-            + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{HasFile}" + "/{Type}")
-    Call<LibrarySingleData> LibraryMaintenance(@Path("LibraryID") long LibraryID,
-                                               @Path("LibraryDetailID") long LibraryDetailID, @Path("Title") String Title,
-                                               @Path("link") String link, @Path("FileName") String FileName, @Path("Extension") String Extension,
-                                               @Path("Description") String Description, @Path("BranchID") long BranchID,
-                                               @Path("CategoryID") long CategoryID, @Path("CreateId") int CreateId,
-                                               @Path("CreateBy") String CreateBy, @Path("TransactionId") long TransactionId,
-                                               @Path("HasFile") Boolean HasFile, @Path("Type") int Type, @Part MultipartBody.Part image);
-
-    @Multipart
     @POST(ApiConstant.OldLibraryMaintenance + "/{LibraryID}"
             + "/{LibraryDetailID}" + "/{LibraryTitle}" + "/{CategoryID}" + "/{CourseID}" + "/{StandardID}" + "/{BranchID}" + "/{CreatebyBranch}" + "/{Type}" + "/{Library_Type}" + "/{Description}"
             + "/{SubjectID}" + "/{CreateId}" + "/{CreateBy}" + "/{TransactionId}" + "/{VideoLink}" + "/{ThumbnailFileName}" + "/{ThumbnailFileExtension}" + "/{DocFileName}"
@@ -315,8 +270,6 @@ public interface ApiCalling {
                                                   @Path("HasThumbnailFile") Boolean HasThumbnailFile, @Path("HasDocFile") Boolean HasDocFile,
                                                   @Part MultipartBody.Part Thumbnail, @Part MultipartBody.Part Document);
 
-    @GET(ApiConstant.GET_ALL_LIBRARY_BRANCH)
-    Call<LibraryData> GetAllLibrary(@Query("Type") int Type, @Query("branchID") long branchID);
 
     @GET(ApiConstant.GET_LIBRARY_APPROVAL_LIST)
     Call<LibraryData> Getalllibraryapprovallist(@Query("branchID") long branchID);
@@ -397,9 +350,6 @@ public interface ApiCalling {
     @POST(ApiConstant.GET_BRANCH_COURCE_BRANCHCOURCE_BY_ID)
     Call<BranchCourseModel> GetBranchCourseByBranchCourseID(@Query("BranchCourseID") long BranchCourseID);
 
-    @POST(ApiConstant.GET_ALL_BRANCH_COURSE)
-    Call<BranchCourseModel> Get_All_Branch_Course(@Query("branchID") long branchID);
-
     @GET(ApiConstant.GET_BRANCH_COURCE_ALL)
     Call<CourceModel> GetAllCourse();
 
@@ -428,9 +378,6 @@ public interface ApiCalling {
     @POST(ApiConstant.BRANCH_CLASS_MAITENANCE)
     Call<BranchClassSingleModel> BranchClassMaintenance(@Body BranchClassSingleModel.BranchClassData libraryModel);
 
-    @GET(ApiConstant.GET_BRANCH_CLASS_ALL)
-    Call<ClassModel> GetAllClass();
-
     @POST(ApiConstant.GET_BRANCH_CLASS_BRANCHID)
     Call<BranchClassModel> GetAllBranchClassByBranchID(@Query("BranchID") long BranchID);
 
@@ -444,14 +391,8 @@ public interface ApiCalling {
     @POST(ApiConstant.GET_BRANCH_SUBJECT_BRANCHID)
     Call<BranchSubjectModel> GetAllBranchSubjectByBranchID(@Query("branchID") long branchID);
 
-    @GET(ApiConstant.GET_BRANCH_SUBJECT_ALL)
-    Call<SuperAdminSubjectModel> GetAllSubject();
-
     @POST(ApiConstant.BRANCH_SUBJECT_REMOVE)
     Call<CommonModel.ResponseModel> RemoveSubjectDetail(@Query("CourseID") long CourseID, @Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("lastupdatedby") long lastupdatedby);
-
-    @POST(ApiConstant.GET_ALL_BRANCH_SUBJECT)
-    Call<BranchSubjectModel> Get_All_Subject(@Query("SubjectID") long SubjectID, @Query("BranchID") long BranchID, @Query("ClassID") long ClassID);
 
     @GET(ApiConstant.GET_ALL_SUBJECT_DDL)
     Call<BranchSubjectModel> Get_All_Subject_DDL(@Query("ClassID") long ClassID, @Query("BranchID") long BranchID, @Query("CourseID") long CourseID);

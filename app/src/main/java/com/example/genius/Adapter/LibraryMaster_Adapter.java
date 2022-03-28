@@ -76,7 +76,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.doc_category.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
         holder.doc_desc.setText(libraryDetails.get(position).getDescription());
         if (libraryDetails.get(position).getLibrary_Type() == 1) {

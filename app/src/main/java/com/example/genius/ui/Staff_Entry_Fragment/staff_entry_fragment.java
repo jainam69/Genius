@@ -70,8 +70,7 @@ public class staff_entry_fragment extends Fragment {
     private int year;
     private int month;
     private int day;
-    String gender, status,RoleName, BranchID;
-    String ddate, apdate, jodate, ledate;
+    String gender, status,RoleName, BranchID,ddate, apdate, jodate, ledate;
     int select;
     Context context;
     List<String> roleitem = new ArrayList<>();
@@ -117,6 +116,18 @@ public class staff_entry_fragment extends Fragment {
         transaction_id = root.findViewById(R.id.transaction_id);
         user_password = root.findViewById(R.id.user_password);
         hide_password = root.findViewById(R.id.hide_password);
+
+        Calendar cal2 = Calendar.getInstance();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        cal2.add(Calendar.DATE, 0);
+        apdate = dateFormat1.format(cal2.getTime());
+        jodate = dateFormat1.format(cal2.getTime());
+        ledate = dateFormat1.format(cal2.getTime());
+
+        date_of_appo.setText(yesterday());
+        date_of_join.setText(yesterday());
+        date_of_leaving.setText(yesterday());
+
         GetStaffRole();
 
         bundle = getArguments();
@@ -261,9 +272,9 @@ public class staff_entry_fragment extends Fragment {
                     }, year, month, day);
             picker.show();
         });
+
         date_of_appo.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
@@ -278,9 +289,9 @@ public class staff_entry_fragment extends Fragment {
                     }, year, month, day);
             picker.show();
         });
+
         date_of_join.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
@@ -295,9 +306,9 @@ public class staff_entry_fragment extends Fragment {
                     }, year, month, day);
             picker.show();
         });
+
         date_of_leaving.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
@@ -343,18 +354,15 @@ public class staff_entry_fragment extends Fragment {
                             if (response.isSuccessful()) {
                                 StaffModel.StaffData1 data = response.body();
                                 if (data.isCompleted()) {
-                                    StaffModel staffModel = data.getData();
-                                    if (staffModel.getStaffID() > 0) {
-                                        Toast.makeText(context, "User inserted successfully.", Toast.LENGTH_SHORT).show();
-                                        staff_entry_listfragment profileFragment = new staff_entry_listfragment();
-                                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                                        FragmentTransaction ft = fm.beginTransaction();
-                                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                                        ft.addToBackStack(null);
-                                        ft.commit();
-                                    } else {
-                                        Toast.makeText(context, "User Already Exists.", Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    staff_entry_listfragment profileFragment = new staff_entry_listfragment();
+                                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                                    FragmentTransaction ft = fm.beginTransaction();
+                                    ft.replace(R.id.nav_host_fragment, profileFragment);
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -402,18 +410,15 @@ public class staff_entry_fragment extends Fragment {
                             if (response.isSuccessful()) {
                                 StaffModel.StaffData1 data = response.body();
                                 if (data.isCompleted()) {
-                                    StaffModel staffModel = data.getData();
-                                    if (staffModel.getStaffID() > 0) {
-                                        Toast.makeText(context, "User Updated Successfully.", Toast.LENGTH_SHORT).show();
-                                        staff_entry_listfragment profileFragment = new staff_entry_listfragment();
-                                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                                        FragmentTransaction ft = fm.beginTransaction();
-                                        ft.replace(R.id.nav_host_fragment, profileFragment);
-                                        ft.addToBackStack(null);
-                                        ft.commit();
-                                    } else {
-                                        Toast.makeText(context, "User Already Exists.", Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    staff_entry_listfragment profileFragment = new staff_entry_listfragment();
+                                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                                    FragmentTransaction ft = fm.beginTransaction();
+                                    ft.replace(R.id.nav_host_fragment, profileFragment);
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }
@@ -491,6 +496,13 @@ public class staff_entry_fragment extends Fragment {
             return String.valueOf(c);
         else
             return "0" + c;
+    }
+
+    public static String yesterday() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        cal.add(Calendar.DATE, 0);
+        return dateFormat.format(cal.getTime());
     }
 
 }

@@ -110,6 +110,8 @@ public class reminder_fragment extends Fragment {
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
 
+        date_reminder.setText(yesterday());
+
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 40 && !model.getPackageRightinfo().isCreatestatus()){
                 linear_create_reminder.setVisibility(View.GONE);
@@ -122,107 +124,6 @@ public class reminder_fragment extends Fragment {
         } else {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
-
-        save_reminder.setOnClickListener(v -> {
-            progressBarHelper.showProgressDialog();
-            if (Function.checkNetworkConnection(context)) {
-                if (edt_reminderDescription.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Enter Description", Toast.LENGTH_SHORT).show();
-                } else if (reminder_time.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Select Time", Toast.LENGTH_SHORT).show();
-                } else if (date_reminder.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Select Date", Toast.LENGTH_SHORT).show();
-                } else {
-                    progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    ReminderModel model = new ReminderModel(branchModel, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), date, reminder_time.getText().toString(), edt_reminderDescription.getText().toString(), transactionModel, rowStatusModel);
-                    Call<ReminderModel.ReminderData1> call = apiCalling.ReminderMaintenance(model);
-                    call.enqueue(new Callback<ReminderModel.ReminderData1>() {
-                        @Override
-                        public void onResponse(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Response<ReminderModel.ReminderData1> response) {
-                            if (response.isSuccessful()) {
-                                ReminderModel.ReminderData1 data = response.body();
-                                if (data != null) {
-                                    ReminderModel reminderModel = data.getData();
-                                    if (reminderModel.getReminderID() > 0) {
-                                        edt_reminderDescription.setText("");
-                                        reminder_time.setText("");
-                                        date_reminder.setText("");
-                                        GetReminderDetails();
-                                        Toast.makeText(context, "Reminder Added Successfully.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                            progressBarHelper.hideProgressDialog();
-                        }
-
-                        @Override
-                        public void onFailure(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Throwable t) {
-                            progressBarHelper.hideProgressDialog();
-                        }
-                    });
-                }
-            } else {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        edit_reminder.setOnClickListener(v -> {
-            if (Function.checkNetworkConnection(context)) {
-                if (edt_reminderDescription.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Enter Description", Toast.LENGTH_SHORT).show();
-                } else if (reminder_time.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Select Time", Toast.LENGTH_SHORT).show();
-                } else if (date_reminder.getText().toString().equals("")) {
-                    progressBarHelper.hideProgressDialog();
-                    Toast.makeText(context, "Please Select Date", Toast.LENGTH_SHORT).show();
-                } else {
-                    progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                    RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    ReminderModel model = new ReminderModel(Long.parseLong(reminderid.getText().toString()), branchModel, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), date, reminder_time.getText().toString(), edt_reminderDescription.getText().toString(), transactionModel, rowStatusModel);
-                    Call<ReminderModel.ReminderData1> call = apiCalling.ReminderMaintenance(model);
-                    call.enqueue(new Callback<ReminderModel.ReminderData1>() {
-                        @Override
-                        public void onResponse(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Response<ReminderModel.ReminderData1> response) {
-                            if (response.isSuccessful()) {
-                                ReminderModel.ReminderData1 data = response.body();
-                                if (data != null) {
-                                    ReminderModel reminderModel = data.getData();
-                                    if (reminderModel.getReminderID() > 0) {
-                                        edt_reminderDescription.setText("");
-                                        reminder_time.setText("");
-                                        date_reminder.setText("");
-                                        save_reminder.setVisibility(View.VISIBLE);
-                                        edit_reminder.setVisibility(View.GONE);
-                                        GetReminderDetails();
-                                        Toast.makeText(context, "Reminder Edited Successfully.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                            progressBarHelper.hideProgressDialog();
-                        }
-
-                        @Override
-                        public void onFailure(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Throwable t) {
-
-                        }
-                    });
-                }
-            } else {
-                progressBarHelper.hideProgressDialog();
-                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         reminder_time.setOnClickListener(v -> {
             Calendar mcurrentTime = Calendar.getInstance();
@@ -250,7 +151,6 @@ public class reminder_fragment extends Fragment {
 
         date_reminder.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
-
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             day = c.get(Calendar.DAY_OF_MONTH);
@@ -264,6 +164,97 @@ public class reminder_fragment extends Fragment {
                         date = pad(year) + "-" + pad(month + 1) + "-" + day;
                     }, year, month, day);
             picker.show();
+        });
+
+        save_reminder.setOnClickListener(v -> {
+            if (Function.isNetworkAvailable(context)) {
+                if (edt_reminderDescription.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Enter Description", Toast.LENGTH_SHORT).show();
+                } else if (reminder_time.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Select Time", Toast.LENGTH_SHORT).show();
+                } else if (date_reminder.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Select Date", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressBarHelper.showProgressDialog();
+                    TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    ReminderModel model = new ReminderModel(branchModel, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), date, reminder_time.getText().toString(), edt_reminderDescription.getText().toString(), transactionModel, rowStatusModel);
+                    Call<ReminderModel.ReminderData1> call = apiCalling.ReminderMaintenance(model);
+                    call.enqueue(new Callback<ReminderModel.ReminderData1>() {
+                        @Override
+                        public void onResponse(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Response<ReminderModel.ReminderData1> response) {
+                            if (response.isSuccessful()) {
+                                ReminderModel.ReminderData1 data = response.body();
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    edt_reminderDescription.setText("");
+                                    reminder_time.setText("");
+                                    date_reminder.setText(yesterday());
+                                    GetReminderDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            progressBarHelper.hideProgressDialog();
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Throwable t) {
+                            progressBarHelper.hideProgressDialog();
+                        }
+                    });
+                }
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        edit_reminder.setOnClickListener(v -> {
+            if (Function.isNetworkAvailable(context)) {
+                if (edt_reminderDescription.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Enter Description", Toast.LENGTH_SHORT).show();
+                } else if (reminder_time.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Select Time", Toast.LENGTH_SHORT).show();
+                } else if (date_reminder.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please Select Date", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressBarHelper.showProgressDialog();
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    RowStatusModel rowStatusModel = new RowStatusModel(1);
+                    BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+                    ReminderModel model = new ReminderModel(Long.parseLong(reminderid.getText().toString()), branchModel, Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), date, reminder_time.getText().toString(), edt_reminderDescription.getText().toString(), transactionModel, rowStatusModel);
+                    Call<ReminderModel.ReminderData1> call = apiCalling.ReminderMaintenance(model);
+                    call.enqueue(new Callback<ReminderModel.ReminderData1>() {
+                        @Override
+                        public void onResponse(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Response<ReminderModel.ReminderData1> response) {
+                            if (response.isSuccessful()) {
+                                ReminderModel.ReminderData1 data = response.body();
+                                if (data.isCompleted()) {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    edt_reminderDescription.setText("");
+                                    reminder_time.setText("");
+                                    date_reminder.setText(yesterday());
+                                    save_reminder.setVisibility(View.VISIBLE);
+                                    edit_reminder.setVisibility(View.GONE);
+                                    GetReminderDetails();
+                                }else {
+                                    Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            progressBarHelper.hideProgressDialog();
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call<ReminderModel.ReminderData1> call, @NotNull Throwable t) {
+                            progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            } else {
+                Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
+            }
         });
 
         callback = new OnBackPressedCallback(true) {

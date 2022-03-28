@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         preferences = new Preferences(SplashActivity.this);
         a = preferences.getBoolean(Preferences.KEY_LOGIN);
 
-        Thread timer=new Thread(){
+        Thread timer = new Thread(){
             @Override
             public void run() {
                 super.run();
@@ -28,11 +28,10 @@ public class SplashActivity extends AppCompatActivity {
                     sleep(3000);
                     if(a){
                         startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                        SplashActivity.this.finish();
                     }else{
                         startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                        SplashActivity.this.finish();
                     }
+                    SplashActivity.this.finish();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -61,7 +61,6 @@ public class BranchCourseFragment extends Fragment {
     List<BranchCourseModel.BranchCourceData> list;
     List<BranchCourseModel.BranchCourceData> listForBundle;
     Bundle bundle = null;
-    BranchCourseModel.BranchCourceData model;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -136,18 +135,16 @@ public class BranchCourseFragment extends Fragment {
                     public void onResponse(@NotNull Call<BranchCourseSingleModel> call, @NotNull Response<BranchCourseSingleModel> response) {
                         if (response.isSuccessful()) {
                             BranchCourseSingleModel data = response.body();
-                            if (data != null) {
-                                if (data.getCompleted()) {
-                                    Function.showToast(context, data.getMessage());
-                                    BranchCourseListFragment profileFragment = new BranchCourseListFragment();
-                                    FragmentManager fm = requireActivity().getSupportFragmentManager();
-                                    FragmentTransaction ft = fm.beginTransaction();
-                                    ft.replace(R.id.nav_host_fragment, profileFragment);
-                                    ft.addToBackStack(null);
-                                    ft.commit();
-                                } else {
-                                    Function.showToast(context, data.getMessage());
-                                }
+                            if (data.getCompleted()) {
+                                Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                BranchCourseListFragment profileFragment = new BranchCourseListFragment();
+                                FragmentManager fm = requireActivity().getSupportFragmentManager();
+                                FragmentTransaction ft = fm.beginTransaction();
+                                ft.replace(R.id.nav_host_fragment, profileFragment);
+                                ft.addToBackStack(null);
+                                ft.commit();
+                            } else {
+                                Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             progressBarHelper.hideProgressDialog();
                         }
