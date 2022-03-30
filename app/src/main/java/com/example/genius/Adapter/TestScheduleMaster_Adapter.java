@@ -79,7 +79,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull TestScheduleMaster_Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TestScheduleMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 84){
                 if (!model.getPackageRightinfo().isCreatestatus()){
@@ -188,10 +188,12 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
                                 CommonModel model = response.body();
                                 if (model.isCompleted()) {
                                     if (model.isData()) {
-                                        Toast.makeText(context, "Test Schedule Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         testScheduleDetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();
+                                    }else {
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }

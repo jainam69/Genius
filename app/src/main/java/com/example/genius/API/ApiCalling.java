@@ -372,7 +372,7 @@ public interface ApiCalling {
     Call<CommonModel.ResponseModel> Check_Subject_Detail(@Query("Branchid") long Branchid, @Query("subjectdetailis") long subjectdetailis);
 
     @POST(ApiConstant.BRANCH_COURCE_REMOVE)
-    Call<CommonModel> RemoveBranchCourse(@Query("BranchCourseID") long BranchCourseID, @Query("lastupdatedby") String lastupdatedby);
+    Call<CommonModel.ResponseModel> RemoveBranchCourse(@Query("BranchCourseID") long BranchCourseID, @Query("lastupdatedby") String lastupdatedby);
 
     //Branch Class
     @POST(ApiConstant.BRANCH_CLASS_MAITENANCE)

@@ -515,11 +515,13 @@ public class LiveVideoFragment extends Fragment {
                         public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
                             if (response.isSuccessful()) {
                                 CommonModel model = response.body();
-                                if (model != null && model.isData()) {
-                                    Toast.makeText(context, "Live Video Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                if (model.isData()) {
+                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     linkdetails.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
+                                }else {
+                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();

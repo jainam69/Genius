@@ -80,7 +80,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull HomeworkMaster_Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HomeworkMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 43){
@@ -172,10 +172,12 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
                                 CommonModel model = response.body();
                                 if (model != null && model.isCompleted()) {
                                     if (model.isData()) {
-                                        Toast.makeText(context, "Homework deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         homeworkDetails.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();
+                                    }else {
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                                 progressBarHelper.hideProgressDialog();

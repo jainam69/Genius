@@ -140,12 +140,14 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
                         public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
                             if (response.isSuccessful()) {
                                 CommonModel model = response.body();
-                                if (model != null && model.isCompleted()) {
+                                if (model.isCompleted()) {
                                     if (model.isData()) {
-                                        Toast.makeText(context, "Faculty Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         facultyModelList.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();
+                                    }else {
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
@@ -155,6 +157,7 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
                         @Override
                         public void onFailure(@NotNull Call<CommonModel> call, @NotNull Throwable t) {
                             progressBarHelper.hideProgressDialog();
+                            Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 });

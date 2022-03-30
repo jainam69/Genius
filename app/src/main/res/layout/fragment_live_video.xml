@@ -251,7 +251,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Live Video Details :"
+                android:text="Online Class Details :"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
                 android:textStyle="bold"

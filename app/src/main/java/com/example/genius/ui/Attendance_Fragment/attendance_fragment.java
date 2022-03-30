@@ -193,11 +193,6 @@ public class attendance_fragment extends Fragment {
 
         selectStandard();
 
-        Calendar cal2 = Calendar.getInstance();
-        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-        cal2.add(Calendar.DATE, 0);
-        indate = dateFormat1.format(cal2.getTime());
-
         attendance_date.setText(yesterday());
 
         attendance_date.setOnClickListener(v -> {
@@ -257,6 +252,7 @@ public class attendance_fragment extends Fragment {
                                             attendanceMaster_adapter.notifyDataSetChanged();
                                             attendance_rv.setAdapter(attendanceMaster_adapter);
                                         } else {
+                                            save_attendance.setVisibility(View.GONE);
                                             attendance_rv.setVisibility(View.GONE);
                                             no_content.setVisibility(View.VISIBLE);
                                         }

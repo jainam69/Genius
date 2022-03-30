@@ -152,7 +152,7 @@ public class BranchClassListAdapter extends RecyclerView.Adapter<BranchClassList
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
                                 }else {
-                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             }
                             progressBarHelper.hideProgressDialog();

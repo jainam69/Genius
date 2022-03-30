@@ -70,8 +70,18 @@ public class SchoolModel {
     }
 
     public static class SchoolData1 {
+
         boolean Completed;
         SchoolModel Data;
+        String Message;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
 
         public boolean isCompleted() {
             return Completed;

@@ -143,9 +143,12 @@ public class Batch_Adapter extends RecyclerView.Adapter<Batch_Adapter.ViewHolder
                                 CommonModel model = response.body();
                                 if (model != null && model.isCompleted()) {
                                     if (model.isData()) {
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         batchModels.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();
+                                    }else {
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                                 progressBarHelper.hideProgressDialog();

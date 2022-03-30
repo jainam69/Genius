@@ -177,10 +177,12 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
-                                                Toast.makeText(context, "Attendance deleted successfully.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                                 attendanceDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();
+                                            }else {
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }

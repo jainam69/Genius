@@ -173,11 +173,12 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
-                                                Toast.makeText(context, "User deleted successfully.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context,model.getMessage(), Toast.LENGTH_SHORT).show();
                                                 staffDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();
-
+                                            }else {
+                                                Toast.makeText(context,model.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }

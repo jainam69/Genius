@@ -298,12 +298,14 @@ public class reminder_fragment extends Fragment {
                         if (reminderModelList != null) {
                             if (reminderModelList.size() > 0) {
                                 text.setVisibility(View.VISIBLE);
+                                reminder_rv.setVisibility(View.VISIBLE);
                                 reminder_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
                                 reminder_adapter = new Reminder_Adapter(context, reminderModelList);
                                 reminder_adapter.notifyDataSetChanged();
                                 reminder_rv.setAdapter(reminder_adapter);
                             }else {
                                 text.setVisibility(View.GONE);
+                                reminder_rv.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -427,10 +429,12 @@ public class reminder_fragment extends Fragment {
                                 CommonModel model = response.body();
                                 if (model.isCompleted()) {
                                     if (model.isData()) {
-                                        Toast.makeText(context, "Reminder Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         reminderModels.remove(position);
                                         notifyItemRemoved(position);
                                         notifyDataSetChanged();
+                                    }else {
+                                        Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }

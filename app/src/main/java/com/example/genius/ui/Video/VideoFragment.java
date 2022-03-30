@@ -460,12 +460,14 @@ public class VideoFragment extends Fragment {
                             public void onResponse(@NotNull Call<CommonModel> call, @NotNull Response<CommonModel> response) {
                                 if (response.isSuccessful()) {
                                     CommonModel model = response.body();
-                                    if (model != null && model.isCompleted()) {
+                                    if (model.isCompleted()) {
                                         if (model.isData()) {
-                                            Toast.makeText(context, "Video Deleted Successfully...", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             galleryDetails.remove(position);
                                             notifyItemRemoved(position);
                                             notifyDataSetChanged();
+                                        }else {
+                                            Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }

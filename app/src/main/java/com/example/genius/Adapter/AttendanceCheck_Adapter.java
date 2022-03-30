@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,7 +26,6 @@ public class AttendanceCheck_Adapter extends RecyclerView.Adapter<AttendanceChec
     Context context;
     List<AttendanceModel.AttendanceDetailEntity> attendanceDetailEntities;
     public static List<AttendanceModel.AttendanceDetailEntity> testlist_edit = new ArrayList<>();
-    boolean absent;
 
     public AttendanceCheck_Adapter(Context context, List<AttendanceModel.AttendanceDetailEntity> attendanceDetailEntities) {
         this.context = context;
@@ -39,8 +39,7 @@ public class AttendanceCheck_Adapter extends RecyclerView.Adapter<AttendanceChec
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AttendanceCheck_Adapter.ViewHolder holder, int position) {
-        AttendanceModel.AttendanceDetailEntity attendanceDetailEntity = new AttendanceModel.AttendanceDetailEntity();
+    public void onBindViewHolder(@NonNull AttendanceCheck_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.gr_no.setText(""+attendanceDetailEntities.get(position).getStudent().getGrNo());
         holder.stu_name.setText(attendanceDetailEntities.get(position).getStudent().getFirstName() + " " + attendanceDetailEntities.get(position).getStudent().getLastName());
         holder.present_absent.setChecked(attendanceDetailEntities.get(position).isAbsent());
@@ -50,13 +49,19 @@ public class AttendanceCheck_Adapter extends RecyclerView.Adapter<AttendanceChec
         AttendanceModel.AttendanceDetailEntity att = new AttendanceModel.AttendanceDetailEntity();
         StudentModel mod = new StudentModel();
         mod.setStudentID(attendanceDetailEntities.get(position).getStudent().getStudentID());
-        attendanceDetailEntity.setStudent(mod);
-        attendanceDetailEntity.setDetailID(attendanceDetailEntities.get(position).getDetailID());
-        attendanceDetailEntity.setHeaderID(attendanceDetailEntities.get(position).getHeaderID());
-        attendanceDetailEntity.setRemarks(attendanceDetailEntities.get(position).getRemarks());
-        attendanceDetailEntity.setAbsent(attendanceDetailEntities.get(position).isAbsent());
-        attendanceDetailEntity.setPresent(attendanceDetailEntities.get(position).isPresent());
-        testlist_edit.add(attendanceDetailEntity);
+        att.setStudent(mod);
+        testlist_edit.add(att);
+        testlist_edit.get(position).setDetailID(attendanceDetailEntities.get(position).getDetailID());
+        testlist_edit.get(position).setHeaderID(attendanceDetailEntities.get(position).getHeaderID());
+        testlist_edit.get(position).setRemarks(attendanceDetailEntities.get(position).getRemarks());
+        testlist_edit.get(position).setAbsent(attendanceDetailEntities.get(position).isAbsent());
+        testlist_edit.get(position).setPresent(attendanceDetailEntities.get(position).isPresent());
+        /*att.setDetailID(attendanceDetailEntities.get(position).getDetailID());
+        att.setHeaderID(attendanceDetailEntities.get(position).getHeaderID());
+        att.setRemarks(attendanceDetailEntities.get(position).getRemarks());
+        att.setAbsent(attendanceDetailEntities.get(position).isAbsent());
+        att.setPresent(attendanceDetailEntities.get(position).isPresent());
+        testlist_edit.add(att);*/
         holder.present_absent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

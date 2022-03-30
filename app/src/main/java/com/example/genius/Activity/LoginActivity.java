@@ -25,9 +25,6 @@ import com.example.genius.R;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -48,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Context context;
-    String deviceToken,year;
+    String year;
     List<String> financialyearlist = new ArrayList<>(),yearname = new ArrayList<>();
     String[] YEARNAME;
 
@@ -65,13 +62,6 @@ public class LoginActivity extends AppCompatActivity {
         context = LoginActivity.this;
         forgot_password = findViewById(R.id.forgot_password);
         financial_year = findViewById(R.id.financial_year);
-
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                deviceToken = task.getResult();
-            }
-        });
 
         forgot_password.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -158,6 +158,8 @@ public class Add_Upi_Fragment extends Fragment {
                                         Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
                                         edt_upiid.setText("");
                                         GetAllUPIDetails();
+                                        save_upiid.setVisibility(View.VISIBLE);
+                                        edit_upiid.setVisibility(View.GONE);
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -313,10 +315,12 @@ public class Add_Upi_Fragment extends Fragment {
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
-                                                Toast.makeText(context, "UPI ID deleted successfully.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                                 upiModelList.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();
+                                            }else {
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                         progressBarHelper.hideProgressDialog();

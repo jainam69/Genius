@@ -125,14 +125,11 @@ public class master_schoolFragment extends Fragment {
                                 if (response.isSuccessful()) {
                                     SchoolModel.SchoolData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        SchoolModel model1 = data.getData();
-                                        if (model1.getSchoolID() > 0) {
-                                            Toast.makeText(context, "School inserted successfully.", Toast.LENGTH_SHORT).show();
-                                            school_name.setText("");
-                                            GetAllSchool();
-                                        }else {
-                                            Toast.makeText(context, "School Already Exists.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        school_name.setText("");
+                                        GetAllSchool();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -171,16 +168,13 @@ public class master_schoolFragment extends Fragment {
                                 if (response.isSuccessful()) {
                                     SchoolModel.SchoolData1 data = response.body();
                                     if (data.isCompleted()) {
-                                        SchoolModel model1 = data.getData();
-                                        if (model1.getSchoolID() > 0) {
-                                            Toast.makeText(context, "School updated successfully.", Toast.LENGTH_SHORT).show();
-                                            save_school_master.setVisibility(View.VISIBLE);
-                                            edit_school_master.setVisibility(View.GONE);
-                                            school_name.setText("");
-                                            GetAllSchool();
-                                        }else {
-                                            Toast.makeText(context, "School Already Exists.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                        save_school_master.setVisibility(View.VISIBLE);
+                                        edit_school_master.setVisibility(View.GONE);
+                                        school_name.setText("");
+                                        GetAllSchool();
+                                    }else {
+                                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     progressBarHelper.hideProgressDialog();
                                 }
@@ -391,10 +385,12 @@ public class master_schoolFragment extends Fragment {
                                             CommonModel model = response.body();
                                             if (model.isCompleted()) {
                                                 if (model.isData()) {
-                                                    Toast.makeText(context, "School deleted successfully.", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                                     schoolDetails.remove(position);
                                                     notifyItemRemoved(position);
                                                     notifyDataSetChanged();
+                                                }else {
+                                                    Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         } else {

@@ -633,10 +633,12 @@ public class Banner_Fragment extends Fragment {
                                     CommonModel model = response.body();
                                     if (model.isCompleted()) {
                                         if (model.isData()) {
-                                            Toast.makeText(context, "Banner deleted successfully.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             bannerDetails.remove(position);
                                             notifyItemRemoved(position);
                                             notifyDataSetChanged();
+                                        }else {
+                                            Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     progressBarHelper.hideProgressDialog();

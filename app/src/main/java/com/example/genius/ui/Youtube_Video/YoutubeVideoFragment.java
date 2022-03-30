@@ -541,10 +541,12 @@ public class YoutubeVideoFragment extends Fragment {
                                         if (response.isSuccessful()) {
                                             CommonModel model = response.body();
                                             if (model.isData()) {
-                                                Toast.makeText(context, "YouTube Video Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                                 linkdetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();
+                                            }else {
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                         progressBarHelper.hideProgressDialog();

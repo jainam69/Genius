@@ -686,9 +686,12 @@ public class TaskFragment extends Fragment {
                                     CommonModel model = response.body();
                                     if (model.isCompleted()) {
                                         if (model.isData()) {
+                                            Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             todoModels.remove(position);
                                             notifyItemRemoved(position);
                                             notifyDataSetChanged();
+                                        }else {
+                                            Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }

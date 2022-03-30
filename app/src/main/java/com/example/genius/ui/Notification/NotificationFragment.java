@@ -783,10 +783,12 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                         CommonModel model = response.body();
                                         if (model.isCompleted()) {
                                             if (model.isData()) {
-                                                Toast.makeText(context, "Notification deleted successfully.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                                 notificationDetails.remove(position);
                                                 notifyItemRemoved(position);
                                                 notifyDataSetChanged();
+                                            }else {
+                                                Toast.makeText(context, model.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     }
@@ -796,6 +798,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                 @Override
                                 public void onFailure(Call<CommonModel> call, Throwable t) {
                                     progressBarHelper.hideProgressDialog();
+                                    Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                             dialog.dismiss();

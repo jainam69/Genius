@@ -61,7 +61,7 @@ public class staff_entry_listfragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("User Entry");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("User List");
         View root = inflater.inflate(R.layout.staff_entry_listfragment_fragment, container, false);
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
