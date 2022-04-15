@@ -43,6 +43,8 @@ import com.example.genius.Model.NotificationModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.FragmentNotificationBinding;
+import com.example.genius.databinding.RowLayoutNotiBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -69,21 +71,14 @@ import retrofit2.Response;
 
 public class NotificationFragment extends Fragment implements MultiSelectionSpinner.OnMultipleItemsSelectedListener{
 
-    SearchableSpinner branch,course_name;
-    LinearLayout linear_create_notification,linear_spinner;
-    CheckBox ch_admin, ch_teacher, ch_student;
+    FragmentNotificationBinding binding;
     Long adminid = Long.valueOf(0), teacherid = Long.valueOf(0), studentid = Long.valueOf(0);
-    TextView text, id, image, transaction_id, notification_id;
-    RecyclerView notification_rv;
-    Button save_notification, edit_notification;
     Context context;
     ProgressBarHelper progressBarHelper;
-    EditText notification_message,notification_date;
     ApiCalling apiCalling;
     int check_value_admin, check_value_teacher, check_value_student;
     Long courseID = 0L,StandardId;
     OnBackPressedCallback callback;
-    NestedScrollView notification_scroll;
     String BranchID,noti_date,StandardIDs="";
     Notification_Adapter notification_adapter;
     UserModel userpermission;
@@ -96,43 +91,23 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
     List<Integer> standardid = new ArrayList<>(),courseid = new ArrayList<>();
     String[] STANDARDITEM,COURSEITEM;
     Integer[] STANDARDID,COURSEID;
-    MultiSelectionSpinner standard;
     List<NotificationModel.NotificationStandardEntity> list = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Notification");
-        View root = inflater.inflate(R.layout.fragment_notification, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Notification Master");
+        binding = FragmentNotificationBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        branch = root.findViewById(R.id.branch);
-        ch_admin = root.findViewById(R.id.ch_admin);
-        ch_teacher = root.findViewById(R.id.ch_teacher);
-        ch_student = root.findViewById(R.id.ch_student);
-        notification_message = root.findViewById(R.id.notification_message);
-        save_notification = root.findViewById(R.id.save_notification);
-        edit_notification = root.findViewById(R.id.edit_notification);
-        notification_rv = root.findViewById(R.id.notification_rv);
-        text = root.findViewById(R.id.text);
-        id = root.findViewById(R.id.id);
-        image = root.findViewById(R.id.image);
-        notification_id = root.findViewById(R.id.notification_id);
-        transaction_id = root.findViewById(R.id.transaction_id);
-        notification_scroll = root.findViewById(R.id.notification_scroll);
-        notification_date = root.findViewById(R.id.notification_date);
-        linear_spinner = root.findViewById(R.id.linear_spinner);
-        course_name = root.findViewById(R.id.course_name);
-        standard = root.findViewById(R.id.standard);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        linear_create_notification = root.findViewById(R.id.linear_create_notification);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 10 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_notification.setVisibility(View.GONE);
+                binding.linearCreateNotification.setVisibility(View.GONE);
             }
         }
 
@@ -150,9 +125,9 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
         cal2.add(Calendar.DATE, 0);
         noti_date = dateFormat1.format(cal2.getTime());
 
-        notification_date.setText(yesterday());
+        binding.notificationDate.setText(yesterday());
 
-        notification_date.setOnClickListener(new View.OnClickListener() {
+        binding.notificationDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Calendar c = Calendar.getInstance();
@@ -166,13 +141,13 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                             month = monthOfYear;
                             day = dayOfMonth;
                             noti_date = year + "-" + pad(month + 1) + "-" + pad(day);
-                            notification_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                            binding.notificationDate.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                         }, year, month, day);
                 picker.show();
             }
         });
 
-        ch_admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.chAdmin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -183,49 +158,49 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
             }
         });
 
-        ch_teacher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.chTeacher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     check_value_teacher = 1;
-                    linear_spinner.setVisibility(View.VISIBLE);
+                    binding.linearSpinner.setVisibility(View.VISIBLE);
                 } else {
                     check_value_teacher = 0;
-                    if (!ch_student.isChecked()){
-                        linear_spinner.setVisibility(View.GONE);
+                    if (!binding.chStudent.isChecked()){
+                        binding.linearSpinner.setVisibility(View.GONE);
                     }
                 }
             }
         });
 
-        ch_student.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.chStudent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     check_value_student = 1;
-                    linear_spinner.setVisibility(View.VISIBLE);
+                    binding.linearSpinner.setVisibility(View.VISIBLE);
                 } else {
                     check_value_student = 0;
-                    if (!ch_teacher.isChecked()){
-                        linear_spinner.setVisibility(View.GONE);
+                    if (!binding.chTeacher.isChecked()){
+                        binding.linearSpinner.setVisibility(View.GONE);
                     }
                 }
             }
         });
 
-        save_notification.setOnClickListener(new View.OnClickListener() {
+        binding.saveNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (notification_message.getText().toString().equals("")) {
+                    if (binding.notificationMessage.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
-                    }else if (notification_date.getText().toString().isEmpty()){
+                    }else if (binding.notificationDate.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please enter Notification Date.", Toast.LENGTH_SHORT).show();
-                    }else if ((ch_teacher.isChecked() || ch_student.isChecked()) && course_name.getSelectedItemId() == 0){
+                    }else if ((binding.chTeacher.isChecked() || binding.chStudent.isChecked()) && binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
-                    } else if ((ch_teacher.isChecked() || ch_student.isChecked()) && StandardIDs.equals("")){
+                    } else if ((binding.chTeacher.isChecked() || binding.chStudent.isChecked()) && StandardIDs.equals("")){
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    }else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
+                    }else if (binding.chAdmin.isChecked() || binding.chTeacher.isChecked() || binding.chStudent.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
                         List<NotificationModel.NotificationTypeModel> typeModel = new ArrayList<>();
@@ -245,7 +220,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
-                        NotificationModel model = new NotificationModel(typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString(),noti_date,StandardIDs,course);
+                        NotificationModel model = new NotificationModel(typeModel, branchModel, rowStatusModel, transactionModel, binding.notificationMessage.getText().toString(),noti_date,StandardIDs,course);
                         Call<NotificationModel.NotificationData1> call = apiCalling.NotificationMaintanance(model);
                         call.enqueue(new Callback<NotificationModel.NotificationData1>() {
                             @Override
@@ -254,11 +229,11 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                     NotificationModel.NotificationData1 data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        notification_message.setText("");
-                                        notification_date.setText(yesterday());
-                                        ch_admin.setChecked(false);
-                                        ch_student.setChecked(false);
-                                        ch_teacher.setChecked(false);
+                                        binding.notificationMessage.setText("");
+                                        binding.notificationDate.setText(yesterday());
+                                        binding.chAdmin.setChecked(false);
+                                        binding.chStudent.setChecked(false);
+                                        binding.chTeacher.setChecked(false);
                                         GetAllNotification();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -282,19 +257,19 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
             }
         });
 
-        edit_notification.setOnClickListener(new View.OnClickListener() {
+        binding.editNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (notification_message.getText().toString().equals("")) {
+                    if (binding.notificationMessage.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Enter Description.", Toast.LENGTH_SHORT).show();
-                    }else if (notification_date.getText().toString().isEmpty()){
+                    }else if (binding.notificationDate.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please enter Notification Date.", Toast.LENGTH_SHORT).show();
-                    }else if ((ch_teacher.isChecked() || ch_student.isChecked()) && course_name.getSelectedItemId() == 0){
+                    }else if ((binding.chTeacher.isChecked() || binding.chStudent.isChecked()) && binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
-                    }else if ((ch_teacher.isChecked() || ch_student.isChecked()) && StandardIDs.equals("")){
+                    }else if ((binding.chTeacher.isChecked() || binding.chStudent.isChecked()) && StandardIDs.equals("")){
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    }else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
+                    }else if (binding.chAdmin.isChecked() || binding.chTeacher.isChecked() || binding.chStudent.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
                         List<NotificationModel.NotificationTypeModel> typeModel = new ArrayList<>();
@@ -325,11 +300,11 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                 typeModel.add(model1);
                             }
                         }
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionId.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                         BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
-                        NotificationModel model = new NotificationModel(Long.parseLong(notification_id.getText().toString()), typeModel, branchModel, rowStatusModel, transactionModel, notification_message.getText().toString(),noti_date,StandardIDs,course);
+                        NotificationModel model = new NotificationModel(Long.parseLong(binding.notificationId.getText().toString()), typeModel, branchModel, rowStatusModel, transactionModel, binding.notificationMessage.getText().toString(),noti_date,StandardIDs,course);
                         Call<NotificationModel.NotificationData1> call = apiCalling.NotificationMaintanance(model);
                         call.enqueue(new Callback<NotificationModel.NotificationData1>() {
                             @Override
@@ -338,14 +313,14 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                                     NotificationModel.NotificationData1 data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        notification_message.setText("");
-                                        notification_date.setText(yesterday());
-                                        ch_admin.setChecked(false);
-                                        ch_student.setChecked(false);
-                                        ch_teacher.setChecked(false);
+                                        binding.notificationMessage.setText("");
+                                        binding.notificationDate.setText(yesterday());
+                                        binding.chAdmin.setChecked(false);
+                                        binding.chStudent.setChecked(false);
+                                        binding.chTeacher.setChecked(false);
                                         GetAllNotification();
-                                        save_notification.setVisibility(View.VISIBLE);
-                                        edit_notification.setVisibility(View.GONE);
+                                        binding.saveNotification.setVisibility(View.VISIBLE);
+                                        binding.editNotification.setVisibility(View.GONE);
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -380,7 +355,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse()
@@ -429,8 +404,8 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setAdapter(adapter);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -438,14 +413,14 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -499,10 +474,10 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
     }
 
     public void bindstandard() {
-        standard.setItems(STANDARDITEM);
-        standard.setListener(this);
-        standard.hasNoneOption(true);
-        standard.setSelection(new int[]{0});
+        binding.standard.setItems(STANDARDITEM);
+        binding.standard.setListener(this);
+        binding.standard.hasNoneOption(true);
+        binding.standard.setSelection(new int[]{0});
         //long id = Long.parseLong(notification_id.getText().toString());
         if (list.size() > 0){
             List<String> lst = new ArrayList<>();
@@ -513,9 +488,9 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                 sb.append(",");
             }
             StandardIDs = sb.toString().substring(0, sb.length() - 1);
-            standard.setSelection(lst);
+            binding.standard.setSelection(lst);
         }
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -523,7 +498,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -548,9 +523,9 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
             StandardIDs = sb.toString().substring(0, sb.length() - 1);
         } else {
             StandardIDs = "";
-            standard.setSelection(new int[]{0});
+            binding.standard.setSelection(new int[]{0});
         }
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     @Override
@@ -573,11 +548,11 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setItems(STANDARDITEM);
-        standard.setListener(this);
-        standard.hasNoneOption(true);
-        standard.setSelection(new int[]{0});
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setItems(STANDARDITEM);
+        binding.standard.setListener(this);
+        binding.standard.hasNoneOption(true);
+        binding.standard.setSelection(new int[]{0});
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     public void GetAllNotification() {
@@ -592,14 +567,14 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                             List<NotificationModel> respose = data.getData();
                             if (respose != null) {
                                 if (respose.size() > 0) {
-                                    text.setVisibility(View.VISIBLE);
+                                    binding.text.setVisibility(View.VISIBLE);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                    notification_rv.setLayoutManager(linearLayoutManager);
+                                    binding.notificationRv.setLayoutManager(linearLayoutManager);
                                     notification_adapter = new Notification_Adapter(context, respose);
                                     notification_adapter.notifyDataSetChanged();
-                                    notification_rv.setAdapter(notification_adapter);
+                                    binding.notificationRv.setAdapter(notification_adapter);
                                 }else {
-                                    text.setVisibility(View.GONE);
+                                    binding.text.setVisibility(View.GONE);
                                 }
                             }
                         }
@@ -633,7 +608,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
         @NonNull
         @Override
         public Notification_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new Notification_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_layout_noti, parent, false));
+            return new ViewHolder(RowLayoutNotiBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @Override
@@ -642,24 +617,24 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
             {
                 if (model.getPageInfo().getPageID() == 10){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.noti_edit.setVisibility(View.GONE);
+                        holder.binding.notiEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.noti_delete.setVisibility(View.GONE);
+                        holder.binding.notiDelete.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                        holder.linear_actions.setVisibility(View.GONE);
+                        holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
             }
             String date = notificationDetails.get(position).getNotification_Date();
             try {
                 Date d = actualdate.parse(date);
-                holder.ndate.setText(displaydate.format(d));
+                holder.binding.ndate.setText(displaydate.format(d));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            holder.noti_desc.setText("" + notificationDetails.get(position).getNotificationMessage());
+            holder.binding.notiDesc.setText("" + notificationDetails.get(position).getNotificationMessage());
             List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
             String a = null;
             for (NotificationModel.NotificationTypeModel model : notitypelist) {
@@ -669,30 +644,30 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                     a = model.getTypeText();
                 }
             }
-            holder.sub_type.setText("" + a);
+            holder.binding.subType.setText("" + a);
             stdname = "";
             if (notificationDetails.get(position).getList().size() > 0){
-                holder.linear_course.setVisibility(View.VISIBLE);
-                holder.linear_standard.setVisibility(View.VISIBLE);
-                holder.course.setText(notificationDetails.get(position).getList().get(0).BranchCourse.getCourse().getCourseName());
+                holder.binding.linearCourse.setVisibility(View.VISIBLE);
+                holder.binding.linearStandard.setVisibility(View.VISIBLE);
+                holder.binding.course.setText(notificationDetails.get(position).getList().get(0).BranchCourse.getCourse().getCourseName());
                 for (int i = 0; i < notificationDetails.get(position).getList().size(); i++){
                     stdname += notificationDetails.get(position).getList().get(i).standard;
                     stdname += "\n";
                 }
-                holder.standard.setText(stdname);
+                holder.binding.standard.setText(stdname);
             }else {
-                holder.linear_course.setVisibility(View.GONE);
-                holder.linear_standard.setVisibility(View.GONE);
+                holder.binding.linearCourse.setVisibility(View.GONE);
+                holder.binding.linearStandard.setVisibility(View.GONE);
             }
-            holder.noti_edit.setOnClickListener(new View.OnClickListener() {
+            holder.binding.notiEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_cancel = dialogView.findViewById(R.id.btn_edit_no);
-                    Button btn_delete = dialogView.findViewById(R.id.btn_edit_yes);
+                    TextView btn_cancel = dialogView.findViewById(R.id.btn_edit_no);
+                    TextView btn_delete = dialogView.findViewById(R.id.btn_edit_yes);
                     TextView title = dialogView.findViewById(R.id.title);
                     ImageView image = dialogView.findViewById(R.id.image);
                     image.setImageResource(R.drawable.noti);
@@ -709,15 +684,15 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                     btn_delete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            save_notification.setVisibility(View.GONE);
-                            edit_notification.setVisibility(View.VISIBLE);
-                            transaction_id.setText("" + notificationDetails.get(position).getTransaction().getTransactionId());
-                            id.setText("" + notificationDetails.get(position).getNotificationID());
-                            notification_id.setText("" + notificationDetails.get(position).getNotificationID());
-                            notification_message.setText(" " + notificationDetails.get(position).getNotificationMessage());
+                            binding.saveNotification.setVisibility(View.GONE);
+                            binding.editNotification.setVisibility(View.VISIBLE);
+                            binding.transactionId.setText("" + notificationDetails.get(position).getTransaction().getTransactionId());
+                            binding.id.setText("" + notificationDetails.get(position).getNotificationID());
+                            binding.notificationId.setText("" + notificationDetails.get(position).getNotificationID());
+                            binding.notificationMessage.setText(" " + notificationDetails.get(position).getNotificationMessage());
                             try {
                                 Date d = actualdate.parse(notificationDetails.get(position).getNotification_Date());
-                                notification_date.setText("" + displaydate.format(d));
+                                binding.notificationDate.setText("" + displaydate.format(d));
                                 noti_date = actualdate.format(d);
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -725,21 +700,21 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                             List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
                             for (NotificationModel.NotificationTypeModel model : notitypelist) {
                                 if (model.getTypeID() == 1) {
-                                    ch_admin.setChecked(true);
+                                    binding.chAdmin.setChecked(true);
                                     adminid = model.getID();
                                 }
                                 if (model.getTypeID() == 2) {
-                                    ch_teacher.setChecked(true);
+                                    binding.chTeacher.setChecked(true);
                                     teacherid = model.getID();
                                 }
                                 if (model.getTypeID() == 3) {
-                                    ch_student.setChecked(true);
+                                    binding.chStudent.setChecked(true);
                                     studentid = model.getID();
                                 }
                             }
                             if (notificationDetails.get(position).getList().size() > 0){
                                 list = notificationDetails.get(position).getList();
-                                selectSpinnerValue(course_name,notificationDetails.get(position).getList().get(0).BranchCourse.getCourse().getCourseName());
+                                selectSpinnerValue(binding.courseName,notificationDetails.get(position).getList().get(0).BranchCourse.getCourse().getCourseName());
                             }
                             dialog.dismiss();
                         }
@@ -749,15 +724,15 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                 }
             });
 
-            holder.noti_delete.setOnClickListener(new View.OnClickListener() {
+            holder.binding.notiDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                    Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                    TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                    TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                     TextView title = dialogView.findViewById(R.id.title);
                     ImageView image = dialogView.findViewById(R.id.image);
                     image.setImageResource(R.drawable.delete);
@@ -816,22 +791,11 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView noti_desc, sub_type,ndate,course,standard;
-            ImageView noti_delete, noti_edit;
-            LinearLayout linear_actions,linear_course,linear_standard;
+            RowLayoutNotiBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                noti_desc = itemView.findViewById(R.id.noti_desc);
-                sub_type = itemView.findViewById(R.id.sub_type);
-                noti_delete = itemView.findViewById(R.id.noti_delete);
-                noti_edit = itemView.findViewById(R.id.noti_edit);
-                linear_actions = itemView.findViewById(R.id.linear_actions);
-                ndate = itemView.findViewById(R.id.ndate);
-                linear_course = itemView.findViewById(R.id.linear_course);
-                linear_standard = itemView.findViewById(R.id.linear_standard);
-                course = itemView.findViewById(R.id.course);
-                standard = itemView.findViewById(R.id.standard);
+            public ViewHolder(@NonNull RowLayoutNotiBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

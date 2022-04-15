@@ -32,6 +32,7 @@ import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentBatchFragmentBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -53,9 +54,7 @@ import retrofit2.Response;
 
 public class batch_fragment extends Fragment {
 
-    SearchableSpinner course_name,standard,batch_time;
-    EditText mon_start_time,mon_end_time,sat_start_time,sat_end_time,sun_start_time,sun_end_time;
-    Button save_batch,edit_batch;
+    FragmentBatchFragmentBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -74,36 +73,25 @@ public class batch_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Batch Master Entry");
-        View root = inflater.inflate(R.layout.fragment_batch_fragment, container, false);
+        binding = FragmentBatchFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
-        course_name = root.findViewById(R.id.course_name);
-        standard = root.findViewById(R.id.standard);
-        batch_time = root.findViewById(R.id.batch_time);
-        mon_start_time = root.findViewById(R.id.mon_start_time);
-        mon_end_time = root.findViewById(R.id.mon_end_time);
-        sat_start_time = root.findViewById(R.id.sat_start_time);
-        sat_end_time = root.findViewById(R.id.sat_end_time);
-        sun_start_time = root.findViewById(R.id.sun_start_time);
-        sun_end_time = root.findViewById(R.id.sun_end_time);
-        save_batch = root.findViewById(R.id.save_batch);
-        edit_batch = root.findViewById(R.id.edit_batch);
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
 
         bundle = getArguments();
         if (bundle != null){
-            save_batch.setVisibility(View.GONE);
-            edit_batch.setVisibility(View.VISIBLE);
+            binding.saveBatch.setVisibility(View.GONE);
+            binding.editBatch.setVisibility(View.VISIBLE);
             batchModel = (BatchModel) bundle.getSerializable("BATCH_DATA");
             String[] time1 = batchModel.getMonFriBatchTime().split("-");
-            mon_start_time.setText(time1[0]);
-            mon_end_time.setText(time1[1]);
+            binding.monStartTime.setText(time1[0]);
+            binding.monEndTime.setText(time1[1]);
             String[] time2 = batchModel.getSatBatchTime().split("-");
-            sat_start_time.setText(time2[0]);
-            sat_end_time.setText(time2[1]);
+            binding.satStartTime.setText(time2[0]);
+            binding.satEndTime.setText(time2[1]);
             String[] time3 = batchModel.getSunBatchTime().split("-");
-            sun_start_time.setText(time3[0]);
-            sun_end_time.setText(time3[1]);
+            binding.sunStartTime.setText(time3[0]);
+            binding.sunEndTime.setText(time3[1]);
         }
 
         if (Function.isNetworkAvailable(context)){
@@ -113,7 +101,7 @@ public class batch_fragment extends Fragment {
         selectbatch_time();
         selectStandard();
 
-        mon_start_time.setOnClickListener(new View.OnClickListener() {
+        binding.monStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -134,13 +122,13 @@ public class batch_fragment extends Fragment {
                             }
                             hour1 = hourOfDay;
                             minute1 = minute2;
-                            mon_start_time.setText(hourOfDay + ":" + minute2 + " " + format);
+                            binding.monStartTime.setText(hourOfDay + ":" + minute2 + " " + format);
                         }, hour, minute, false);
                 timePickerDialog.show();
             }
         });
 
-        mon_end_time.setOnClickListener(new View.OnClickListener() {
+        binding.monEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -161,13 +149,13 @@ public class batch_fragment extends Fragment {
                             }
                             hour1 = hourOfDay;
                             minute1 = minute2;
-                            mon_end_time.setText(hourOfDay + ":" + minute2 + " " + format);
+                            binding.monEndTime.setText(hourOfDay + ":" + minute2 + " " + format);
                         }, hour, minute, false);
                 timePickerDialog.show();
             }
         });
 
-        sat_start_time.setOnClickListener(new View.OnClickListener() {
+        binding.satStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -188,13 +176,13 @@ public class batch_fragment extends Fragment {
                             }
                             hour1 = hourOfDay;
                             minute1 = minute2;
-                            sat_start_time.setText(hourOfDay + ":" + minute2 + " " + format);
+                            binding.satStartTime.setText(hourOfDay + ":" + minute2 + " " + format);
                         }, hour, minute, false);
                 timePickerDialog.show();
             }
         });
 
-        sat_end_time.setOnClickListener(new View.OnClickListener() {
+        binding.satEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -215,13 +203,13 @@ public class batch_fragment extends Fragment {
                             }
                             hour1 = hourOfDay;
                             minute1 = minute2;
-                            sat_end_time.setText(hourOfDay + ":" + minute2 + " " + format);
+                            binding.satEndTime.setText(hourOfDay + ":" + minute2 + " " + format);
                         }, hour, minute, false);
                 timePickerDialog.show();
             }
         });
 
-        sun_start_time.setOnClickListener(new View.OnClickListener() {
+        binding.sunStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -242,13 +230,13 @@ public class batch_fragment extends Fragment {
                             }
                             hour1 = hourOfDay;
                             minute1 = minute2;
-                            sun_start_time.setText(hourOfDay + ":" + minute2 + " " + format);
+                            binding.sunStartTime.setText(hourOfDay + ":" + minute2 + " " + format);
                         }, hour, minute, false);
                 timePickerDialog.show();
             }
         });
 
-        sun_end_time.setOnClickListener(new View.OnClickListener() {
+        binding.sunEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -269,39 +257,39 @@ public class batch_fragment extends Fragment {
                             }
                             hour1 = hourOfDay;
                             minute1 = minute2;
-                            sun_end_time.setText(hourOfDay + ":" + minute2 + " " + format);
+                            binding.sunEndTime.setText(hourOfDay + ":" + minute2 + " " + format);
                         }, hour, minute, false);
                 timePickerDialog.show();
             }
         });
 
-        save_batch.setOnClickListener(new View.OnClickListener() {
+        binding.saveBatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)){
-                    if (course_name.getSelectedItemId() == 0){
+                    if (binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
-                    }else if (standard.getSelectedItemId() == 0){
+                    }else if (binding.standard.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    }else if (batch_time.getSelectedItemId() == 0){
+                    }else if (binding.batchTime.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    }else if (mon_start_time.getText().toString().isEmpty()){
+                    }else if (binding.monStartTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Monday-Friday Start Time.", Toast.LENGTH_SHORT).show();
-                    }else if (mon_end_time.getText().toString().isEmpty()){
+                    }else if (binding.monEndTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Monday-Friday End Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sat_start_time.getText().toString().isEmpty()){
+                    }else if (binding.satStartTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Saturday Start Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sat_end_time.getText().toString().isEmpty()){
+                    }else if (binding.satEndTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Saturday End Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sun_start_time.getText().toString().isEmpty()){
+                    }else if (binding.sunStartTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Sunday Start Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sun_end_time.getText().toString().isEmpty()){
+                    }else if (binding.sunEndTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Sunday End Time.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
-                        monday_time = mon_start_time.getText().toString() + " - " + mon_end_time.getText().toString();
-                        saturday_time = sat_start_time.getText().toString() + " - " + sat_end_time.getText().toString();
-                        sunday_time = sun_start_time.getText().toString() + " - " + sun_end_time.getText().toString();
+                        monday_time = binding.monStartTime.getText().toString() + " - " + binding.monEndTime.getText().toString();
+                        saturday_time = binding.satStartTime.getText().toString() + " - " + binding.satEndTime.getText().toString();
+                        sunday_time = binding.sunStartTime.getText().toString() + " - " + binding.sunEndTime.getText().toString();
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -342,33 +330,33 @@ public class batch_fragment extends Fragment {
             }
         });
 
-        edit_batch.setOnClickListener(new View.OnClickListener() {
+        binding.editBatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)){
-                    if (course_name.getSelectedItemId() == 0){
+                    if (binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
-                    }else if (standard.getSelectedItemId() == 0){
+                    }else if (binding.standard.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    }else if (batch_time.getSelectedItemId() == 0){
+                    }else if (binding.batchTime.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    }else if (mon_start_time.getText().toString().isEmpty()){
+                    }else if (binding.monStartTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Monday-Friday Start Time.", Toast.LENGTH_SHORT).show();
-                    }else if (mon_end_time.getText().toString().isEmpty()){
+                    }else if (binding.monEndTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Monday-Friday End Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sat_start_time.getText().toString().isEmpty()){
+                    }else if (binding.satStartTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Saturday Start Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sat_end_time.getText().toString().isEmpty()){
+                    }else if (binding.satEndTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Saturday End Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sun_start_time.getText().toString().isEmpty()){
+                    }else if (binding.sunStartTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Sunday Start Time.", Toast.LENGTH_SHORT).show();
-                    }else if (sun_end_time.getText().toString().isEmpty()){
+                    }else if (binding.sunEndTime.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please Select Sunday End Time.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
-                        monday_time = mon_start_time.getText().toString() + " - " + mon_end_time.getText().toString();
-                        saturday_time = sat_start_time.getText().toString() + " - " + sat_end_time.getText().toString();
-                        sunday_time = sun_start_time.getText().toString() + " - " + sun_end_time.getText().toString();
+                        monday_time = binding.monStartTime.getText().toString() + " - " + binding.monEndTime.getText().toString();
+                        saturday_time = binding.satStartTime.getText().toString() + " - " + binding.satEndTime.getText().toString();
+                        sunday_time = binding.sunStartTime.getText().toString() + " - " + binding.sunEndTime.getText().toString();
                         TransactionModel transactionModel = new TransactionModel(batchModel.getTransaction().getTransactionId(), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -421,8 +409,7 @@ public class batch_fragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse()
@@ -472,11 +459,11 @@ public class batch_fragment extends Fragment {
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
+        binding.courseName.setAdapter(adapter);
         if (bundle != null){
-            selectSpinnerValue(course_name,batchModel.getBranchCourse().getCourse().getCourseName());
+            selectSpinnerValue(binding.courseName,batchModel.getBranchCourse().getCourse().getCourseName());
         }
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -484,14 +471,14 @@ public class batch_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -548,11 +535,11 @@ public class batch_fragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
+        binding.standard.setAdapter(adapter);
         if (bundle != null){
-            selectSpinnerValue(standard,batchModel.getBranchClass().getClassModel().getClassName());
+            selectSpinnerValue(binding.standard,batchModel.getBranchClass().getClassModel().getClassName());
         }
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -560,7 +547,7 @@ public class batch_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     standardID = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -594,12 +581,12 @@ public class batch_fragment extends Fragment {
     public void bindbatch_time() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BATCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        batch_time.setAdapter(adapter);
+        binding.batchTime.setAdapter(adapter);
         if (bundle != null){
             int b = batchid.indexOf(String.valueOf(batchModel.getBatchTime()));
-            batch_time.setSelection(b);
+            binding.batchTime.setSelection(b);
         }
-        batch_time.setOnItemSelectedListener(onItemSelectedListener77);
+        binding.batchTime.setOnItemSelectedListener(onItemSelectedListener77);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener77 =
@@ -607,7 +594,7 @@ public class batch_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     batchID = Long.parseLong(batchid.get(position));
-                    if (batch_time.getSelectedItem().equals("Batch Time")) {
+                    if (binding.batchTime.getSelectedItem().equals("Batch Time")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -637,8 +624,8 @@ public class batch_fragment extends Fragment {
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     private void selectSpinnerValue(Spinner spinner, String myString) {

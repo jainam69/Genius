@@ -40,6 +40,7 @@ import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.SuperAdminSubjectModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentBranchSubjectBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -59,15 +60,11 @@ import retrofit2.Response;
 
 public class BranchSubjectFragment extends Fragment {
 
-    View root;
+    FragmentBranchSubjectBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    RecyclerView course_rv;
-    Button save_course, delete_course;
-    CheckBox checkall;
-    SearchableSpinner spinner_course, spinner_class;
     List<String> couseitem = new ArrayList<>(),classitem = new ArrayList<>();
     List<Long> couseiditem = new ArrayList<>(),classiditem = new ArrayList<>();
     Long[] COURSEID,CLASSID;
@@ -83,15 +80,11 @@ public class BranchSubjectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Subject Master");
-        root = inflater.inflate(R.layout.fragment_branch_subject, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Subject Master Entry");
+        binding = FragmentBranchSubjectBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        course_rv = root.findViewById(R.id.course_rv);
-        checkall = root.findViewById(R.id.chk_all);
-        spinner_course = root.findViewById(R.id.spinner_course);
-        spinner_class = root.findViewById(R.id.spinner_class);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -111,10 +104,10 @@ public class BranchSubjectFragment extends Fragment {
                     data.add(listForBundle.get(i));
                 }
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                course_rv.setLayoutManager(linearLayoutManager);
+                binding.courseRv.setLayoutManager(linearLayoutManager);
                 branchCourceAdapter = new BranchSubjectAapter(context, data);
                 branchCourceAdapter.notifyDataSetChanged();
-                course_rv.setAdapter(branchCourceAdapter);
+                binding.courseRv.setAdapter(branchCourceAdapter);
             }
         } else {
             if (Function.isNetworkAvailable(context)) {
@@ -127,9 +120,9 @@ public class BranchSubjectFragment extends Fragment {
 
         GetAllSimpleClass();
 
-        checkall.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        binding.chkAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (branchCourceAdapter != null) {
-                if (checkall.isChecked()) {
+                if (binding.chkAll.isChecked()) {
                     branchCourceAdapter.selectAll();
                 } else {
                     branchCourceAdapter.unselectall();
@@ -137,13 +130,11 @@ public class BranchSubjectFragment extends Fragment {
             }
         });
 
-        save_course = root.findViewById(R.id.save_course);
-        save_course.setOnClickListener(view -> {
+        binding.saveCourse.setOnClickListener(view -> {
             Save();
         });
 
-        delete_course = root.findViewById(R.id.delete_course);
-        delete_course.setOnClickListener(view -> {
+        binding.deleteCourse.setOnClickListener(view -> {
             BranchSubjectListFragment profileFragment = new BranchSubjectListFragment();
             FragmentManager fm = requireActivity().getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -164,8 +155,7 @@ public class BranchSubjectFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse() {
@@ -213,10 +203,10 @@ public class BranchSubjectFragment extends Fragment {
     public void bindCourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_course.setAdapter(adapter);
-        spinner_course.setOnItemSelectedListener(reportareaListener);
+        binding.spinnerCourse.setAdapter(adapter);
+        binding.spinnerCourse.setOnItemSelectedListener(reportareaListener);
         if (bundle != null) {
-            selectSpinnerValue(spinner_course, bundle.getString("COURSE_NAME"));
+            selectSpinnerValue(binding.spinnerCourse, bundle.getString("COURSE_NAME"));
         }
     }
 
@@ -224,7 +214,7 @@ public class BranchSubjectFragment extends Fragment {
             new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (spinner_course.getSelectedItem().toString().equals("Select Course")) {
+                    if (binding.spinnerCourse.getSelectedItem().toString().equals("Select Course")) {
                         course = "";
                         courseid = 0;
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
@@ -235,7 +225,7 @@ public class BranchSubjectFragment extends Fragment {
                         course = couseitem.get(position);
                         courseid = couseiditem.get(position);
                     }
-                    if (spinner_course.getSelectedItemId() != 0){
+                    if (binding.spinnerCourse.getSelectedItemId() != 0){
                         GetAllClass();
                     }
                 }
@@ -258,8 +248,8 @@ public class BranchSubjectFragment extends Fragment {
     public void bindselectclass() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_class.setAdapter(adapter);
-        spinner_class.setOnItemSelectedListener(onItemSelectedListener80);
+        binding.spinnerClass.setAdapter(adapter);
+        binding.spinnerClass.setOnItemSelectedListener(onItemSelectedListener80);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener80 =
@@ -320,10 +310,10 @@ public class BranchSubjectFragment extends Fragment {
     public void bindClass() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_class.setAdapter(adapter);
-        spinner_class.setOnItemSelectedListener(reportareaListener1);
+        binding.spinnerClass.setAdapter(adapter);
+        binding.spinnerClass.setOnItemSelectedListener(reportareaListener1);
         if (bundle != null) {
-            selectSpinnerValue(spinner_class, bundle.getString("CLASS_NAME"));
+            selectSpinnerValue(binding.spinnerClass, bundle.getString("CLASS_NAME"));
         }
     }
 
@@ -331,7 +321,7 @@ public class BranchSubjectFragment extends Fragment {
             new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (spinner_class.getSelectedItem().toString().equals("Select Class")) {
+                    if (binding.spinnerClass.getSelectedItem().toString().equals("Select Class")) {
                         class_name = "";
                         classid = 0;
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
@@ -342,7 +332,7 @@ public class BranchSubjectFragment extends Fragment {
                         class_name = classitem.get(position);
                         classid = classiditem.get(position);
                     }
-                    if (spinner_class.getSelectedItemId() != 0){
+                    if (binding.spinnerClass.getSelectedItemId() != 0){
                         GetAllSubject(courseid,classid);
                     }
                 }
@@ -373,10 +363,10 @@ public class BranchSubjectFragment extends Fragment {
                         if (model != null) {
                             if (model.size() > 0) {
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                course_rv.setLayoutManager(linearLayoutManager);
+                                binding.courseRv.setLayoutManager(linearLayoutManager);
                                 branchCourceAdapter = new BranchSubjectAapter(context,model);
                                 branchCourceAdapter.notifyDataSetChanged();
-                                course_rv.setAdapter(branchCourceAdapter);
+                                binding.courseRv.setAdapter(branchCourceAdapter);
                             }
                         }
                     }
@@ -394,9 +384,9 @@ public class BranchSubjectFragment extends Fragment {
     }
 
     public void Save() {
-        if (spinner_course.getSelectedItemId() == 0) {
+        if (binding.spinnerCourse.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select course");
-        } else if (spinner_class.getSelectedItemId() == 0) {
+        } else if (binding.spinnerClass.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select class");
         } else {
             progressBarHelper.showProgressDialog();

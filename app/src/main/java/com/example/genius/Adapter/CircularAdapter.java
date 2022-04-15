@@ -29,6 +29,7 @@ import com.example.genius.Activity.ViewDocumentActivity;
 import com.example.genius.BuildConfig;
 import com.example.genius.Model.CircularModel;
 import com.example.genius.R;
+import com.example.genius.databinding.RowCircularBinding;
 
 import java.io.File;
 import java.util.List;
@@ -48,19 +49,19 @@ public class CircularAdapter extends RecyclerView.Adapter<CircularAdapter.ViewHo
     @NonNull
     @Override
     public CircularAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_circular, parent, false));
+        return new ViewHolder(RowCircularBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull CircularAdapter.ViewHolder holder, int position) {
-        holder.title.setText(data.get(position).CircularTitle);
-        holder.paper_view.setOnClickListener(v -> {
+        holder.binding.title.setText(data.get(position).CircularTitle);
+        holder.binding.paperView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to View Circular?");
@@ -79,13 +80,13 @@ public class CircularAdapter extends RecyclerView.Adapter<CircularAdapter.ViewHo
             });
             dialog.show();
         });
-        holder.download.setOnClickListener(v -> {
+        holder.binding.download.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Download Circular?");
@@ -114,17 +115,13 @@ public class CircularAdapter extends RecyclerView.Adapter<CircularAdapter.ViewHo
         return data.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title;
-        ImageView paper_view, download;
+        RowCircularBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            title = itemView.findViewById(R.id.title);
-            paper_view = itemView.findViewById(R.id.paper_view);
-            download = itemView.findViewById(R.id.download);
+        public ViewHolder(@NonNull RowCircularBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
         }
     }
 

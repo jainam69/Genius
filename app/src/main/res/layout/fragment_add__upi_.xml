@@ -92,6 +92,43 @@
                     app:tint="@color/blue" />
 
             </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/border">
+
+                <EditText
+                    android:id="@+id/edt_payment_gateway"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_toEndOf="@+id/transprt122"
+                    android:background="@android:color/transparent"
+                    android:hint="Payment Gateway"
+                    android:maxLines="1"
+                    android:paddingStart="9dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="14dp"
+                    tools:ignore="Deprecated,HardcodedText,RtlSymmetry"
+                    tools:targetApi="o" />
+
+
+                <ImageView
+                    android:id="@+id/transprt122"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/library"
+                    app:tint="@color/blue" />
+
+            </RelativeLayout>
+
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"

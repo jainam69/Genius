@@ -12,11 +12,12 @@ public class AttendanceModel {
     String AttendanceDate;
     TransactionModel Transaction;
     RowStatusModel RowStatus;
+    String AttendanceRemarks;
     List<AttendanceDetailEntity> AttendanceDetail;
     BranchCourseModel.BranchCourceData BranchCourse;
     BranchClassSingleModel.BranchClassData BranchClass;
 
-    public AttendanceModel(long attendanceID, BranchModel branch, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail,BranchCourseModel.BranchCourceData Course, BranchClassSingleModel.BranchClassData bclass) {
+    public AttendanceModel(long attendanceID, BranchModel branch, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail,BranchCourseModel.BranchCourceData Course, BranchClassSingleModel.BranchClassData bclass,String attendanceRemarks) {
         AttendanceID = attendanceID;
         Branch = branch;
         BatchTypeID = batchTypeID;
@@ -27,9 +28,10 @@ public class AttendanceModel {
         AttendanceDetail = attendanceDetail;
         BranchCourse = Course;
         BranchClass = bclass;
+        AttendanceRemarks = attendanceRemarks;
     }
 
-    public AttendanceModel(BranchModel branch, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail, BranchCourseModel.BranchCourceData Course, BranchClassSingleModel.BranchClassData bclass) {
+    public AttendanceModel(BranchModel branch, int batchTypeID, String batchTypeText, String attendanceDate, TransactionModel transaction, RowStatusModel rowStatus, List<AttendanceDetailEntity> attendanceDetail, BranchCourseModel.BranchCourceData Course, BranchClassSingleModel.BranchClassData bclass,String attendanceRemarks) {
         Branch = branch;
         BatchTypeID = batchTypeID;
         BatchTypeText = batchTypeText;
@@ -39,6 +41,15 @@ public class AttendanceModel {
         AttendanceDetail = attendanceDetail;
         BranchCourse = Course;
         BranchClass = bclass;
+        AttendanceRemarks = attendanceRemarks;
+    }
+
+    public String getAttendanceRemarks() {
+        return AttendanceRemarks;
+    }
+
+    public void setAttendanceRemarks(String attendanceRemarks) {
+        AttendanceRemarks = attendanceRemarks;
     }
 
     public BranchCourseModel.BranchCourceData getBranchCourse() {

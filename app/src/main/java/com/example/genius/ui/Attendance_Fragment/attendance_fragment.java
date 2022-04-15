@@ -41,6 +41,7 @@ import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.StudentData;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.databinding.AttendanceFragmentFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -66,14 +67,10 @@ import retrofit2.Response;
 @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
 public class attendance_fragment extends Fragment {
 
-    SearchableSpinner standard, batch_time, branch,course_name;
-    EditText attendance_date;
-    Button submit_attendance, save_attendance, edit_attendance;
-    RecyclerView attendance_rv, attendance_edit_rv;
+    AttendanceFragmentFragmentBinding binding;
     AttendanceMaster_Adapter attendanceMaster_adapter;
     AttendanceCheck_Adapter attendanceCheck_adapter;
     Context context;
-    TextView no_content, attendance_id, transactionid;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     private int year;
@@ -83,7 +80,7 @@ public class attendance_fragment extends Fragment {
     List<Integer> standardid = new ArrayList<>(), courseid = new ArrayList<>();
     String[] STANDARDITEM, BATCHITEM,COURSEITEM;
     Integer[] STANDARDID, COURSEID;
-    String BatchTime, BranchID, BatchId,indate;
+    String BatchTime, BranchID, BatchId,indate,attendanceremark;
     OnBackPressedCallback callback;
     Long StandardId,courseID;
     List<AttendanceModel.AttendanceDetailEntity> attandance;
@@ -91,42 +88,26 @@ public class attendance_fragment extends Fragment {
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
     Bundle bundle;
-    LinearLayout linear_edit_attendance, linear_create_attendance;
     List<AttendanceModel.AttendanceDetailEntity> attendanceDetailEntityList;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Attendance Entry");
-        View root = inflater.inflate(R.layout.attendance_fragment_fragment, container, false);
+        binding = AttendanceFragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        batch_time = root.findViewById(R.id.batch_time);
-        standard = root.findViewById(R.id.standard);
-        branch = root.findViewById(R.id.branch);
-        submit_attendance = root.findViewById(R.id.submit_attendance);
-        save_attendance = root.findViewById(R.id.save_attendance);
-        attendance_rv = root.findViewById(R.id.attendance_rv);
-        attendance_date = root.findViewById(R.id.attendance_date);
-        no_content = root.findViewById(R.id.no_content);
-        edit_attendance = root.findViewById(R.id.edit_attendance);
-        attendance_edit_rv = root.findViewById(R.id.attendance_edit_rv);
-        linear_edit_attendance = root.findViewById(R.id.linear_edit_attendance);
-        linear_create_attendance = root.findViewById(R.id.linear_create_attendance);
-        attendance_id = root.findViewById(R.id.attendance_id);
-        transactionid = root.findViewById(R.id.transactionid);
-        course_name = root.findViewById(R.id.course_name);
 
         bundle = getArguments();
         if (bundle != null) {
-            linear_create_attendance.setVisibility(View.GONE);
-            linear_edit_attendance.setVisibility(View.VISIBLE);
+            binding.linearCreateAttendance.setVisibility(View.GONE);
+            binding.linearEditAttendance.setVisibility(View.VISIBLE);
             if (bundle.containsKey("AttendanceID")) {
-                attendance_id.setText("" + bundle.getLong("AttendanceID"));
+                binding.attendanceId.setText("" + bundle.getLong("AttendanceID"));
                 if (Function.isNetworkAvailable(context)) {
                     progressBarHelper.showProgressDialog();
-                    Call<AttendanceModel.AttendanceData1> call = apiCalling.GetAttendanceByID(Long.parseLong(attendance_id.getText().toString()));
+                    Call<AttendanceModel.AttendanceData1> call = apiCalling.GetAttendanceByID(Long.parseLong(binding.attendanceId.getText().toString()));
                     call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
                         @Override
                         public void onResponse(@NotNull Call<AttendanceModel.AttendanceData1> call, @NotNull Response<AttendanceModel.AttendanceData1> response) {
@@ -137,10 +118,10 @@ public class attendance_fragment extends Fragment {
                                     attendanceDetailEntityList = notimodel.getAttendanceDetail();
                                     if (attendanceDetailEntityList != null) {
                                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                        attendance_edit_rv.setLayoutManager(linearLayoutManager);
+                                        binding.attendanceEditRv.setLayoutManager(linearLayoutManager);
                                         attendanceCheck_adapter = new AttendanceCheck_Adapter(context, attendanceDetailEntityList);
                                         attendanceCheck_adapter.notifyDataSetChanged();
-                                        attendance_edit_rv.setAdapter(attendanceCheck_adapter);
+                                        binding.attendanceEditRv.setAdapter(attendanceCheck_adapter);
                                     }
                                 }
                             }
@@ -177,7 +158,10 @@ public class attendance_fragment extends Fragment {
                 courseID = bundle.getLong("courseid");
             }
             if (bundle.containsKey("TransactionId")) {
-                transactionid.setText("" + bundle.getLong("TransactionId"));
+                binding.transactionid.setText("" + bundle.getLong("TransactionId"));
+            }
+            if (bundle.containsKey("AttendanceRemark")){
+                attendanceremark = bundle.getString("AttendanceRemark");
             }
         } else {
             indate = actualdate.format(Calendar.getInstance().getTime());
@@ -192,10 +176,9 @@ public class attendance_fragment extends Fragment {
         }
 
         selectStandard();
+        binding.attendanceDate.setText(yesterday());
 
-        attendance_date.setText(yesterday());
-
-        attendance_date.setOnClickListener(v -> {
+        binding.attendanceDate.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -206,8 +189,8 @@ public class attendance_fragment extends Fragment {
                         year = year2;
                         month = monthOfYear;
                         day = dayOfMonth;
-                        attendance_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
-                        String as = attendance_date.getText().toString();
+                        binding.attendanceDate.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        String as = binding.attendanceDate.getText().toString();
                         Date dt;
                         try {
                             dt = displaydate.parse(as);
@@ -220,20 +203,23 @@ public class attendance_fragment extends Fragment {
             picker.show();
         });
 
-        submit_attendance.setOnClickListener(v -> {
+        binding.submitAttendance.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (course_name.getSelectedItemId() == 0){
+                if (binding.courseName.getSelectedItemId() == 0){
                     Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                }else if (standard.getSelectedItemId() == 0)
+                }else if (binding.standard.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                else if (batch_time.getSelectedItemId() == 0)
+                else if (binding.batchTime.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                else if (attendance_date.getText().toString().equals(""))
+                else if (binding.attendanceDate.getText().toString().equals(""))
                     Toast.makeText(context, "Please enter attendance date.", Toast.LENGTH_SHORT).show();
+                else if (binding.attendanceRemark.getText().toString().isEmpty())
+                    Toast.makeText(context, "Please enter attendance remark.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
                     BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    Call<StudentData> call = apiCalling.GetAllStudentForAttendance(Long.parseLong(BranchID), StandardId, courseID,Integer.parseInt(BatchId),indate);
+                    Call<StudentData> call = apiCalling.GetAllStudentForAttendance(Long.parseLong(BranchID), StandardId, courseID,Integer.parseInt(BatchId),indate,
+                            binding.attendanceRemark.getText().toString());
                     call.enqueue(new Callback<StudentData>() {
                         @Override
                         public void onResponse(@NotNull Call<StudentData> call, @NotNull Response<StudentData> response) {
@@ -243,18 +229,18 @@ public class attendance_fragment extends Fragment {
                                     List<StudentModel> studentModelList = data.getData();
                                     if (studentModelList != null) {
                                         if (studentModelList.size() > 0) {
-                                            save_attendance.setVisibility(View.VISIBLE);
-                                            attendance_rv.setVisibility(View.VISIBLE);
-                                            no_content.setVisibility(View.GONE);
+                                            binding.saveAttendance.setVisibility(View.VISIBLE);
+                                            binding.attendanceRv.setVisibility(View.VISIBLE);
+                                            binding.noContent.setVisibility(View.GONE);
                                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                            attendance_rv.setLayoutManager(linearLayoutManager);
+                                            binding.attendanceRv.setLayoutManager(linearLayoutManager);
                                             attendanceMaster_adapter = new AttendanceMaster_Adapter(context, studentModelList);
                                             attendanceMaster_adapter.notifyDataSetChanged();
-                                            attendance_rv.setAdapter(attendanceMaster_adapter);
+                                            binding.attendanceRv.setAdapter(attendanceMaster_adapter);
                                         } else {
-                                            save_attendance.setVisibility(View.GONE);
-                                            attendance_rv.setVisibility(View.GONE);
-                                            no_content.setVisibility(View.VISIBLE);
+                                            binding.saveAttendance.setVisibility(View.GONE);
+                                            binding.attendanceRv.setVisibility(View.GONE);
+                                            binding.noContent.setVisibility(View.VISIBLE);
                                         }
                                     }
                                 }else {
@@ -276,16 +262,18 @@ public class attendance_fragment extends Fragment {
             }
         });
 
-        save_attendance.setOnClickListener(v -> {
+        binding.saveAttendance.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (course_name.getSelectedItemId() == 0) {
+                if (binding.courseName.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Course.", Toast.LENGTH_SHORT).show();
-                } else if (standard.getSelectedItemId() == 0) {
+                } else if (binding.standard.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                } else if (batch_time.getSelectedItemId() == 0) {
+                } else if (binding.batchTime.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                } else if (attendance_date.getText().toString().equals("")) {
+                } else if (binding.attendanceDate.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter attendance date.", Toast.LENGTH_SHORT).show();
+                } else if (binding.attendanceRemark.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please enter attendance remark.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     attandance = new ArrayList<>();
@@ -304,7 +292,8 @@ public class attendance_fragment extends Fragment {
                         }
                     }
                     AttendanceMaster_Adapter.testlist.clear();
-                    AttendanceModel attendanceModel = new AttendanceModel(branchModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance,course,branchclass);
+                    AttendanceModel attendanceModel = new AttendanceModel(branchModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance,course,branchclass,
+                            binding.attendanceRemark.getText().toString());
                     Call<AttendanceModel.AttendanceData1> call = apiCalling.AttendanceMaintenance(attendanceModel);
                     call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
                         @Override
@@ -339,14 +328,14 @@ public class attendance_fragment extends Fragment {
             }
         });
 
-        edit_attendance.setOnClickListener(v -> {
+        binding.editAttendance.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
                 progressBarHelper.showProgressDialog();
                 attandance_edit = new ArrayList<>();
                 BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
                 BranchCourseModel.BranchCourceData course = new BranchCourseModel.BranchCourceData(courseID);
                 BranchClassSingleModel.BranchClassData branchclass = new BranchClassSingleModel.BranchClassData(StandardId);
-                TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                 RowStatusModel rowStatusModel = new RowStatusModel(1);
                 if (AttendanceCheck_Adapter.testlist_edit.size() > 0) {
                     for (int i = 0; i < AttendanceCheck_Adapter.testlist_edit.size(); i++) {
@@ -358,7 +347,8 @@ public class attendance_fragment extends Fragment {
                     }
                 }
                 AttendanceCheck_Adapter.testlist_edit.clear();
-                AttendanceModel attendanceModel = new AttendanceModel(Long.parseLong(attendance_id.getText().toString()), branchModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance_edit,course,branchclass);
+                AttendanceModel attendanceModel = new AttendanceModel(Long.parseLong(binding.attendanceId.getText().toString()), branchModel, Integer.parseInt(BatchId), BatchTime, indate, transactionModel, rowStatusModel, attandance_edit,course,branchclass,
+                        attendanceremark);
                 Call<AttendanceModel.AttendanceData1> call = apiCalling.AttendanceMaintenance(attendanceModel);
                 call.enqueue(new Callback<AttendanceModel.AttendanceData1>() {
                     @Override
@@ -404,7 +394,7 @@ public class attendance_fragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     private static String pad(int c) {
@@ -461,8 +451,8 @@ public class attendance_fragment extends Fragment {
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setAdapter(adapter);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -470,14 +460,14 @@ public class attendance_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -536,8 +526,8 @@ public class attendance_fragment extends Fragment {
     public void bindstandard() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -545,7 +535,7 @@ public class attendance_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -578,8 +568,8 @@ public class attendance_fragment extends Fragment {
     public void bindbatch_time() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BATCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        batch_time.setAdapter(adapter);
-        batch_time.setOnItemSelectedListener(onItemSelectedListener77);
+        binding.batchTime.setAdapter(adapter);
+        binding.batchTime.setOnItemSelectedListener(onItemSelectedListener77);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener77 =
@@ -588,7 +578,7 @@ public class attendance_fragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     BatchTime = batchitem.get(position);
                     BatchId = batchid.get(position);
-                    if (batch_time.getSelectedItem().equals("Batch Time")) {
+                    if (binding.batchTime.getSelectedItem().equals("Batch Time")) {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -626,8 +616,8 @@ public class attendance_fragment extends Fragment {
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     public static String yesterday() {

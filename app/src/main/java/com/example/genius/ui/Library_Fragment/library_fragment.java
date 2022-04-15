@@ -54,6 +54,7 @@ import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.SubjectData;
 import com.example.genius.Model.SubjectModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.databinding.LibraryFragmentFragmentBinding;
 import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -94,17 +95,11 @@ import static android.app.Activity.RESULT_OK;
 @SuppressLint("SetTextI18n")
 public class library_fragment extends Fragment implements MultiSelectionSpinner.OnMultipleItemsSelectedListener {
 
-    RadioGroup rg, rg1;
-    RadioButton all, branch_1, rb_general, rb_standard, rb1, rb2;
-    TextView attach_thumbnail, attach_document, master_id, lib_id, uniqid, libraryid, transactionid;
-    SearchableSpinner subject,course_name;
-    MultiSelectionSpinner standard;
-    EditText library_description, library_title;
-    Button save_library, edit_library;
+    LibraryFragmentFragmentBinding binding;
+    RadioButton rb1, rb2;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    LinearLayout linear_spinner;
     String Branch, Type, thunm_name, doc_name,attach = "", attach_doc = "", thumb_ext, doc_ext,BranchID,StandardIDs = "none";
     int select, type;
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(),courseitem = new ArrayList<>(),categoryitem = new ArrayList<>();
@@ -121,84 +116,60 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     Bundle bundle;
     OnBackPressedCallback callback;
     Long StandardId = 0L, SubjectId = 0L, categoryid = 0L,courseID = 0L;
-    SearchableSpinner category;
     LibraryModel libraryModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Library Image/Document");
-        View root = inflater.inflate(R.layout.library_fragment_fragment, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Library Image/Document Master Entry");
+        binding = LibraryFragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        rg = root.findViewById(R.id.rg);
-        rg1 = root.findViewById(R.id.rg1);
-        all = root.findViewById(R.id.all);
-        branch_1 = root.findViewById(R.id.branch_1);
-        rb_general = root.findViewById(R.id.rb_general);
-        rb_standard = root.findViewById(R.id.rb_standard);
-        attach_document = root.findViewById(R.id.attach_document);
-        attach_thumbnail = root.findViewById(R.id.attach_thumbnail);
-        standard = root.findViewById(R.id.standard);
-        subject = root.findViewById(R.id.subject);
-        library_description = root.findViewById(R.id.library_description);
-        save_library = root.findViewById(R.id.save_library);
-        edit_library = root.findViewById(R.id.edit_library);
-        linear_spinner = root.findViewById(R.id.linear_spinner);
-        master_id = root.findViewById(R.id.master_id);
-        lib_id = root.findViewById(R.id.lib_id);
-        uniqid = root.findViewById(R.id.uniqid);
-        transactionid = root.findViewById(R.id.transactionid);
-        libraryid = root.findViewById(R.id.libraryid);
-        branch_1.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
-        category = root.findViewById(R.id.category);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        library_title = root.findViewById(R.id.library_title);
-        course_name = root.findViewById(R.id.course_name);
+        binding.branch1.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
 
-        rg.setOnCheckedChangeListener((group, checkedId) -> {
-            rb1 = root.findViewById(checkedId);
+        binding.rg.setOnCheckedChangeListener((group, checkedId) -> {
+            rb1 = binding.getRoot().findViewById(checkedId);
             Branch = rb1.getText().toString();
         });
-        select = rg.getCheckedRadioButtonId();
-        rb1 = root.findViewById(select);
+        select = binding.rg.getCheckedRadioButtonId();
+        rb1 = binding.getRoot().findViewById(select);
         Branch = rb1.getText().toString();
 
-        rg1.setOnCheckedChangeListener((group, checkedId) -> {
-            rb2 = root.findViewById(checkedId);
+        binding.rg1.setOnCheckedChangeListener((group, checkedId) -> {
+            rb2 = binding.getRoot().findViewById(checkedId);
             Type = rb2.getText().toString();
             if (Type.equals("Standard")) {
-                linear_spinner.setVisibility(View.VISIBLE);
+                binding.linearSpinner.setVisibility(View.VISIBLE);
                 type = 2;
             }
             if (Type.equals("General")) {
-                linear_spinner.setVisibility(View.GONE);
+                binding.linearSpinner.setVisibility(View.GONE);
                 type = 1;
             }
         });
-        select = rg1.getCheckedRadioButtonId();
-        rb2 = root.findViewById(select);
+        select = binding.rg1.getCheckedRadioButtonId();
+        rb2 = binding.getRoot().findViewById(select);
         Type = rb2.getText().toString();
 
         bundle = getArguments();
         if (bundle != null) {
-            save_library.setVisibility(View.GONE);
-            edit_library.setVisibility(View.VISIBLE);
-
+            binding.saveLibrary.setVisibility(View.GONE);
+            binding.editLibrary.setVisibility(View.VISIBLE);
             libraryModel = (LibraryModel) bundle.getSerializable("LIBRARY_MST");
-            library_title.setText(libraryModel.getLibraryTitle());
+            binding.libraryTitle.setText(libraryModel.getLibraryTitle());
             if (libraryModel.getType() == 1)
-                rb_general.setChecked(true);
+                binding.rbGeneral.setChecked(true);
             else
-                rb_standard.setChecked(true);
+                binding.rbStandard.setChecked(true);
             if (libraryModel.getBranchID() == 0)
-                all.setChecked(true);
+                binding.all.setChecked(true);
             else
-                branch_1.setChecked(true);
-            library_description.setText(libraryModel.getDescription());
-            attach_thumbnail.setText("Attached");
-            attach_document.setText("Attached");
+                binding.branch1.setChecked(true);
+            binding.libraryDescription.setText(libraryModel.getDescription());
+            binding.attachThumbnail.setText("Attached");
+            binding.attachDocument.setText("Attached");
         }
 
         if (Function.isNetworkAvailable(context)) {
@@ -212,7 +183,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
         selectStandard();
         selectSubject();
 
-        attach_thumbnail.setOnClickListener(v -> {
+        binding.attachThumbnail.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -232,7 +203,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             }
         });
 
-        attach_document.setOnClickListener(v -> {
+        binding.attachDocument.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -252,14 +223,14 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             }
         });
 
-        save_library.setOnClickListener(v -> {
+        binding.saveLibrary.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (validation()) {
                 if (Function.isNetworkAvailable(context)) {
-                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, encodeDecode(library_title.getText().toString())
-                            , categoryid, courseID,StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 2
-                            , encodeDecode(library_description.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(0, 0, encodeDecode(binding.libraryTitle.getText().toString())
+                            , categoryid, courseID,StandardIDs, binding.all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), binding.rbGeneral.isChecked() ? 1 : 2, 2
+                            , binding.libraryDescription.getText().toString().isEmpty() ? "-" : encodeDecode(binding.libraryDescription.getText().toString()), SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
                             , 0, "none", "none,none", "none", "none,none", "none"
                             , true, true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination))
@@ -296,7 +267,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             }
         });
 
-        edit_library.setOnClickListener(v -> {
+        binding.editLibrary.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             if (editValidation()) {
                 if (Function.isNetworkAvailable(context)) {
@@ -328,10 +299,10 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                         multipartDocBody = MultipartBody.Part.createFormData("", instrumentFileDestination1.getName()
                                 , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination1));
                     }
-                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(libraryModel.getLibraryID(), 0, encodeDecode(library_title.getText().toString().trim())
-                            , categoryid,courseID, StandardIDs, all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
-                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), rb_general.isChecked() ? 1 : 2, 2
-                            , !library_description.getText().toString().trim().equals("") ? encodeDecode(library_description.getText().toString().trim()) : "-", SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
+                    Call<LibrarySingleData> call = apiCalling.OldLibraryMaintenance(libraryModel.getLibraryID(), 0, encodeDecode(binding.libraryTitle.getText().toString().trim())
+                            , categoryid,courseID, StandardIDs, binding.all.isChecked() ? 0 : Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID), binding.rbGeneral.isChecked() ? 1 : 2, 2
+                            , !binding.libraryDescription.getText().toString().trim().equals("") ? encodeDecode(binding.libraryDescription.getText().toString().trim()) : "-", SubjectId, 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME)
                             , 0, "none", ThumbnailFileName, ThumbnailFileExtension, DocumentFileName, DocumentFileExtension
                             , isThumbnail, isDocument, multipartThumbnailBody
                             , multipartDocBody);
@@ -378,8 +349,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse()
@@ -428,11 +398,11 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
+        binding.courseName.setAdapter(adapter);
         if (bundle != null && libraryModel.getList().size() > 0) {
-            selectSpinnerValue(course_name, libraryModel.getList().get(0).getBranchCourse().getCourse().getCourseName());
+            selectSpinnerValue(binding.courseName, libraryModel.getList().get(0).getBranchCourse().getCourse().getCourseName());
         }
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -440,14 +410,14 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -501,10 +471,10 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     }
 
     public void bindstandard() {
-        standard.setItems(STANDARDITEM);
-        standard.setListener(this);
-        standard.hasNoneOption(true);
-        standard.setSelection(new int[]{0});
+        binding.standard.setItems(STANDARDITEM);
+        binding.standard.setListener(this);
+        binding.standard.hasNoneOption(true);
+        binding.standard.setSelection(new int[]{0});
         if (bundle != null && libraryModel.getList().size() > 0) {
             List<String> list = new ArrayList<>();
             StringBuilder sb = new StringBuilder();
@@ -514,10 +484,10 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 sb.append(",");
             }
             StandardIDs = sb.toString().substring(0, sb.length() - 1);
-            standard.setSelection(list);
+            binding.standard.setSelection(list);
             GetAllSubject(courseID,StandardIDs);
         }
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -525,7 +495,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -550,9 +520,9 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             StandardIDs = sb.toString().substring(0, sb.length() - 1);
         } else {
             StandardIDs = "";
-            standard.setSelection(new int[]{0});
+            binding.standard.setSelection(new int[]{0});
         }
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     @Override
@@ -608,11 +578,11 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     public void bindsubject() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
+        binding.subject.setAdapter(adapter);
         if (bundle != null && libraryModel.getList().size() > 0) {
-            selectSpinnerValue(subject, libraryModel.getList().get(0).getSubject());
+            selectSpinnerValue(binding.subject, libraryModel.getList().get(0).getSubject());
         }
-        subject.setOnItemSelectedListener(onItemSelectedListener8);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener8 =
@@ -620,7 +590,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     SubjectId = Long.parseLong(subjectid.get(position).toString());
-                    if (subject.getSelectedItem().equals("Select Subject")) {
+                    if (binding.subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -656,8 +626,8 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                     Uri uri = result.getData();
                     String Path = FUtils.getPath(requireContext(), uri);
                     instrumentFileDestination = new File(Path);
-                    attach_thumbnail.setText("Attached");
-                    attach_thumbnail.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.attachThumbnail.setText("Attached");
+                    binding.attachThumbnail.setTextColor(context.getResources().getColor(R.color.black));
                     String name = instrumentFileDestination.getName();
                     thumb_ext = name.substring(name.lastIndexOf("."));
                     thunm_name = instrumentFileDestination.getName();
@@ -676,8 +646,8 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireActivity(),uri);
                     instrumentFileDestination1 = new File(Path);
-                    attach_document.setText("Attached");
-                    attach_document.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.attachDocument.setText("Attached");
+                    binding.attachDocument.setTextColor(context.getResources().getColor(R.color.black));
                     String nm = instrumentFileDestination1.getName();
                     doc_ext = nm.substring(nm.lastIndexOf("."));
                     doc_name = instrumentFileDestination1.getName();
@@ -852,10 +822,10 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     public void bindcategory() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CATEGORYITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        category.setAdapter(adapter);
-        category.setOnItemSelectedListener(onItemSelectedListener6);
+        binding.category.setAdapter(adapter);
+        binding.category.setOnItemSelectedListener(onItemSelectedListener6);
         if (bundle != null) {
-            selectSpinnerValue(category, libraryModel.getCategoryInfo().getCategory());
+            selectSpinnerValue(binding.category, libraryModel.getCategoryInfo().getCategory());
         }
     }
 
@@ -864,7 +834,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     categoryid = Long.parseLong(categoryId.get(position).toString());
-                    if (category.getSelectedItem().equals("Select Category")) {
+                    if (binding.category.getSelectedItem().equals("Select Category")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -879,11 +849,11 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             };
 
     public boolean validation() {
-        if (library_title.getText().toString().trim().equals("")) {
+        if (binding.libraryTitle.getText().toString().trim().equals("")) {
             Function.showToast(context, "Please enter library title");
             progressBarHelper.hideProgressDialog();
             return false;
-        } else if (category.getSelectedItemId() == 0) {
+        } else if (binding.category.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select category");
             progressBarHelper.hideProgressDialog();
             return false;
@@ -895,8 +865,8 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
             Function.showToast(context, "Please select document");
             progressBarHelper.hideProgressDialog();
             return false;
-        } else if (rb_standard.isChecked()) {
-            if (course_name.getSelectedItemId() == 0){
+        } else if (binding.rbStandard.isChecked()) {
+            if (binding.courseName.getSelectedItemId() == 0){
                 Function.showToast(context,"Please select Course.");
                 progressBarHelper.hideProgressDialog();
                 return false;
@@ -904,7 +874,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 Function.showToast(context, "Please select standard");
                 progressBarHelper.hideProgressDialog();
                 return false;
-            } else if (subject.getSelectedItemId() == 0) {
+            } else if (binding.subject.getSelectedItemId() == 0) {
                 Function.showToast(context, "Please select subject");
                 progressBarHelper.hideProgressDialog();
                 return false;
@@ -914,16 +884,16 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     }
 
     public boolean editValidation() {
-        if (library_title.getText().toString().trim().equals("")) {
+        if (binding.libraryTitle.getText().toString().trim().equals("")) {
             Function.showToast(context, "Please enter library title");
             progressBarHelper.hideProgressDialog();
             return false;
-        } else if (category.getSelectedItemId() == 0) {
+        } else if (binding.category.getSelectedItemId() == 0) {
             Function.showToast(context, "Please select category");
             progressBarHelper.hideProgressDialog();
             return false;
-        } else if (rb_standard.isChecked()) {
-            if (course_name.getSelectedItemId() == 0){
+        } else if (binding.rbStandard.isChecked()) {
+            if (binding.courseName.getSelectedItemId() == 0){
                 Function.showToast(context,"Please select Course.");
                 progressBarHelper.hideProgressDialog();
                 return false;
@@ -931,7 +901,7 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
                 Function.showToast(context, "Please select standard");
                 progressBarHelper.hideProgressDialog();
                 return false;
-            } else if (subject.getSelectedItemId() == 0) {
+            } else if (binding.subject.getSelectedItemId() == 0) {
                 Function.showToast(context, "Please select subject");
                 progressBarHelper.hideProgressDialog();
                 return false;
@@ -968,11 +938,11 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setItems(STANDARDITEM);
-        standard.setListener(this);
-        standard.hasNoneOption(true);
-        standard.setSelection(new int[]{0});
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setItems(STANDARDITEM);
+        binding.standard.setListener(this);
+        binding.standard.hasNoneOption(true);
+        binding.standard.setSelection(new int[]{0});
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     public void selectSubject() {
@@ -990,8 +960,8 @@ public class library_fragment extends Fragment implements MultiSelectionSpinner.
     public void bindsub() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
-        subject.setOnItemSelectedListener(onItemSelectedListener8);
+        binding.subject.setAdapter(adapter);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
 }

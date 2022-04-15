@@ -32,6 +32,7 @@ import com.example.genius.Model.TestScheduleModel;
 import com.example.genius.Model.UploadPaperData;
 import com.example.genius.Model.UploadPaperModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.TestscheduleMasterDeatilListBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -74,7 +75,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     @NotNull
     @Override
     public TestScheduleMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new TestScheduleMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.testschedule_master_deatil_list, parent, false));
+        return new ViewHolder(TestscheduleMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @SuppressLint("SetTextI18n")
@@ -83,38 +84,38 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 84){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.testschedule_edit.setVisibility(View.GONE);
+                    holder.binding.testscheduleEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.testschedule_delete.setVisibility(View.GONE);
+                    holder.binding.testscheduleDelete.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                    holder.testschedule_edit.setVisibility(View.GONE);
-                    holder.testschedule_delete.setVisibility(View.GONE);
+                    holder.binding.testscheduleEdit.setVisibility(View.GONE);
+                    holder.binding.testscheduleDelete.setVisibility(View.GONE);
                 }
             }
         }
-        holder.course.setText(testScheduleDetails.get(position).getBranchCourse().getCourse().getCourseName());
-        holder.standard.setText(testScheduleDetails.get(position).getBranchClass().getClassModel().getClassName());
-        holder.batch_time.setText(testScheduleDetails.get(position).getBatchTimeText());
+        holder.binding.course.setText(testScheduleDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.binding.standard.setText(testScheduleDetails.get(position).getBranchClass().getClassModel().getClassName());
+        holder.binding.batchTime.setText(testScheduleDetails.get(position).getBatchTimeText());
         String a = testScheduleDetails.get(position).getTestDate().replace("T00:00:00", "");
         try {
             Date d = actualdate.parse(a);
-            holder.test_date.setText(displaydate.format(d));
+            holder.binding.testDate.setText(displaydate.format(d));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.test_time.setText(testScheduleDetails.get(position).getTestStartTime() + "  -  " + testScheduleDetails.get(position).getTestEndTime());
-        holder.subject.setText(testScheduleDetails.get(position).getBranchSubject().getSubject().getSubjectName());
-        holder.total_marks.setText("" + testScheduleDetails.get(position).getMarks());
+        holder.binding.testTime.setText(testScheduleDetails.get(position).getTestStartTime() + "  -  " + testScheduleDetails.get(position).getTestEndTime());
+        holder.binding.subject.setText(testScheduleDetails.get(position).getBranchSubject().getSubject().getSubjectName());
+        holder.binding.totalMarks.setText("" + testScheduleDetails.get(position).getMarks());
 
-        holder.testschedule_edit.setOnClickListener(v -> {
+        holder.binding.testscheduleEdit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Edit Test Schedule?");
@@ -156,13 +157,13 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             dialog.show();
         });
 
-        holder.testschedule_delete.setOnClickListener(v -> {
+        holder.binding.testscheduleDelete.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-            Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+            TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+            TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
             TextView title = dialogView.findViewById(R.id.title);
             ImageView image = dialogView.findViewById(R.id.image);
             image.setImageResource(R.drawable.delete);
@@ -211,15 +212,15 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             dialog.show();
         });
 
-        holder.test_paper.setOnClickListener(new View.OnClickListener() {
+        holder.binding.testPaper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Download Test Paper?");
@@ -296,13 +297,13 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
             }
         });
 
-        holder.paper_view.setOnClickListener(v -> {
+        holder.binding.paperView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to View Student AnswerSheet?");
@@ -334,23 +335,11 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView standard, batch_time, test_date, test_time, subject, total_marks,course;
-        ImageView testschedule_edit, testschedule_delete, paper_view,test_paper;
+        TestscheduleMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            standard = itemView.findViewById(R.id.standard);
-            batch_time = itemView.findViewById(R.id.batch_time);
-            test_date = itemView.findViewById(R.id.test_date);
-            test_time = itemView.findViewById(R.id.test_time);
-            subject = itemView.findViewById(R.id.subject);
-            total_marks = itemView.findViewById(R.id.total_marks);
-            testschedule_edit = itemView.findViewById(R.id.testschedule_edit);
-            testschedule_delete = itemView.findViewById(R.id.testschedule_delete);
-            paper_view = itemView.findViewById(R.id.paper_view);
-            test_paper = itemView.findViewById(R.id.test_paper);
-            course = itemView.findViewById(R.id.course);
+        public ViewHolder(@NonNull TestscheduleMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -27,6 +28,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.AnswerSheetData;
 import com.example.genius.Model.AnswerSheetModel;
 import com.example.genius.Model.HomeworkModel;
+import com.example.genius.databinding.HomeworkCheckingMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
@@ -64,38 +66,37 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
 
     @Override
     public UploadPaperChecking_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new UploadPaperChecking_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.homework_checking_master_deatil_list, parent, false));
+        return new ViewHolder(HomeworkCheckingMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UploadPaperChecking_Adapter.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull UploadPaperChecking_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String a = answerSheetModels.get(position).getSubmitDate().replace("T00:00:00", "");
         try {
             Date d = actualdate.parse(a);
-            holder.submit_date.setText(displaydate.format(d));
+            holder.binding.submitDate.setText(displaydate.format(d));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.standard.setText(answerSheetModels.get(position).getTestInfo().getStandard().getStandard());
-        holder.stu_name.setText(answerSheetModels.get(position).getStudentInfo().getName());
+        holder.binding.standard.setText(answerSheetModels.get(position).getTestInfo().getStandard().getStandard());
+        holder.binding.stuName.setText(answerSheetModels.get(position).getStudentInfo().getName());
         int st = answerSheetModels.get(position).getStatus();
         if (st == 2){
-            holder.status.setText("Pending");
+            holder.binding.status.setText("Pending");
         }else {
-            holder.status.setText("Done");
+            holder.binding.status.setText("Done");
         }
-        holder.remarks.setText(answerSheetModels.get(position).getRemarks());
+        holder.binding.remarks.setText(answerSheetModels.get(position).getRemarks());
 
-        holder.homework_checking_edit.setOnClickListener(new View.OnClickListener() {
+        holder.binding.homeworkCheckingEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Test Paper?");
@@ -170,8 +171,8 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
                                             AnswerSheetData data = response.body();
                                             if (data.isCompleted()){
                                                 Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                                holder.status.setText(pending_done);
-                                                holder.remarks.setText(rm.getText().toString());
+                                                holder.binding.status.setText(pending_done);
+                                                holder.binding.remarks.setText(rm.getText().toString());
                                                 if (pending_done.equals("Pending")){
                                                     answerSheetModels.get(position).setStatusText("Pending");
                                                 }else {
@@ -199,7 +200,7 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
                 dialog.show();
             }
         });
-        holder.homework_checking_download.setOnClickListener(new View.OnClickListener() {
+        holder.binding.homeworkCheckingDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressBarHelper.showProgressDialog();
@@ -252,20 +253,12 @@ public class UploadPaperChecking_Adapter extends RecyclerView.Adapter<UploadPape
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView submit_date,standard,stu_name,status,remarks;
-        ImageView homework_checking_edit,homework_checking_download;
+        HomeworkCheckingMasterDeatilListBinding binding;
         RadioButton rb1;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            submit_date = itemView.findViewById(R.id.submit_date);
-            standard = itemView.findViewById(R.id.standard);
-            stu_name = itemView.findViewById(R.id.stu_name);
-            status = itemView.findViewById(R.id.status);
-            remarks = itemView.findViewById(R.id.remarks);
-            homework_checking_edit = itemView.findViewById(R.id.homework_checking_edit);
-            homework_checking_download = itemView.findViewById(R.id.homework_checking_download);
+        public ViewHolder(@NonNull HomeworkCheckingMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

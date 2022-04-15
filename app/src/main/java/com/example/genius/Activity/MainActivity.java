@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.genius.databinding.ActivityMainBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.ui.Notification.NotificationFragment;
@@ -24,19 +25,17 @@ import java.lang.reflect.Array;
 
 public class MainActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout;
+    ActivityMainBinding binding;
     Context context;
     TextView branchname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
         branchname = findViewById(R.id.branchname);
         context = MainActivity.this;
 

@@ -15,6 +15,7 @@ public class Preferences {
     public static final String KEY_PERMISSION_LIST = "KEY_PERMISSION_LIST";
     public static final String KEY_VIDEO_BASE = "KEY_VIDEO_BASE";
     public static final String KEY_FINANCIAL_YEAR = "KEY_FINANCIAL_YEAR";
+    public static final String KEY_APP_LOGO = "KEY_APP_LOGO";
 
     public static final String KEY_FIRE_NOTIFICATION = "KEY_FIRE_NOTIFICATION";
 

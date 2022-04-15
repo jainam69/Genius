@@ -30,6 +30,7 @@ import com.example.genius.Adapter.HomeworkMaster_Adapter;
 import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.HomeworkListfragmentFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -57,45 +58,29 @@ import retrofit2.Response;
 @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class homework_Listfragment extends Fragment {
 
-    FloatingActionButton fab_contact;
+    HomeworkListfragmentFragmentBinding binding;
     Context context;
-    EditText standard, date;
-    TextView txt_nodata;
-    RecyclerView homework_rv;
     HomeworkMaster_Adapter homeworkMaster_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    private int year;
-    private int month;
-    private int day;
-    Button clear;
     List<HomeworkModel> homeworkfilter;
-    String Date;
     UserModel userpermission;
-    DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
-    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Homework Entry");
-        View root = inflater.inflate(R.layout.homework__listfragment_fragment, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Homework Master");
+        binding = HomeworkListfragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        homework_rv = root.findViewById(R.id.homework_rv);
-        standard = root.findViewById(R.id.standard);
-        date = root.findViewById(R.id.date);
-        clear = root.findViewById(R.id.clear);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 43 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -106,43 +91,7 @@ public class homework_Listfragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        clear.setOnClickListener(v -> {
-            standard.setText("");
-            date.setText("");
-        });
-
-        date.setOnClickListener(v -> {
-            final Calendar c = Calendar.getInstance();
-            year = c.get(Calendar.YEAR);
-            month = c.get(Calendar.MONTH);
-            day = c.get(Calendar.DAY_OF_MONTH);
-            DatePickerDialog picker = new DatePickerDialog(getActivity(),
-                    (view, year2, monthOfYear, dayOfMonth) -> {
-                        year = year2;
-                        month = monthOfYear;
-                        day = dayOfMonth;
-                        date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
-                    }, year, month, day);
-            picker.show();
-        });
-
-        date.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                getDate(s.toString());
-            }
-        });
-
-        standard.addTextChangedListener(new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -158,7 +107,7 @@ public class homework_Listfragment extends Fragment {
             }
         });
 
-        fab_contact.setOnClickListener(v -> {
+        binding.fabContact.setOnClickListener(v -> {
             homework_fragment orderplace = new homework_fragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -179,7 +128,7 @@ public class homework_Listfragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllHomework() {
@@ -193,17 +142,17 @@ public class homework_Listfragment extends Fragment {
                         List<HomeworkModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                homework_rv.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.homeworkRv.setVisibility(View.VISIBLE);
                                 homeworkfilter = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                homework_rv.setLayoutManager(linearLayoutManager);
+                                binding.homeworkRv.setLayoutManager(linearLayoutManager);
                                 homeworkMaster_adapter = new HomeworkMaster_Adapter(context, studentModelList);
                                 homeworkMaster_adapter.notifyDataSetChanged();
-                                homework_rv.setAdapter(homeworkMaster_adapter);
+                                binding.homeworkRv.setAdapter(homeworkMaster_adapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                homework_rv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.homeworkRv.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -219,47 +168,14 @@ public class homework_Listfragment extends Fragment {
         });
     }
 
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + c;
-    }
-
-    private void getDate(String text) {
-        ArrayList<HomeworkModel> filteredList = new ArrayList<>();
-
-        for (HomeworkModel item : homeworkfilter) {
-            String a = item.getHomeworkDate().replace("T00:00:00", "");
-            try {
-                Date d = actualdate.parse(a);
-                if (d != null) {
-                    Date = displaydate.format(d);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (Date.toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
-            }
-        }
-
-        if (filteredList.size() > 0) {
-            homeworkMaster_adapter.filterList(filteredList);
-        } else {
-            homeworkMaster_adapter.filterList(filteredList);
-        }
-    }
-
     private void getstandard(String text) {
         ArrayList<HomeworkModel> filteredList = new ArrayList<>();
-
         for (HomeworkModel item : homeworkfilter) {
-            if (item.getStandardInfo().getStandard().toLowerCase().contains(text.toLowerCase()) || item.getSubjectInfo().getSubject().toLowerCase().contains(text.toLowerCase()) || item.getBatchTimeText().toLowerCase().contains(text.toLowerCase())) {
+            if (item.getBranchSubject().getSubject().getSubjectName().toLowerCase().contains(text.toLowerCase()) || item.getBranchClass().getClassModel().getClassName().toLowerCase().contains(text.toLowerCase()) ||
+                    item.getBatchTimeText().toLowerCase().contains(text.toLowerCase()) || item.getBranchCourse().getCourse().getCourseName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         if (filteredList.size() > 0) {
             homeworkMaster_adapter.filterList(filteredList);
         } else {

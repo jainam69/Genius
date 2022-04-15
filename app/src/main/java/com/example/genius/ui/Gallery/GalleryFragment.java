@@ -52,6 +52,8 @@ import com.example.genius.Model.GalleryModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.FragmentGalleryBinding;
+import com.example.genius.databinding.GalleryMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -88,11 +90,7 @@ import static android.app.Activity.RESULT_OK;
 @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class GalleryFragment extends Fragment {
 
-    TextView attachment_gallery, bid, photo, text, transactionid;
-    ImageView imageView;
-    EditText gallery_description;
-    Button save_gallery, edit_gallery;
-    RecyclerView gallery_rv;
+    FragmentGalleryBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -103,7 +101,6 @@ public class GalleryFragment extends Fragment {
     public static final String ERROR = "error";
     File instrumentFileDestination;
     OnBackPressedCallback callback;
-    NestedScrollView gallery_scroll;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final int REQUEST_CODE_TAKE_PICTURE = 0x2;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
@@ -111,33 +108,20 @@ public class GalleryFragment extends Fragment {
     Bitmap bitmap;
     GalleryMaster_Adapter galleryMaster_adapter;
     UserModel userpermission;
-    LinearLayout linear_create_image;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Gallery");
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Gallery Master");
+        binding = FragmentGalleryBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        attachment_gallery = root.findViewById(R.id.attachment_gallery);
-        gallery_description = root.findViewById(R.id.gallery_description);
-        save_gallery = root.findViewById(R.id.save_gallery);
-        gallery_rv = root.findViewById(R.id.gallery_rv);
-        imageView = root.findViewById(R.id.imageView);
-        edit_gallery = root.findViewById(R.id.edit_gallery);
-        bid = root.findViewById(R.id.bid);
-        photo = root.findViewById(R.id.photo);
-        text = root.findViewById(R.id.text);
-        transactionid = root.findViewById(R.id.transactionid);
-        gallery_scroll = root.findViewById(R.id.gallery_scroll);
-        linear_create_image = root.findViewById(R.id.linear_create_image);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 83 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_image.setVisibility(View.GONE);
+                binding.linearCreateImage.setVisibility(View.GONE);
             }
         }
 
@@ -148,7 +132,7 @@ public class GalleryFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        attachment_gallery.setOnClickListener(v -> {
+        binding.attachmentGallery.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -168,16 +152,16 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-        save_gallery.setOnClickListener(v -> {
+        binding.saveGallery.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (attachment_gallery.getText().toString().equals("")) {
+                if (binding.attachmentGallery.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    GalleryModel model = new GalleryModel(0,branch,gallery_description.getText().toString(),
+                    GalleryModel model = new GalleryModel(0,branch,binding.galleryDescription.getText().toString(),
                             rowStatusModel,transactionModel,1,FilePath,OriginFileName);
                     String data = new Gson().toJson(model);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
@@ -190,9 +174,9 @@ public class GalleryFragment extends Fragment {
                                 GalleryModel.GallaryData1 data = response.body();
                                 if (data.isCompleted()) {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    gallery_description.setText("");
-                                    attachment_gallery.setText("");
-                                    imageView.setVisibility(View.GONE);
+                                    binding.galleryDescription.setText("");
+                                    binding.attachmentGallery.setText("");
+                                    binding.imageView.setVisibility(View.GONE);
                                     GetGalleryDetails();
                                 } else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -213,17 +197,17 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-        edit_gallery.setOnClickListener(v -> {
+        binding.editGallery.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (attachment_gallery.getText().toString().equals("")) {
+                if (binding.attachmentGallery.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Upload Image.", Toast.LENGTH_SHORT).show();
                 }else {
                     progressBarHelper.showProgressDialog();
                     Call<GalleryModel.GallaryData1> call;
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    GalleryModel model = new GalleryModel(Long.parseLong(bid.getText().toString()),branch,gallery_description.getText().toString(),
+                    GalleryModel model = new GalleryModel(Long.parseLong(binding.bid.getText().toString()),branch,binding.galleryDescription.getText().toString(),
                             rowStatusModel,transactionModel,1,FilePath,OriginFileName);
                     String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
@@ -242,11 +226,11 @@ public class GalleryFragment extends Fragment {
                                 GalleryModel.GallaryData1 data = response.body();
                                 if (data.isCompleted()) {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    gallery_description.setText("");
-                                    attachment_gallery.setText("");
-                                    imageView.setVisibility(View.GONE);
-                                    save_gallery.setVisibility(View.VISIBLE);
-                                    edit_gallery.setVisibility(View.GONE);
+                                    binding.galleryDescription.setText("");
+                                    binding.attachmentGallery.setText("");
+                                    binding.imageView.setVisibility(View.GONE);
+                                    binding.saveGallery.setVisibility(View.VISIBLE);
+                                    binding.editGallery.setVisibility(View.GONE);
                                     GetGalleryDetails();
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -279,7 +263,7 @@ public class GalleryFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
 
@@ -347,14 +331,14 @@ public class GalleryFragment extends Fragment {
                     flag = 1;
                     selectfile = true;
                     imageVal = null;
-                    imageView.setVisibility(View.VISIBLE);
-                    attachment_gallery.setText("Attached");
-                    attachment_gallery.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.imageView.setVisibility(View.VISIBLE);
+                    binding.attachmentGallery.setText("Attached");
+                    binding.attachmentGallery.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
                     imageVal = ImageUtility.using(context).toBase64(instrumentFileDestination.getPath());
                     attach = Base64.encodeToString(imageVal, Base64.DEFAULT);
                     try {
-                        imageView.setImageURI(Uri.fromFile(instrumentFileDestination));
+                        binding.imageView.setImageURI(Uri.fromFile(instrumentFileDestination));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -384,10 +368,10 @@ public class GalleryFragment extends Fragment {
                         InputStream imageStream;
                         imageStream = requireActivity().getContentResolver().openInputStream(image);
                         bitmap = BitmapFactory.decodeStream(imageStream);
-                        imageView.setVisibility(View.VISIBLE);
-                        imageView.setImageBitmap(bitmap);
-                        attachment_gallery.setText("Attached");
-                        attachment_gallery.setTextColor(context.getResources().getColor(R.color.black));
+                        binding.imageView.setVisibility(View.VISIBLE);
+                        binding.imageView.setImageBitmap(bitmap);
+                        binding.attachmentGallery.setText("Attached");
+                        binding.attachmentGallery.setTextColor(context.getResources().getColor(R.color.black));
                         attach = onGalleryImageResultInstrument(result);
                     }
                 } catch (Exception e) {
@@ -558,12 +542,12 @@ public class GalleryFragment extends Fragment {
                         List<GalleryModel> galleryModelList = galleryMaster_model.getData();
                         if (galleryModelList != null) {
                             if (galleryModelList.size() > 0) {
-                                text.setVisibility(View.VISIBLE);
-                                gallery_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                                gallery_rv.setLayoutManager(new GridLayoutManager(context, 2));
+                                binding.text.setVisibility(View.VISIBLE);
+                                binding.galleryRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                binding.galleryRv.setLayoutManager(new GridLayoutManager(context, 2));
                                 galleryMaster_adapter = new GalleryMaster_Adapter(context, galleryModelList);
                                 galleryMaster_adapter.notifyDataSetChanged();
-                                gallery_rv.setAdapter(galleryMaster_adapter);
+                                binding.galleryRv.setAdapter(galleryMaster_adapter);
                             }
                         }
                     }
@@ -595,7 +579,7 @@ public class GalleryFragment extends Fragment {
         @NotNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_master_deatil_list, parent, false));
+            return new ViewHolder(GalleryMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @Override
@@ -603,25 +587,25 @@ public class GalleryFragment extends Fragment {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 83){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.gallery_edit.setVisibility(View.GONE);
+                        holder.binding.galleryEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.gallery_delete.setVisibility(View.GONE);
+                        holder.binding.galleryDelete.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                        holder.linear_actions.setVisibility(View.GONE);
+                        holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
             }
-            holder.description.setText(galleryDetails.get(position).getRemarks());
-            Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(holder.gallery_image);
-            holder.gallery_edit.setOnClickListener(v -> {
+            holder.binding.description.setText(galleryDetails.get(position).getRemarks());
+            Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(holder.binding.galleryImage);
+            holder.binding.galleryEdit.setOnClickListener(v -> {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Image?");
@@ -632,29 +616,29 @@ public class GalleryFragment extends Fragment {
 
                 btn_edit_yes.setOnClickListener(v14 -> {
                     dialog.dismiss();
-                    save_gallery.setVisibility(View.GONE);
-                    edit_gallery.setVisibility(View.VISIBLE);
-                    imageView.setVisibility(View.VISIBLE);
-                    Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(imageView);
-                    attachment_gallery.setText("Attached");
+                    binding.saveGallery.setVisibility(View.GONE);
+                    binding.editGallery.setVisibility(View.VISIBLE);
+                    binding.imageView.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(galleryDetails.get(position).getFilePath()).into(binding.imageView);
+                    binding.attachmentGallery.setText("Attached");
                     OriginFileName = galleryDetails.get(position).getFileName();
                     FilePath = galleryDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
-                    attachment_gallery.setTextColor(context.getResources().getColor(R.color.black));
-                    gallery_description.setText(galleryDetails.get(position).getRemarks());
-                    bid.setText("" + galleryDetails.get(position).getUniqueID());
-                    transactionid.setText("" + galleryDetails.get(position).getTransaction().getTransactionId());
-                    gallery_scroll.fullScroll(View.FOCUS_UP);
-                    gallery_scroll.scrollTo(0, 0);
+                    binding.attachmentGallery.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.galleryDescription.setText(galleryDetails.get(position).getRemarks());
+                    binding.bid.setText("" + galleryDetails.get(position).getUniqueID());
+                    binding.transactionid.setText("" + galleryDetails.get(position).getTransaction().getTransactionId());
+                    binding.galleryScroll.fullScroll(View.FOCUS_UP);
+                    binding.galleryScroll.scrollTo(0, 0);
                 });
                 dialog.show();
             });
-            holder.gallery_delete.setOnClickListener(v -> {
+            holder.binding.galleryDelete.setOnClickListener(v -> {
                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -710,18 +694,11 @@ public class GalleryFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView description;
-            ImageView gallery_image, gallery_edit, gallery_delete;
-            LinearLayout linear_actions;
+            GalleryMasterDeatilListBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                description = itemView.findViewById(R.id.description);
-                gallery_image = itemView.findViewById(R.id.gallery_image);
-                gallery_edit = itemView.findViewById(R.id.gallery_edit);
-                gallery_delete = itemView.findViewById(R.id.gallery_delete);
-                linear_actions = itemView.findViewById(R.id.linear_actions);
+            public ViewHolder(@NonNull GalleryMasterDeatilListBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);

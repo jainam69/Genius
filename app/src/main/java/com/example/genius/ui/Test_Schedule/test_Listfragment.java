@@ -29,6 +29,7 @@ import com.example.genius.Adapter.TestScheduleMaster_Adapter;
 import com.example.genius.Model.TestScheduleData;
 import com.example.genius.Model.TestScheduleModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.TestListFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -55,45 +56,28 @@ import retrofit2.Response;
 @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class test_Listfragment extends Fragment {
 
-    FloatingActionButton fab_contact;
+    TestListFragmentBinding binding;
     Context context;
-    RecyclerView testschedule_rv;
     TestScheduleMaster_Adapter testScheduleMaster_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    EditText date, std;
-    Button clear, search;
-    TextView txt_nodata;
-    private int year;
-    private int month;
-    private int day;
     OnBackPressedCallback callback;
     List<TestScheduleModel> testScheduleDetails2;
-    String Date;
-    DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
-    DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
     UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Schedule List");
-        View root = inflater.inflate(R.layout.test_list_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Paper Master");
+        binding = TestListFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        testschedule_rv = root.findViewById(R.id.testschedule_rv);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        date = root.findViewById(R.id.date);
-        std = root.findViewById(R.id.std);
-        clear = root.findViewById(R.id.clear);
-        search = root.findViewById(R.id.search);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 84 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -104,47 +88,7 @@ public class test_Listfragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                year = c.get(Calendar.YEAR);
-                month = c.get(Calendar.MONTH);
-                day = c.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog picker = new DatePickerDialog(getActivity(),
-                        (view, year2, monthOfYear, dayOfMonth) -> {
-                            year = year2;
-                            month = monthOfYear;
-                            day = dayOfMonth;
-                            date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
-                        }, year, month, day);
-                picker.show();
-            }
-        });
-
-        clear.setOnClickListener(v -> {
-            date.setText("");
-            std.setText("");
-        });
-
-        date.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                getDate(s.toString());
-            }
-        });
-
-        std.addTextChangedListener(new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -160,8 +104,7 @@ public class test_Listfragment extends Fragment {
             }
         });
 
-        fab_contact.setOnClickListener((View.OnClickListener) v -> {
-
+        binding.fabContact.setOnClickListener((View.OnClickListener) v -> {
             test_schedule_fragment orderplace = new test_schedule_fragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -182,14 +125,7 @@ public class test_Listfragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
-    }
-
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + c;
+        return binding.getRoot();
     }
 
     public void GetTestScheduleDetails() {
@@ -204,17 +140,17 @@ public class test_Listfragment extends Fragment {
                         List<TestScheduleModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                testschedule_rv.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.testscheduleRv.setVisibility(View.VISIBLE);
                                 testScheduleDetails2 = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                testschedule_rv.setLayoutManager(linearLayoutManager);
+                                binding.testscheduleRv.setLayoutManager(linearLayoutManager);
                                 testScheduleMaster_adapter = new TestScheduleMaster_Adapter(context, studentModelList);
                                 testScheduleMaster_adapter.notifyDataSetChanged();
-                                testschedule_rv.setAdapter(testScheduleMaster_adapter);
+                                binding.testscheduleRv.setAdapter(testScheduleMaster_adapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                testschedule_rv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.testscheduleRv.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -229,44 +165,19 @@ public class test_Listfragment extends Fragment {
         });
     }
 
-    private void getDate(String text) {
-        ArrayList<TestScheduleModel> filteredList = new ArrayList<>();
-
-        for (TestScheduleModel item : testScheduleDetails2) {
-            String a = item.getTestDate().replace("T00:00:00", "");
-            try {
-                Date d = actualdate.parse(a);
-                Date = displaydate.format(d);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (Date.toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
-            }
-        }
-
-        if (filteredList.size() > 0) {
-            testScheduleMaster_adapter.filterList(filteredList);
-        } else {
-            testScheduleMaster_adapter.filterList(filteredList);
-        }
-    }
-
     private void getStandard(String text) {
         ArrayList<TestScheduleModel> filteredList = new ArrayList<>();
-
         for (TestScheduleModel item : testScheduleDetails2) {
-            if (item.getStandard().getStandard().toLowerCase().contains(text.toLowerCase()) || item.getSubject().getSubject().toLowerCase().contains(text.toLowerCase()) || item.getTestStartTime().toLowerCase().contains(text.toLowerCase()) || item.getTestEndTime().toLowerCase().contains(text.toLowerCase())) {
+            if (item.getBranchCourse().getCourse().getCourseName().toLowerCase().contains(text.toLowerCase()) || item.getBranchClass().getClassModel().getClassName().toLowerCase().contains(text.toLowerCase()) || item.getBatchTimeText().contains(text.toLowerCase()) || item.getTestEndTime().toLowerCase().contains(text.toLowerCase()) ||
+            item.getTestStartTime().toLowerCase().contains(text.toLowerCase()) || item.getBranchSubject().getSubject().getSubjectName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         if (filteredList.size() > 0) {
             testScheduleMaster_adapter.filterList(filteredList);
         } else {
             testScheduleMaster_adapter.filterList(filteredList);
         }
-
     }
 
 }

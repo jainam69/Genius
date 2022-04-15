@@ -27,6 +27,7 @@ import com.example.genius.Model.FacultyModel;
 import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.RowFacultyListBinding;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
@@ -60,7 +61,7 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
     @NonNull
     @Override
     public Faculty_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new Faculty_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_faculty_list, parent, false));
+        return new ViewHolder(RowFacultyListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
@@ -69,31 +70,31 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
         {
             if (model.getPageInfo().getPageID() == 77){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.img_edit.setVisibility(View.GONE);
+                    holder.binding.imgEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.img_delete.setVisibility(View.GONE);
+                    holder.binding.imgDelete.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+                    holder.binding.linearActions.setVisibility(View.GONE);
                 }
             }
         }
-        Glide.with(context).load(facultyModelList.get(position).getFilePath()).into(holder.faculty_image);
-        holder.faculty_name.setText(facultyModelList.get(position).getStaff().getName());
-        holder.course_name.setText(facultyModelList.get(position).getBranchCourse().getCourse().getCourseName());
-        holder.standard.setText(facultyModelList.get(position).getBranchClass().getClassModel().getClassName());
-        holder.subject.setText(facultyModelList.get(position).getBranchSubject().getSubject().getSubjectName());
+        Glide.with(context).load(facultyModelList.get(position).getFilePath()).into(holder.binding.facultyImage);
+        holder.binding.facultyName.setText(facultyModelList.get(position).getStaff().getName());
+        holder.binding.courseName.setText(facultyModelList.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.binding.standard.setText(facultyModelList.get(position).getBranchClass().getClassModel().getClassName());
+        holder.binding.subject.setText(facultyModelList.get(position).getBranchSubject().getSubject().getSubjectName());
 
-        holder.img_edit.setOnClickListener(new View.OnClickListener() {
+        holder.binding.imgEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Faculty?");
@@ -116,15 +117,15 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
             }
         });
 
-        holder.img_delete.setOnClickListener(new View.OnClickListener() {
+        holder.binding.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -173,20 +174,11 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView faculty_image,img_edit,img_delete;
-        TextView faculty_name,course_name,standard,subject;
-        LinearLayout linear_actions;
+        RowFacultyListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            faculty_image = itemView.findViewById(R.id.faculty_image);
-            img_edit = itemView.findViewById(R.id.img_edit);
-            img_delete = itemView.findViewById(R.id.img_delete);
-            faculty_name = itemView.findViewById(R.id.faculty_name);
-            course_name = itemView.findViewById(R.id.course_name);
-            standard = itemView.findViewById(R.id.standard);
-            subject = itemView.findViewById(R.id.subject);
-            linear_actions = itemView.findViewById(R.id.linear_actions);
+        public ViewHolder(@NonNull RowFacultyListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

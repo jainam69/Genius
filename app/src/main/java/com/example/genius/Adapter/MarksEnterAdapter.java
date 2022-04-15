@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.Model.MarksModel;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.R;
+import com.example.genius.databinding.AchievemarksMasterDeatilListBinding;
 
 import java.util.List;
 
@@ -31,16 +33,16 @@ public class MarksEnterAdapter extends RecyclerView.Adapter<MarksEnterAdapter.Vi
     @NonNull
     @Override
     public MarksEnterAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MarksEnterAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.achievemarks_master_deatil_list, parent, false));
+        return new ViewHolder(AchievemarksMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MarksEnterAdapter.ViewHolder holder, int position) {
-        holder.student_name.setText(studentModels.get(position).getName());
+    public void onBindViewHolder(@NonNull MarksEnterAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.binding.studentName.setText(studentModels.get(position).getName());
         long stdid = studentModels.get(position).getStudentID();
         studentModels.get(position).setAchieveMarks("");
         studentModels.get(position).setStudentID(stdid);
-        holder.ach_marks.addTextChangedListener(new TextWatcher() {
+        holder.binding.achMarks.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -54,7 +56,7 @@ public class MarksEnterAdapter extends RecyclerView.Adapter<MarksEnterAdapter.Vi
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    String mks = holder.ach_marks.getText().toString();
+                    String mks = holder.binding.achMarks.getText().toString();
                     studentModels.get(position).setAchieveMarks(mks);
                 }else {
                     studentModels.get(position).setAchieveMarks("");
@@ -70,14 +72,11 @@ public class MarksEnterAdapter extends RecyclerView.Adapter<MarksEnterAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView student_name;
-        EditText ach_marks;
+        AchievemarksMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            student_name = itemView.findViewById(R.id.student_name);
-            ach_marks = itemView.findViewById(R.id.ach_marks);
+        public ViewHolder(@NonNull AchievemarksMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
         }
     }
 }

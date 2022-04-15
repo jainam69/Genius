@@ -46,6 +46,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.MarksEnterAdapter;
 import com.example.genius.Model.*;
+import com.example.genius.databinding.MarksEntryFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -80,11 +81,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class marks_entry_fragment extends Fragment {
 
-    SearchableSpinner standard, batch_time, subject, branch, test_date,course_name;
-    EditText remarks, total_marks;
-    TextView upload_image, txt_nodata;
-    RecyclerView marks_rv;
-    Button save_test_marks, edit_test_marks, btnsearch_student;
+    MarksEntryFragmentBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -98,7 +95,6 @@ public class marks_entry_fragment extends Fragment {
     public static final String ERROR = "error";
     File instrumentFileDestination;
     int flag = 0;
-    LinearLayout linear_line;
     OnBackPressedCallback callback;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final int REQUEST_CODE_TAKE_PICTURE = 0x2;
@@ -113,26 +109,11 @@ public class marks_entry_fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Marks Entry");
-        View root = inflater.inflate(R.layout.marks_entry_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Marks Master Entry");
+        binding = MarksEntryFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        standard = root.findViewById(R.id.standard);
-        batch_time = root.findViewById(R.id.batch_time);
-        subject = root.findViewById(R.id.subject);
-        test_date = root.findViewById(R.id.test_date);
-        total_marks = root.findViewById(R.id.total_marks);
-        remarks = root.findViewById(R.id.remarks);
-        upload_image = root.findViewById(R.id.upload_image);
-        save_test_marks = root.findViewById(R.id.save_test_marks);
-        edit_test_marks = root.findViewById(R.id.edit_test_marks);
-        branch = root.findViewById(R.id.branch);
-        btnsearch_student = root.findViewById(R.id.btnsearch_student);
-        marks_rv = root.findViewById(R.id.marks_rv);
-        linear_line = root.findViewById(R.id.linear_line);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
-        course_name = root.findViewById(R.id.course_name);
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -146,7 +127,7 @@ public class marks_entry_fragment extends Fragment {
 
         selectStandard();
 
-        upload_image.setOnClickListener(new View.OnClickListener() {
+        binding.uploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= 23) {
@@ -169,19 +150,19 @@ public class marks_entry_fragment extends Fragment {
             }
         });
 
-        btnsearch_student.setOnClickListener(new View.OnClickListener() {
+        binding.btnsearchStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (course_name.getSelectedItemId() == 0){
+                    if (binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                    }else if (standard.getSelectedItemId() == 0)
+                    }else if (binding.standard.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    else if (batch_time.getSelectedItemId() == 0)
+                    else if (binding.batchTime.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    else if (test_date.getSelectedItemId() == 0)
+                    else if (binding.testDate.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
-                    else if (subject.getSelectedItemId() == 0)
+                    else if (binding.subject.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                     else {
                         if (marksentered) {
@@ -197,18 +178,18 @@ public class marks_entry_fragment extends Fragment {
                                         if (data.isCompleted()) {
                                             List<StudentModel> list = data.getData();
                                             if (list != null && list.size() > 0) {
-                                                marks_rv.setVisibility(View.VISIBLE);
-                                                txt_nodata.setVisibility(View.GONE);
-                                                save_test_marks.setVisibility(View.VISIBLE);
+                                                binding.marksRv.setVisibility(View.VISIBLE);
+                                                binding.txtNodata.setVisibility(View.GONE);
+                                                binding.saveTestMarks.setVisibility(View.VISIBLE);
                                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                                marks_rv.setLayoutManager(linearLayoutManager);
+                                                binding.marksRv.setLayoutManager(linearLayoutManager);
                                                 marksEnterAdapter = new MarksEnterAdapter(context, list);
                                                 marksEnterAdapter.notifyDataSetChanged();
-                                                marks_rv.setAdapter(marksEnterAdapter);
+                                                binding.marksRv.setAdapter(marksEnterAdapter);
                                             } else {
-                                                marks_rv.setVisibility(View.GONE);
-                                                txt_nodata.setVisibility(View.VISIBLE);
-                                                save_test_marks.setVisibility(View.GONE);
+                                                binding.marksRv.setVisibility(View.GONE);
+                                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                                binding.saveTestMarks.setVisibility(View.GONE);
                                             }
                                         }
                                         progressBarHelper.hideProgressDialog();
@@ -229,17 +210,17 @@ public class marks_entry_fragment extends Fragment {
             }
         });
 
-        save_test_marks.setOnClickListener(new View.OnClickListener() {
+        binding.saveTestMarks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (course_name.getSelectedItemId() == 0){
+                    if (binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                    }else if (standard.getSelectedItemId() == 0)
+                    }else if (binding.standard.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                    else if (batch_time.getSelectedItemId() == 0)
+                    else if (binding.batchTime.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    else if (test_date.getSelectedItemId() == 0)
+                    else if (binding.testDate.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
                     else {
                         progressBarHelper.showProgressDialog();
@@ -260,7 +241,7 @@ public class marks_entry_fragment extends Fragment {
 
                         }
                         Call<MarksModel.MarksData1> call;
-                        if (upload_image.getText().toString().isEmpty()) {
+                        if (binding.uploadImage.getText().toString().isEmpty()) {
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", requestBody);
                             call = apiCalling.MarksMaintenance(0, Marks_Date, TestID, Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)
@@ -318,8 +299,7 @@ public class marks_entry_fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     private void showAddProfilePicDialog() {
@@ -363,8 +343,8 @@ public class marks_entry_fragment extends Fragment {
                 try {
                     flag = 1;
                     imageVal = null;
-                    upload_image.setText("Attached");
-                    upload_image.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.uploadImage.setText("Attached");
+                    binding.uploadImage.setTextColor(context.getResources().getColor(R.color.black));
                     instrumentFileDestination = new File(pictureFilePath);
                     Toast.makeText(context, "" + instrumentFileDestination, Toast.LENGTH_SHORT).show();
                     onCameraImageResultInstrument();
@@ -391,8 +371,8 @@ public class marks_entry_fragment extends Fragment {
                     InputStream imageStream;
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     bitmap = BitmapFactory.decodeStream(imageStream);
-                    upload_image.setText("Attached");
-                    upload_image.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.uploadImage.setText("Attached");
+                    binding.uploadImage.setTextColor(context.getResources().getColor(R.color.black));
                     onGalleryImageResultInstrument(result);
                 } catch (Exception e) {
                     errored();
@@ -515,7 +495,7 @@ public class marks_entry_fragment extends Fragment {
         } catch (Exception e) {
 
         }
-        Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date);
+        Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<SubjectData>() {
             @Override
             public void onResponse(Call<SubjectData> call, Response<SubjectData> response) {
@@ -567,8 +547,8 @@ public class marks_entry_fragment extends Fragment {
     public void bindsubject() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
-        subject.setOnItemSelectedListener(onItemSelectedListener8);
+        binding.subject.setAdapter(adapter);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener8 =
@@ -578,14 +558,14 @@ public class marks_entry_fragment extends Fragment {
                     SubjectName = subjectitem.get(position);
                     SubjectId = subjectid.get(position).toString();
                     TestID = Long.parseLong(dateid.get(position).toString());
-                    if (subject.getSelectedItem().equals("Select Subject")) {
+                    if (binding.subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (subject.getSelectedItemId() != 0) {
+                    if (binding.subject.getSelectedItemId() != 0) {
                         GetTestDetails();
                     }
                 }
@@ -605,8 +585,8 @@ public class marks_entry_fragment extends Fragment {
                     TestScheduleModel.TestScheduleData1 data = response.body();
                     if (data != null && data.isCompleted()) {
                         TestScheduleModel model = data.getData();
-                        total_marks.setText("" + model.getMarks());
-                        remarks.setText(model.getRemarks());
+                        binding.totalMarks.setText("" + model.getMarks());
+                        binding.remarks.setText(model.getRemarks());
                         marksentered = model.isMarksentered();
                     }
                     progressBarHelper.hideProgressDialog();
@@ -667,8 +647,8 @@ public class marks_entry_fragment extends Fragment {
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setAdapter(adapter);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -676,14 +656,14 @@ public class marks_entry_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -739,8 +719,8 @@ public class marks_entry_fragment extends Fragment {
     public void bindstandard() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -748,7 +728,7 @@ public class marks_entry_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -782,8 +762,8 @@ public class marks_entry_fragment extends Fragment {
     public void bindbatch_time() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BATCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        batch_time.setAdapter(adapter);
-        batch_time.setOnItemSelectedListener(onItemSelectedListener77);
+        binding.batchTime.setAdapter(adapter);
+        binding.batchTime.setOnItemSelectedListener(onItemSelectedListener77);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener77 =
@@ -792,14 +772,14 @@ public class marks_entry_fragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     BatchTime = batchitem.get(position);
                     BatchId = batchid.get(position);
-                    if (batch_time.getSelectedItem().equals("Select Batch Time")) {
+                    if (binding.batchTime.getSelectedItem().equals("Select Batch Time")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
-                    if (batch_time.getSelectedItemId() != 0) {
+                    if (binding.batchTime.getSelectedItemId() != 0) {
                         GetTestDates();
                     }
                 }
@@ -853,8 +833,8 @@ public class marks_entry_fragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, DATEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        test_date.setAdapter(adapter);
-        test_date.setOnItemSelectedListener(onItemSelectedListenerdate);
+        binding.testDate.setAdapter(adapter);
+        binding.testDate.setOnItemSelectedListener(onItemSelectedListenerdate);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListenerdate =
@@ -862,14 +842,14 @@ public class marks_entry_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TestDate = dateitem.get(position);
-                    if (test_date.getSelectedItem().equals("Test Date")) {
+                    if (binding.testDate.getSelectedItem().equals("Test Date")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (test_date.getSelectedItemId() != 0) {
+                    if (binding.testDate.getSelectedItemId() != 0) {
                         GetAllSubject();
                     }
                 }
@@ -968,8 +948,8 @@ public class marks_entry_fragment extends Fragment {
     public void bindTestDate() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, DATEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        test_date.setAdapter(adapter);
-        test_date.setOnItemSelectedListener(onItemSelectedListener80);
+        binding.testDate.setAdapter(adapter);
+        binding.testDate.setOnItemSelectedListener(onItemSelectedListener80);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener80 =
@@ -998,8 +978,8 @@ public class marks_entry_fragment extends Fragment {
     public void bindselectsubject() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
-        subject.setOnItemSelectedListener(onItemSelectedListener90);
+        binding.subject.setAdapter(adapter);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener90);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener90 =
@@ -1030,7 +1010,7 @@ public class marks_entry_fragment extends Fragment {
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 }

@@ -22,6 +22,7 @@ import com.example.genius.Adapter.HomeworkCheckingAdapter;
 import com.example.genius.Adapter.HomeworkMaster_Adapter;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentHomeWorkCheckingBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
@@ -34,36 +35,30 @@ import retrofit2.Response;
 
 public class HomeWorkCheckingFragment extends Fragment {
 
+    FragmentHomeWorkCheckingBinding binding;
     Context context;
-    RecyclerView homework_checking_rv;
-    TextView id,no_content;
     Bundle bundle;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     HomeworkCheckingAdapter homeworkCheckingAdapter;
-    TextView txt_nodata;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("HomeWork Checking");
-        View root = inflater.inflate(R.layout.fragment_home_work_checking, container, false);
+        binding = FragmentHomeWorkCheckingBinding.inflate(getLayoutInflater());
         context  =getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        homework_checking_rv = root.findViewById(R.id.homework_checking_rv);
-        id = root.findViewById(R.id.id);
-        no_content = root.findViewById(R.id.no_content);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         bundle = getArguments();
         if (bundle != null)
         {
             if (bundle.containsKey("ID"))
             {
-                id.setText(""+bundle.getLong("ID"));
+                binding.id.setText(""+bundle.getLong("ID"));
             }
         }
 
@@ -87,14 +82,13 @@ public class HomeWorkCheckingFragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetHomeworkCheckingList()
     {
         progressBarHelper.showProgressDialog();
-        Call<HomeworkModel.HomeworkDetailData> call = apiCalling.Get_Homework_Checking_List(Long.parseLong(id.getText().toString()));
+        Call<HomeworkModel.HomeworkDetailData> call = apiCalling.Get_Homework_Checking_List(Long.parseLong(binding.id.getText().toString()));
         call.enqueue(new Callback<HomeworkModel.HomeworkDetailData>() {
             @Override
             public void onResponse(Call<HomeworkModel.HomeworkDetailData> call, Response<HomeworkModel.HomeworkDetailData> response) {
@@ -103,16 +97,16 @@ public class HomeWorkCheckingFragment extends Fragment {
                     if (data != null && data.isCompleted()){
                         List<HomeworkModel> list = data.getData();
                         if (list != null && list.size() > 0){
-                            homework_checking_rv.setVisibility(View.VISIBLE);
-                            txt_nodata.setVisibility(View.GONE);
+                            binding.homeworkCheckingRv.setVisibility(View.VISIBLE);
+                            binding.txtNodata.setVisibility(View.GONE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            homework_checking_rv.setLayoutManager(linearLayoutManager);
+                            binding.homeworkCheckingRv.setLayoutManager(linearLayoutManager);
                             homeworkCheckingAdapter = new HomeworkCheckingAdapter(list,context);
                             homeworkCheckingAdapter.notifyDataSetChanged();
-                            homework_checking_rv.setAdapter(homeworkCheckingAdapter);
+                            binding.homeworkCheckingRv.setAdapter(homeworkCheckingAdapter);
                         }else {
-                            homework_checking_rv.setVisibility(View.GONE);
-                            txt_nodata.setVisibility(View.VISIBLE);
+                            binding.homeworkCheckingRv.setVisibility(View.GONE);
+                            binding.txtNodata.setVisibility(View.VISIBLE);
                         }
                     }
                     progressBarHelper.hideProgressDialog();

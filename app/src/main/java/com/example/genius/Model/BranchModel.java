@@ -12,9 +12,18 @@ public class BranchModel implements Serializable {
     String MobileNo;
     String EmailID;
     boolean Completed;
+    String AppImagePath;
     List<BranchData> Data;
 
     public BranchModel() {
+    }
+
+    public String getAppImagePath() {
+        return AppImagePath;
+    }
+
+    public void setAppImagePath(String appImagePath) {
+        AppImagePath = appImagePath;
     }
 
     public BranchModel(long branchID) {

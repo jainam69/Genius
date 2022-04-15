@@ -24,6 +24,7 @@ import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
+import com.example.genius.databinding.ActivityProfileBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -37,8 +38,7 @@ import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    EditText name, mobile_no, email;
-    Button btn_save;
+    ActivityProfileBinding binding;
     ApiCalling apiCalling;
     ProgressBarHelper progressBarHelper;
     Context context;
@@ -47,18 +47,14 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Profile");
-
         context = ProfileActivity.this;
         progressBarHelper = new ProgressBarHelper(ProfileActivity.this, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        name = findViewById(R.id.name);
-        mobile_no = findViewById(R.id.mobile_no);
-        email = findViewById(R.id.email);
-        btn_save = findViewById(R.id.btn_save);
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -69,9 +65,10 @@ public class ProfileActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         StaffModel.StaffData1 model = response.body();
                         if (model != null && model.isCompleted()) {
-                            name.setText(model.getData().getName());
-                            mobile_no.setText(model.getData().getMobileNo());
-                            email.setText(model.getData().getEmailID());
+                            binding.name.setText(model.getData().getUserNameNew());
+                            binding.mobileNo.setText(model.getData().getMobileNo());
+                            binding.email.setText(model.getData().getEmailID());
+                            binding.fullName.setText(model.getData().getName());
                             TransactionId = model.getData().getTransaction().getTransactionId();
                         }
                         progressBarHelper.hideProgressDialog();
@@ -88,32 +85,34 @@ public class ProfileActivity extends AppCompatActivity {
             Function.showToast(context, "Please check your internet connectivity...");
         }
 
-        btn_save.setOnClickListener(v -> {
-            if (name.getText().toString().trim().equals("")) {
-                Function.showToast(context, "Please enter name");
-            } else if (mobile_no.getText().toString().trim().equals("")) {
-                Function.showToast(context, "Please enter mobile no (login id)");
-            } else if (email.getText().toString().trim().equals("")) {
+        binding.btnSave.setOnClickListener(v -> {
+            if (binding.fullName.getText().toString().isEmpty()) {
+                Function.showToast(context, "Please enter Full Name");
+            } else if (binding.name.getText().toString().isEmpty()){
+                Toast.makeText(context, "Please enter User Name(Login ID).", Toast.LENGTH_SHORT).show();
+            } else if (binding.mobileNo.getText().toString().trim().equals("")) {
+                Function.showToast(context, "Please enter mobile no(Forgot Password).");
+            } else if (binding.email.getText().toString().trim().equals("")) {
                 Function.showToast(context, "Please enter email");
             } else {
                 if (Function.isNetworkAvailable(context)) {
                     progressBarHelper.showProgressDialog();
                     Call<ProfileModel> call = apiCalling.UpdateProfile(new StaffModel(Preferences.getInstance(context).getLong(Preferences.KEY_STAFF_ID)
-                            , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), name.getText().toString().trim()
-                            , email.getText().toString().trim(), mobile_no.getText().toString().trim()
+                            , Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID), binding.fullName.getText().toString().trim()
+                            , binding.email.getText().toString().trim(), binding.mobileNo.getText().toString().trim()
                             , new TransactionModel(TransactionId, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID))
-                            , new RowStatusModel(1), new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))));
+                            , new RowStatusModel(1), new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID)),binding.name.getText().toString()));
                     call.enqueue(new Callback<ProfileModel>() {
                         @Override
                         public void onResponse(@NonNull Call<ProfileModel> call, @NonNull Response<ProfileModel> response) {
                             if (response.isSuccessful()) {
                                 ProfileModel model = response.body();
-                                if (model != null && model.isCompleted()) {
-                                    if (Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME).equals(mobile_no.getText().toString().trim())) {
+                                if (model.isCompleted()) {
+                                    if (Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME).equals(binding.name.getText().toString().trim())) {
                                         Function.showToast(context, model.getMessage());
                                     } else {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                        builder.setMessage("Your Mobile Number has Changed!! Please Login Again!!");
+                                        builder.setMessage(model.getMessage());
                                         builder.setPositiveButton("OK", (dialog, which) -> {
                                             Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN, false);
                                             startActivity(new Intent(context, LoginActivity.class));
@@ -126,9 +125,7 @@ public class ProfileActivity extends AppCompatActivity {
                                         Preferences.getInstance(context).setBoolean(Preferences.KEY_LOGIN, false);
                                     }
                                 } else {
-                                    if (model != null) {
-                                        Function.showToast(context, model.getMessage());
-                                    }
+                                    Function.showToast(context, model.getMessage());
                                 }
                                 progressBarHelper.hideProgressDialog();
                             }

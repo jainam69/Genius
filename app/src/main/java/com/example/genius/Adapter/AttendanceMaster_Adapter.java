@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.R;
+import com.example.genius.databinding.AttendanceMasterDeatilListBinding;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,15 +39,14 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
     @NotNull
     @Override
     public AttendanceMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.attendance_master_deatil_list, parent, false));
+        return new ViewHolder(AttendanceMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
-
     @Override
-    public void onBindViewHolder(@NonNull AttendanceMaster_Adapter.ViewHolder holder, int position) {
-        holder.gr_no.setText(""+studentModels.get(position).getGrNo());
-        holder.stu_name.setText(studentModels.get(position).getFirstName() + " " + studentModels.get(position).getLastName());
-        holder.std_id.setText(""+studentModels.get(position).getStudentID());
+    public void onBindViewHolder(@NonNull AttendanceMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.binding.grNo.setText(""+studentModels.get(position).getGrNo());
+        holder.binding.stuName.setText(studentModels.get(position).getFirstName() + " " + studentModels.get(position).getLastName());
+        holder.binding.stuId.setText(""+studentModels.get(position).getStudentID());
         AttendanceModel.AttendanceDetailEntity att = new AttendanceModel.AttendanceDetailEntity();
         StudentModel mod = new StudentModel();
         mod.setStudentID(studentModels.get(position).getStudentID());
@@ -55,10 +55,10 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
         testlist.get(position).setRemarks("");
         testlist.get(position).setPresent(true);
         testlist.get(position).setAbsent(false);
-        holder.present_absent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.binding.presentAbsent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (holder.present_absent.isChecked())
+                if (holder.binding.presentAbsent.isChecked())
                 {
                     testlist.get(position).setAbsent(true);
                     testlist.get(position).setPresent(false);
@@ -68,7 +68,7 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
                 }
             }
         });
-        holder.remarks.addTextChangedListener(new TextWatcher() {
+        holder.binding.remarks.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -82,7 +82,7 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > 0) {
-                    String rm = holder.remarks.getText().toString();
+                    String rm = holder.binding.remarks.getText().toString();
                     testlist.get(position).setRemarks(rm);
                 }
             }
@@ -96,17 +96,11 @@ public class AttendanceMaster_Adapter extends RecyclerView.Adapter<AttendanceMas
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView gr_no,stu_name,remarks,std_id;
-        CheckBox present_absent;
+        AttendanceMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            gr_no = itemView.findViewById(R.id.gr_no);
-            stu_name = itemView.findViewById(R.id.stu_name);
-            present_absent = itemView.findViewById(R.id.present_absent);
-            remarks = itemView.findViewById(R.id.remarks);
-            std_id = itemView.findViewById(R.id.stu_id);
+        public ViewHolder(@NonNull AttendanceMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
         }
     }
 }

@@ -26,6 +26,7 @@ import com.example.genius.Adapter.ViewLibrary_Adapter;
 import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.R;
+import com.example.genius.databinding.ShowLibraryFragmentBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -45,10 +46,9 @@ import retrofit2.Response;
 
 public class ShowLibraryFragment extends Fragment {
 
-    RecyclerView view_library;
+    ShowLibraryFragmentBinding binding;
     Context context;
     ViewLibrary_Adapter viewLibrary_adapter;
-    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -59,12 +59,10 @@ public class ShowLibraryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Show Library");
-        View root = inflater.inflate(R.layout.show_library_fragment, container, false);
+        binding = ShowLibraryFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        view_library = root.findViewById(R.id.view_library);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -94,7 +92,7 @@ public class ShowLibraryFragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetViewLibrary() {
@@ -109,21 +107,21 @@ public class ShowLibraryFragment extends Fragment {
                         List<LibraryModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                view_library.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.viewLibrary.setVisibility(View.VISIBLE);
                                 for (LibraryModel model1 : studentModelList) {
                                     if (bundle.getInt("Type") == model1.getLibrary_Type()) {
                                         model.add(model1);
                                     }
                                 }
-                                view_library.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                                view_library.setLayoutManager(new GridLayoutManager(context, 2));
+                                binding.viewLibrary.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                binding.viewLibrary.setLayoutManager(new GridLayoutManager(context, 2));
                                 viewLibrary_adapter = new ViewLibrary_Adapter(context, model);
                                 viewLibrary_adapter.notifyDataSetChanged();
-                                view_library.setAdapter(viewLibrary_adapter);
+                                binding.viewLibrary.setAdapter(viewLibrary_adapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                view_library.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.viewLibrary.setVisibility(View.GONE);
                             }
                         }
                     }

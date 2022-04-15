@@ -39,6 +39,7 @@
                     tools:ignore="HardcodedText,RtlSymmetry" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/branch_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,7 +84,7 @@
                         android:layout_height="0dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/ic_edit"
                         app:tint="@color/white"
                         tools:ignore="ContentDescription,NestedWeights" />
@@ -103,7 +104,7 @@
                         android:layout_height="0dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/ic_delete"
                         app:tint="@color/white"
                         tools:ignore="ContentDescription,NestedWeights" />

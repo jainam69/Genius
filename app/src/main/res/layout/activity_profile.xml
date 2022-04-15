@@ -7,6 +7,60 @@
     android:orientation="vertical"
     tools:context=".Activity.ChangePasswordActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        android:text="Full Name"
+        android:textSize="16dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/border">
+
+        <EditText
+            android:id="@+id/full_name"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_toEndOf="@+id/pwd12"
+            android:background="@android:color/transparent"
+            android:hint="Name"
+            android:maxLines="1"
+            android:paddingStart="9dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            tools:ignore="Autofill,HardcodedText,RtlSymmetry,TextFields"
+            tools:targetApi="o" />
+
+
+        <ImageView
+            android:id="@+id/pwd12"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/user"
+            app:tint="@color/blue" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        android:text="User Name(Login ID)"
+        android:textSize="16dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,11 +92,20 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/password"
+            android:src="@drawable/user"
             app:tint="@color/blue" />
 
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        android:text="Mobile Number(Forgot Password)"
+        android:textSize="16dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,11 +140,20 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/password"
+            android:src="@drawable/mobile_no"
             app:tint="@color/blue" />
 
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        android:text="Email ID"
+        android:textSize="16dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,7 +186,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/password"
+            android:src="@drawable/email"
             app:tint="@color/blue" />
 
     </RelativeLayout>

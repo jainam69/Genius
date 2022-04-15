@@ -21,6 +21,8 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.CircularAdapter;
 import com.example.genius.Model.CircularModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentCircularBinding;
+import com.example.genius.databinding.FragmentCircularFragmentBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
@@ -35,8 +37,8 @@ import retrofit2.Response;
 
 public class circular_fragment extends Fragment {
 
+    FragmentCircularBinding binding;
     Context context;
-    RecyclerView circular_rv;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -46,11 +48,10 @@ public class circular_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Circular");
-        View root = inflater.inflate(R.layout.fragment_circular, container, false);
+        binding = FragmentCircularBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        circular_rv = root.findViewById(R.id.circular_rv);
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -71,7 +72,7 @@ public class circular_fragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetCircular() {
@@ -85,9 +86,9 @@ public class circular_fragment extends Fragment {
                         List<CircularModel.CircularData> list = data.Data;
                         if (list != null && list.size() > 0) {
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            circular_rv.setLayoutManager(linearLayoutManager);
+                            binding.circularRv.setLayoutManager(linearLayoutManager);
                             circularAdapter = new CircularAdapter(context, list);
-                            circular_rv.setAdapter(circularAdapter);
+                            binding.circularRv.setAdapter(circularAdapter);
                         }
                     }
                     progressBarHelper.hideProgressDialog();

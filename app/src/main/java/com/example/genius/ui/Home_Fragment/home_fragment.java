@@ -80,7 +80,6 @@ public class home_fragment extends Fragment {
     View root;
     Context context;
     UserModel userpermission;
-    CirclePageIndicator circlePageIndicator;
     ViewPager viewPager;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -99,7 +98,6 @@ public class home_fragment extends Fragment {
         progressBarHelper = new ProgressBarHelper(context, false);
         home_rv = root.findViewById(R.id.home_rv);
         viewPager = root.findViewById(R.id.viewpager);
-        circlePageIndicator = root.findViewById(R.id.circlepagerindicator);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
 
         if (Function.isNetworkAvailable(context)) {
@@ -151,7 +149,7 @@ public class home_fragment extends Fragment {
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 }
-                if (pagename.get(position).equals("STUDENTS")) {
+                if (pagename.get(position).equals("ADMISSION FORM")) {
                     student_registration_Listfragment orderplace = new student_registration_Listfragment();
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -374,7 +372,7 @@ public class home_fragment extends Fragment {
                 image.add(R.drawable.subject);
             }
             if (model.getPageInfo().getPageID() == 9 && model.getPackageRightinfo().isViewstatus()) {
-                pagename.add("STUDENTS");
+                pagename.add("ADMISSION FORM");
                 image.add(R.drawable.students);
             }
             if (model.getPageInfo().getPageID() == 19 && model.getPackageRightinfo().isViewstatus()) {

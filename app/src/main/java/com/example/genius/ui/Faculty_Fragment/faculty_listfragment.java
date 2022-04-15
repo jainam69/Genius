@@ -29,6 +29,7 @@ import com.example.genius.Model.StaffData;
 import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentFacultyListfragmentBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -48,42 +49,33 @@ import retrofit2.Response;
 
 public class faculty_listfragment extends Fragment {
 
+    FragmentFacultyListfragmentBinding binding;
     Context context;
-    RecyclerView faculty_rv;
-    EditText search;
-    FloatingActionButton fab_contact;
-    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     UserModel userpermission;
     Faculty_Adapter faculty_adapter;
     List<FacultyModel>  model;
-    Button clear;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Faculty List Master");
-        View root = inflater.inflate(R.layout.fragment_faculty_listfragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Faculty Master");
+        binding = FragmentFacultyListfragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        faculty_rv = root.findViewById(R.id.faculty_rv);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
-        search = root.findViewById(R.id.search);
-        clear = root.findViewById(R.id.clear);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 77 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
-        search.addTextChangedListener(new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -100,13 +92,6 @@ public class faculty_listfragment extends Fragment {
             }
         });
 
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search.setText("");
-            }
-        });
-
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
             GetAllFacultyList();
@@ -114,7 +99,7 @@ public class faculty_listfragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        fab_contact.setOnClickListener(new View.OnClickListener() {
+        binding.fabContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 faculty_fragment orderplace = new faculty_fragment();
@@ -138,7 +123,7 @@ public class faculty_listfragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllFacultyList()
@@ -153,16 +138,16 @@ public class faculty_listfragment extends Fragment {
                         List<FacultyModel> list = data.getData();
                         if (list != null && list.size() > 0){
                             model = list;
-                            txt_nodata.setVisibility(View.GONE);
-                            faculty_rv.setVisibility(View.VISIBLE);
+                            binding.txtNodata.setVisibility(View.GONE);
+                            binding.facultyRv.setVisibility(View.VISIBLE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            faculty_rv.setLayoutManager(linearLayoutManager);
+                            binding.facultyRv.setLayoutManager(linearLayoutManager);
                             faculty_adapter = new Faculty_Adapter(context, list);
                             faculty_adapter.notifyDataSetChanged();
-                            faculty_rv.setAdapter(faculty_adapter);
+                            binding.facultyRv.setAdapter(faculty_adapter);
                         }else {
-                            txt_nodata.setVisibility(View.VISIBLE);
-                            faculty_rv.setVisibility(View.GONE);
+                            binding.txtNodata.setVisibility(View.VISIBLE);
+                            binding.facultyRv.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -179,14 +164,12 @@ public class faculty_listfragment extends Fragment {
 
     private void getUserName(String text) {
         ArrayList<FacultyModel> filteredList = new ArrayList<>();
-
         for (FacultyModel item : model) {
             if (item.getStaff().getName().toLowerCase().contains(text.toLowerCase()) || item.getBranchCourse().getCourse().getCourseName().toLowerCase().contains(text.toLowerCase())
             || item.getBranchClass().getClassModel().getClassName().toLowerCase().contains(text.toLowerCase()) || item.getBranchSubject().getSubject().getSubjectName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         if (filteredList.size() > 0) {
             faculty_adapter.filterList(filteredList);
         } else {

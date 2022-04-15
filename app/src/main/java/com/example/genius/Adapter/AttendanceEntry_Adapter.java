@@ -25,6 +25,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.AttendanceModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.AttendanceEntryMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -64,44 +65,44 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
     @NotNull
     @Override
     public AttendanceEntry_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new AttendanceEntry_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.attendance_entry_master_deatil_list, parent, false));
+        return new ViewHolder(AttendanceEntryMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 18){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.atten_edit.setVisibility(View.GONE);
+                    holder.binding.attenEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.atten_delete.setVisibility(View.GONE);
+                    holder.binding.attenDelete.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                    holder.linear_create_delete.setVisibility(View.GONE);
+                    holder.binding.linearCreateDelete.setVisibility(View.GONE);
                 }
             }
         }
         String date = attendanceDetails.get(position).getAttendanceDate().replace("T00:00:00","");
         try {
             Date d = actualdate.parse(date);
-            holder.att_date.setText(displaydate.format(d));
+            holder.binding.attDate.setText(displaydate.format(d));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.batch_time.setText(attendanceDetails.get(position).getBatchTypeText());
-        holder.std.setText(attendanceDetails.get(position).getBranchClass().getClassModel().getClassName());
-        holder.course.setText(attendanceDetails.get(position).getBranchCourse().getCourse().getCourseName());
-
-        holder.atten_edit.setOnClickListener(new View.OnClickListener() {
+        holder.binding.batchTime.setText(attendanceDetails.get(position).getBatchTypeText());
+        holder.binding.std.setText(attendanceDetails.get(position).getBranchClass().getClassModel().getClassName());
+        holder.binding.course.setText(attendanceDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.binding.attendanceRemark.setText(attendanceDetails.get(position).getAttendanceRemarks());
+        holder.binding.attenEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Attendance?");
@@ -128,6 +129,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
                         bundle.putString("Date",attendanceDetails.get(position).getAttendanceDate());
                         bundle.putInt("BatchId",attendanceDetails.get(position).getBatchTypeID());
                         bundle.putString("BatchName",attendanceDetails.get(position).getBatchTypeText());
+                        bundle.putString("AttendanceRemark",attendanceDetails.get(position).getAttendanceRemarks());
                         bundle.putLong("TransactionId",attendanceDetails.get(position).getTransaction().getTransactionId());
                         orderplace.setArguments(bundle);
                         FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
@@ -140,15 +142,15 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
                 dialog.show();
             }
         });
-        holder.atten_delete.setOnClickListener(new View.OnClickListener() {
+        holder.binding.attenDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -211,20 +213,11 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView att_date,batch_time,std,course;
-        ImageView atten_edit,atten_delete;
-        LinearLayout linear_create_delete;
+        AttendanceEntryMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            att_date = itemView.findViewById(R.id.att_date);
-            batch_time = itemView.findViewById(R.id.batch_time);
-            std = itemView.findViewById(R.id.std);
-            atten_edit = itemView.findViewById(R.id.atten_edit);
-            atten_delete = itemView.findViewById(R.id.atten_delete);
-            linear_create_delete = itemView.findViewById(R.id.linear_create_delete);
-            course = itemView.findViewById(R.id.course);
+        public ViewHolder(@NonNull AttendanceEntryMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);

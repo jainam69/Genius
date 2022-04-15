@@ -30,6 +30,7 @@ import com.example.genius.Model.CourceModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentBranchCourceBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -49,15 +50,12 @@ import retrofit2.Response;
 
 public class BranchCourseFragment extends Fragment {
 
-    View root;
+    FragmentBranchCourceBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    RecyclerView course_rv;
-    Button save_course, delete_course;
     BranchCourseAdapter branchCourceAdapter;
-    CheckBox checkall;
     List<BranchCourseModel.BranchCourceData> list;
     List<BranchCourseModel.BranchCourceData> listForBundle;
     Bundle bundle = null;
@@ -66,13 +64,11 @@ public class BranchCourseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Course Master");
-        root = inflater.inflate(R.layout.fragment_branch_cource, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Course Master Entry");
+        binding = FragmentBranchCourceBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        course_rv = root.findViewById(R.id.course_rv);
-        checkall = root.findViewById(R.id.chk_all);
 
         bundle = getArguments();
         if (bundle != null) {
@@ -86,10 +82,10 @@ public class BranchCourseFragment extends Fragment {
                     data.add(listForBundle.get(i).getCourse());
                 }
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                course_rv.setLayoutManager(linearLayoutManager);
+                binding.courseRv.setLayoutManager(linearLayoutManager);
                 branchCourceAdapter = new BranchCourseAdapter(context, data);
                 branchCourceAdapter.notifyDataSetChanged();
-                course_rv.setAdapter(branchCourceAdapter);
+                binding.courseRv.setAdapter(branchCourceAdapter);
             }
         } else {
             if (Function.checkNetworkConnection(context)) {
@@ -99,16 +95,15 @@ public class BranchCourseFragment extends Fragment {
             }
         }
 
-        checkall.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (checkall.isChecked()) {
+        binding.chkAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (binding.chkAll.isChecked()) {
                 branchCourceAdapter.selectAll();
             } else {
                 branchCourceAdapter.unselectall();
             }
         });
 
-        save_course = root.findViewById(R.id.save_course);
-        save_course.setOnClickListener(view -> {
+        binding.saveCourse.setOnClickListener(view -> {
             progressBarHelper.showProgressDialog();
             list = new ArrayList<>();
             if (BranchCourseAdapter.CourceDataList.size() > 0) {
@@ -159,8 +154,7 @@ public class BranchCourseFragment extends Fragment {
             }
         });
 
-        delete_course = root.findViewById(R.id.delete_course);
-        delete_course.setOnClickListener(view -> {
+        binding.deleteCourse.setOnClickListener(view -> {
             BranchCourseListFragment profileFragment = new BranchCourseListFragment();
             FragmentManager fm = requireActivity().getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -181,8 +175,7 @@ public class BranchCourseFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse() {
@@ -198,10 +191,10 @@ public class BranchCourseFragment extends Fragment {
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                course_rv.setLayoutManager(linearLayoutManager);
+                                binding.courseRv.setLayoutManager(linearLayoutManager);
                                 branchCourceAdapter = new BranchCourseAdapter(context, studentModelList);
                                 branchCourceAdapter.notifyDataSetChanged();
-                                course_rv.setAdapter(branchCourceAdapter);
+                                binding.courseRv.setAdapter(branchCourceAdapter);
                             }
                         }
                     }

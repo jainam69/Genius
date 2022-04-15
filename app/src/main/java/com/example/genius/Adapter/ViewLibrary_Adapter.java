@@ -31,6 +31,7 @@ import com.example.genius.Activity.VideoViewActivity;
 import com.example.genius.Activity.ViewDocumentActivity;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.R;
+import com.example.genius.databinding.ViewLibraryMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 
 import java.util.List;
@@ -51,34 +52,34 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_library_master_deatil_list, parent, false));
+        return new ViewHolder(ViewLibraryMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         if (manageDetails.get(position).getLibrary_Type() == 1) {
-            holder.lib_download.setVisibility(View.GONE);
+            holder.binding.libDownload.setVisibility(View.GONE);
             if (isYoutubeUrl(manageDetails.get(position).getVideoLink())) {
-                holder.lib_image.setVisibility(View.VISIBLE);
-                holder.iv_play.setImageDrawable(context.getResources().getDrawable(R.drawable.youtube_icon, context.getTheme()));
-                Glide.with(context).load("http://img.youtube.com/vi/" + extractYoutubeId(manageDetails.get(position).getVideoLink()) + "/0.jpg").into(holder.lib_image);
+                holder.binding.libImage.setVisibility(View.VISIBLE);
+                holder.binding.ivPlay.setImageDrawable(context.getResources().getDrawable(R.drawable.youtube_icon, context.getTheme()));
+                Glide.with(context).load("http://img.youtube.com/vi/" + extractYoutubeId(manageDetails.get(position).getVideoLink()) + "/0.jpg").into(holder.binding.libImage);
             } else {
-                holder.iv_play.setImageDrawable(context.getResources().getDrawable(R.drawable.play, context.getTheme()));
+                holder.binding.ivPlay.setImageDrawable(context.getResources().getDrawable(R.drawable.play, context.getTheme()));
             }
         } else {
-            holder.lib_download.setVisibility(View.VISIBLE);
-            holder.lib_image.setVisibility(View.VISIBLE);
-            holder.iv_play.setVisibility(View.GONE);
-            Glide.with(context).load(manageDetails.get(position).getThumbnailFilePath()).into(holder.lib_image);
+            holder.binding.libDownload.setVisibility(View.VISIBLE);
+            holder.binding.libImage.setVisibility(View.VISIBLE);
+            holder.binding.ivPlay.setVisibility(View.GONE);
+            Glide.with(context).load(manageDetails.get(position).getThumbnailFilePath()).into(holder.binding.libImage);
         }
-        holder.description.setText(manageDetails.get(position).getDescription());
-        holder.lib_view.setOnClickListener(v -> {
+        holder.binding.description.setText(manageDetails.get(position).getDescription());
+        holder.binding.libView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to View Document?");
@@ -120,13 +121,13 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
             });
             dialog.show();
         });
-        holder.lib_download.setOnClickListener(v -> {
+        holder.binding.libDownload.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Download Library Document?");
@@ -167,17 +168,11 @@ public class ViewLibrary_Adapter extends RecyclerView.Adapter<ViewLibrary_Adapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView lib_image,lib_view,lib_download,iv_play;;
-        TextView description;
+        ViewLibraryMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            description = itemView.findViewById(R.id.description);
-            lib_image = itemView.findViewById(R.id.lib_image);
-            lib_view = itemView.findViewById(R.id.lib_view);
-            lib_download = itemView.findViewById(R.id.lib_download);
-            iv_play = itemView.findViewById(R.id.iv_play);
+        public ViewHolder(@NonNull ViewLibraryMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
         }
     }
 

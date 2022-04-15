@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/editLinear"
@@ -16,94 +17,27 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/linear_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/border">
+            android:orientation="horizontal">
 
             <EditText
-                android:background="@null"
-                android:id="@+id/user_name"
-                android:padding="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="User Name"
-                android:inputType="text"
+                android:id="@+id/edt_search"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_weight="0.4"
+                android:background="@drawable/bg_gray"
+                android:drawableStart="@drawable/search"
+                android:drawablePadding="10dp"
+                android:hint="Search"
                 android:maxLines="1"
+                android:paddingStart="10dp"
                 android:singleLine="true"
-                android:textSize="15dp" />
-        </RelativeLayout>
+                tools:ignore="Autofill,HardcodedText,RtlSymmetry,TextFields" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/border">
-
-            <EditText
-                android:background="@null"
-                android:id="@+id/mno"
-                android:padding="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Mobile No."
-                android:inputType="phone"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textSize="15dp" />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/buttonLinear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editLinear"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginRight="10dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1">
-            <Button
-                android:visibility="invisible"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:text="Clear"
-                android:textSize="16dp"
-                android:background="@drawable/blue_fill__rounded_color"
-                android:textColor="@color/white"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end">
-
-            <Button
-                android:id="@+id/clear"
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-                android:text="Clear"
-                android:textSize="16dp"
-                android:background="@drawable/blue_fill"
-                android:textColor="@color/white"/>
-
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -111,7 +45,7 @@
         android:id="@+id/staff_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/buttonLinear"
+        android:layout_below="@id/editLinear"
         android:layout_marginTop="10dp" />
 
     <TextView
@@ -121,7 +55,7 @@
         android:layout_height="wrap_content"
         android:text="No Data Found"
         android:textColor="@color/black"
-        android:layout_below="@id/buttonLinear"
+        android:layout_below="@id/editLinear"
         android:gravity="center"
         android:layout_marginTop="150dp"/>
 

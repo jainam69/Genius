@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.ActivityLoginBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -38,53 +39,43 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button btn_login;
-    SearchableSpinner financial_year;
-    TextView forgot_password;
-    EditText mobile_no, password;
+    ActivityLoginBinding binding;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Context context;
     String year;
-    List<String> financialyearlist = new ArrayList<>(),yearname = new ArrayList<>();
-    String[] YEARNAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        btn_login = findViewById(R.id.btn_login);
-        mobile_no = findViewById(R.id.mobile_no);
-        password = findViewById(R.id.password);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         progressBarHelper = new ProgressBarHelper(this, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         context = LoginActivity.this;
-        forgot_password = findViewById(R.id.forgot_password);
-        financial_year = findViewById(R.id.financial_year);
 
-        forgot_password.setOnClickListener(new View.OnClickListener() {
+        if (Preferences.getInstance(context).getBoolean(Preferences.KEY_LOGIN)){
+            startActivity(new Intent(getApplicationContext(),SplashActivity.class));
+            finish();
+        }
+
+        binding.forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),ForgotPasswordActivity.class));
             }
         });
 
-       /*if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
-            ((ActivityManager) context.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData();
-            return;
-       }*/
-
-        btn_login.setOnClickListener(v -> {
+        binding.btnLogin.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(LoginActivity.this)) {
                 //if (!password.getText().toString().matches( "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$") || !password.getText().toString().matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$"))
-                if (mobile_no.getText().toString().length() > 0 && password.getText().toString().length() == 0) {
+                if (binding.mobileNo.getText().toString().length() > 0 && binding.password.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please enter Password", Toast.LENGTH_LONG).show();
-                } else if (mobile_no.getText().toString().length() == 0 && password.getText().toString().length() > 0) {
+                } else if (binding.mobileNo.getText().toString().length() == 0 && binding.password.getText().toString().length() > 0) {
                     Toast.makeText(getApplicationContext(), "Please enter User Name", Toast.LENGTH_LONG).show();
-                }else if (mobile_no.getText().toString().length() > 0 && password.getText().toString().length() > 0) {
+                }else if (binding.mobileNo.getText().toString().length() > 0 && binding.password.getText().toString().length() > 0) {
                     progressBarHelper.showProgressDialog();
-                    Call<UserModel.UserData> call = apiCalling.ValidateUser(mobile_no.getText().toString(), password.getText().toString(),"");
+                    Call<UserModel.UserData> call = apiCalling.ValidateUser(binding.mobileNo.getText().toString(), binding.password.getText().toString(),"");
                     call.enqueue(new Callback<UserModel.UserData>() {
                         @Override
                         public void onResponse(Call<UserModel.UserData> call, Response<UserModel.UserData> response) {
@@ -100,7 +91,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Preferences.getInstance(context).setString(Preferences.KEY_USER_NAME, model.getUsername());
                                     Preferences.getInstance(context).setInt(Preferences.KEY_USER_TYPE, Integer.parseInt(model.getUserType()));
                                     Preferences.getInstance(context).setString(Preferences.KEY_FINANCIAL_YEAR,year);
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    Preferences.getInstance(context).setString(Preferences.KEY_APP_LOGO,model.getBranchInfo().getAppImagePath());
+                                    startActivity(new Intent(LoginActivity.this, SplashActivity.class));
                                     LoginActivity.this.finish();
                                 } else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -127,62 +119,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void GetFinancialYear()
-    {
-        Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        for (int i = 2020; i <= year; i++){
-            String financialyear = "";
-            if (i == year){
-                if ((month + 1) > 3){
-                    financialyear = year + " - " + (year + 1);
-                    financialyearlist.add(financialyear);
-                }
-            }else{
-                financialyear = i + " - " + (i + 1);
-                financialyearlist.add(financialyear);
-            }
-        }
-    }
-
-    public void GetAllFinancialYear()
-    {
-        yearname.clear();
-        yearname.add("Select Financial Year");
-        yearname.addAll(financialyearlist);
-
-        YEARNAME = new String[yearname.size()];
-        YEARNAME = yearname.toArray(YEARNAME);
-        bindyear();
-    }
-
-    public void bindyear()
-    {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,R.layout.support_simple_spinner_dropdown_item,YEARNAME);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        financial_year.setAdapter(adapter);
-        financial_year.setSelection(financialyearlist.size());
-        financial_year.setOnItemSelectedListener(selectyear);
-    }
-
-    AdapterView.OnItemSelectedListener selectyear = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            year = yearname.get(position);
-            if (financial_year.getSelectedItem().equals("Select Financial Year")){
-                ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                ((TextView) parent.getChildAt(0)).setTextSize(13);
-            }else {
-                ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                ((TextView) parent.getChildAt(0)).setTextSize(13);
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
 }

@@ -35,6 +35,8 @@ import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UPIModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentAddUpiBinding;
+import com.example.genius.databinding.RowUpiDetailsBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -52,39 +54,29 @@ import retrofit2.Response;
 
 public class Add_Upi_Fragment extends Fragment {
 
-    EditText edt_upiid;
-    Button save_upiid,edit_upiid;
-    RecyclerView upiid_rv;
+    FragmentAddUpiBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     UPIAdapter upiAdapter;
-    TextView text;
     UserModel userpermission;
-    LinearLayout linear_create_upi;
     long id,transactionid;
     OnBackPressedCallback callback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("UPI Details Master");
-        View root = inflater.inflate(R.layout.fragment_add__upi_, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("UPI Details");
+        binding = FragmentAddUpiBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        edt_upiid = root.findViewById(R.id.edt_upiid);
-        save_upiid = root.findViewById(R.id.save_upiid);
-        edit_upiid = root.findViewById(R.id.edit_upiid);
-        upiid_rv = root.findViewById(R.id.upiid_rv);
-        text = root.findViewById(R.id.text);
-        linear_create_upi = root.findViewById(R.id.linear_create_upi);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 17 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_upi.setVisibility(View.GONE);
+                binding.linearCreateUpi.setVisibility(View.GONE);
             }
         }
 
@@ -94,18 +86,18 @@ public class Add_Upi_Fragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        save_upiid.setOnClickListener(new View.OnClickListener() {
+        binding.saveUpiid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)){
-                    if (edt_upiid.getText().toString().isEmpty()){
+                    if (binding.edtUpiid.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please enter UPI ID.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
                         BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         RowStatusModel rowmodel = new RowStatusModel(1);
                         TransactionModel transmodel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
-                        UPIModel model = new UPIModel(0,edt_upiid.getText().toString(),branch,rowmodel,transmodel);
+                        UPIModel model = new UPIModel(0,binding.edtUpiid.getText().toString(),branch,rowmodel,transmodel,binding.edtPaymentGateway.getText().toString());
                         Call<UPIModel.UPIResponse> call = apiCalling.Save_UPI_ID(model);
                         call.enqueue(new Callback<UPIModel.UPIResponse>() {
                             @Override
@@ -114,7 +106,8 @@ public class Add_Upi_Fragment extends Fragment {
                                     UPIModel.UPIResponse data = response.body();
                                     if (data.isCompleted()){
                                         Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        edt_upiid.setText("");
+                                        binding.edtUpiid.setText("");
+                                        binding.edtPaymentGateway.setText("");
                                         GetAllUPIDetails();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -136,18 +129,18 @@ public class Add_Upi_Fragment extends Fragment {
             }
         });
 
-        edit_upiid.setOnClickListener(new View.OnClickListener() {
+        binding.editUpiid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)){
-                    if (edt_upiid.getText().toString().isEmpty()){
+                    if (binding.edtUpiid.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please enter UPI ID.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
                         BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                         RowStatusModel rowmodel = new RowStatusModel(1);
                         TransactionModel transactionModel = new TransactionModel(transactionid, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
-                        UPIModel model = new UPIModel(id,edt_upiid.getText().toString(),branch,rowmodel,transactionModel);
+                        UPIModel model = new UPIModel(id,binding.edtUpiid.getText().toString(),branch,rowmodel,transactionModel,binding.edtPaymentGateway.getText().toString());
                         Call<UPIModel.UPIResponse> call = apiCalling.Save_UPI_ID(model);
                         call.enqueue(new Callback<UPIModel.UPIResponse>() {
                             @Override
@@ -156,10 +149,11 @@ public class Add_Upi_Fragment extends Fragment {
                                     UPIModel.UPIResponse data = response.body();
                                     if (data.isCompleted()){
                                         Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        edt_upiid.setText("");
+                                        binding.edtUpiid.setText("");
+                                        binding.edtPaymentGateway.setText("");
                                         GetAllUPIDetails();
-                                        save_upiid.setVisibility(View.VISIBLE);
-                                        edit_upiid.setVisibility(View.GONE);
+                                        binding.saveUpiid.setVisibility(View.VISIBLE);
+                                        binding.editUpiid.setVisibility(View.GONE);
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -192,8 +186,7 @@ public class Add_Upi_Fragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllUPIDetails()
@@ -208,14 +201,14 @@ public class Add_Upi_Fragment extends Fragment {
                     if (data.isCompleted()){
                         List<UPIModel> list = data.getData();
                         if (list.size() > 0){
-                            text.setVisibility(View.VISIBLE);
+                            binding.text.setVisibility(View.VISIBLE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            upiid_rv.setLayoutManager(linearLayoutManager);
+                            binding.upiidRv.setLayoutManager(linearLayoutManager);
                             upiAdapter = new UPIAdapter(context, list);
                             upiAdapter.notifyDataSetChanged();
-                            upiid_rv.setAdapter(upiAdapter);
+                            binding.upiidRv.setAdapter(upiAdapter);
                         }else {
-                            text.setVisibility(View.GONE);
+                            binding.text.setVisibility(View.GONE);
                         }
                     }
                     progressBarHelper.hideProgressDialog();
@@ -243,21 +236,22 @@ public class Add_Upi_Fragment extends Fragment {
         @NonNull
         @Override
         public UPIAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new UPIAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_upi_details, parent, false));
+            return new UPIAdapter.ViewHolder(RowUpiDetailsBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull UPIAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            holder.upi_id.setText(upiModelList.get(position).UPICode);
-            holder.upi_edit.setOnClickListener(new View.OnClickListener() {
+            holder.binding.upiId.setText(upiModelList.get(position).UPICode);
+            holder.binding.paymentGateway.setText(upiModelList.get(position).PaymentGateway);
+            holder.binding.upiEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                    Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                    TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                    TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                     ImageView image = dialogView.findViewById(R.id.image);
                     TextView title = dialogView.findViewById(R.id.title);
                     title.setText("Are you sure that you want to Edit UPI Detail?");
@@ -269,10 +263,11 @@ public class Add_Upi_Fragment extends Fragment {
                     btn_edit_yes.setOnClickListener(v12 -> {
                         dialog.dismiss();
                         final NestedScrollView scroll = ((Activity) context).findViewById(R.id.upi_scroll);
-                        save_upiid.setVisibility(View.GONE);
-                        edit_upiid.setVisibility(View.VISIBLE);
+                        binding.saveUpiid.setVisibility(View.GONE);
+                        binding.editUpiid.setVisibility(View.VISIBLE);
                         id = upiModelList.get(position).UPIId;
-                        edt_upiid.setText(upiModelList.get(position).UPICode);
+                        binding.edtUpiid.setText(upiModelList.get(position).UPICode);
+                        binding.edtPaymentGateway.setText(upiModelList.get(position).PaymentGateway);
                         transactionid = upiModelList.get(position).TransactionData.getTransactionId();
                         scroll.scrollTo(0, 0);
                         scroll.fullScroll(View.FOCUS_UP);
@@ -280,15 +275,15 @@ public class Add_Upi_Fragment extends Fragment {
                     dialog.show();
                 }
             });
-            holder.upi_delete.setOnClickListener(new View.OnClickListener() {
+            holder.binding.upiDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                    Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                    TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                    TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                     TextView title = dialogView.findViewById(R.id.title);
                     ImageView image = dialogView.findViewById(R.id.image);
                     image.setImageResource(R.drawable.delete);
@@ -348,16 +343,11 @@ public class Add_Upi_Fragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView upi_id;
-            ImageView upi_edit,upi_delete;
-            LinearLayout linear_actions;
+            RowUpiDetailsBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                linear_actions = itemView.findViewById(R.id.linear_actions);
-                upi_id = itemView.findViewById(R.id.upi_id);
-                upi_edit = itemView.findViewById(R.id.upi_edit);
-                upi_delete = itemView.findViewById(R.id.upi_delete);
+            public ViewHolder(@NonNull RowUpiDetailsBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
             }
         }
     }

@@ -51,6 +51,8 @@ import com.example.genius.Model.TodoModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.FragmentTaskBinding;
+import com.example.genius.databinding.TaskMasterDeatilListBinding;
 import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -87,19 +89,14 @@ import static android.app.Activity.RESULT_OK;
 @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class TaskFragment extends Fragment {
 
+    FragmentTaskBinding binding;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     File instrumentFileDestination;
     OnBackPressedCallback callback;
-    View root;
     Context context;
-    EditText date_task, edt_taskDescription;
-    TextView attachment, text, id, photo, no_content, todoid, transactionid;
-    SearchableSpinner branch, user,status;
-    Button save_task, edit_task;
-    RecyclerView task_rv;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     List<String> useritem = new ArrayList<>(),statusitem = new ArrayList<>();
@@ -108,45 +105,26 @@ public class TaskFragment extends Fragment {
     Integer[] USERID;
     String BranchID, UserName, UserId,date,OriginFileName,FilePath,StatusName = "Pending";
     int flag = 0;
-    NestedScrollView scroll;
     int userid1 = 0;
     private int year;
     private int month;
     private int day;
     TodoMaster_Adapter todoMaster_adapter;
-    LinearLayout linear_create_todo;
     UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Task");
-        root = inflater.inflate(R.layout.fragment_task, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Task Master");
+        binding = FragmentTaskBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        date_task = root.findViewById(R.id.date_task);
-        attachment = root.findViewById(R.id.attachment);
-        branch = root.findViewById(R.id.branch);
-        user = root.findViewById(R.id.user);
-        edt_taskDescription = root.findViewById(R.id.edt_taskDescription);
-        task_rv = root.findViewById(R.id.task_rv);
-        save_task = root.findViewById(R.id.save_task);
-        edit_task = root.findViewById(R.id.edit_task);
-        text = root.findViewById(R.id.text);
-        id = root.findViewById(R.id.id);
-        photo = root.findViewById(R.id.photo);
-        todoid = root.findViewById(R.id.todoid);
-        transactionid = root.findViewById(R.id.transactionid);
-        status = root.findViewById(R.id.status);
-        scroll = root.findViewById(R.id.scroll);
-        no_content = root.findViewById(R.id.no_content);
-        linear_create_todo = root.findViewById(R.id.linear_create_todo);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 38 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_todo.setVisibility(View.GONE);
+                binding.linearCreateTodo.setVisibility(View.GONE);
             }
         }
 
@@ -155,9 +133,10 @@ public class TaskFragment extends Fragment {
         cal2.add(Calendar.DATE, 0);
         date = dateFormat1.format(cal2.getTime());
 
-        date_task.setText(yesterday());
+        binding.dateTask.setText(yesterday());
 
         if (Function.isNetworkAvailable(context)) {
+            progressBarHelper.showProgressDialog();
             selectstatus();
             GetAllTask();
             GetAllUser(Long.parseLong(BranchID));
@@ -167,7 +146,7 @@ public class TaskFragment extends Fragment {
 
         selectUser();
 
-        date_task.setOnClickListener(v -> {
+        binding.dateTask.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -177,32 +156,37 @@ public class TaskFragment extends Fragment {
                         year = year2;
                         month = monthOfYear;
                         day = dayOfMonth;
-                        date_task.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        binding.dateTask.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                         date = year + "-" + pad(month + 1) + "-" + pad(day);
                     }, year, month, day);
             picker.show();
         });
 
-        save_task.setOnClickListener(v -> {
+        binding.saveTask.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (date_task.getText().toString().isEmpty())
+                if (binding.dateTask.getText().toString().isEmpty())
                     Toast.makeText(context, "Please Select Task Date.", Toast.LENGTH_SHORT).show();
-                else if(user.getSelectedItemId() == 0)
+                else if(binding.user.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select User.", Toast.LENGTH_SHORT).show();
-                else if(attachment.getText().toString().equals(""))
-                    Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
                 else {
+                    Call<TodoModel.TodoData1> call;
                     progressBarHelper.showProgressDialog();
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     UserModel usermodel = new UserModel(Long.parseLong(UserId));
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TodoModel model = new TodoModel(0,date,branch,usermodel,edt_taskDescription.getText().toString(),
+                    TodoModel model = new TodoModel(0,date,branch,usermodel,binding.edtTaskDescription.getText().toString(),
                             OriginFileName,rowStatusModel,transactionModel,FilePath);
                     String data = new Gson().toJson(model);
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
-                    MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
-                    Call<TodoModel.TodoData1> call = apiCalling.ToDoMaintenance(data,true,uploadfile);
+                    if (instrumentFileDestination != null) {
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
+                        call = apiCalling.ToDoMaintenance(data,true,uploadfile);
+                    } else {
+                        RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+                        MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
+                        call = apiCalling.ToDoMaintenance(data,false,uploadfile);
+                    }
                     call.enqueue(new Callback<TodoModel.TodoData1>() {
                         @Override
                         public void onResponse(@NotNull Call<TodoModel.TodoData1> call, @NotNull Response<TodoModel.TodoData1> response) {
@@ -210,10 +194,10 @@ public class TaskFragment extends Fragment {
                                 TodoModel.TodoData1 data1 = response.body();
                                 if (data1.isCompleted()) {
                                     Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
-                                    edt_taskDescription.setText("");
-                                    date_task.setText(yesterday());
-                                    attachment.setText("");
-                                    user.setSelection(0);
+                                    binding.edtTaskDescription.setText("");
+                                    binding.dateTask.setText(yesterday());
+                                    binding.attachment.setText("");
+                                    binding.user.setSelection(0);
                                     GetAllTask();
                                 }else {
                                     Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
@@ -234,22 +218,20 @@ public class TaskFragment extends Fragment {
             }
         });
 
-        edit_task.setOnClickListener(v -> {
+        binding.editTask.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (date_task.getText().toString().isEmpty())
+                if (binding.dateTask.getText().toString().isEmpty())
                     Toast.makeText(context, "Please Select Task Date.", Toast.LENGTH_SHORT).show();
-                else if(user.getSelectedItemId() == 0)
+                else if(binding.user.getSelectedItemId() == 0)
                     Toast.makeText(context, "Please Select User.", Toast.LENGTH_SHORT).show();
-                else if(attachment.getText().toString().equals(""))
-                    Toast.makeText(context, "Please Upload Task Document.", Toast.LENGTH_SHORT).show();
                 else {
                     progressBarHelper.showProgressDialog();
                     Call<TodoModel.TodoData1> call;
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     UserModel usermodel = new UserModel(Long.parseLong(UserId));
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TodoModel model = new TodoModel(Long.parseLong(todoid.getText().toString()),date,branch,usermodel,edt_taskDescription.getText().toString(),
+                    TodoModel model = new TodoModel(Long.parseLong(binding.todoid.getText().toString()),date,branch,usermodel,binding.edtTaskDescription.getText().toString(),
                             OriginFileName,rowStatusModel,transactionModel,FilePath);
                     String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
@@ -268,13 +250,13 @@ public class TaskFragment extends Fragment {
                                 TodoModel.TodoData1 data1 = response.body();
                                 if (data1.isCompleted()) {
                                     Toast.makeText(context,data1.getMessage(), Toast.LENGTH_SHORT).show();
-                                    edt_taskDescription.setText("");
-                                    date_task.setText(yesterday());
-                                    attachment.setText("");
+                                    binding.edtTaskDescription.setText("");
+                                    binding.dateTask.setText(yesterday());
+                                    binding.attachment.setText("");
                                     userid1 = 0;
-                                    user.setSelection(0);
-                                    save_task.setVisibility(View.VISIBLE);
-                                    edit_task.setVisibility(View.GONE);
+                                    binding.user.setSelection(0);
+                                    binding.saveTask.setVisibility(View.VISIBLE);
+                                    binding.editTask.setVisibility(View.GONE);
                                     GetAllTask();
                                 }else {
                                     Toast.makeText(context, data1.getMessage(), Toast.LENGTH_SHORT).show();
@@ -295,7 +277,7 @@ public class TaskFragment extends Fragment {
             }
         });
 
-        attachment.setOnClickListener(v -> {
+        binding.attachment.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -327,7 +309,7 @@ public class TaskFragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void selectstatus() {
@@ -346,9 +328,9 @@ public class TaskFragment extends Fragment {
     public void bindstatus() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STATUSITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        status.setAdapter(adapter);
-        status.setSelection(1);
-        status.setOnItemSelectedListener(onItemSelectedListener61);
+        binding.status.setAdapter(adapter);
+        binding.status.setSelection(1);
+        binding.status.setOnItemSelectedListener(onItemSelectedListener61);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener61 =
@@ -356,7 +338,7 @@ public class TaskFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StatusName = statusitem.get(position);
-                    if (status.getSelectedItem().equals("Select Status")) {
+                    if (binding.status.getSelectedItem().equals("Select Status")) {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -378,7 +360,6 @@ public class TaskFragment extends Fragment {
             };
 
     public void GetAllUser(long branch) {
-        progressBarHelper.showProgressDialog();
         useritem.clear();
         userid.clear();
         useritem.add("Select User");
@@ -426,8 +407,8 @@ public class TaskFragment extends Fragment {
     public void binduser() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, USERITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        user.setAdapter(adapter);
-        user.setOnItemSelectedListener(UserItemListener);
+        binding.user.setAdapter(adapter);
+        binding.user.setOnItemSelectedListener(UserItemListener);
     }
 
     AdapterView.OnItemSelectedListener UserItemListener =
@@ -436,9 +417,13 @@ public class TaskFragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     UserName = useritem.get(position);
                     UserId = userid.get(position).toString();
-                    if (user.getSelectedItem().equals("Select User")) {
-                        ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
-                        ((TextView) parent.getChildAt(0)).setTextSize(13);
+                    if (binding.user.getSelectedItem().equals("Select User")) {
+                        try {
+                            ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
+                            ((TextView) parent.getChildAt(0)).setTextSize(13);
+                        }catch (Exception e){
+
+                        }
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -474,8 +459,8 @@ public class TaskFragment extends Fragment {
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     instrumentFileDestination = new File(Objects.requireNonNull(Path));
-                    attachment.setText("Attached");
-                    attachment.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.attachment.setText("Attached");
+                    binding.attachment.setTextColor(context.getResources().getColor(R.color.black));
                 } catch (Exception e) {
                     errored();
                 }
@@ -515,13 +500,13 @@ public class TaskFragment extends Fragment {
                         List<TodoModel> modelList = data.getData();
                         if (modelList != null) {
                             if (modelList.size() > 0) {
-                                text.setVisibility(View.VISIBLE);
-                                task_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+                                binding.text.setVisibility(View.VISIBLE);
+                                binding.taskRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
                                 todoMaster_adapter = new TodoMaster_Adapter(context, modelList);
                                 todoMaster_adapter.notifyDataSetChanged();
-                                task_rv.setAdapter(todoMaster_adapter);
+                                binding.taskRv.setAdapter(todoMaster_adapter);
                             }else {
-                                text.setVisibility(View.GONE);
+                                binding.text.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -555,7 +540,7 @@ public class TaskFragment extends Fragment {
         @NotNull
         @Override
         public TodoMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new TodoMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.task_master_deatil_list, parent, false));
+            return new ViewHolder(TaskMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @SuppressLint("SetTextI18n")
@@ -564,35 +549,40 @@ public class TaskFragment extends Fragment {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 38){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.task_edit.setVisibility(View.GONE);
+                    holder.binding.taskEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.task_delete.setVisibility(View.GONE);
+                    holder.binding.taskDelete.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                    holder.task_edit.setVisibility(View.GONE);
-                    holder.task_delete.setVisibility(View.GONE);
+                    holder.binding.taskEdit.setVisibility(View.GONE);
+                    holder.binding.taskDelete.setVisibility(View.GONE);
                 }
             }
+            }
+            if (todoModels.get(position).getToDoFileName() == null){
+                holder.binding.linearDownload.setVisibility(View.GONE);
+            }else {
+                holder.binding.linearDownload.setVisibility(View.VISIBLE);
             }
             if (todoModels.get(position).getToDoDate() != null) {
                 String a = todoModels.get(position).getToDoDate().replace("T00:00:00", "");
                 try {
                     Date d = actualdate.parse(a);
-                    holder.task_date.setText("" + displaydate.format(d));
+                    holder.binding.taskDate.setText("" + displaydate.format(d));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
-            holder.staff_name.setText("" + todoModels.get(position).getUserInfo().getUsername());
-            holder.task_description.setText(todoModels.get(position).getToDoDescription());
-            holder.task_edit.setOnClickListener(v -> {
+            holder.binding.staffName.setText("" + todoModels.get(position).getUserInfo().getUsername());
+            holder.binding.taskDescription.setText(todoModels.get(position).getToDoDescription());
+            holder.binding.taskEdit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Task?");
@@ -613,30 +603,32 @@ public class TaskFragment extends Fragment {
                                 if (paperData.Completed) {
                                     TodoModel paperModelList = paperData.Data;
                                     if (paperModelList != null) {
-                                        save_task.setVisibility(View.GONE);
-                                        edit_task.setVisibility(View.VISIBLE);
+                                        binding.saveTask.setVisibility(View.GONE);
+                                        binding.editTask.setVisibility(View.VISIBLE);
                                         int az = Integer.parseInt(String.valueOf(todoModels.get(position).getUserInfo().getUserID()));
                                         if (az > 0) {
                                             userid1 = userid.indexOf(az);
-                                            user.setSelection(userid1);
+                                            binding.user.setSelection(userid1);
                                         }
-                                        transactionid.setText("" + todoModels.get(position).getTransaction().getTransactionId());
-                                        todoid.setText("" + todoModels.get(position).getToDoID());
-                                        edt_taskDescription.setText("" + todoModels.get(position).getToDoDescription());
-                                        attachment.setText("Attached");
+                                        binding.transactionid.setText("" + todoModels.get(position).getTransaction().getTransactionId());
+                                        binding.todoid.setText("" + todoModels.get(position).getToDoID());
+                                        binding.edtTaskDescription.setText("" + todoModels.get(position).getToDoDescription());
                                         FilePath = todoModels.get(position).getFilePath().replace("https://mastermind.org.in","");
                                         OriginFileName = todoModels.get(position).getToDoFileName();
-                                        attachment.setTextColor(context.getResources().getColor(R.color.black));
+                                        if (OriginFileName != null){
+                                            binding.attachment.setText("Attached");
+                                        }
+                                        binding.attachment.setTextColor(context.getResources().getColor(R.color.black));
                                         String a = todoModels.get(position).getToDoDate().replace("T00:00:00", "");
                                         try {
                                             Date d = actualdate.parse(a);
                                             date = actualdate.format(d);
-                                            date_task.setText("" + displaydate.format(d));
+                                            binding.dateTask.setText("" + displaydate.format(d));
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
-                                        scroll.scrollTo(0, 0);
-                                        scroll.fullScroll(View.FOCUS_UP);
+                                        binding.scroll.scrollTo(0, 0);
+                                        binding.scroll.fullScroll(View.FOCUS_UP);
                                     }
                                 }
                             }
@@ -653,13 +645,13 @@ public class TaskFragment extends Fragment {
                 });
                 dialog.show();
             });
-            holder.task_delete.setOnClickListener(v -> {
+            holder.binding.taskDelete.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -709,15 +701,15 @@ public class TaskFragment extends Fragment {
                 dialog.show();
             });
 
-            holder.task_download.setOnClickListener(new View.OnClickListener() {
+            holder.binding.taskDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                    Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                    TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                    TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                     ImageView image = dialogView.findViewById(R.id.image);
                     TextView title = dialogView.findViewById(R.id.title);
                     title.setText("Are you sure that you want to Download Task Document?");
@@ -751,17 +743,11 @@ public class TaskFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView task_edit, task_delete,task_download;
-            TextView task_date, staff_name, task_description;
+            TaskMasterDeatilListBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                task_date = itemView.findViewById(R.id.task_date);
-                staff_name = itemView.findViewById(R.id.staff_name);
-                task_edit = itemView.findViewById(R.id.task_edit);
-                task_delete = itemView.findViewById(R.id.task_delete);
-                task_description = itemView.findViewById(R.id.task_description);
-                task_download = itemView.findViewById(R.id.task_download);
+            public ViewHolder(@NonNull TaskMasterDeatilListBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
@@ -807,8 +793,8 @@ public class TaskFragment extends Fragment {
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, USERITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        user.setAdapter(adapter);
-        user.setOnItemSelectedListener(UserItemListener);
+        binding.user.setAdapter(adapter);
+        binding.user.setOnItemSelectedListener(UserItemListener);
     }
 
     public static String yesterday() {

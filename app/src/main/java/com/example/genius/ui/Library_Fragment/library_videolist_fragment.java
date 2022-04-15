@@ -26,6 +26,7 @@ import com.example.genius.Model.LibraryData;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.LibraryListfragmentFragmentBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -44,39 +45,28 @@ import retrofit2.Response;
 
 public class library_videolist_fragment extends Fragment {
 
-    RecyclerView library_rv;
-    Button save, update;
+    LibraryListfragmentFragmentBinding binding;
     Context context;
-    TextView txt_nodata;
     LibraryMaster_Adapter libraryMaster_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    EditText library_category;
-    FloatingActionButton fab_contact;
     UserModel userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Video List");
-        View root = inflater.inflate(R.layout.library__listfragment_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Library Video Master");
+        binding = LibraryListfragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-
-        save = root.findViewById(R.id.save_category);
-        update = root.findViewById(R.id.update_category);
-        library_category = root.findViewById(R.id.library_category);
-        library_rv = root.findViewById(R.id.library_rv);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 30 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -87,7 +77,7 @@ public class library_videolist_fragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        fab_contact.setOnClickListener(view -> {
+        binding.fabContact.setOnClickListener(view -> {
             library_video_fragment profileFragment = new library_video_fragment();
             FragmentManager fm = getActivity().getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -108,7 +98,7 @@ public class library_videolist_fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetLibraryDetails() {
@@ -122,14 +112,14 @@ public class library_videolist_fragment extends Fragment {
                         List<LibraryModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                library_rv.setVisibility(View.VISIBLE);
-                                library_rv.setLayoutManager(new LinearLayoutManager(context));
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.libraryRv.setVisibility(View.VISIBLE);
+                                binding.libraryRv.setLayoutManager(new LinearLayoutManager(context));
                                 libraryMaster_adapter = new LibraryMaster_Adapter(context, studentModelList);
-                                library_rv.setAdapter(libraryMaster_adapter);
+                                binding.libraryRv.setAdapter(libraryMaster_adapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                library_rv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.libraryRv.setVisibility(View.GONE);
                             }
                         }
                     }

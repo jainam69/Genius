@@ -41,6 +41,8 @@ import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentLibraryApproveBinding;
+import com.example.genius.databinding.RowLibraryApprovalDetailBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -59,9 +61,8 @@ import retrofit2.Response;
 @SuppressLint("SetTextI18n")
 public class LibraryApproveFragment extends Fragment {
 
+    FragmentLibraryApproveBinding binding;
     Context context;
-    RecyclerView approval_rv;
-    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     LibraryApproval_Adapter libraryApproval_adapter;
@@ -71,13 +72,10 @@ public class LibraryApproveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Manage Library");
-        View root = inflater.inflate(R.layout.fragment_library_approve, container, false);
-
+        binding = FragmentLibraryApproveBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        approval_rv = root.findViewById(R.id.approval_rv);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         if (Function.isNetworkAvailable(context)) {
             GetAllLibraryApprovalList();
@@ -97,8 +95,7 @@ public class LibraryApproveFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllLibraryApprovalList() {
@@ -112,15 +109,15 @@ public class LibraryApproveFragment extends Fragment {
                     if (data.isCompleted()) {
                         List<LibraryModel> list = data.getData();
                         if (list != null && list.size() > 0) {
-                            approval_rv.setVisibility(View.VISIBLE);
-                            txt_nodata.setVisibility(View.GONE);
-                            approval_rv.setLayoutManager(new LinearLayoutManager(context));
+                            binding.approvalRv.setVisibility(View.VISIBLE);
+                            binding.txtNodata.setVisibility(View.GONE);
+                            binding.approvalRv.setLayoutManager(new LinearLayoutManager(context));
                             libraryApproval_adapter = new LibraryApproval_Adapter(context, list);
                             libraryApproval_adapter.notifyDataSetChanged();
-                            approval_rv.setAdapter(libraryApproval_adapter);
+                            binding.approvalRv.setAdapter(libraryApproval_adapter);
                         } else {
-                            approval_rv.setVisibility(View.GONE);
-                            txt_nodata.setVisibility(View.VISIBLE);
+                            binding.approvalRv.setVisibility(View.GONE);
+                            binding.txtNodata.setVisibility(View.VISIBLE);
                         }
                     }
                     progressBarHelper.hideProgressDialog();
@@ -154,7 +151,7 @@ public class LibraryApproveFragment extends Fragment {
         @NonNull
         @Override
         public LibraryApproval_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_library_approval_detail, parent, false));
+            return new ViewHolder(RowLibraryApprovalDetailBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @SuppressLint("RecyclerView")
@@ -163,45 +160,45 @@ public class LibraryApproveFragment extends Fragment {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 80){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.img_edit.setVisibility(View.GONE);
+                        holder.binding.imgEdit.setVisibility(View.GONE);
                     }
                 }
             }
             if (libraryModels.get(position).getLibrary_Type() == 2) {
-                Glide.with(context).load(libraryModels.get(position).getThumbnailFilePath()).into(holder.img_thumbnail);
-                holder.img_thumbnail.setVisibility(View.VISIBLE);
-                holder.img_download.setVisibility(View.VISIBLE);
+                Glide.with(context).load(libraryModels.get(position).getThumbnailFilePath()).into(holder.binding.imgThumbnail);
+                holder.binding.imgThumbnail.setVisibility(View.VISIBLE);
+                holder.binding.imgDownload.setVisibility(View.VISIBLE);
             } else {
-                holder.img_thumbnail.setVisibility(View.GONE);
-                holder.img_download.setVisibility(View.GONE);
+                holder.binding.imgThumbnail.setVisibility(View.GONE);
+                holder.binding.imgDownload.setVisibility(View.GONE);
             }
 
-            holder.txt_branchname.setText("All Branch");
+            holder.binding.txtBranchname.setText("All Branch");
             if (libraryModels.get(position).getVideoLink() != null && !libraryModels.get(position).getVideoLink().equals("")) {
-                holder.txt_videolink.setText(libraryModels.get(position).getVideoLink());
-                holder.linear_videolink.setVisibility(View.VISIBLE);
+                holder.binding.txtVideolink.setText(libraryModels.get(position).getVideoLink());
+                holder.binding.linearVideolink.setVisibility(View.VISIBLE);
             } else {
-                holder.linear_videolink.setVisibility(View.GONE);
+                holder.binding.linearVideolink.setVisibility(View.GONE);
             }
             if (!libraryModels.get(position).getSubject().getSubject().equals("")) {
-                holder.linear_subject.setVisibility(View.VISIBLE);
-                holder.txt_subjectname.setText(libraryModels.get(position).getSubject().getSubject());
+                holder.binding.linearSubject.setVisibility(View.VISIBLE);
+                holder.binding.txtSubjectname.setText(libraryModels.get(position).getSubject().getSubject());
             } else {
-                ViewGroup.LayoutParams params = holder.linear_subject.getLayoutParams();
+                ViewGroup.LayoutParams params = holder.binding.linearSubject.getLayoutParams();
                 params.height = 0;
                 params.width = 0;
-                holder.linear_subject.setLayoutParams(params);
+                holder.binding.linearSubject.setLayoutParams(params);
             }
-            holder.txt_categoryname.setText(libraryModels.get(position).getCategoryInfo().getCategory());
-            holder.txt_description.setText(libraryModels.get(position).getDescription());
-            holder.txt_approvalstatus.setText(libraryModels.get(position).getApproval().getLibrary_Status_text());
-            holder.img_edit.setOnClickListener(v -> {
+            holder.binding.txtCategoryname.setText(libraryModels.get(position).getCategoryInfo().getCategory());
+            holder.binding.txtDescription.setText(libraryModels.get(position).getDescription());
+            holder.binding.txtApprovalstatus.setText(libraryModels.get(position).getApproval().getLibrary_Status_text());
+            holder.binding.imgEdit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to change Library Status?");
@@ -256,7 +253,7 @@ public class LibraryApproveFragment extends Fragment {
                                     LibraryModel.ApprovalData data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context, "Library Approved Successfully.", Toast.LENGTH_SHORT).show();
-                                        holder.txt_approvalstatus.setText(sts);
+                                        holder.binding.txtApprovalstatus.setText(sts);
                                         libraryModels.get(position).setApproval(new LibraryModel.ApprovalModel(sts));
                                         dialog1.dismiss();
                                     }
@@ -276,13 +273,13 @@ public class LibraryApproveFragment extends Fragment {
                 });
                 dialog.show();
             });
-            holder.img_download.setOnClickListener(v -> {
+            holder.binding.imgDownload.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Download Document?");
@@ -294,7 +291,6 @@ public class LibraryApproveFragment extends Fragment {
                 btn_edit_yes.setOnClickListener(v17 -> {
                     dialog.dismiss();
                     String filetype = libraryModels.get(position).getDocFilePath();
-                    String filetyp = filetype.substring(filetype.lastIndexOf("."));
                     Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
                     DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                     Uri uri = Uri.parse(filetype);
@@ -316,25 +312,12 @@ public class LibraryApproveFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView img_thumbnail, img_download, img_edit;
-            TextView txt_branchname, txt_videolink, txt_subjectname, txt_categoryname, txt_description, txt_approvalstatus;
+            RowLibraryApprovalDetailBinding binding;
             RadioButton rb1;
-            LinearLayout linear_subject, linear_videolink;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                img_thumbnail = itemView.findViewById(R.id.img_thumbnail);
-                img_edit = itemView.findViewById(R.id.img_edit);
-                img_download = itemView.findViewById(R.id.img_download);
-                txt_branchname = itemView.findViewById(R.id.txt_branchname);
-                txt_videolink = itemView.findViewById(R.id.txt_videolink);
-                txt_subjectname = itemView.findViewById(R.id.txt_subjectname);
-                txt_categoryname = itemView.findViewById(R.id.txt_categoryname);
-                txt_description = itemView.findViewById(R.id.txt_description);
-                txt_approvalstatus = itemView.findViewById(R.id.txt_approvalstatus);
-                linear_subject = itemView.findViewById(R.id.linear_subject);
-                linear_videolink = itemView.findViewById(R.id.linear_videolink);
+            public ViewHolder(@NonNull RowLibraryApprovalDetailBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);

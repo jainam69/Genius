@@ -28,6 +28,7 @@ import com.example.genius.Model.BatchModel;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentBatchListFragmentBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -49,14 +50,10 @@ import retrofit2.Response;
 
 public class batch_list_fragment extends Fragment {
 
-    EditText edt_search;
-    Button clear;
-    RecyclerView batch_rv;
-    FloatingActionButton fab_contact;
+    FragmentBatchListFragmentBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    TextView txt_nodata;
     Batch_Adapter batch_adapter;
     OnBackPressedCallback callback;
     UserModel userpermission;
@@ -66,13 +63,8 @@ public class batch_list_fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Batch Master");
-        View root = inflater.inflate(R.layout.fragment_batch_list_fragment, container, false);
+        binding = FragmentBatchListFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
-        edt_search = root.findViewById(R.id.edt_search);
-        clear = root.findViewById(R.id.clear);
-        batch_rv = root.findViewById(R.id.batch_rv);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
@@ -80,7 +72,7 @@ public class batch_list_fragment extends Fragment {
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 11 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -90,11 +82,7 @@ public class batch_list_fragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        clear.setOnClickListener(v -> {
-            edt_search.setText("");
-        });
-
-        edt_search.addTextChangedListener(new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -110,7 +98,7 @@ public class batch_list_fragment extends Fragment {
             }
         });
 
-        fab_contact.setOnClickListener(v -> {
+        binding.fabContact.setOnClickListener(v -> {
             batch_fragment orderplace = new batch_fragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -131,8 +119,7 @@ public class batch_list_fragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllBatchList()
@@ -147,17 +134,17 @@ public class batch_list_fragment extends Fragment {
                     if (data.isCompleted()){
                         List<BatchModel> list = data.getData();
                         if (list.size() > 0 && list != null){
-                            txt_nodata.setVisibility(View.GONE);
-                            batch_rv.setVisibility(View.VISIBLE);
+                            binding.txtNodata.setVisibility(View.GONE);
+                            binding.batchRv.setVisibility(View.VISIBLE);
                             model = list;
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            batch_rv.setLayoutManager(linearLayoutManager);
+                            binding.batchRv.setLayoutManager(linearLayoutManager);
                             batch_adapter = new Batch_Adapter(list,context);
                             batch_adapter.notifyDataSetChanged();
-                            batch_rv.setAdapter(batch_adapter);
+                            binding.batchRv.setAdapter(batch_adapter);
                         }else {
-                            txt_nodata.setVisibility(View.VISIBLE);
-                            batch_rv.setVisibility(View.GONE);
+                            binding.txtNodata.setVisibility(View.VISIBLE);
+                            binding.batchRv.setVisibility(View.GONE);
                         }
                     }
                     progressBarHelper.hideProgressDialog();
@@ -174,7 +161,6 @@ public class batch_list_fragment extends Fragment {
 
     private void getallsearch(String text) {
         ArrayList<BatchModel> filteredList = new ArrayList<>();
-
         for (BatchModel item : model) {
             if (item.getBranchCourse().getCourse().getCourseName().toLowerCase().contains(text.toLowerCase()) ||
             item.getBranchClass().getClassModel().getClassName().toLowerCase().contains(text.toLowerCase()) ||
@@ -183,7 +169,6 @@ public class batch_list_fragment extends Fragment {
                 filteredList.add(item);
             }
         }
-
         if (filteredList.size() > 0) {
             batch_adapter.filterList(filteredList);
         } else {

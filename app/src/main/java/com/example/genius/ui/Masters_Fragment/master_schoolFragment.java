@@ -36,6 +36,8 @@ import com.example.genius.Model.SchoolData;
 import com.example.genius.Model.SchoolModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.MasterSchoolFragmentBinding;
+import com.example.genius.databinding.SchoolMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -52,12 +54,7 @@ import retrofit2.Response;
 
 public class master_schoolFragment extends Fragment {
 
-    AutoCompleteTextView school_name;
-    LinearLayout linear_create_school;
-    RadioButton school_active, school_inactive;
-    Button save_school_master, edit_school_master;
-    RecyclerView school_rv;
-    TextView id, id_branch, text, transaction_id;
+    MasterSchoolFragmentBinding binding;
     List<String> schoolitem = new ArrayList<>();
     List<Integer> schoolid = new ArrayList<>();
     String[] SCHOOLITEM;
@@ -66,7 +63,6 @@ public class master_schoolFragment extends Fragment {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    NestedScrollView school_scroll;
     SchoolMaster_Adapter schoolMaster_adapter;
     UserModel userpermission;
 
@@ -74,28 +70,16 @@ public class master_schoolFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("School Master");
-        View root = inflater.inflate(R.layout.master_school_fragment, container, false);
+        binding = MasterSchoolFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        school_name = root.findViewById(R.id.school_name);
-        school_active = root.findViewById(R.id.school_active);
-        school_inactive = root.findViewById(R.id.school_inactive);
-        save_school_master = root.findViewById(R.id.save_school_master);
-        edit_school_master = root.findViewById(R.id.edit_school_master);
-        school_rv = root.findViewById(R.id.school_rv);
-        id = root.findViewById(R.id.id);
-        id_branch = root.findViewById(R.id.id_branch);
-        text = root.findViewById(R.id.text);
-        school_scroll = root.findViewById(R.id.school_scroll);
-        transaction_id = root.findViewById(R.id.transaction_id);
-        linear_create_school = root.findViewById(R.id.linear_create_school);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 6 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_school.setVisibility(View.GONE);
+                binding.linearCreateSchool.setVisibility(View.GONE);
             }
         }
 
@@ -106,10 +90,10 @@ public class master_schoolFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        save_school_master.setOnClickListener(new View.OnClickListener() {
+        binding.saveSchoolMaster.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (school_name.getText().toString().equals("")) {
+                if (binding.schoolName.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
                 } else {
                     if (Function.isNetworkAvailable(context)) {
@@ -117,7 +101,7 @@ public class master_schoolFragment extends Fragment {
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        SchoolModel model = new SchoolModel(school_name.getText().toString(), transactionModel, rowStatusModel, branchModel);
+                        SchoolModel model = new SchoolModel(binding.schoolName.getText().toString(), transactionModel, rowStatusModel, branchModel);
                         Call<SchoolModel.SchoolData1> call = apiCalling.SchoolMaintanance(model);
                         call.enqueue(new Callback<SchoolModel.SchoolData1>() {
                             @Override
@@ -126,7 +110,7 @@ public class master_schoolFragment extends Fragment {
                                     SchoolModel.SchoolData1 data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        school_name.setText("");
+                                        binding.schoolName.setText("");
                                         GetAllSchool();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -149,18 +133,18 @@ public class master_schoolFragment extends Fragment {
             }
         });
 
-        edit_school_master.setOnClickListener(new View.OnClickListener() {
+        binding.editSchoolMaster.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (school_name.getText().toString().equals("")) {
+                if (binding.schoolName.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Enter School Name", Toast.LENGTH_SHORT).show();
                 } else {
                     if (Function.isNetworkAvailable(context)) {
                         progressBarHelper.showProgressDialog();
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionId.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         BranchModel branchModel = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        SchoolModel model = new SchoolModel(Long.parseLong(id.getText().toString()), school_name.getText().toString(), transactionModel, rowStatusModel, branchModel);
+                        SchoolModel model = new SchoolModel(Long.parseLong(binding.id.getText().toString()), binding.schoolName.getText().toString(), transactionModel, rowStatusModel, branchModel);
                         Call<SchoolModel.SchoolData1> call = apiCalling.SchoolMaintanance(model);
                         call.enqueue(new Callback<SchoolModel.SchoolData1>() {
                             @Override
@@ -169,9 +153,9 @@ public class master_schoolFragment extends Fragment {
                                     SchoolModel.SchoolData1 data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        save_school_master.setVisibility(View.VISIBLE);
-                                        edit_school_master.setVisibility(View.GONE);
-                                        school_name.setText("");
+                                        binding.saveSchoolMaster.setVisibility(View.VISIBLE);
+                                        binding.editSchoolMaster.setVisibility(View.GONE);
+                                        binding.schoolName.setText("");
                                         GetAllSchool();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -205,7 +189,7 @@ public class master_schoolFragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllSchool() {
@@ -237,10 +221,10 @@ public class master_schoolFragment extends Fragment {
                                     }
                                 }
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                school_rv.setLayoutManager(linearLayoutManager);
+                                binding.schoolRv.setLayoutManager(linearLayoutManager);
                                 schoolMaster_adapter = new SchoolMaster_Adapter(context, list);
                                 schoolMaster_adapter.notifyDataSetChanged();
-                                school_rv.setAdapter(schoolMaster_adapter);
+                                binding.schoolRv.setAdapter(schoolMaster_adapter);
                                 SCHOOLITEM = new String[schoolitem.size()];
                                 SCHOOLITEM = schoolitem.toArray(SCHOOLITEM);
 
@@ -270,9 +254,8 @@ public class master_schoolFragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SCHOOLITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        school_name.setAdapter(adapter);
-        school_name.setThreshold(1);
-
+        binding.schoolName.setAdapter(adapter);
+        binding.schoolName.setThreshold(1);
     }
 
     public class SchoolMaster_Adapter extends RecyclerView.Adapter<SchoolMaster_Adapter.ViewHolder> {
@@ -290,7 +273,7 @@ public class master_schoolFragment extends Fragment {
 
         @Override
         public SchoolMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new SchoolMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.school_master_deatil_list, parent, false));
+            return new ViewHolder(SchoolMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @Override
@@ -299,27 +282,27 @@ public class master_schoolFragment extends Fragment {
             {
                 if (model.getPageInfo().getPageID() == 6){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.school_edit.setVisibility(View.GONE);
+                        holder.binding.schoolEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.school_delete.setVisibility(View.GONE);
+                        holder.binding.schoolDelete.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                        holder.linear_actions.setVisibility(View.GONE);
+                        holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
             }
             if (schoolDetails.get(position).getRowStatus().getRowStatusId() == 1) {
-                holder.school_name.setText(schoolDetails.get(position).getSchoolName());
-                holder.school_edit.setOnClickListener(new View.OnClickListener() {
+                holder.binding.schoolName.setText(schoolDetails.get(position).getSchoolName());
+                holder.binding.schoolEdit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                         View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                         builder.setView(dialogView);
                         builder.setCancelable(true);
-                        Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                        Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                        TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                        TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                         ImageView image = dialogView.findViewById(R.id.image);
                         TextView title = dialogView.findViewById(R.id.title);
                         title.setText("Are you sure that you want to Edit School Name?");
@@ -337,28 +320,28 @@ public class master_schoolFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
-                                save_school_master.setVisibility(View.GONE);
-                                edit_school_master.setVisibility(View.VISIBLE);
-                                school_name.setText(schoolDetails.get(position).getSchoolName());
-                                id.setText("" + schoolDetails.get(position).getSchoolID());
-                                id_branch.setText("" + schoolDetails.get(position).getBranchInfo().getBranchID());
-                                transaction_id.setText("" + schoolDetails.get(position).getTransaction().getTransactionId());
-                                school_scroll.fullScroll(View.FOCUS_UP);
-                                school_scroll.scrollTo(0, 0);
+                                binding.saveSchoolMaster.setVisibility(View.GONE);
+                                binding.editSchoolMaster.setVisibility(View.VISIBLE);
+                                binding.schoolName.setText(schoolDetails.get(position).getSchoolName());
+                                binding.id.setText("" + schoolDetails.get(position).getSchoolID());
+                                binding.idBranch.setText("" + schoolDetails.get(position).getBranchInfo().getBranchID());
+                                binding.transactionId.setText("" + schoolDetails.get(position).getTransaction().getTransactionId());
+                                binding.schoolScroll.fullScroll(View.FOCUS_UP);
+                                binding.schoolScroll.scrollTo(0, 0);
                             }
                         });
                         dialog.show();
                     }
                 });
-                holder.school_delete.setOnClickListener(new View.OnClickListener() {
+                holder.binding.schoolDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                         View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                         builder.setView(dialogView);
                         builder.setCancelable(true);
-                        Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                        Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                        TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                        TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                         TextView title = dialogView.findViewById(R.id.title);
                         ImageView image = dialogView.findViewById(R.id.image);
                         image.setImageResource(R.drawable.delete);
@@ -419,17 +402,11 @@ public class master_schoolFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView school_name, status;
-            ImageView school_edit, school_delete;
-            LinearLayout linear_actions;
+            SchoolMasterDeatilListBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                school_name = itemView.findViewById(R.id.school_name);
-                status = itemView.findViewById(R.id.status);
-                school_edit = itemView.findViewById(R.id.school_edit);
-                school_delete = itemView.findViewById(R.id.school_delete);
-                linear_actions = itemView.findViewById(R.id.linear_actions);
+            public ViewHolder(@NonNull SchoolMasterDeatilListBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

@@ -44,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="10dp"
                     android:textSize="14sp"
+                    android:textColor="@color/black"
                     tools:ignore="RtlSymmetry" />
             </LinearLayout>
 
@@ -69,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/view"
                         app:tint="@color/white"
                         tools:ignore="ContentDescription" />
@@ -89,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/download"
                         app:tint="@color/white"
                         tools:ignore="ContentDescription" />

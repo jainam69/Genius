@@ -6,16 +6,18 @@ public class UPIModel {
 
     public long UPIId;
     public String UPICode;
+    public String PaymentGateway;
     public BranchModel BranchData;
     public RowStatusModel RowStatusData;
     public TransactionModel TransactionData;
 
-    public UPIModel(long UPIId, String UPICode, BranchModel branchData, RowStatusModel rowStatusData, TransactionModel transactionData) {
+    public UPIModel(long UPIId, String UPICode, BranchModel branchData, RowStatusModel rowStatusData, TransactionModel transactionData,String PaymentGateway) {
         this.UPIId = UPIId;
         this.UPICode = UPICode;
         BranchData = branchData;
         RowStatusData = rowStatusData;
         TransactionData = transactionData;
+        this.PaymentGateway = PaymentGateway;
     }
 
     public static class UPIData

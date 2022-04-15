@@ -25,6 +25,7 @@ import com.example.genius.Model.BranchClassSingleModel;
 import com.example.genius.Model.BranchSubjectModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentBranchSubjectListBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -45,34 +46,28 @@ import retrofit2.Response;
 
 public class BranchSubjectListFragment extends Fragment {
 
-    View root;
+    FragmentBranchSubjectListBinding binding;
     Context context;
-    TextView txt_nodata;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    FloatingActionButton fab_contact;
     BranchSubjectListAapter branchSubjectListAapter;
-    RecyclerView class_list_rv;
     UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Subject List");
-        root = inflater.inflate(R.layout.fragment_branch_subject_list, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Subject Master");
+        binding = FragmentBranchSubjectListBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        class_list_rv = root.findViewById(R.id.class_list_rv);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 76 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -83,7 +78,7 @@ public class BranchSubjectListFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        fab_contact.setOnClickListener(v -> {
+        binding.fabContact.setOnClickListener(v -> {
             BranchSubjectFragment orderplace = new BranchSubjectFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -104,8 +99,7 @@ public class BranchSubjectListFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllSubjectBranchData() {
@@ -119,16 +113,16 @@ public class BranchSubjectListFragment extends Fragment {
                         List<BranchSubjectModel.BranchSubjectData> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                class_list_rv.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.classListRv.setVisibility(View.VISIBLE);
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                class_list_rv.setLayoutManager(linearLayoutManager);
+                                binding.classListRv.setLayoutManager(linearLayoutManager);
                                 branchSubjectListAapter = new BranchSubjectListAapter(context, studentModelList);
                                 branchSubjectListAapter.notifyDataSetChanged();
-                                class_list_rv.setAdapter(branchSubjectListAapter);
+                                binding.classListRv.setAdapter(branchSubjectListAapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                class_list_rv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.classListRv.setVisibility(View.GONE);
                             }
                         }
                     }

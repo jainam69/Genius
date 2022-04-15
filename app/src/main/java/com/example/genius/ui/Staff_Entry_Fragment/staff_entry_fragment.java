@@ -36,6 +36,7 @@ import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.databinding.StaffEntryFragmentFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -60,17 +61,12 @@ import retrofit2.Response;
 @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
 public class staff_entry_fragment extends Fragment {
 
-    EditText date_of_birth, date_of_appo, date_of_join, date_of_leaving, fullname, education_qua, address, email, mobile_no, password,user_password;
-    Button save_staff, edit_staff;
-    RadioGroup gender_rg, status_rg;
-    RadioButton active, inactive, male, female, rb1, rb2;
-    SearchableSpinner role, branch;
-    TextView id_reg, id_branch, transaction_id;
-    ImageView hide_password;
+    StaffEntryFragmentFragmentBinding binding;
+    RadioButton rb1;
     private int year;
     private int month;
     private int day;
-    String gender, status,RoleName, BranchID,ddate, apdate, jodate, ledate;
+    String gender, RoleName, BranchID,ddate, apdate, jodate, ledate;
     int select;
     Context context;
     List<String> roleitem = new ArrayList<>();
@@ -86,36 +82,11 @@ public class staff_entry_fragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("User Entry");
-        View root = inflater.inflate(R.layout.staff_entry_fragment_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("User Master Entry");
+        binding = StaffEntryFragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        date_of_birth = root.findViewById(R.id.date_of_birth);
-        date_of_appo = root.findViewById(R.id.date_of_appo);
-        date_of_join = root.findViewById(R.id.date_of_join);
-        date_of_leaving = root.findViewById(R.id.date_of_leaving);
-        role = root.findViewById(R.id.role);
-        branch = root.findViewById(R.id.branch);
-        fullname = root.findViewById(R.id.fullname);
-        education_qua = root.findViewById(R.id.education_qua);
-        address = root.findViewById(R.id.address);
-        email = root.findViewById(R.id.email);
-        mobile_no = root.findViewById(R.id.mobile_no);
-        password = root.findViewById(R.id.password);
-        save_staff = root.findViewById(R.id.save_staff);
-        edit_staff = root.findViewById(R.id.edit_staff);
-        active = root.findViewById(R.id.active);
-        inactive = root.findViewById(R.id.inactive);
-        male = root.findViewById(R.id.male);
-        female = root.findViewById(R.id.female);
-        gender_rg = root.findViewById(R.id.gender_rg);
-        status_rg = root.findViewById(R.id.status_rg);
-        id_reg = root.findViewById(R.id.id_reg);
-        id_branch = root.findViewById(R.id.id_branch);
-        transaction_id = root.findViewById(R.id.transaction_id);
-        user_password = root.findViewById(R.id.user_password);
-        hide_password = root.findViewById(R.id.hide_password);
 
         Calendar cal2 = Calendar.getInstance();
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -124,38 +95,41 @@ public class staff_entry_fragment extends Fragment {
         jodate = dateFormat1.format(cal2.getTime());
         ledate = dateFormat1.format(cal2.getTime());
 
-        date_of_appo.setText(yesterday());
-        date_of_join.setText(yesterday());
-        date_of_leaving.setText(yesterday());
+        binding.dateOfAppo.setText(yesterday());
+        binding.dateOfJoin.setText(yesterday());
+        binding.dateOfLeaving.setText(yesterday());
 
         GetStaffRole();
 
         bundle = getArguments();
         if (bundle != null) {
-            save_staff.setVisibility(View.GONE);
-            edit_staff.setVisibility(View.VISIBLE);
+            binding.saveStaff.setVisibility(View.GONE);
+            binding.editStaff.setVisibility(View.VISIBLE);
             if (bundle.containsKey("StaffID")) {
-                id_reg.setText("" + bundle.getLong("StaffID"));
+                binding.idReg.setText("" + bundle.getLong("StaffID"));
             }
             if (bundle.containsKey("USER_ID")){
                 userid = bundle.getLong("USER_ID");
             }
             if (bundle.containsKey("TransactionId")) {
-                transaction_id.setText("" + bundle.getLong("TransactionId"));
+                binding.transactionId.setText("" + bundle.getLong("TransactionId"));
             }
             if (bundle.containsKey("Branch_ID")) {
-                id_branch.setText("" + bundle.getLong("Branch_ID"));
+                binding.idBranch.setText("" + bundle.getLong("Branch_ID"));
             }
             if (bundle.containsKey("Name")) {
-                fullname.setText(bundle.getString("Name"));
+                binding.fullname.setText(bundle.getString("Name"));
             }
             if (bundle.containsKey("EduQual")) {
-                education_qua.setText(bundle.getString("EduQual"));
+                binding.educationQua.setText(bundle.getString("EduQual"));
+            }
+            if (bundle.containsKey("USER_NAME")){
+                binding.userName.setText(bundle.getString("USER_NAME"));
             }
             if (bundle.containsKey("DOB")) {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOB"));
-                    date_of_birth.setText("" + displaydate.format(d));
+                    binding.dateOfBirth.setText("" + displaydate.format(d));
                     ddate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -164,7 +138,7 @@ public class staff_entry_fragment extends Fragment {
             if (bundle.containsKey("DOA")) {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOA"));
-                    date_of_appo.setText("" + displaydate.format(d));
+                    binding.dateOfAppo.setText("" + displaydate.format(d));
                     apdate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -174,7 +148,7 @@ public class staff_entry_fragment extends Fragment {
             if (bundle.containsKey("DOJ")) {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOJ"));
-                    date_of_join.setText("" + displaydate.format(d));
+                    binding.dateOfJoin.setText("" + displaydate.format(d));
                     jodate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -183,81 +157,62 @@ public class staff_entry_fragment extends Fragment {
             if (bundle.containsKey("DOl")) {
                 try {
                     Date d = actualdate.parse(bundle.getString("DOl"));
-                    date_of_leaving.setText("" + displaydate.format(d));
+                    binding.dateOfLeaving.setText("" + displaydate.format(d));
                     ledate = actualdate.format(d);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
             if (bundle.containsKey("Address")) {
-                address.setText(bundle.getString("Address"));
+                binding.address.setText(bundle.getString("Address"));
             }
             if (bundle.containsKey("Email")) {
-                email.setText(bundle.getString("Email"));
+                binding.email.setText(bundle.getString("Email"));
             }
             if (bundle.containsKey("Gender")) {
                 String gndr = bundle.getString("Gender");
                 if (gndr.equals("1")) {
-                    male.setChecked(true);
-                    female.setChecked(false);
+                    binding.male.setChecked(true);
+                    binding.female.setChecked(false);
                 } else {
-                    male.setChecked(false);
-                    female.setChecked(true);
+                    binding.male.setChecked(false);
+                    binding.female.setChecked(true);
                 }
             }
             if (bundle.containsKey("MobileNo")) {
-                mobile_no.setText(bundle.getString("MobileNo"));
+                binding.mobileNo.setText(bundle.getString("MobileNo"));
             }
             if (bundle.containsKey("Password")) {
-                password.setText(bundle.getString("Password"));
+                binding.password.setText(bundle.getString("Password"));
             }
             if (bundle.containsKey("USER_PASSWORD")){
-                user_password.setText(bundle.getString("USER_PASSWORD"));
-            }
-            if (bundle.containsKey("Status")) {
-                int st = bundle.getInt("Status");
-                if (st == 1) {
-                    active.setChecked(true);
-                    inactive.setChecked(false);
-                }
-                if (st == 2) {
-                    active.setChecked(false);
-                    inactive.setChecked(true);
-                }
+                binding.userPassword.setText(bundle.getString("USER_PASSWORD"));
             }
         }
 
-        hide_password.setOnClickListener(v -> {
-            if (user_password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
-                hide_password.setImageResource(R.drawable.eye_on);
-                user_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                user_password.setSelection(user_password.length());
+        binding.hidePassword.setOnClickListener(v -> {
+            if (binding.userPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                binding.hidePassword.setImageResource(R.drawable.eye_on);
+                binding.userPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                binding.userPassword.setSelection(binding.userPassword.length());
             } else {
-                hide_password.setImageResource(R.drawable.eye_off);
-                user_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                user_password.setSelection(user_password.length());
+                binding.hidePassword.setImageResource(R.drawable.eye_off);
+                binding.userPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                binding.userPassword.setSelection(binding.userPassword.length());
             }
         });
 
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
 
-        gender_rg.setOnCheckedChangeListener((group, checkedId) -> {
-            rb1 = root.findViewById(checkedId);
+        binding.genderRg.setOnCheckedChangeListener((group, checkedId) -> {
+            rb1 = binding.getRoot().findViewById(checkedId);
             gender = rb1.getText().toString();
         });
-        select = gender_rg.getCheckedRadioButtonId();
-        rb1 = root.findViewById(select);
+        select = binding.genderRg.getCheckedRadioButtonId();
+        rb1 = binding.getRoot().findViewById(select);
         gender = rb1.getText().toString();
 
-        status_rg.setOnCheckedChangeListener((group, checkedId) -> {
-            rb2 = root.findViewById(checkedId);
-            status = rb2.getText().toString();
-        });
-        select = status_rg.getCheckedRadioButtonId();
-        rb2 = root.findViewById(select);
-        status = rb2.getText().toString();
-
-        date_of_birth.setOnClickListener(v -> {
+        binding.dateOfBirth.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -268,12 +223,12 @@ public class staff_entry_fragment extends Fragment {
                         month = monthOfYear;
                         day = dayOfMonth;
                         ddate = pad(month + 1) + "/" + pad(day) + "/" + year;
-                        date_of_birth.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        binding.dateOfBirth.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                     }, year, month, day);
             picker.show();
         });
 
-        date_of_appo.setOnClickListener(v -> {
+        binding.dateOfAppo.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -285,12 +240,12 @@ public class staff_entry_fragment extends Fragment {
                         month = monthOfYear;
                         day = dayOfMonth;
                         apdate = pad(month + 1) + "/" + pad(day) + "/" + year;
-                        date_of_appo.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        binding.dateOfAppo.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                     }, year, month, day);
             picker.show();
         });
 
-        date_of_join.setOnClickListener(v -> {
+        binding.dateOfJoin.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -302,12 +257,12 @@ public class staff_entry_fragment extends Fragment {
                         month = monthOfYear;
                         day = dayOfMonth;
                         jodate = pad(month + 1) + "/" + pad(day) + "/" + year;
-                        date_of_join.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        binding.dateOfJoin.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                     }, year, month, day);
             picker.show();
         });
 
-        date_of_leaving.setOnClickListener(v -> {
+        binding.dateOfLeaving.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -319,34 +274,36 @@ public class staff_entry_fragment extends Fragment {
                         month = monthOfYear;
                         day = dayOfMonth;
                         ledate = pad(month + 1) + "/" + pad(day) + "/" + year;
-                        date_of_leaving.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        binding.dateOfLeaving.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
                     }, year, month, day);
             picker.show();
         });
 
-        save_staff.setOnClickListener(v -> {
+        binding.saveStaff.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (fullname.getText().toString().equals("")) {
+                if (binding.fullname.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
-                } else if (address.getText().toString().equals("")) {
+                } else if (binding.address.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
-                } else if (mobile_no.getText().toString().equals("")) {
-                    Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
-                } else if (email.getText().toString().equals("")) {
+                } else if (binding.mobileNo.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please enter mobile number.", Toast.LENGTH_SHORT).show();
+                } else if (binding.email.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
-                } else if (mobile_no.getText().toString().length() < 10){
+                } else if (binding.mobileNo.getText().toString().length() < 10){
                     Toast.makeText(context, "Please enter valid mobile number.", Toast.LENGTH_SHORT).show();
-                }else if (user_password.getText().toString().isEmpty()){
+                } else if (binding.userName.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please enter User Name.", Toast.LENGTH_SHORT).show();
+                } else if (binding.userPassword.getText().toString().isEmpty()){
                     Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StaffModel model = new StaffModel(fullname.getText().toString()
-                            , education_qua.getText().toString(), ddate, gender, address.getText().toString(), apdate, jodate
-                            , ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, "Staff",
-                            user_password.getText().toString());
+                    StaffModel model = new StaffModel(binding.fullname.getText().toString()
+                            , binding.educationQua.getText().toString(), ddate, gender, binding.address.getText().toString(), apdate, jodate
+                            , ledate, binding.email.getText().toString(), binding.mobileNo.getText().toString(), transactionModel, rowStatusModel, branchModel, "Staff",
+                            binding.userPassword.getText().toString(),binding.userName.getText().toString());
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
@@ -380,29 +337,31 @@ public class staff_entry_fragment extends Fragment {
             }
         });
 
-        edit_staff.setOnClickListener(v -> {
+        binding.editStaff.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (fullname.getText().toString().equals("")) {
+                if (binding.fullname.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter your fullname.", Toast.LENGTH_SHORT).show();
-                } else if (address.getText().toString().equals("")) {
+                } else if (binding.address.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter address.", Toast.LENGTH_SHORT).show();
-                } else if (mobile_no.getText().toString().equals("")) {
-                    Toast.makeText(context, "Please enter mobile number(login id).", Toast.LENGTH_SHORT).show();
-                } else if (email.getText().toString().equals("")) {
+                } else if (binding.mobileNo.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please enter mobile number.", Toast.LENGTH_SHORT).show();
+                } else if (binding.email.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Email Id.", Toast.LENGTH_SHORT).show();
-                }else if (mobile_no.getText().toString().length() < 10){
+                }else if (binding.mobileNo.getText().toString().length() < 10){
                     Toast.makeText(context, "Please enter valid mobile number.", Toast.LENGTH_SHORT).show();
-                }else if (user_password.getText().toString().isEmpty()){
+                } else if (binding.userName.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please enter User Name.", Toast.LENGTH_SHORT).show();
+                } else if (binding.userPassword.getText().toString().isEmpty()){
                     Toast.makeText(context, "Please enter Password.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionId.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     BranchModel branchModel = new BranchModel(Long.parseLong(BranchID));
-                    StaffModel model = new StaffModel(Long.parseLong(id_reg.getText().toString())
-                            , fullname.getText().toString(), education_qua.getText().toString(), ddate, gender, address.getText().toString()
-                            , apdate, jodate, ledate, email.getText().toString(), mobile_no.getText().toString(), transactionModel, rowStatusModel, branchModel, userid,
-                            user_password.getText().toString());
+                    StaffModel model = new StaffModel(Long.parseLong(binding.idReg.getText().toString())
+                            , binding.fullname.getText().toString(), binding.educationQua.getText().toString(), ddate, gender, binding.address.getText().toString()
+                            , apdate, jodate, ledate, binding.email.getText().toString(), binding.mobileNo.getText().toString(), transactionModel, rowStatusModel, branchModel, userid,
+                            binding.userPassword.getText().toString(),binding.userName.getText().toString());
                     Call<StaffModel.StaffData1> call = apiCalling.StaffMaintanance(model);
                     call.enqueue(new Callback<StaffModel.StaffData1>() {
                         @Override
@@ -448,8 +407,7 @@ public class staff_entry_fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     public void GetStaffRole() {
@@ -467,9 +425,9 @@ public class staff_entry_fragment extends Fragment {
     public void bindrole() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, ROLEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        role.setAdapter(adapter);
-        role.setSelection(1);
-        role.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.role.setAdapter(adapter);
+        binding.role.setSelection(1);
+        binding.role.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -477,7 +435,7 @@ public class staff_entry_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     RoleName = roleitem.get(position);
-                    if (role.getSelectedItem().equals("Select Role")) {
+                    if (binding.role.getSelectedItem().equals("Select Role")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {

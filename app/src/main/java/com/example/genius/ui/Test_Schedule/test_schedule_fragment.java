@@ -57,6 +57,7 @@ import com.example.genius.Model.TestScheduleModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UploadPaperData;
 import com.example.genius.Model.UploadPaperModel;
+import com.example.genius.databinding.TestScheduleFragmentBinding;
 import com.example.genius.helper.FileUtils;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
@@ -95,11 +96,8 @@ import static android.app.Activity.RESULT_OK;
 @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
 public class test_schedule_fragment extends Fragment {
 
-    SearchableSpinner standard, batch_time, subject, paper_type,course_name;
+    TestScheduleFragmentBinding binding;
     Context context;
-    EditText marks, start_time, end_time, remarks, test_date, paper_remarks, upload_link;
-    TextView id, upload_test_paper, test_id, paper_id;
-    Button save_testschedule, edit_testschedule, save_test_paper, edit_test_paper;
     List<String> subjectitem = new ArrayList<>(),typeitem = new ArrayList<>(), typeid = new ArrayList<>(),batchitem = new ArrayList<>(), batchid = new ArrayList<>(),
             standarditem = new ArrayList<>(),courseitem = new ArrayList<>();
     List<Integer> subjectid = new ArrayList<>(),standardid = new ArrayList<>(),courseid = new ArrayList<>();
@@ -116,89 +114,57 @@ public class test_schedule_fragment extends Fragment {
     OnBackPressedCallback callback;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    RelativeLayout linear_doc, linear_link, linear_remarks, linear_edit, linear_save;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     File instrumentFileDestination;
     int flag = 0, type,select,statusid;
-    LinearLayout linear_status;
-    RadioGroup status_rg;
-    RadioButton rb2,active,inactive;
+    RadioButton rb2;
     List<UploadPaperModel> studentModelList;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Schedule Entry");
-        View root = inflater.inflate(R.layout.test_schedule_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Paper Master Entry");
+        binding = TestScheduleFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        standard = root.findViewById(R.id.standard);
-        batch_time = root.findViewById(R.id.batch_time);
-        subject = root.findViewById(R.id.subject);
-        marks = root.findViewById(R.id.marks);
-        start_time = root.findViewById(R.id.start_time);
-        end_time = root.findViewById(R.id.end_time);
-        remarks = root.findViewById(R.id.remarks);
-        save_testschedule = root.findViewById(R.id.save_testschedule);
-        edit_testschedule = root.findViewById(R.id.edit_testschedule);
-        test_date = root.findViewById(R.id.test_date);
-        id = root.findViewById(R.id.id);
-        paper_type = root.findViewById(R.id.paper_type);
-        paper_remarks = root.findViewById(R.id.paper_remarks);
-        upload_test_paper = root.findViewById(R.id.upload_test_paper);
-        upload_link = root.findViewById(R.id.upload_link);
-        save_test_paper = root.findViewById(R.id.save_test_paper);
-        linear_doc = root.findViewById(R.id.linear_doc);
-        linear_link = root.findViewById(R.id.linear_link);
-        linear_remarks = root.findViewById(R.id.linear_remarks);
-        test_id = root.findViewById(R.id.test_id);
-        edit_test_paper = root.findViewById(R.id.edit_test_paper);
-        paper_id = root.findViewById(R.id.paper_id);
-        linear_edit = root.findViewById(R.id.linear_edit);
-        linear_save = root.findViewById(R.id.linear_save);
-        course_name = root.findViewById(R.id.course_name);
-        linear_status = root.findViewById(R.id.linear_status);
-        status_rg = root.findViewById(R.id.status_rg);
-        active = root.findViewById(R.id.active);
-        inactive = root.findViewById(R.id.inactive);
 
         Calendar cal2 = Calendar.getInstance();
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
         cal2.add(Calendar.DATE, 0);
         indate = dateFormat1.format(cal2.getTime());
 
-        test_date.setText(yesterday());
+        binding.testDate.setText(yesterday());
 
         bundle = getArguments();
         if (bundle != null) {
-            linear_save.setVisibility(View.GONE);
-            linear_edit.setVisibility(View.VISIBLE);
+            binding.linearSave.setVisibility(View.GONE);
+            binding.linearEdit.setVisibility(View.VISIBLE);
             if (bundle.containsKey("TestDate")) {
                 try {
                     Date d = actualdate.parse(bundle.getString("TestDate").replace("T00:00:00", ""));
-                    test_date.setText("" + displaydate.format(d));
+                    binding.testDate.setText("" + displaydate.format(d));
                     indate = bundle.getString("TestDate").replace("T00:00:00", "");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
             if (bundle.containsKey("StartTime")) {
-                start_time.setText(bundle.getString("StartTime"));
+                binding.startTime.setText(bundle.getString("StartTime"));
             }
             if (bundle.containsKey("EndTime")) {
-                end_time.setText(bundle.getString("EndTime"));
+                binding.endTime.setText(bundle.getString("EndTime"));
             }
             if (bundle.containsKey("TestMarks")) {
-                marks.setText("" + bundle.getDouble("TestMarks"));
+                binding.marks.setText("" + bundle.getDouble("TestMarks"));
             }
             if (bundle.containsKey("TestRemarks")) {
-                remarks.setText(bundle.getString("TestRemarks"));
+                binding.remarks.setText(bundle.getString("TestRemarks"));
             }
             if (bundle.containsKey("TestID")) {
                 testid = bundle.getLong("TestID");
-                id.setText("" + bundle.getLong("TestID"));
+                binding.id.setText("" + bundle.getLong("TestID"));
                 if (Function.isNetworkAvailable(context)) {
                     progressBarHelper.showProgressDialog();
                     Call<UploadPaperData> call = apiCalling.GetAllTestPapaerByTest(bundle.getLong("TestID"));
@@ -216,34 +182,34 @@ public class test_schedule_fragment extends Fragment {
                                             type = studentModelList.get(0).getPaperTypeID();
                                             statusid = studentModelList.get(0).getRowStatus().getRowStatusId();
                                             if (type == 1) {
-                                                paper_type.setSelection(1);
-                                                upload_test_paper.setText("Attached");
-                                                upload_test_paper.setTextColor(context.getResources().getColor(R.color.black));
-                                                linear_doc.setVisibility(View.VISIBLE);
+                                                binding.paperType.setSelection(1);
+                                                binding.uploadTestPaper.setText("Attached");
+                                                binding.uploadTestPaper.setTextColor(context.getResources().getColor(R.color.black));
+                                                binding.linearDoc.setVisibility(View.VISIBLE);
                                             } else {
-                                                paper_type.setSelection(2);
-                                                upload_link.setText(studentModelList.get(0).getDocLink());
-                                                linear_link.setVisibility(View.VISIBLE);
+                                                binding.paperType.setSelection(2);
+                                                binding.uploadLink.setText(studentModelList.get(0).getDocLink());
+                                                binding.linearLink.setVisibility(View.VISIBLE);
                                             }
-                                            linear_remarks.setVisibility(View.VISIBLE);
-                                            edit_test_paper.setVisibility(View.VISIBLE);
-                                            save_test_paper.setVisibility(View.GONE);
+                                            binding.linearRemarks.setVisibility(View.VISIBLE);
+                                            binding.editTestPaper.setVisibility(View.VISIBLE);
+                                            binding.saveTestPaper.setVisibility(View.GONE);
                                             if (studentModelList.get(0).getRemarks() != null){
-                                                paper_remarks.setText(studentModelList.get(0).getRemarks());
+                                                binding.paperRemarks.setText(studentModelList.get(0).getRemarks());
                                             }
                                             if (!studentModelList.get(0).getFilePath().equals("") && studentModelList.get(0).getFilePath() != null) {
                                                 OriginFileName = studentModelList.get(0).getFileName();
                                                 FilePath = studentModelList.get(0).getFilePath().replace("https://mastermind.org.in","");
                                             }else {
-                                                upload_link.setText(studentModelList.get(0).getDocLink());
+                                                binding.uploadLink.setText(studentModelList.get(0).getDocLink());
                                             }
                                             if (statusid == 1){
-                                                active.setChecked(true);
-                                                inactive.setChecked(false);
+                                                binding.active.setChecked(true);
+                                                binding.inactive.setChecked(false);
                                             }
                                             if (statusid == 2){
-                                                active.setChecked(false);
-                                                inactive.setChecked(true);
+                                                binding.active.setChecked(false);
+                                                binding.inactive.setChecked(true);
                                             }
                                         }
                                         GetPaperType();
@@ -276,18 +242,18 @@ public class test_schedule_fragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        status_rg.setOnCheckedChangeListener((group, checkedId) -> {
-            rb2 = root.findViewById(checkedId);
+        binding.statusRg.setOnCheckedChangeListener((group, checkedId) -> {
+            rb2 = binding.getRoot().findViewById(checkedId);
             status = rb2.getText().toString();
         });
-        select = status_rg.getCheckedRadioButtonId();
-        rb2 = root.findViewById(select);
+        select = binding.statusRg.getCheckedRadioButtonId();
+        rb2 = binding.getRoot().findViewById(select);
         status = rb2.getText().toString();
 
         selectStandard();
         selectSubject();
 
-        test_date.setOnClickListener(v -> {
+        binding.testDate.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
@@ -297,8 +263,8 @@ public class test_schedule_fragment extends Fragment {
                         year = year2;
                         month = monthOfYear;
                         day = dayOfMonth;
-                        test_date.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
-                        String as = test_date.getText().toString();
+                        binding.testDate.setText(pad(day) + "/" + pad(month + 1) + "/" + year);
+                        String as = binding.testDate.getText().toString();
                         Date dt = null;
                         try {
                             dt = displaydate.parse(as);
@@ -310,7 +276,7 @@ public class test_schedule_fragment extends Fragment {
             picker.show();
         });
 
-        start_time.setOnClickListener(v -> {
+        binding.startTime.setOnClickListener(v -> {
             Calendar mcurrentTime = Calendar.getInstance();
             int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
             int minute = mcurrentTime.get(Calendar.MINUTE);
@@ -327,12 +293,12 @@ public class test_schedule_fragment extends Fragment {
                         } else {
                             format = "AM";
                         }
-                        start_time.setText(hourOfDay + ":" + minute1 + " " + format);
+                        binding.startTime.setText(hourOfDay + ":" + minute1 + " " + format);
                     }, hour, minute, false);
             timePickerDialog.show();
         });
 
-        end_time.setOnClickListener(v -> {
+        binding.endTime.setOnClickListener(v -> {
             Calendar mcurrentTime = Calendar.getInstance();
             int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
             int minute = mcurrentTime.get(Calendar.MINUTE);
@@ -353,25 +319,25 @@ public class test_schedule_fragment extends Fragment {
                             } else {
                                 format = "AM";
                             }
-                            end_time.setText(hourOfDay + ":" + minute + " " + format);
+                            binding.endTime.setText(hourOfDay + ":" + minute + " " + format);
                         }
                     }, hour, minute, false);
             timePickerDialog.show();
         });
 
-        save_testschedule.setOnClickListener(v -> {
+        binding.saveTestschedule.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (course_name.getSelectedItemId() == 0){
+                if (binding.courseName.getSelectedItemId() == 0){
                     Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                }else if (standard.getSelectedItemId() == 0) {
+                }else if (binding.standard.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                } else if (batch_time.getSelectedItemId() == 0) {
+                } else if (binding.batchTime.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                } else if (subject.getSelectedItemId() == 0) {
+                } else if (binding.subject.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                } else if (marks.getText().toString().equals("")) {
+                } else if (binding.marks.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Total Marks.", Toast.LENGTH_SHORT).show();
-                } else if (test_date.getText().toString().equals("")) {
+                } else if (binding.testDate.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Test Date.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -382,8 +348,8 @@ public class test_schedule_fragment extends Fragment {
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME));
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     TestScheduleModel testScheduleModel = new TestScheduleModel("Demo", branchModel,Integer.parseInt(BatchId), BatchTime,
-                            Double.parseDouble(marks.getText().toString()), indate, start_time.getText().toString(), end_time.getText().toString(),
-                            remarks.getText().toString(), rowStatusModel, transactionModel,course,branchclass,subject);
+                            Double.parseDouble(binding.marks.getText().toString()), indate, binding.startTime.getText().toString(), binding.endTime.getText().toString(),
+                            binding.remarks.getText().toString(), rowStatusModel, transactionModel,course,branchclass,subject);
                     Call<TestScheduleModel.TestScheduleData1> call = apiCalling.TestMaintenance(testScheduleModel);
                     call.enqueue(new Callback<TestScheduleModel.TestScheduleData1>() {
                         @Override
@@ -393,7 +359,7 @@ public class test_schedule_fragment extends Fragment {
                                 if (data.isCompleted()) {
                                     TestScheduleModel notimodel = data.getData();
                                     if (notimodel.getTestID() > 0) {
-                                        if (paper_type.getSelectedItemId() == 0) {
+                                        if (binding.paperType.getSelectedItemId() == 0) {
                                             Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
                                             test_Listfragment orderplace = new test_Listfragment();
                                             FragmentManager fragmentManager = getFragmentManager();
@@ -403,16 +369,16 @@ public class test_schedule_fragment extends Fragment {
                                             fragmentTransaction.commit();
                                         } else {
                                             Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                            save_testschedule.setVisibility(View.GONE);
+                                            binding.saveTestschedule.setVisibility(View.GONE);
                                             a = notimodel.getTestID();
                                             if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                                                linear_doc.setVisibility(View.VISIBLE);
+                                                binding.linearDoc.setVisibility(View.VISIBLE);
                                             } else {
-                                                linear_link.setVisibility(View.VISIBLE);
+                                                binding.linearLink.setVisibility(View.VISIBLE);
                                             }
-                                            linear_remarks.setVisibility(View.VISIBLE);
-                                            linear_status.setVisibility(View.VISIBLE);
-                                            save_test_paper.setVisibility(View.VISIBLE);
+                                            binding.linearRemarks.setVisibility(View.VISIBLE);
+                                            binding.linearStatus.setVisibility(View.VISIBLE);
+                                            binding.saveTestPaper.setVisibility(View.VISIBLE);
                                         }
                                     } else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -436,19 +402,19 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        edit_testschedule.setOnClickListener(v -> {
+        binding.editTestschedule.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (course_name.getSelectedItemId() == 0){
+                if (binding.courseName.getSelectedItemId() == 0){
                     Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                }else if (standard.getSelectedItemId() == 0) {
+                }else if (binding.standard.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Standard.", Toast.LENGTH_SHORT).show();
-                } else if (batch_time.getSelectedItemId() == 0) {
+                } else if (binding.batchTime.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                } else if (subject.getSelectedItemId() == 0) {
+                } else if (binding.subject.getSelectedItemId() == 0) {
                     Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
-                } else if (marks.getText().toString().equals("")) {
+                } else if (binding.marks.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Total Marks.", Toast.LENGTH_SHORT).show();
-                } else if (test_date.getText().toString().equals("")) {
+                } else if (binding.testDate.getText().toString().equals("")) {
                     Toast.makeText(context, "Please enter Test Date.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -458,9 +424,9 @@ public class test_schedule_fragment extends Fragment {
                     BranchSubjectModel.BranchSubjectData subject = new BranchSubjectModel.BranchSubjectData(Long.parseLong(SubjectId));
                     TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    TestScheduleModel testScheduleModel = new TestScheduleModel(Long.parseLong(id.getText().toString()), "Demo", branchModel, Integer.parseInt(BatchId), BatchTime,
-                            Double.parseDouble(marks.getText().toString()), indate, start_time.getText().toString(), end_time.getText().toString(),
-                            remarks.getText().toString(), rowStatusModel, transactionModel,course,branchclass,subject);
+                    TestScheduleModel testScheduleModel = new TestScheduleModel(Long.parseLong(binding.id.getText().toString()), "Demo", branchModel, Integer.parseInt(BatchId), BatchTime,
+                            Double.parseDouble(binding.marks.getText().toString()), indate, binding.startTime.getText().toString(), binding.endTime.getText().toString(),
+                            binding.remarks.getText().toString(), rowStatusModel, transactionModel,course,branchclass,subject);
                     Call<TestScheduleModel.TestScheduleData1> call = apiCalling.TestMaintenance(testScheduleModel);
                     call.enqueue(new Callback<TestScheduleModel.TestScheduleData1>() {
                         @Override
@@ -497,11 +463,11 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        save_test_paper.setOnClickListener(v -> {
+        binding.saveTestPaper.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
                 if (PaperType_Name.equals("UploadDocument") && instrumentFileDestination == null) {
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
-                } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
+                } else if (PaperType_Name.equals("UploadLink") && binding.uploadLink.getText().toString().equals("")) {
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -515,8 +481,8 @@ public class test_schedule_fragment extends Fragment {
                     RowStatusModel rowStatusModel = new RowStatusModel(statusid);
                     Call<UploadPaperModel.UploadPaperData1> call;
                     if (bundle != null) {
-                        UploadPaperModel model = new UploadPaperModel(0,Long.parseLong(id.getText().toString()),Integer.parseInt(PaperType_Id),OriginFileName,FilePath,
-                                upload_link.getText().toString(),paper_remarks.getText().toString(),rowStatusModel,transactionModel);
+                        UploadPaperModel model = new UploadPaperModel(0,Long.parseLong(binding.id.getText().toString()),Integer.parseInt(PaperType_Id),OriginFileName,FilePath,
+                                binding.uploadLink.getText().toString(),binding.paperRemarks.getText().toString(),rowStatusModel,transactionModel);
                         String data = new Gson().toJson(model);
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                             call = apiCalling.TestPaperMaintenance(data, true
@@ -527,7 +493,7 @@ public class test_schedule_fragment extends Fragment {
                         }
                     } else {
                         UploadPaperModel model = new UploadPaperModel(0,a,Integer.parseInt(PaperType_Id),OriginFileName,FilePath,
-                                upload_link.getText().toString(),paper_remarks.getText().toString(),rowStatusModel,transactionModel);
+                                binding.uploadLink.getText().toString(),binding.paperRemarks.getText().toString(),rowStatusModel,transactionModel);
                         String data = new Gson().toJson(model);
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                             call = apiCalling.TestPaperMaintenance(data, true
@@ -571,11 +537,11 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        edit_test_paper.setOnClickListener(v -> {
+        binding.editTestPaper.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (PaperType_Name.equals("UploadDocument") && upload_test_paper.getText().toString().equals("")) {
+                if (PaperType_Name.equals("UploadDocument") && binding.uploadTestPaper.getText().toString().equals("")) {
                     Toast.makeText(context, "Please upload document.", Toast.LENGTH_SHORT).show();
-                } else if (PaperType_Name.equals("UploadLink") && upload_link.getText().toString().equals("")) {
+                } else if (PaperType_Name.equals("UploadLink") && binding.uploadLink.getText().toString().equals("")) {
                     Toast.makeText(context, "Please upload link.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -589,7 +555,7 @@ public class test_schedule_fragment extends Fragment {
                     TransactionModel transactionModel = new TransactionModel(bundle.getLong("TransactionId"), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(statusid);
                     UploadPaperModel model = new UploadPaperModel(b,c,Integer.parseInt(PaperType_Id),OriginFileName,FilePath,
-                            upload_link.getText().toString(),paper_remarks.getText().toString(),rowStatusModel,transactionModel);
+                            binding.uploadLink.getText().toString(),binding.paperRemarks.getText().toString(),rowStatusModel,transactionModel);
                     String data = new Gson().toJson(model);
                     if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
                         if (instrumentFileDestination != null) {
@@ -638,7 +604,7 @@ public class test_schedule_fragment extends Fragment {
             }
         });
 
-        upload_test_paper.setOnClickListener(v -> requestPermissionForAll());
+        binding.uploadTestPaper.setOnClickListener(v -> requestPermissionForAll());
 
         callback = new OnBackPressedCallback(true) {
             @Override
@@ -652,7 +618,7 @@ public class test_schedule_fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     private static String pad(int c) {
@@ -708,12 +674,12 @@ public class test_schedule_fragment extends Fragment {
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
+        binding.courseName.setAdapter(adapter);
         if (bundle != null) {
             int b = courseid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("Course"))));
-            course_name.setSelection(b);
+            binding.courseName.setSelection(b);
         }
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -721,14 +687,14 @@ public class test_schedule_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -785,11 +751,11 @@ public class test_schedule_fragment extends Fragment {
     public void bindstandard() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
         if (bundle != null) {
             int b = standardid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("Standard"))));
-            standard.setSelection(b);
+            binding.standard.setSelection(b);
         }
     }
 
@@ -798,14 +764,14 @@ public class test_schedule_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (standard.getSelectedItemId() != 0){
+                    if (binding.standard.getSelectedItemId() != 0){
                         GetAllSubject(StandardId,courseID);
                     }
                 }
@@ -861,12 +827,12 @@ public class test_schedule_fragment extends Fragment {
     public void bindsubject() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
+        binding.subject.setAdapter(adapter);
         if (bundle != null) {
             int c = subjectid.indexOf(Integer.parseInt(String.valueOf(bundle.getLong("TestSubject"))));
-            subject.setSelection(c);
+            binding.subject.setSelection(c);
         }
-        subject.setOnItemSelectedListener(onItemSelectedListener8);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener8 =
@@ -874,7 +840,7 @@ public class test_schedule_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     SubjectId = subjectid.get(position).toString();
-                    if (subject.getSelectedItem().equals("Select Subject")) {
+                    if (binding.subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -907,11 +873,11 @@ public class test_schedule_fragment extends Fragment {
     public void bindbatch_time() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BATCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        batch_time.setAdapter(adapter);
-        batch_time.setOnItemSelectedListener(onItemSelectedListener77);
+        binding.batchTime.setAdapter(adapter);
+        binding.batchTime.setOnItemSelectedListener(onItemSelectedListener77);
         if (bundle != null) {
             int a = batchid.indexOf(String.valueOf(bundle.getInt("BatchTime")));
-            batch_time.setSelection(a);
+            binding.batchTime.setSelection(a);
         }
     }
 
@@ -921,7 +887,7 @@ public class test_schedule_fragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     BatchTime = batchitem.get(position);
                     BatchId = batchid.get(position);
-                    if (batch_time.getSelectedItem().equals("Batch Time")) {
+                    if (binding.batchTime.getSelectedItem().equals("Batch Time")) {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -961,13 +927,13 @@ public class test_schedule_fragment extends Fragment {
     public void bindtype() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, TYPEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        paper_type.setAdapter(adapter);
+        binding.paperType.setAdapter(adapter);
         if (bundle != null && type == 1) {
-            paper_type.setSelection(1);
+            binding.paperType.setSelection(1);
         } else if (bundle != null && type == 2) {
-            paper_type.setSelection(2);
+            binding.paperType.setSelection(2);
         }
-        paper_type.setOnItemSelectedListener(onItemSelectedListener78);
+        binding.paperType.setOnItemSelectedListener(onItemSelectedListener78);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener78 =
@@ -976,7 +942,7 @@ public class test_schedule_fragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     PaperType_Name = typeitem.get(position);
                     PaperType_Id = typeid.get(position);
-                    if (paper_type.getSelectedItem().equals("Select Type")) {
+                    if (binding.paperType.getSelectedItem().equals("Select Type")) {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -989,35 +955,35 @@ public class test_schedule_fragment extends Fragment {
                         } catch (Exception ignored) {
                         }
                     }
-                    if (paper_type.getSelectedItemId() != 0){
+                    if (binding.paperType.getSelectedItemId() != 0){
                         if(testid == 0){
                             Toast.makeText(context, "Please Create Test Schedule First.", Toast.LENGTH_LONG).show();
                         }
                     }
-                    if (bundle != null && paper_type.getSelectedItemId() != 0 && studentModelList.size() == 0) {
+                    if (bundle != null && binding.paperType.getSelectedItemId() != 0 && studentModelList.size() == 0) {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                            linear_doc.setVisibility(View.VISIBLE);
-                            linear_link.setVisibility(View.GONE);
+                            binding.linearDoc.setVisibility(View.VISIBLE);
+                            binding.linearLink.setVisibility(View.GONE);
                         } else if (PaperType_Name.equalsIgnoreCase("UploadLink")) {
-                            linear_link.setVisibility(View.VISIBLE);
-                            linear_doc.setVisibility(View.GONE);
+                            binding.linearLink.setVisibility(View.VISIBLE);
+                            binding.linearDoc.setVisibility(View.GONE);
                         }
-                        linear_remarks.setVisibility(View.VISIBLE);
-                        linear_status.setVisibility(View.VISIBLE);
-                        save_test_paper.setVisibility(View.VISIBLE);
-                        edit_test_paper.setVisibility(View.GONE);
-                    } else if (bundle != null && paper_type.getSelectedItemId() != 0 && studentModelList.size() > 0) {
+                        binding.linearRemarks.setVisibility(View.VISIBLE);
+                        binding.linearStatus.setVisibility(View.VISIBLE);
+                        binding.saveTestPaper.setVisibility(View.VISIBLE);
+                        binding.editTestPaper.setVisibility(View.GONE);
+                    } else if (bundle != null && binding.paperType.getSelectedItemId() != 0 && studentModelList.size() > 0) {
                         if (PaperType_Name.equalsIgnoreCase("UploadDocument")) {
-                            linear_doc.setVisibility(View.VISIBLE);
-                            linear_link.setVisibility(View.GONE);
+                            binding.linearDoc.setVisibility(View.VISIBLE);
+                            binding.linearLink.setVisibility(View.GONE);
                         } else if (PaperType_Name.equalsIgnoreCase("UploadLink")) {
-                            linear_link.setVisibility(View.VISIBLE);
-                            linear_doc.setVisibility(View.GONE);
+                            binding.linearLink.setVisibility(View.VISIBLE);
+                            binding.linearDoc.setVisibility(View.GONE);
                         }
-                        linear_remarks.setVisibility(View.VISIBLE);
-                        linear_status.setVisibility(View.VISIBLE);
-                        save_test_paper.setVisibility(View.GONE);
-                        edit_test_paper.setVisibility(View.VISIBLE);
+                        binding.linearRemarks.setVisibility(View.VISIBLE);
+                        binding.linearStatus.setVisibility(View.VISIBLE);
+                        binding.saveTestPaper.setVisibility(View.GONE);
+                        binding.editTestPaper.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -1068,8 +1034,8 @@ public class test_schedule_fragment extends Fragment {
                     Uri uri = result.getData();
                     String Path = FileUtils.getReadablePathFromUri(requireContext(), uri);
                     instrumentFileDestination = new File(Path);
-                    upload_test_paper.setText("Attached");
-                    upload_test_paper.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.uploadTestPaper.setText("Attached");
+                    binding.uploadTestPaper.setTextColor(context.getResources().getColor(R.color.black));
                     String name = instrumentFileDestination.getName();
                     paper_ext = name.substring(name.lastIndexOf("."));
                     papername = instrumentFileDestination.getName();
@@ -1127,8 +1093,8 @@ public class test_schedule_fragment extends Fragment {
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     public void selectSubject() {
@@ -1146,8 +1112,8 @@ public class test_schedule_fragment extends Fragment {
     public void bindsub() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
-        subject.setOnItemSelectedListener(onItemSelectedListener8);
+        binding.subject.setAdapter(adapter);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
     public static String yesterday() {

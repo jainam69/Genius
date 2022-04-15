@@ -24,6 +24,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Adapter.MarksEnterAdapter;
 import com.example.genius.Adapter.MarksRegisterAdapter;
 import com.example.genius.Model.*;
+import com.example.genius.databinding.FragmentMarksEntryListfragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -46,12 +47,8 @@ import retrofit2.Response;
 
 public class marks_entry_Listfragment extends Fragment {
 
-    FloatingActionButton fab_contact;
-    SearchableSpinner branch, standard, batch_time, test_date, subject,course_name;
-    Button clear, search;
+    FragmentMarksEntryListfragmentBinding binding;
     Context context;
-    TextView no_content;
-    RecyclerView marks_entry_rv;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     List<String> standarditem = new ArrayList<>(), subjectitem = new ArrayList<>(), batchitem = new ArrayList<>(), batchid = new ArrayList<>(),dateitem = new ArrayList<>(),courseitem = new ArrayList<>();
@@ -69,27 +66,16 @@ public class marks_entry_Listfragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Marks Entry");
-        View root = inflater.inflate(R.layout.fragment_marks_entry__listfragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Marks Master");
+        binding = FragmentMarksEntryListfragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        marks_entry_rv = root.findViewById(R.id.marks_entry_rv);
-        standard = root.findViewById(R.id.standard);
-        batch_time = root.findViewById(R.id.batch_time);
-        subject = root.findViewById(R.id.subject);
-        test_date = root.findViewById(R.id.test_date);
-        branch = root.findViewById(R.id.branch);
-        clear = root.findViewById(R.id.clear);
-        search = root.findViewById(R.id.search);
-        no_content = root.findViewById(R.id.no_content);
-        course_name = root.findViewById(R.id.course_name);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 81 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -105,7 +91,7 @@ public class marks_entry_Listfragment extends Fragment {
 
         selectStandard();
 
-        fab_contact.setOnClickListener(new View.OnClickListener() {
+        binding.fabContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 marks_entry_fragment orderplace = new marks_entry_fragment();
@@ -117,30 +103,30 @@ public class marks_entry_Listfragment extends Fragment {
             }
         });
 
-        clear.setOnClickListener(new View.OnClickListener() {
+        binding.clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                branch.setSelection(0);
-                standard.setSelection(0);
-                batch_time.setSelection(0);
-                test_date.setSelection(0);
-                subject.setSelection(0);
+                binding.courseName.setSelection(0);
+                binding.standard.setSelection(0);
+                binding.batchTime.setSelection(0);
+                binding.testDate.setSelection(0);
+                binding.subject.setSelection(0);
             }
         });
 
-        search.setOnClickListener(new View.OnClickListener() {
+        binding.search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (course_name.getSelectedItemId() == 0){
+                    if (binding.courseName.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                    }else if (standard.getSelectedItemId() == 0)
+                    }else if (binding.standard.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select standard.", Toast.LENGTH_SHORT).show();
-                    else if (batch_time.getSelectedItemId() == 0)
+                    else if (binding.batchTime.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Batch Time.", Toast.LENGTH_SHORT).show();
-                    else if (test_date.getSelectedItemId() == 0)
+                    else if (binding.testDate.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Test Date.", Toast.LENGTH_SHORT).show();
-                    else if (subject.getSelectedItemId() == 0)
+                    else if (binding.subject.getSelectedItemId() == 0)
                         Toast.makeText(context, "Please Select Subject.", Toast.LENGTH_SHORT).show();
                     else {
                         progressBarHelper.showProgressDialog();
@@ -159,16 +145,16 @@ public class marks_entry_Listfragment extends Fragment {
                                     if (data.isCompleted()){
                                         List<MarksModel> list = data.getData();
                                         if (list != null && list.size() > 0){
-                                            no_content.setVisibility(View.GONE);
-                                            marks_entry_rv.setVisibility(View.VISIBLE);
+                                            binding.noContent.setVisibility(View.GONE);
+                                            binding.marksEntryRv.setVisibility(View.VISIBLE);
                                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                            marks_entry_rv.setLayoutManager(linearLayoutManager);
+                                            binding.marksEntryRv.setLayoutManager(linearLayoutManager);
                                             marksRegisterAdapter = new MarksRegisterAdapter(context, list);
                                             marksRegisterAdapter.notifyDataSetChanged();
-                                            marks_entry_rv.setAdapter(marksRegisterAdapter);
+                                            binding.marksEntryRv.setAdapter(marksRegisterAdapter);
                                         }else {
-                                            no_content.setVisibility(View.VISIBLE);
-                                            marks_entry_rv.setVisibility(View.GONE);
+                                            binding.noContent.setVisibility(View.VISIBLE);
+                                            binding.marksEntryRv.setVisibility(View.GONE);
                                         }
                                     }
                                     progressBarHelper.hideProgressDialog();
@@ -200,7 +186,7 @@ public class marks_entry_Listfragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse()
@@ -249,8 +235,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setAdapter(adapter);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -258,14 +244,14 @@ public class marks_entry_Listfragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.parseLong(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -288,7 +274,7 @@ public class marks_entry_Listfragment extends Fragment {
         }catch (Exception e){
 
         }
-        Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date);
+        Call<SubjectData> call = apiCalling.GetAllSubjectByTestDate(Subject_Date,Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
         call.enqueue(new Callback<SubjectData>() {
             @Override
             public void onResponse(Call<SubjectData> call, Response<SubjectData> response) {
@@ -332,8 +318,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindsubject() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
-        subject.setOnItemSelectedListener(onItemSelectedListener8);
+        binding.subject.setAdapter(adapter);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener8);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener8 =
@@ -342,7 +328,7 @@ public class marks_entry_Listfragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     SubjectName = subjectitem.get(position);
                     SubjectId = subjectid.get(position).toString();
-                    if (subject.getSelectedItem().equals("Select Subject")) {
+                    if (binding.subject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -402,8 +388,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindstandard() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener7 =
@@ -411,7 +397,7 @@ public class marks_entry_Listfragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     StandardId = Long.parseLong(standardid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -475,8 +461,8 @@ public class marks_entry_Listfragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, DATEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        test_date.setAdapter(adapter);
-        test_date.setOnItemSelectedListener(onItemSelectedListenerdate);
+        binding.testDate.setAdapter(adapter);
+        binding.testDate.setOnItemSelectedListener(onItemSelectedListenerdate);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListenerdate =
@@ -485,14 +471,14 @@ public class marks_entry_Listfragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TestDate = dateitem.get(position);
                     TestID = dateid.get(position).toString();
-                    if (test_date.getSelectedItem().equals("Test Date")) {
+                    if (binding.testDate.getSelectedItem().equals("Test Date")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (test_date.getSelectedItemId() != 0){
+                    if (binding.testDate.getSelectedItemId() != 0){
                         GetAllSubject();
                     }
                 }
@@ -522,9 +508,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindbatch_time() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BATCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        batch_time.setAdapter(adapter);
-        batch_time.setOnItemSelectedListener(onItemSelectedListener77);
-
+        binding.batchTime.setAdapter(adapter);
+        binding.batchTime.setOnItemSelectedListener(onItemSelectedListener77);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener77 =
@@ -533,7 +518,7 @@ public class marks_entry_Listfragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     BatchTime = batchitem.get(position);
                     BatchId = batchid.get(position);
-                    if (batch_time.getSelectedItem().equals("Batch Time")) {
+                    if (binding.batchTime.getSelectedItem().equals("Batch Time")) {
                         try {
                             ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                             ((TextView) parent.getChildAt(0)).setTextSize(13);
@@ -546,7 +531,7 @@ public class marks_entry_Listfragment extends Fragment {
                         } catch (Exception e) {
                         }
                     }
-                    if (batch_time.getSelectedItemId() != 0){
+                    if (binding.batchTime.getSelectedItemId() != 0){
                         GetTestDates();
                     }
                 }
@@ -571,8 +556,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindTestDate() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, DATEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        test_date.setAdapter(adapter);
-        test_date.setOnItemSelectedListener(onItemSelectedListener80);
+        binding.testDate.setAdapter(adapter);
+        binding.testDate.setOnItemSelectedListener(onItemSelectedListener80);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener80 =
@@ -602,8 +587,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindselectsubject() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subject.setAdapter(adapter);
-        subject.setOnItemSelectedListener(onItemSelectedListener90);
+        binding.subject.setAdapter(adapter);
+        binding.subject.setOnItemSelectedListener(onItemSelectedListener90);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener90 =
@@ -634,8 +619,8 @@ public class marks_entry_Listfragment extends Fragment {
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, STANDARDITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener7);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener7);
     }
 
 }

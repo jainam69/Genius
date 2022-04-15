@@ -89,8 +89,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/border">
 
@@ -138,8 +138,8 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="10dp"
                 android:orientation="horizontal"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:weightSum="2">
 
                 <RadioButton
@@ -387,7 +387,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="3dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/border">

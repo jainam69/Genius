@@ -52,6 +52,7 @@ import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentFacultyFragmentBinding;
 import com.example.genius.helper.FUtils;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
@@ -78,15 +79,12 @@ import retrofit2.Response;
 
 public class faculty_fragment extends Fragment {
 
+    FragmentFacultyFragmentBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     Bundle bundle;
-    SearchableSpinner sp_faculty,sp_course,sp_class,sp_subject;
-    TextView attachment;
-    EditText faculty_description;
-    Button save_faculty,edit_faculty;
     List<String> facultyitem = new ArrayList<>(), courseitem = new ArrayList<>(), classitem = new ArrayList<>(), subjectitem = new ArrayList<>();
     String[] FACULTYITEM,COURSEITEM,CLASSITEM,SUBJECTITEM;
     List<Integer> facultyid = new ArrayList<>(), courseid = new ArrayList<>(), classid = new ArrayList<>(), subjectid = new ArrayList<>();
@@ -97,7 +95,6 @@ public class faculty_fragment extends Fragment {
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     File instrumentFileDestination;
-    ImageView view_image;
     Bitmap bitmap;
     FacultyModel facultyModel;
     String OriginFileName,FilePath;
@@ -106,31 +103,22 @@ public class faculty_fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Faculty Master");
-        View root = inflater.inflate(R.layout.fragment_faculty_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Faculty Master Entry");
+        binding = FragmentFacultyFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        sp_faculty = root.findViewById(R.id.sp_faculty);
-        sp_course = root.findViewById(R.id.sp_course);
-        sp_class = root.findViewById(R.id.sp_class);
-        sp_subject = root.findViewById(R.id.sp_subject);
-        attachment = root.findViewById(R.id.attachment);
-        faculty_description = root.findViewById(R.id.faculty_description);
-        save_faculty = root.findViewById(R.id.save_faculty);
-        edit_faculty = root.findViewById(R.id.edit_faculty);
-        view_image = root.findViewById(R.id.view_image);
 
         bundle = getArguments();
         if (bundle != null)
         {
-            save_faculty.setVisibility(View.GONE);
-            edit_faculty.setVisibility(View.VISIBLE);
+            binding.saveFaculty.setVisibility(View.GONE);
+            binding.editFaculty.setVisibility(View.VISIBLE);
             facultyModel = new Gson().fromJson(bundle.getString("FACULTY_LIST"),FacultyModel.class);
-            attachment.setText("Attached");
-            view_image.setVisibility(View.VISIBLE);
-            Glide.with(context).load(facultyModel.getFilePath()).into(view_image);
-            faculty_description.setText(facultyModel.getDescripation());
+            binding.attachment.setText("Attached");
+            binding.viewImage.setVisibility(View.VISIBLE);
+            Glide.with(context).load(facultyModel.getFilePath()).into(binding.viewImage);
+            binding.facultyDescription.setText(facultyModel.getDescripation());
             FilePath = facultyModel.getFilePath().replace("https://mastermind.org.in","");
             OriginFileName = facultyModel.getFacultyContentFileName();
             uniq_id = facultyModel.getFacultyID();
@@ -148,7 +136,7 @@ public class faculty_fragment extends Fragment {
         selectClass();
         selectSubject();
 
-        attachment.setOnClickListener(new View.OnClickListener() {
+        binding.attachment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= 23) {
@@ -171,19 +159,19 @@ public class faculty_fragment extends Fragment {
             }
         });
 
-        save_faculty.setOnClickListener(new View.OnClickListener() {
+        binding.saveFaculty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)){
-                    if (sp_faculty.getSelectedItemId() == 0){
+                    if (binding.spFaculty.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select faculty.", Toast.LENGTH_SHORT).show();
-                    }else if (sp_course.getSelectedItemId() == 0){
+                    }else if (binding.spCourse.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select course.", Toast.LENGTH_SHORT).show();
-                    }else if (sp_class.getSelectedItemId() == 0){
-                        Toast.makeText(context, "Please select class name.", Toast.LENGTH_SHORT).show();
-                    }else if (sp_subject.getSelectedItemId() == 0){
+                    }else if (binding.spClass.getSelectedItemId() == 0){
+                        Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
+                    }else if (binding.spSubject.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select subject.", Toast.LENGTH_SHORT).show();
-                    }else if (attachment.getText().toString().isEmpty()){
+                    }else if (binding.attachment.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please upload faculty image.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
@@ -195,7 +183,7 @@ public class faculty_fragment extends Fragment {
                         TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         FacultyModel model = new FacultyModel(0,transactionModel,rowStatusModel,branch,staff,
-                                faculty_description.getText().toString(),subject,course,classmodel);
+                                binding.facultyDescription.getText().toString(),subject,course,classmodel);
                         String data = new Gson().toJson(model);
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                         MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
@@ -233,19 +221,19 @@ public class faculty_fragment extends Fragment {
             }
         });
 
-        edit_faculty.setOnClickListener(new View.OnClickListener() {
+        binding.editFaculty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)){
-                    if (sp_faculty.getSelectedItemId() == 0){
+                    if (binding.spFaculty.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select faculty.", Toast.LENGTH_SHORT).show();
-                    }else if (sp_course.getSelectedItemId() == 0){
+                    }else if (binding.spCourse.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select course.", Toast.LENGTH_SHORT).show();
-                    }else if (sp_class.getSelectedItemId() == 0){
-                        Toast.makeText(context, "Please select class name.", Toast.LENGTH_SHORT).show();
-                    }else if (sp_subject.getSelectedItemId() == 0){
+                    }else if (binding.spClass.getSelectedItemId() == 0){
+                        Toast.makeText(context, "Please select Standard.", Toast.LENGTH_SHORT).show();
+                    }else if (binding.spSubject.getSelectedItemId() == 0){
                         Toast.makeText(context, "Please select subject.", Toast.LENGTH_SHORT).show();
-                    }else if (attachment.getText().toString().isEmpty()){
+                    }else if (binding.attachment.getText().toString().isEmpty()){
                         Toast.makeText(context, "Please upload faculty image.", Toast.LENGTH_SHORT).show();
                     }else {
                         progressBarHelper.showProgressDialog();
@@ -259,14 +247,14 @@ public class faculty_fragment extends Fragment {
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
                         if (instrumentFileDestination != null){
                             FacultyModel model = new FacultyModel(uniq_id,transactionModel,rowStatusModel,branch,staff,
-                                    faculty_description.getText().toString(),subject,course,classmodel);
+                                    binding.facultyDescription.getText().toString(),subject,course,classmodel);
                             String data = new Gson().toJson(model);
                             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("", instrumentFileDestination.getName(), requestBody);
                             call = apiCalling.Faculty_Maintanance(data,true,uploadfile);
                         }else {
                             FacultyModel model = new FacultyModel(uniq_id,transactionModel,rowStatusModel,branch,staff,
-                                    faculty_description.getText().toString(),OriginFileName,FilePath,subject,course,classmodel);
+                                    binding.facultyDescription.getText().toString(),OriginFileName,FilePath,subject,course,classmodel);
                             String data = new Gson().toJson(model);
                             RequestBody attachmentEmpty = RequestBody.create(MediaType.parse("multipart/form-data"), "");
                             MultipartBody.Part uploadfile = MultipartBody.Part.createFormData("attachment", "", attachmentEmpty);
@@ -317,8 +305,7 @@ public class faculty_fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-
-        return root;
+        return binding.getRoot();
     }
 
     @Override
@@ -346,10 +333,10 @@ public class faculty_fragment extends Fragment {
                         InputStream imageStream;
                         imageStream = requireActivity().getContentResolver().openInputStream(image);
                         bitmap = BitmapFactory.decodeStream(imageStream);
-                        view_image.setVisibility(View.VISIBLE);
-                        view_image.setImageBitmap(bitmap);
-                        attachment.setText("Attached");
-                        attachment.setTextColor(context.getResources().getColor(R.color.black));
+                        binding.viewImage.setVisibility(View.VISIBLE);
+                        binding.viewImage.setImageBitmap(bitmap);
+                        binding.attachment.setText("Attached");
+                        binding.attachment.setTextColor(context.getResources().getColor(R.color.black));
                     }
                 } catch (Exception e) {
                     errored();
@@ -428,11 +415,11 @@ public class faculty_fragment extends Fragment {
     public void binduser() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, FACULTYITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_faculty.setAdapter(adapter);
+        binding.spFaculty.setAdapter(adapter);
         if (bundle != null){
-            selectSpinnerValue(sp_faculty,facultyModel.getStaff().getName());
+            selectSpinnerValue(binding.spFaculty,facultyModel.getStaff().getName());
         }
-        sp_faculty.setOnItemSelectedListener(UserItemListener);
+        binding.spFaculty.setOnItemSelectedListener(UserItemListener);
     }
 
     AdapterView.OnItemSelectedListener UserItemListener =
@@ -440,7 +427,7 @@ public class faculty_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     faculty_id = facultyid.get(position);
-                    if (sp_faculty.getSelectedItem().equals("Select Faculty")) {
+                    if (binding.spFaculty.getSelectedItem().equals("Select Faculty")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -500,11 +487,11 @@ public class faculty_fragment extends Fragment {
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_course.setAdapter(adapter);
+        binding.spCourse.setAdapter(adapter);
         if (bundle != null){
-            selectSpinnerValue(sp_course,facultyModel.getBranchCourse().getCourse().getCourseName());
+            selectSpinnerValue(binding.spCourse,facultyModel.getBranchCourse().getCourse().getCourseName());
         }
-        sp_course.setOnItemSelectedListener(CourseItemListener);
+        binding.spCourse.setOnItemSelectedListener(CourseItemListener);
     }
 
     AdapterView.OnItemSelectedListener CourseItemListener =
@@ -512,14 +499,14 @@ public class faculty_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     course_id = courseid.get(position);
-                    if (sp_course.getSelectedItem().equals("Select Course")) {
+                    if (binding.spCourse.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
-                    if (sp_course.getSelectedItemId() != 0){
+                    if (binding.spCourse.getSelectedItemId() != 0){
                         GetClassList();
                     }
                 }
@@ -576,11 +563,11 @@ public class faculty_fragment extends Fragment {
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, CLASSITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_class.setAdapter(adapter);
+        binding.spClass.setAdapter(adapter);
         if (bundle != null){
-            selectSpinnerValue(sp_class,facultyModel.getBranchClass().getClassModel().getClassName());
+            selectSpinnerValue(binding.spClass,facultyModel.getBranchClass().getClassModel().getClassName());
         }
-        sp_class.setOnItemSelectedListener(ClassItemListener);
+        binding.spClass.setOnItemSelectedListener(ClassItemListener);
     }
 
     AdapterView.OnItemSelectedListener ClassItemListener =
@@ -588,14 +575,14 @@ public class faculty_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     class_id = classid.get(position);
-                    if (sp_class.getSelectedItem().equals("Select Standard")) {
+                    if (binding.spClass.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     }
-                    if (sp_class.getSelectedItemId() != 0){
+                    if (binding.spClass.getSelectedItemId() != 0){
                         GetSubjectList();
                     }
                 }
@@ -651,11 +638,11 @@ public class faculty_fragment extends Fragment {
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, SUBJECTITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_subject.setAdapter(adapter);
+        binding.spSubject.setAdapter(adapter);
         if (bundle != null){
-            selectSpinnerValue(sp_subject,facultyModel.getBranchSubject().getSubject().getSubjectName());
+            selectSpinnerValue(binding.spSubject,facultyModel.getBranchSubject().getSubject().getSubjectName());
         }
-        sp_subject.setOnItemSelectedListener(SubjectItemListener);
+        binding.spSubject.setOnItemSelectedListener(SubjectItemListener);
     }
 
     AdapterView.OnItemSelectedListener SubjectItemListener =
@@ -663,7 +650,7 @@ public class faculty_fragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     subject_id = subjectid.get(position);
-                    if (sp_subject.getSelectedItem().equals("Select Subject")) {
+                    if (binding.spSubject.getSelectedItem().equals("Select Subject")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {

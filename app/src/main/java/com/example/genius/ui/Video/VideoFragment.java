@@ -47,6 +47,8 @@ import com.example.genius.Model.GalleryModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.FragmentVideoBinding;
+import com.example.genius.databinding.VideoMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.Activity.VideoViewActivity;
@@ -79,11 +81,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class VideoFragment extends Fragment {
 
-    TextView attachment_video, bid, video, transaction_id, unique_id;
-    ImageView imageView;
-    EditText video_description;
-    Button save_video, edit_video;
-    RecyclerView video_rv;
+    FragmentVideoBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -92,41 +90,27 @@ public class VideoFragment extends Fragment {
     public static final String ERROR = "error";
     File instrumentFileDestination;
     OnBackPressedCallback callback;
-    NestedScrollView video_scroll;
     String OriginFileName,FilePath;
     VideoMaster_Adapter videoMaster_adapter;
     UserModel userpermission;
-    LinearLayout linear_create_video;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Video");
-        View root = inflater.inflate(R.layout.fragment_video, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Video Master");
+        binding = FragmentVideoBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        attachment_video = root.findViewById(R.id.attachment_video);
-        imageView = root.findViewById(R.id.imageView);
-        video_description = root.findViewById(R.id.video_description);
-        save_video = root.findViewById(R.id.save_video);
-        edit_video = root.findViewById(R.id.edit_video);
-        video_rv = root.findViewById(R.id.video_rv);
-        bid = root.findViewById(R.id.bid);
-        video = root.findViewById(R.id.video);
-        video_scroll = root.findViewById(R.id.video_scroll);
-        transaction_id = root.findViewById(R.id.transaction_id);
-        unique_id = root.findViewById(R.id.unique_id);
-        linear_create_video = root.findViewById(R.id.linear_create_video);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 85 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_video.setVisibility(View.GONE);
+                binding.linearCreateVideo.setVisibility(View.GONE);
             }
         }
 
-        attachment_video.setOnClickListener(v -> requestPermissionForVideo());
+        binding.attachmentVideo.setOnClickListener(v -> requestPermissionForVideo());
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -135,16 +119,16 @@ public class VideoFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        save_video.setOnClickListener(v -> {
+        binding.saveVideo.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (attachment_video.getText().toString().equals("")) {
+                if (binding.attachmentVideo.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    GalleryModel model = new GalleryModel(0,branch,video_description.getText().toString(),
+                    GalleryModel model = new GalleryModel(0,branch,binding.videoDescription.getText().toString(),
                             rowStatusModel,transactionModel,2,FilePath,OriginFileName);
                     String data = new Gson().toJson(model);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination);
@@ -157,9 +141,9 @@ public class VideoFragment extends Fragment {
                                 GalleryModel.GallaryData1 data = response.body();
                                 if (data.isCompleted()) {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    video_description.setText("");
-                                    attachment_video.setText("");
-                                    imageView.setVisibility(View.GONE);
+                                    binding.videoDescription.setText("");
+                                    binding.attachmentVideo.setText("");
+                                    binding.imageView.setVisibility(View.GONE);
                                     GetVideoDetails();
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -180,17 +164,17 @@ public class VideoFragment extends Fragment {
             }
         });
 
-        edit_video.setOnClickListener(v -> {
+        binding.editVideo.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (attachment_video.getText().toString().equals("")) {
+                if (binding.attachmentVideo.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Attach Video.", Toast.LENGTH_SHORT).show();
                 }else {
                     progressBarHelper.showProgressDialog();
                     Call<GalleryModel.GallaryData1> call;
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(transaction_id.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                    TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionId.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
-                    GalleryModel model = new GalleryModel(Long.parseLong(unique_id.getText().toString()),branch,video_description.getText().toString(),
+                    GalleryModel model = new GalleryModel(Long.parseLong(binding.uniqueId.getText().toString()),branch,binding.videoDescription.getText().toString(),
                             rowStatusModel,transactionModel,2,FilePath,OriginFileName);
                     String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
@@ -209,11 +193,11 @@ public class VideoFragment extends Fragment {
                                 GalleryModel.GallaryData1 data = response.body();
                                 if (data.isCompleted()) {
                                     Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    save_video.setVisibility(View.VISIBLE);
-                                    edit_video.setVisibility(View.GONE);
-                                    video_description.setText("");
-                                    attachment_video.setText("");
-                                    imageView.setVisibility(View.GONE);
+                                    binding.saveVideo.setVisibility(View.VISIBLE);
+                                    binding.editVideo.setVisibility(View.GONE);
+                                    binding.videoDescription.setText("");
+                                    binding.attachmentVideo.setText("");
+                                    binding.imageView.setVisibility(View.GONE);
                                     GetVideoDetails();
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -246,7 +230,7 @@ public class VideoFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
 
@@ -288,34 +272,8 @@ public class VideoFragment extends Fragment {
                     String Path = FUtils.getPath(requireContext(), uri);
                     if (Path != null) {
                         instrumentFileDestination = new File(Path);
-                        attachment_video.setText("Attached");
-                        attachment_video.setTextColor(context.getResources().getColor(R.color.black));
-                        /*Uri selectedVideoUri = result.getData();
-                        String[] projection = {MediaStore.Video.Media.DATA, MediaStore.Video.Media.SIZE, MediaStore.Video.Media.DURATION};
-                        @SuppressLint("Recycle") Cursor cursor = context.getContentResolver().query(selectedVideoUri, projection, null, null, null);
-                        cursor.moveToFirst();
-                        InputStream inputStream = null;
-                        try {
-                            inputStream = context.getContentResolver().openInputStream(selectedVideoUri);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        int bufferSize = 1024;
-                        byte[] buffer = new byte[bufferSize];
-                        byteBuffer = new ByteArrayOutputStream();
-                        int len = 0;
-                        try {
-                            if (inputStream != null) {
-                                while ((len = inputStream.read(buffer)) != -1) {
-                                    byteBuffer.write(buffer, 0, len);
-                                }
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        System.out.println("converted!");
-                        videoData = Base64.encodeToString(byteBuffer.toByteArray(), Base64.DEFAULT);
-                        Log.d("VideoData**>  ", videoData);*/
+                        binding.attachmentVideo.setText("Attached");
+                        binding.attachmentVideo.setTextColor(context.getResources().getColor(R.color.black));
                     }
                 } catch (Exception e) {
                     errored();
@@ -341,11 +299,14 @@ public class VideoFragment extends Fragment {
                         List<GalleryModel> galleryModelList = galleryMaster_model.getData();
                         if (galleryModelList != null) {
                             if (galleryModelList.size() > 0) {
-                                video_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                                video_rv.setLayoutManager(new GridLayoutManager(context, 2));
+                                binding.text.setVisibility(View.VISIBLE);
+                                binding.videoRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                binding.videoRv.setLayoutManager(new GridLayoutManager(context, 2));
                                 videoMaster_adapter = new VideoMaster_Adapter(context, galleryModelList);
                                 videoMaster_adapter.notifyDataSetChanged();
-                                video_rv.setAdapter(videoMaster_adapter);
+                                binding.videoRv.setAdapter(videoMaster_adapter);
+                            }else {
+                                binding.text.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -383,7 +344,7 @@ public class VideoFragment extends Fragment {
         @NotNull
         @Override
         public VideoMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new VideoMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.video_master_deatil_list, parent, false));
+            return new ViewHolder(VideoMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @SuppressLint("SetTextI18n")
@@ -392,25 +353,25 @@ public class VideoFragment extends Fragment {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 85){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.video_edit.setVisibility(View.GONE);
+                        holder.binding.videoEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.video_delete.setVisibility(View.GONE);
+                        holder.binding.videoDelete.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                        holder.video_edit.setVisibility(View.GONE);
-                        holder.video_delete.setVisibility(View.GONE);
+                        holder.binding.videoEdit.setVisibility(View.GONE);
+                        holder.binding.videoDelete.setVisibility(View.GONE);
                     }
                 }
             }
-            holder.description.setText(galleryDetails.get(position).getRemarks());
-            holder.video_edit.setOnClickListener(v -> {
+            holder.binding.description.setText(galleryDetails.get(position).getRemarks());
+            holder.binding.videoEdit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Video?");
@@ -421,27 +382,27 @@ public class VideoFragment extends Fragment {
 
                 btn_edit_yes.setOnClickListener(v12 -> {
                     dialog.dismiss();
-                    save_video.setVisibility(View.GONE);
-                    edit_video.setVisibility(View.VISIBLE);
-                    attachment_video.setText("Attached");
-                    attachment_video.setTextColor(context.getResources().getColor(R.color.black));
-                    video_description.setText(galleryDetails.get(position).getRemarks());
+                    binding.saveVideo.setVisibility(View.GONE);
+                    binding.editVideo.setVisibility(View.VISIBLE);
+                    binding.attachmentVideo.setText("Attached");
+                    binding.attachmentVideo.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.videoDescription.setText(galleryDetails.get(position).getRemarks());
                     OriginFileName = galleryDetails.get(position).getFileName();
                     FilePath = galleryDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
-                    unique_id.setText("" + galleryDetails.get(position).getUniqueID());
-                    transaction_id.setText("" + galleryDetails.get(position).getTransaction().getTransactionId());
-                    video_scroll.fullScroll(View.FOCUS_UP);
-                    video_scroll.scrollTo(0, 0);
+                    binding.uniqueId.setText("" + galleryDetails.get(position).getUniqueID());
+                    binding.transactionId.setText("" + galleryDetails.get(position).getTransaction().getTransactionId());
+                    binding.videoScroll.fullScroll(View.FOCUS_UP);
+                    binding.videoScroll.scrollTo(0, 0);
                 });
                 dialog.show();
             });
-            holder.video_delete.setOnClickListener(v -> {
+            holder.binding.videoDelete.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -487,13 +448,13 @@ public class VideoFragment extends Fragment {
                 });
                 dialog.show();
             });
-            holder.video_view.setOnClickListener(v -> {
+            holder.binding.videoView.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Play Video?");
@@ -522,17 +483,11 @@ public class VideoFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView description;
-            ImageView video_view, video_edit, video_delete, video_image;
+            VideoMasterDeatilListBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                description = itemView.findViewById(R.id.description);
-                video_view = itemView.findViewById(R.id.video_view);
-                video_delete = itemView.findViewById(R.id.video_delete);
-                video_edit = itemView.findViewById(R.id.video_edit);
-                video_image = itemView.findViewById(R.id.video_image);
+            public ViewHolder(@NonNull VideoMasterDeatilListBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);

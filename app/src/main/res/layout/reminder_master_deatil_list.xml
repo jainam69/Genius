@@ -35,10 +35,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2"
                     android:paddingLeft="10dp"
-                    android:text="Task Date"
+                    android:text="Reminder Date"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/task_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -59,10 +60,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2"
                     android:paddingLeft="10dp"
-                    android:text="Task Time"
+                    android:text="Reminder Time"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/task_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -86,6 +88,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,7 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/ic_edit"
                         app:tint="@color/white" />
                 </LinearLayout>
@@ -137,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/ic_delete"
                         app:tint="@color/white" />
                 </LinearLayout>

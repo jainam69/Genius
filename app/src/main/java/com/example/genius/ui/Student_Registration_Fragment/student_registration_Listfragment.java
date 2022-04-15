@@ -28,6 +28,7 @@ import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.StudentData;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.StudentRegistrationListfragmentFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -49,40 +50,28 @@ import retrofit2.Response;
 
 public class student_registration_Listfragment extends Fragment {
 
-    FloatingActionButton fab_contact;
+    StudentRegistrationListfragmentFragmentBinding binding;
     Context context;
-    RecyclerView student_rv;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    EditText stu_name, con_no;
-    Button clear,active, inactive;
     OnBackPressedCallback callback;
     StudentMaster_Adapter studentMaster_adapter;
-    LinearLayout txt_nodata;
     UserModel userpermission;
     List<StudentModel> model;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Student Registration");
-        View root = inflater.inflate(R.layout.student_registration__listfragment_fragment, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Student Admission Form");
+        binding = StudentRegistrationListfragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        student_rv = root.findViewById(R.id.student_rv);
-        stu_name = root.findViewById(R.id.stu_name);
-        con_no = root.findViewById(R.id.con_no);
-        clear = root.findViewById(R.id.clear);
-        active = root.findViewById(R.id.active);
-        inactive = root.findViewById(R.id.inactive);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 8 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -93,22 +82,17 @@ public class student_registration_Listfragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        clear.setOnClickListener(v -> {
-            stu_name.setText("");
-            con_no.setText("");
-        });
-
-        inactive.setOnClickListener(v -> {
+        binding.inactive.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             GetAllInactiveStudent();
         });
 
-        active.setOnClickListener(v -> {
+        binding.active.setOnClickListener(v -> {
             progressBarHelper.showProgressDialog();
             GetAllActiveStudent();
         });
 
-        fab_contact.setOnClickListener(v -> {
+        binding.fabContact.setOnClickListener(v -> {
             student_registration_fragment orderplace = new student_registration_fragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -117,7 +101,7 @@ public class student_registration_Listfragment extends Fragment {
             fragmentTransaction.commit();
         });
 
-        stu_name.addTextChangedListener(new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -133,22 +117,6 @@ public class student_registration_Listfragment extends Fragment {
             }
         });
 
-        con_no.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                getMobileNo(s.toString());
-            }
-        });
-
         callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -161,7 +129,7 @@ public class student_registration_Listfragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllStudent() {
@@ -176,17 +144,17 @@ public class student_registration_Listfragment extends Fragment {
                         List<StudentModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                student_rv.setVisibility(View.VISIBLE);
-                                txt_nodata.setVisibility(View.GONE);
+                                binding.studentRv.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
                                 model = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                student_rv.setLayoutManager(linearLayoutManager);
+                                binding.studentRv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
                                 studentMaster_adapter.notifyDataSetChanged();
-                                student_rv.setAdapter(studentMaster_adapter);
+                                binding.studentRv.setAdapter(studentMaster_adapter);
                             }else {
-                                student_rv.setVisibility(View.GONE);
-                                txt_nodata.setVisibility(View.VISIBLE);
+                                binding.studentRv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
                             }
                         }
                     }
@@ -212,17 +180,17 @@ public class student_registration_Listfragment extends Fragment {
                         List<StudentModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                student_rv.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.studentRv.setVisibility(View.VISIBLE);
                                 model = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                student_rv.setLayoutManager(linearLayoutManager);
+                                binding.studentRv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
                                 studentMaster_adapter.notifyDataSetChanged();
-                                student_rv.setAdapter(studentMaster_adapter);
+                                binding.studentRv.setAdapter(studentMaster_adapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                student_rv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.studentRv.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -248,17 +216,17 @@ public class student_registration_Listfragment extends Fragment {
                         List<StudentModel> studentModelList = data.getData();
                         if (studentModelList != null) {
                             if (studentModelList.size() > 0) {
-                                txt_nodata.setVisibility(View.GONE);
-                                student_rv.setVisibility(View.VISIBLE);
+                                binding.txtNodata.setVisibility(View.GONE);
+                                binding.studentRv.setVisibility(View.VISIBLE);
                                 model = studentModelList;
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                student_rv.setLayoutManager(linearLayoutManager);
+                                binding.studentRv.setLayoutManager(linearLayoutManager);
                                 studentMaster_adapter = new StudentMaster_Adapter(context, studentModelList);
                                 studentMaster_adapter.notifyDataSetChanged();
-                                student_rv.setAdapter(studentMaster_adapter);
+                                binding.studentRv.setAdapter(studentMaster_adapter);
                             }else {
-                                txt_nodata.setVisibility(View.VISIBLE);
-                                student_rv.setVisibility(View.GONE);
+                                binding.txtNodata.setVisibility(View.VISIBLE);
+                                binding.studentRv.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -274,13 +242,14 @@ public class student_registration_Listfragment extends Fragment {
 
     private void getUserName(String text) {
         ArrayList<StudentModel> filteredList = new ArrayList<>();
-
         for (StudentModel item : model) {
-            if (item.getFirstName().toLowerCase().contains(text.toLowerCase())) {
+            if (item.getFirstName().toLowerCase().contains(text.toLowerCase()) || item.getLastName().toLowerCase().contains(text.toLowerCase()) ||
+            item.getBranchCourse().getCourse().getCourseName().toLowerCase().contains(text.toLowerCase()) ||
+            item.getBranchClass().classModel.getClassName().toLowerCase().contains(text.toLowerCase()) ||
+            item.getContactNo().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         if (filteredList.size() > 0) {
             studentMaster_adapter.filterList(filteredList);
         } else {
@@ -288,20 +257,4 @@ public class student_registration_Listfragment extends Fragment {
         }
     }
 
-    private void getMobileNo(String text) {
-        ArrayList<StudentModel> filteredList = new ArrayList<>();
-
-        for (StudentModel item : model) {
-            if (item.getContactNo().toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
-            }
-        }
-
-        if (filteredList.size() > 0) {
-            studentMaster_adapter.filterList(filteredList);
-        } else {
-            studentMaster_adapter.filterList(filteredList);
-        }
-
-    }
 }

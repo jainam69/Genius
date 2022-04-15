@@ -27,6 +27,7 @@ import com.example.genius.Adapter.StaffMaster_Adapter;
 import com.example.genius.Model.StaffData;
 import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.StaffEntryListfragmentFragmentBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -45,12 +46,8 @@ import retrofit2.Response;
 
 public class staff_entry_listfragment extends Fragment {
 
-    FloatingActionButton fab_contact;
+    StaffEntryListfragmentFragmentBinding binding;
     Context context;
-    RecyclerView staff_rv;
-    EditText user_name, mno;
-    TextView txt_nodata;
-    Button clear, search;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
@@ -61,24 +58,17 @@ public class staff_entry_listfragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("User List");
-        View root = inflater.inflate(R.layout.staff_entry_listfragment_fragment, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("User Master");
+        binding = StaffEntryListfragmentFragmentBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = root.findViewById(R.id.fab_contact);
-        staff_rv = root.findViewById(R.id.staff_rv);
-        user_name = root.findViewById(R.id.user_name);
-        mno = root.findViewById(R.id.mno);
-        clear = root.findViewById(R.id.clear);
-        search = root.findViewById(R.id.search);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 4 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -89,15 +79,7 @@ public class staff_entry_listfragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                user_name.setText("");
-                mno.setText("");
-            }
-        });
-
-        user_name.addTextChangedListener(new TextWatcher() {
+        binding.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -105,6 +87,7 @@ public class staff_entry_listfragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
@@ -113,26 +96,9 @@ public class staff_entry_listfragment extends Fragment {
             }
         });
 
-        mno.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                getMobileNo(s.toString());
-            }
-        });
-
-        fab_contact.setOnClickListener(new View.OnClickListener() {
+        binding.fabContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 staff_entry_fragment orderplace = new staff_entry_fragment();
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = ((FragmentManager) fragmentManager).beginTransaction();
@@ -154,7 +120,7 @@ public class staff_entry_listfragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllStaff() {
@@ -169,17 +135,17 @@ public class staff_entry_listfragment extends Fragment {
                             List<StaffModel> respose = staffData.getData();
                             if (respose != null){
                                 if (respose.size() > 0) {
-                                    txt_nodata.setVisibility(View.GONE);
-                                    staff_rv.setVisibility(View.VISIBLE);
                                     staffDetails2 = respose;
+                                    binding.txtNodata.setVisibility(View.GONE);
+                                    binding.staffRv.setVisibility(View.VISIBLE);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                                    staff_rv.setLayoutManager(linearLayoutManager);
+                                    binding.staffRv.setLayoutManager(linearLayoutManager);
                                     staffMaster_adapter = new StaffMaster_Adapter(context, respose);
                                     staffMaster_adapter.notifyDataSetChanged();
-                                    staff_rv.setAdapter(staffMaster_adapter);
+                                    binding.staffRv.setAdapter(staffMaster_adapter);
                                 }else {
-                                    staff_rv.setVisibility(View.GONE);
-                                    txt_nodata.setVisibility(View.VISIBLE);
+                                    binding.staffRv.setVisibility(View.GONE);
+                                    binding.txtNodata.setVisibility(View.VISIBLE);
                                 }
                             }
                         }
@@ -198,34 +164,16 @@ public class staff_entry_listfragment extends Fragment {
 
     private void getUserName(String text) {
         ArrayList<StaffModel> filteredList = new ArrayList<>();
-
         for (StaffModel item : staffDetails2) {
-            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase()) || item.getMobileNo().toLowerCase().contains(text.toLowerCase()) ||
+                 item.getEmailID().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
-
         if (filteredList.size() > 0) {
             staffMaster_adapter.filterList(filteredList);
         } else {
             staffMaster_adapter.filterList(filteredList);
         }
-    }
-
-    private void getMobileNo(String text) {
-        ArrayList<StaffModel> filteredList = new ArrayList<>();
-
-        for (StaffModel item : staffDetails2) {
-            if (item.getMobileNo().toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
-            }
-        }
-
-        if (filteredList.size() > 0) {
-            staffMaster_adapter.filterList(filteredList);
-        } else {
-            staffMaster_adapter.filterList(filteredList);
-        }
-
     }
 }

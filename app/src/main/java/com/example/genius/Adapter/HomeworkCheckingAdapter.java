@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.HomeworkModel;
+import com.example.genius.databinding.HomeworkMasterCheckListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
@@ -60,39 +62,39 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
     @NonNull
     @Override
     public HomeworkCheckingAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new HomeworkCheckingAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.homework_master_check_list, parent, false));
+        return new ViewHolder(HomeworkMasterCheckListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeworkCheckingAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HomeworkCheckingAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         String a = homeworkModels.get(position).getHomeworkDate().replace("T00:00:00", "");
         try {
             Date d = actualdate.parse(a);
             if (d != null) {
-                holder.submit_date.setText(displaydate.format(d));
+                holder.binding.submitDate.setText(displaydate.format(d));
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.course.setText(homeworkModels.get(position).getBranchCourse().getCourse().getCourseName());
-        holder.standard.setText(homeworkModels.get(position).getBranchClass().getClassModel().getClassName());
-        holder.student_name.setText(homeworkModels.get(position).getStudentInfo().getName());
+        holder.binding.course.setText(homeworkModels.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.binding.standard.setText(homeworkModels.get(position).getBranchClass().getClassModel().getClassName());
+        holder.binding.studentName.setText(homeworkModels.get(position).getStudentInfo().getName());
         int st = homeworkModels.get(position).getStatus();
         if (st == 2){
-            holder.status.setText("Pending");
+            holder.binding.status.setText("Pending");
         }else {
-            holder.status.setText("Done");
+            holder.binding.status.setText("Done");
         }
-        holder.remark.setText(homeworkModels.get(position).getRemarks());
-        holder.img_edit.setOnClickListener(new View.OnClickListener() {
+        holder.binding.remark.setText(homeworkModels.get(position).getRemarks());
+        holder.binding.imgEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Homework Checking?");
@@ -167,8 +169,8 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
                                             HomeworkModel.HomeworkDetailData data = response.body();
                                             if (data.isCompleted()){
                                                 Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                                holder.status.setText(pending_done);
-                                                holder.remark.setText(rm.getText().toString());
+                                                holder.binding.status.setText(pending_done);
+                                                holder.binding.remark.setText(rm.getText().toString());
                                                 if (pending_done.equals("Pending")){
                                                     homeworkModels.get(position).setStatus(2);
                                                 }else {
@@ -196,7 +198,7 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
                 dialog.show();
             }
         });
-        holder.img_download.setOnClickListener(new View.OnClickListener() {
+        holder.binding.imgDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressBarHelper.showProgressDialog();
@@ -250,21 +252,12 @@ public class HomeworkCheckingAdapter extends RecyclerView.Adapter<HomeworkChecki
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView submit_date,standard,student_name,status,remark,course;
-        ImageView img_edit,img_download;
+        HomeworkMasterCheckListBinding binding;
         RadioButton rb1;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            submit_date = itemView.findViewById(R.id.submit_date);
-            standard = itemView.findViewById(R.id.standard);
-            student_name = itemView.findViewById(R.id.student_name);
-            status = itemView.findViewById(R.id.status);
-            remark = itemView.findViewById(R.id.remark);
-            img_edit = itemView.findViewById(R.id.img_edit);
-            course = itemView.findViewById(R.id.course);
-            img_download = itemView.findViewById(R.id.img_download);
+        public ViewHolder(@NonNull HomeworkMasterCheckListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

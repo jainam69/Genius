@@ -27,6 +27,7 @@ import com.example.genius.Model.BranchCourseModel;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.RowBranchCourseListLineBinding;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
@@ -62,7 +63,7 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
     @NonNull
     @Override
     public BranchCourseList_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_branch_course_list_line, parent, false));
+        return new ViewHolder(RowBranchCourseListLineBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @SuppressLint("SetTextI18n")
@@ -72,26 +73,26 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
         {
             if (model.getPageInfo().getPageID() == 75){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.img_edit.setVisibility(View.GONE);
+                    holder.binding.imgEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.img_delete.setVisibility(View.GONE);
+                    holder.binding.imgDelete.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+                    holder.binding.linearActions.setVisibility(View.GONE);
                 }
             }
         }
-        holder.branch_name.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
-        holder.course_sublist_rv.setLayoutManager(new LinearLayoutManager(context));
-        holder.course_sublist_rv.setAdapter(new BranchCourseSubList_Adapter(context, branchCourceData.getData()));
-        holder.img_edit.setOnClickListener((View.OnClickListener) v -> {
+        holder.binding.branchName.setText(Preferences.getInstance(context).getString(Preferences.KEY_BRANCH_NAME));
+        holder.binding.courseSublistRv.setLayoutManager(new LinearLayoutManager(context));
+        holder.binding.courseSublistRv.setAdapter(new BranchCourseSubList_Adapter(context, branchCourceData.getData()));
+        holder.binding.imgEdit.setOnClickListener((View.OnClickListener) v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Edit Branch Course?");
@@ -114,13 +115,13 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
             });
             dialog.show();
         });
-        holder.img_delete.setOnClickListener(v -> {
+        holder.binding.imgDelete.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-            Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+            TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+            TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
             TextView title = dialogView.findViewById(R.id.title);
             ImageView image = dialogView.findViewById(R.id.image);
             image.setImageResource(R.drawable.delete);
@@ -170,19 +171,11 @@ public class BranchCourseList_Adapter extends RecyclerView.Adapter<BranchCourseL
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView branch_name;
-        ImageView img_edit, img_delete;
-        RecyclerView course_sublist_rv;
-        LinearLayout linear_actions;
+        RowBranchCourseListLineBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            branch_name = itemView.findViewById(R.id.branch_name);
-            course_sublist_rv = itemView.findViewById(R.id.course_sublist_rv);
-            img_edit = itemView.findViewById(R.id.img_edit);
-            img_delete = itemView.findViewById(R.id.img_delete);
-            linear_actions = itemView.findViewById(R.id.linear_actions);
+        public ViewHolder(@NonNull RowBranchCourseListLineBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
         }
     }

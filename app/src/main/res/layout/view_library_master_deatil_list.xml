@@ -76,7 +76,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:padding="5dp"
+                    android:padding="3dp"
                     android:src="@drawable/view"
                     app:tint="@color/white" />
             </LinearLayout>
@@ -97,7 +97,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:padding="5dp"
+                    android:padding="3dp"
                     android:src="@drawable/download"
                     app:tint="@color/white" />
             </LinearLayout>

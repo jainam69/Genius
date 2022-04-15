@@ -191,7 +191,7 @@ public interface ApiCalling {
     Call<CommonModel> RemoveLibrary(@Query("libraryID") long libraryID, @Query("lastupdatedby") String lastupdatedby);
 
     @GET(ApiConstant.GET_STUDENT_ATTENDANCE_LIST)
-    Call<StudentData> GetAllStudentForAttendance(@Query("branchID") long branchID, @Query("stdID") long stdID, @Query("courseid") long courseid,@Query("batchID") int batchID, @Query("attendanceDate") String attendanceDate);
+    Call<StudentData> GetAllStudentForAttendance(@Query("branchID") long branchID, @Query("stdID") long stdID, @Query("courseid") long courseid,@Query("batchID") int batchID, @Query("attendanceDate") String attendanceDate,@Query("attendanceRemarks") String attendanceRemarks);
 
     @POST(ApiConstant.ATTENDANCE_MAINTENANCE)
     Call<AttendanceModel.AttendanceData1> AttendanceMaintenance(@Body AttendanceModel attendanceModel);
@@ -335,13 +335,13 @@ public interface ApiCalling {
                                                  @Path("HasFile") Boolean HasFile, @Part MultipartBody.Part image);
 
     @GET(ApiConstant.GET_ALL_SUBJECT_BY_TESTDATE)
-    Call<SubjectData> GetAllSubjectByTestDate(@Query("TestDate") String TestDate);
+    Call<SubjectData> GetAllSubjectByTestDate(@Query("TestDate") String TestDate,@Query("BranchID") long BranchID);
 
     @POST(ApiConstant.GET_ALL_STUDENT_ACHIEVE_MARK)
     Call<MarksModel.MarksData> GetAllStudentAchieveMarks(@Query("Std") long Std, @Query("Branch") long Branch, @Query("Batch") long Batch, @Query("MarksID") long MarksID);
 
     @POST(ApiConstant.UPDATE_ACHIEVE_MARKS)
-    Call<MarksModel.MarksData> Update_Achieve_Marks(@Query("MarksID") long MarksID, @Query("StudentID") long StudentID, @Query("AchieveMarks") String AchieveMarks, @Query("CreatedId") long CreatedId, @Query("CreatedBy") String CreatedBy, @Query("TransactionId") long TransactionId);
+    Call<MarksModel.MarksData1> Update_Achieve_Marks(@Query("MarksID") long MarksID, @Query("StudentID") long StudentID, @Query("AchieveMarks") String AchieveMarks, @Query("CreatedId") long CreatedId, @Query("CreatedBy") String CreatedBy, @Query("TransactionId") long TransactionId);
 
     //Branch Course
     @POST(ApiConstant.BRANCH_COURCE_MAITENANCE)

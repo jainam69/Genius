@@ -54,6 +54,8 @@ import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.BannerMasterDeatilListBinding;
+import com.example.genius.databinding.FragmentBannerBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -89,18 +91,14 @@ import static android.app.Activity.RESULT_OK;
 @SuppressLint("SetTextI18n")
 public class Banner_Fragment extends Fragment {
 
+    FragmentBannerBinding binding;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
     Boolean selectfile = false;
     String BranchID, attach = "",OriginalFileName,FilePath;
-    SearchableSpinner branch;
-    CheckBox ch_admin, ch_teacher, ch_student;
-    TextView banner_image, text, id, image, transactionid, bannerid;
-    RecyclerView banner_rv;
     BannerMaster_Adapter bannerMaster_adapter;
-    Button save_banner, edit_banner;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -110,42 +108,24 @@ public class Banner_Fragment extends Fragment {
     Boolean isAdmin = false,isTeacher = false,isStudent = false;
     File instrumentFileDestination;
     OnBackPressedCallback callback;
-    NestedScrollView banner_scroll;
     UserModel userpermission;
-    LinearLayout linear_create_banner;
     List<BannerModel.BannerTypeEntity> listentity = new ArrayList<>();
-    BannerModel.BannerTypeEntity editmodel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Banner Master");
-        View root = inflater.inflate(R.layout.fragment_banner, container, false);
+        binding = FragmentBannerBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        branch = root.findViewById(R.id.branch);
-        ch_admin = root.findViewById(R.id.ch_admin);
-        ch_teacher = root.findViewById(R.id.ch_teacher);
-        ch_student = root.findViewById(R.id.ch_student);
-        banner_image = root.findViewById(R.id.banner_image);
-        save_banner = root.findViewById(R.id.save_banner);
-        edit_banner = root.findViewById(R.id.edit_banner);
-        banner_rv = root.findViewById(R.id.banner_rv);
-        text = root.findViewById(R.id.text);
-        id = root.findViewById(R.id.id);
-        image = root.findViewById(R.id.image);
-        transactionid = root.findViewById(R.id.transactionid);
-        bannerid = root.findViewById(R.id.bannerid);
-        banner_scroll = root.findViewById(R.id.banner_scroll);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        linear_create_banner = root.findViewById(R.id.linear_create_banner);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
              if (model.getPageInfo().getPageID() == 73 && !model.getPackageRightinfo().isCreatestatus()){
-                linear_create_banner.setVisibility(View.GONE);
+                binding.linearCreateBanner.setVisibility(View.GONE);
             }
         }
 
@@ -156,7 +136,7 @@ public class Banner_Fragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        ch_admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.chAdmin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -169,7 +149,7 @@ public class Banner_Fragment extends Fragment {
                 }
             }
         });
-        ch_teacher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.chTeacher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -182,7 +162,7 @@ public class Banner_Fragment extends Fragment {
                 }
             }
         });
-        ch_student.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.chStudent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -196,7 +176,7 @@ public class Banner_Fragment extends Fragment {
             }
         });
 
-        banner_image.setOnClickListener(new View.OnClickListener() {
+        binding.bannerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= 23) {
@@ -219,13 +199,13 @@ public class Banner_Fragment extends Fragment {
             }
         });
 
-        save_banner.setOnClickListener(new View.OnClickListener() {
+        binding.saveBanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (banner_image.getText().toString().equals("")) {
+                    if (binding.bannerImage.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Upload Banner Image.", Toast.LENGTH_SHORT).show();
-                    }else if (ch_admin.isChecked() || ch_student.isChecked() || ch_teacher.isChecked())
+                    }else if (binding.chAdmin.isChecked() || binding.chStudent.isChecked() || binding.chTeacher.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
                         BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -244,10 +224,10 @@ public class Banner_Fragment extends Fragment {
                                     BannerModel.BannerlData1 data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context,data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        banner_image.setText("");
-                                        ch_admin.setChecked(false);
-                                        ch_student.setChecked(false);
-                                        ch_teacher.setChecked(false);
+                                        binding.bannerImage.setText("");
+                                        binding.chAdmin.setChecked(false);
+                                        binding.chStudent.setChecked(false);
+                                        binding.chTeacher.setChecked(false);
                                         GetBannerDetails();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -271,20 +251,20 @@ public class Banner_Fragment extends Fragment {
             }
         });
 
-       edit_banner.setOnClickListener(new View.OnClickListener() {
+       binding.editBanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Function.isNetworkAvailable(context)) {
-                    if (banner_image.getText().toString().equals("")) {
+                    if (binding.bannerImage.getText().toString().equals("")) {
                         Toast.makeText(context, "Please Upload Banner Image.", Toast.LENGTH_SHORT).show();
-                    } else if (ch_admin.isChecked() || ch_teacher.isChecked() || ch_student.isChecked())
+                    } else if (binding.chAdmin.isChecked() || binding.chTeacher.isChecked() || binding.chStudent.isChecked())
                     {
                         progressBarHelper.showProgressDialog();
                         Call<BannerModel.BannerlData1> call;
                         BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
+                        TransactionModel transactionModel = new TransactionModel(Long.parseLong(binding.transactionid.getText().toString()), Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                         RowStatusModel rowStatusModel = new RowStatusModel(1);
-                        BannerModel model = new BannerModel(Long.parseLong(bannerid.getText().toString()),listentity,branch,transactionModel,rowStatusModel,
+                        BannerModel model = new BannerModel(Long.parseLong(binding.bannerid.getText().toString()),listentity,branch,transactionModel,rowStatusModel,
                                 FilePath,OriginalFileName);
                         String data = new Gson().toJson(model);
                         if (instrumentFileDestination != null) {
@@ -303,12 +283,12 @@ public class Banner_Fragment extends Fragment {
                                     BannerModel.BannerlData1 data = response.body();
                                     if (data.isCompleted()) {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                        banner_image.setText("");
-                                        ch_admin.setChecked(false);
-                                        ch_student.setChecked(false);
-                                        ch_teacher.setChecked(false);
-                                        save_banner.setVisibility(View.VISIBLE);
-                                        edit_banner.setVisibility(View.GONE);
+                                        binding.bannerImage.setText("");
+                                        binding.chAdmin.setChecked(false);
+                                        binding.chStudent.setChecked(false);
+                                        binding.chTeacher.setChecked(false);
+                                        binding.saveBanner.setVisibility(View.VISIBLE);
+                                        binding.editBanner.setVisibility(View.GONE);
                                         GetBannerDetails();
                                     }else {
                                         Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -344,7 +324,7 @@ public class Banner_Fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     @Override
@@ -374,8 +354,8 @@ public class Banner_Fragment extends Fragment {
                     InputStream imageStream;
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     bitmap = BitmapFactory.decodeStream(imageStream);
-                    banner_image.setText("Attached");
-                    banner_image.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.bannerImage.setText("Attached");
+                    binding.bannerImage.setTextColor(context.getResources().getColor(R.color.black));
                     attach = onGalleryImageResultInstrument(result);
                 } catch (Exception e) {
                     errored();
@@ -484,14 +464,14 @@ public class Banner_Fragment extends Fragment {
                         List<BannerModel> bannerDataList = bannerData.getData();
                         if (bannerDataList != null) {
                             if (bannerDataList.size() > 0) {
-                                text.setVisibility(View.VISIBLE);
-                                banner_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                                banner_rv.setLayoutManager(new GridLayoutManager(context, 2));
+                                binding.text.setVisibility(View.VISIBLE);
+                                binding.bannerRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                binding.bannerRv.setLayoutManager(new GridLayoutManager(context, 2));
                                 bannerMaster_adapter = new BannerMaster_Adapter(context, bannerDataList);
                                 bannerMaster_adapter.notifyDataSetChanged();
-                                banner_rv.setAdapter(bannerMaster_adapter);
+                                binding.bannerRv.setAdapter(bannerMaster_adapter);
                             }else {
-                                text.setVisibility(View.GONE);
+                                binding.text.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -523,7 +503,7 @@ public class Banner_Fragment extends Fragment {
         @NotNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.banner_master_deatil_list, parent, false));
+            return new ViewHolder(BannerMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @Override
@@ -532,13 +512,13 @@ public class Banner_Fragment extends Fragment {
             {
                 if (model.getPageInfo().getPageID() == 73){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.banner_edit.setVisibility(View.GONE);
+                        holder.binding.bannerEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.banner_delete.setVisibility(View.GONE);
+                        holder.binding.bannerDelete.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                        holder.linear_actions.setVisibility(View.GONE);
+                        holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
             }
@@ -551,15 +531,15 @@ public class Banner_Fragment extends Fragment {
                     a = model.getTypeText();
                 }
             }
-            holder.sub_type.setText("" + a);
-            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
-            holder.banner_edit.setOnClickListener(v -> {
+            holder.binding.subType.setText("" + a);
+            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.binding.bannerImage);
+            holder.binding.bannerEdit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Banner?");
@@ -571,26 +551,26 @@ public class Banner_Fragment extends Fragment {
                 btn_edit_yes.setOnClickListener(v12 -> {
                     dialog.dismiss();
                     final NestedScrollView scroll = ((Activity) context).findViewById(R.id.banner_scroll);
-                    save_banner.setVisibility(View.GONE);
-                    edit_banner.setVisibility(View.VISIBLE);
-                    transactionid.setText("" + bannerDetails.get(position).getTransaction().getTransactionId());
-                    bannerid.setText("" + bannerDetails.get(position).getBannerID());
-                    banner_image.setText("Attached");
-                    banner_image.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.saveBanner.setVisibility(View.GONE);
+                    binding.editBanner.setVisibility(View.VISIBLE);
+                    binding.transactionid.setText("" + bannerDetails.get(position).getTransaction().getTransactionId());
+                    binding.bannerid.setText("" + bannerDetails.get(position).getBannerID());
+                    binding.bannerImage.setText("Attached");
+                    binding.bannerImage.setTextColor(context.getResources().getColor(R.color.black));
                     OriginalFileName = bannerDetails.get(position).getFileName();
                     FilePath = bannerDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
                     List<BannerModel.BannerTypeEntity> notitypelist1 = bannerDetails.get(position).getBannerType();
                     for (BannerModel.BannerTypeEntity model : notitypelist1) {
                         if (model.getTypeID() == 1) {
-                            ch_admin.setChecked(true);
+                            binding.chAdmin.setChecked(true);
                             isAdmin = true;
                         }
                         if (model.getTypeID() == 2) {
-                            ch_teacher.setChecked(true);
+                            binding.chTeacher.setChecked(true);
                             isTeacher = true;
                         }
                         if (model.getTypeID() == 3) {
-                            ch_student.setChecked(true);
+                            binding.chStudent.setChecked(true);
                             isStudent = true;
                         }
                     }
@@ -600,13 +580,13 @@ public class Banner_Fragment extends Fragment {
                 });
                 dialog.show();
             });
-            holder.banner_delete.setOnClickListener(v -> {
+            holder.binding.bannerDelete.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -664,19 +644,11 @@ public class Banner_Fragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView banner_image, banner_edit, banner_delete;
-            TextView branch_name, sub_type;
-            LinearLayout linear_actions;
+            BannerMasterDeatilListBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                banner_image = itemView.findViewById(R.id.banner_image);
-                banner_edit = itemView.findViewById(R.id.banner_edit);
-                banner_delete = itemView.findViewById(R.id.banner_delete);
-                branch_name = itemView.findViewById(R.id.branch_name);
-                sub_type = itemView.findViewById(R.id.sub_type);
-                linear_actions = itemView.findViewById(R.id.linear_actions);
+            public ViewHolder(@NonNull BannerMasterDeatilListBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

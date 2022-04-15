@@ -59,6 +59,8 @@ import com.example.genius.Model.StandardData;
 import com.example.genius.Model.StandardModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.FeestructureDetailListBinding;
+import com.example.genius.databinding.FragmentFeeStructureBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.FUtils;
@@ -97,16 +99,12 @@ import static android.app.Activity.RESULT_OK;
 @SuppressLint("SetTextI18n")
 public class FeeStructureFragment extends Fragment {
 
+    FragmentFeeStructureBinding binding;
     public static final int REQUEST_CODE_PICK_GALLERY = 0x1;
     public static final String ERROR_MSG = "error_msg";
     public static final String ERROR = "error";
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0x3;
-    SearchableSpinner branch, standard,course_name;
-    TextView banner_image, text, id, image, transactionid, bannerid;
-    RecyclerView banner_rv;
     BannerMaster_Adapter bannerMaster_adapter;
-    Button save_banner, edit_banner;
-    LinearLayout linear_create_fee;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -119,10 +117,7 @@ public class FeeStructureFragment extends Fragment {
     Bitmap bitmap;
     File instrumentFileDestination;
     OnBackPressedCallback callback;
-    NestedScrollView banner_scroll;
     Long courseID = Long.valueOf(0), studentid = Long.valueOf(0);
-    EditText remarks;
-    ImageView imageView;
     long TransactionId, FeesId, FeesDetailId;
     String OriginFilename,stdname = "",FilePath;
     UserModel userpermission;
@@ -130,33 +125,16 @@ public class FeeStructureFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Fee Structure");
-        View root = inflater.inflate(R.layout.fragment_fee_structure, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Fee Structure Master");
+        binding = FragmentFeeStructureBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-
-        branch = root.findViewById(R.id.branch);
-        standard = root.findViewById(R.id.standard);
-        banner_image = root.findViewById(R.id.banner_image);
-        save_banner = root.findViewById(R.id.save_banner);
-        edit_banner = root.findViewById(R.id.edit_banner);
-        banner_rv = root.findViewById(R.id.banner_rv);
-        text = root.findViewById(R.id.text);
-        id = root.findViewById(R.id.id);
-        image = root.findViewById(R.id.image);
-        transactionid = root.findViewById(R.id.transactionid);
-        bannerid = root.findViewById(R.id.bannerid);
-        banner_scroll = root.findViewById(R.id.banner_scroll);
-        remarks = root.findViewById(R.id.remarks);
-        imageView = root.findViewById(R.id.imageView);
-        linear_create_fee = root.findViewById(R.id.linear_create_fee);
-        course_name = root.findViewById(R.id.course_name);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 15 && !model.getPackageRightinfo().isCreatestatus()){
-            linear_create_fee.setVisibility(View.GONE);
+                binding.linearCreateFee.setVisibility(View.GONE);
             }
         }
 
@@ -170,7 +148,7 @@ public class FeeStructureFragment extends Fragment {
 
         selectStandard();
 
-        banner_image.setOnClickListener(v -> {
+        binding.bannerImage.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -190,14 +168,14 @@ public class FeeStructureFragment extends Fragment {
             }
         });
 
-        save_banner.setOnClickListener(v -> {
+        binding.saveBanner.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (course_name.getSelectedItemId() == 0){
+                if (binding.courseName.getSelectedItemId() == 0){
                     Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                }else if (standard.getSelectedItemId() == 0) {
-                    Toast.makeText(context, "Please select standard", Toast.LENGTH_SHORT).show();
+                }else if (binding.standard.getSelectedItemId() == 0) {
+                    Toast.makeText(context, "Please select standard.", Toast.LENGTH_SHORT).show();
                 } else if (instrumentFileDestination == null) {
-                    Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Please upload image.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
                     BranchModel branch = new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
@@ -206,7 +184,7 @@ public class FeeStructureFragment extends Fragment {
                     TransactionModel transactionModel = new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, "");
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     FeeStructureModel model = new FeeStructureModel(0,0,OriginFilename,branch,
-                            transactionModel,rowStatusModel,FilePath,remarks.getText().toString(),course,classmodel);
+                            transactionModel,rowStatusModel,FilePath,binding.remarks.getText().toString(),course,classmodel);
                     String data = new Gson().toJson(model);
                     Call<FeeStructureSingleData> call = apiCalling.FeesMaintenance(data,true,  MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
                                     , RequestBody.create(MediaType.parse("multipart/form-data"), instrumentFileDestination)));
@@ -217,11 +195,11 @@ public class FeeStructureFragment extends Fragment {
                                 FeeStructureSingleData data = response.body();
                                 if (data.isCompleted()) {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
-                                    course_name.setSelection(0);
-                                    standard.setSelection(0);
-                                    remarks.setText("");
-                                    banner_image.setText("");
-                                    imageView.setVisibility(View.GONE);
+                                    binding.courseName.setSelection(0);
+                                    binding.standard.setSelection(0);
+                                    binding.remarks.setText("");
+                                    binding.bannerImage.setText("");
+                                    binding.imageView.setVisibility(View.GONE);
                                     GetBannerDetails();
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -242,14 +220,14 @@ public class FeeStructureFragment extends Fragment {
             }
         });
 
-        edit_banner.setOnClickListener(v -> {
+        binding.editBanner.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (course_name.getSelectedItemId() == 0){
+                if (binding.courseName.getSelectedItemId() == 0){
                     Toast.makeText(context, "Please select Course.", Toast.LENGTH_SHORT).show();
-                }else if (standard.getSelectedItemId() == 0) {
-                    Toast.makeText(context, "Please select standard", Toast.LENGTH_SHORT).show();
-                } else if (banner_image.getText().toString().isEmpty()) {
-                    Toast.makeText(context, "Please upload image", Toast.LENGTH_SHORT).show();
+                }else if (binding.standard.getSelectedItemId() == 0) {
+                    Toast.makeText(context, "Please select standard.", Toast.LENGTH_SHORT).show();
+                } else if (binding.bannerImage.getText().toString().isEmpty()) {
+                    Toast.makeText(context, "Please upload image.", Toast.LENGTH_SHORT).show();
                 }else {
                     progressBarHelper.showProgressDialog();
                     Call<FeeStructureSingleData> call;
@@ -259,7 +237,7 @@ public class FeeStructureFragment extends Fragment {
                     TransactionModel transactionModel = new TransactionModel(TransactionId, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0);
                     RowStatusModel rowStatusModel = new RowStatusModel(1);
                     FeeStructureModel model = new FeeStructureModel(FeesId,FeesDetailId,OriginFilename,branch,
-                            transactionModel,rowStatusModel,FilePath,remarks.getText().toString(),course,classmodel);
+                            transactionModel,rowStatusModel,FilePath,binding.remarks.getText().toString(),course,classmodel);
                     String data = new Gson().toJson(model);
                     if (instrumentFileDestination != null) {
                         call = apiCalling.FeesMaintenance(data,true, MultipartBody.Part.createFormData("", instrumentFileDestination.getName()
@@ -275,12 +253,14 @@ public class FeeStructureFragment extends Fragment {
                                 FeeStructureSingleData data = response.body();
                                 if (data.isCompleted()) {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                                    binding.saveBanner.setVisibility(View.VISIBLE);
+                                    binding.editBanner.setVisibility(View.GONE);
                                     stdname = "";
-                                    course_name.setSelection(0);
-                                    standard.setSelection(0);
-                                    remarks.setText("");
-                                    banner_image.setText("");
-                                    imageView.setVisibility(View.GONE);
+                                    binding.courseName.setSelection(0);
+                                    binding.standard.setSelection(0);
+                                    binding.remarks.setText("");
+                                    binding.bannerImage.setText("");
+                                    binding.imageView.setVisibility(View.GONE);
                                     GetBannerDetails();
                                 }else {
                                     Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
@@ -313,7 +293,7 @@ public class FeeStructureFragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAllCourse()
@@ -362,8 +342,8 @@ public class FeeStructureFragment extends Fragment {
     public void bindcourse() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, COURSEITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        course_name.setAdapter(adapter);
-        course_name.setOnItemSelectedListener(selectcourse);
+        binding.courseName.setAdapter(adapter);
+        binding.courseName.setOnItemSelectedListener(selectcourse);
     }
 
     AdapterView.OnItemSelectedListener selectcourse =
@@ -371,14 +351,14 @@ public class FeeStructureFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     courseID = Long.valueOf(courseid.get(position).toString());
-                    if (course_name.getSelectedItem().equals("Select Course")) {
+                    if (binding.courseName.getSelectedItem().equals("Select Course")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
                         ((TextView) parent.getChildAt(0)).setTextSize(14);
                     }
-                    if (course_name.getSelectedItemId() != 0){
+                    if (binding.courseName.getSelectedItemId() != 0){
                         GetAllStandard(courseID);
                     }
                 }
@@ -432,11 +412,11 @@ public class FeeStructureFragment extends Fragment {
     public void bindbranch() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
+        binding.standard.setAdapter(adapter);
         if (stdname != "") {
-            selectSpinnerValue(standard,stdname);
+            selectSpinnerValue(binding.standard,stdname);
         }
-        standard.setOnItemSelectedListener(onItemSelectedListener6);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener6);
     }
 
     AdapterView.OnItemSelectedListener onItemSelectedListener6 =
@@ -444,7 +424,7 @@ public class FeeStructureFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     studentid = Long.valueOf(branchid.get(position).toString());
-                    if (standard.getSelectedItem().equals("Select Standard")) {
+                    if (binding.standard.getSelectedItem().equals("Select Standard")) {
                         ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                         ((TextView) parent.getChildAt(0)).setTextSize(13);
                     } else {
@@ -484,10 +464,10 @@ public class FeeStructureFragment extends Fragment {
                     InputStream imageStream;
                     imageStream = requireActivity().getContentResolver().openInputStream(image);
                     bitmap = BitmapFactory.decodeStream(imageStream);
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(bitmap);
-                    banner_image.setText("Attached");
-                    banner_image.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.imageView.setVisibility(View.VISIBLE);
+                    binding.imageView.setImageBitmap(bitmap);
+                    binding.bannerImage.setText("Attached");
+                    binding.bannerImage.setTextColor(context.getResources().getColor(R.color.black));
                 } catch (Exception e) {
                     errored();
                 }
@@ -596,12 +576,12 @@ public class FeeStructureFragment extends Fragment {
                         bannerDataList = bannerData.getData();
                         if (bannerDataList != null) {
                             if (bannerDataList.size() > 0) {
-                                text.setVisibility(View.VISIBLE);
-                                banner_rv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                                banner_rv.setLayoutManager(new GridLayoutManager(context, 1));
+                                binding.text.setVisibility(View.VISIBLE);
+                                binding.bannerRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                binding.bannerRv.setLayoutManager(new GridLayoutManager(context, 1));
                                 bannerMaster_adapter = new BannerMaster_Adapter(context, bannerDataList);
                                 bannerMaster_adapter.notifyDataSetChanged();
-                                banner_rv.setAdapter(bannerMaster_adapter);
+                                binding.bannerRv.setAdapter(bannerMaster_adapter);
                             }
                         }
                     }
@@ -632,8 +612,8 @@ public class FeeStructureFragment extends Fragment {
     public void bindstd() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, BRANCHITEM);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        standard.setAdapter(adapter);
-        standard.setOnItemSelectedListener(onItemSelectedListener6);
+        binding.standard.setAdapter(adapter);
+        binding.standard.setOnItemSelectedListener(onItemSelectedListener6);
     }
 
     public class BannerMaster_Adapter extends RecyclerView.Adapter<BannerMaster_Adapter.ViewHolder> {
@@ -652,7 +632,7 @@ public class FeeStructureFragment extends Fragment {
         @NotNull
         @Override
         public BannerMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new BannerMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feestructure_detail_list, parent, false));
+            return new ViewHolder(FeestructureDetailListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
         }
 
         @Override
@@ -660,27 +640,27 @@ public class FeeStructureFragment extends Fragment {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 15){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.banner_edit.setVisibility(View.GONE);
+                        holder.binding.bannerEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.banner_delete.setVisibility(View.GONE);
+                        holder.binding.bannerDelete.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                        holder.linear_actions.setVisibility(View.GONE);
+                        holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
             }
-            holder.remark.setText(bannerDetails.get(position).getRemark());
-            holder.course.setText(bannerDetails.get(position).getBranchCourse().getCourse().getCourseName());
-            holder.standard.setText(bannerDetails.get(position).getBranchClass().getClassModel().getClassName());
-            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.banner_image);
-            holder.banner_edit.setOnClickListener(v -> {
+            holder.binding.remark.setText(bannerDetails.get(position).getRemark());
+            holder.binding.course.setText(bannerDetails.get(position).getBranchCourse().getCourse().getCourseName());
+            holder.binding.standard.setText(bannerDetails.get(position).getBranchClass().getClassModel().getClassName());
+            Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(holder.binding.bannerImage);
+            holder.binding.bannerEdit.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to edit fee structure?");
@@ -692,10 +672,10 @@ public class FeeStructureFragment extends Fragment {
                 btn_edit_yes.setOnClickListener(v12 -> {
                     dialog.dismiss();
                     final NestedScrollView scroll = ((Activity) context).findViewById(R.id.banner_scroll);
-                    save_banner.setVisibility(View.GONE);
-                    edit_banner.setVisibility(View.VISIBLE);
-                    banner_image.setText("Attached");
-                    banner_image.setTextColor(context.getResources().getColor(R.color.black));
+                    binding.saveBanner.setVisibility(View.GONE);
+                    binding.editBanner.setVisibility(View.VISIBLE);
+                    binding.bannerImage.setText("Attached");
+                    binding.bannerImage.setTextColor(context.getResources().getColor(R.color.black));
                     TransactionId = bannerDetails.get(position).getTransaction().getTransactionId();
                     OriginFilename = bannerDetails.get(position).getFileName();
                     FilePath = bannerDetails.get(position).getFilePath().replace("https://mastermind.org.in","");
@@ -704,22 +684,22 @@ public class FeeStructureFragment extends Fragment {
                     studentid = bannerDetails.get(position).getBranchClass().getClass_dtl_id();
                     courseID = bannerDetails.get(position).getBranchCourse().getCourse_dtl_id();
                     stdname= bannerDetails.get(position).getBranchClass().getClassModel().getClassName();
-                    selectSpinnerValue(course_name, bannerDetails.get(position).getBranchCourse().getCourse().getCourseName());
-                    remarks.setText(bannerDetails.get(position).getRemark());
-                    imageView.setVisibility(View.VISIBLE);
-                    Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(imageView);
+                    selectSpinnerValue(binding.courseName, bannerDetails.get(position).getBranchCourse().getCourse().getCourseName());
+                    binding.remarks.setText(bannerDetails.get(position).getRemark());
+                    binding.imageView.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(bannerDetails.get(position).getFilePath()).into(binding.imageView);
                     scroll.scrollTo(0, 0);
                     scroll.fullScroll(View.FOCUS_UP);
                 });
                 dialog.show();
             });
-            holder.banner_delete.setOnClickListener(v -> {
+            holder.binding.bannerDelete.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                 TextView title = dialogView.findViewById(R.id.title);
                 ImageView image = dialogView.findViewById(R.id.image);
                 image.setImageResource(R.drawable.delete);
@@ -770,23 +750,14 @@ public class FeeStructureFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView banner_image, banner_edit, banner_delete;
-            TextView standard, remark,course;
-            LinearLayout linear_actions;
+            FeestructureDetailListBinding binding;
 
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                banner_image = itemView.findViewById(R.id.banner_image);
-                banner_edit = itemView.findViewById(R.id.banner_edit);
-                banner_delete = itemView.findViewById(R.id.banner_delete);
+            public ViewHolder(@NonNull FeestructureDetailListBinding itemView) {
+                super(itemView.getRoot());
+                binding = itemView;
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
                 userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
-                standard = itemView.findViewById(R.id.standard);
-                remark = itemView.findViewById(R.id.remark);
-                course = itemView.findViewById(R.id.course);
-                linear_actions = itemView.findViewById(R.id.linear_actions);
             }
         }
     }

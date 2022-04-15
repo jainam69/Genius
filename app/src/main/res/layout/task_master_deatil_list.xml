@@ -38,6 +38,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/task_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,6 +62,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/staff_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,6 +86,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textColor="@color/black"
                     android:id="@+id/task_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -138,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/ic_edit"
                         app:tint="@color/white" />
                 </LinearLayout>
@@ -158,12 +161,13 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/ic_delete"
                         app:tint="@color/white" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linear_download"
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:layout_marginRight="10dp"
@@ -178,7 +182,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:padding="5dp"
+                        android:padding="3dp"
                         android:src="@drawable/download"
                         app:tint="@color/white" />
                 </LinearLayout>

@@ -182,7 +182,7 @@
         android:layout_gravity="end"
         android:layout_marginRight="30dp"
         android:layout_marginTop="15dp"
-        android:text="Edit"
+        android:text="Update"
         android:textColor="@color/white"
         android:textSize="14dp"
         android:textStyle="bold"/>

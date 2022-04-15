@@ -25,6 +25,7 @@ import com.example.genius.Model.HomeworkData;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentBranchCourceListBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -46,34 +47,28 @@ import retrofit2.Response;
 
 public class BranchCourseListFragment extends Fragment {
 
-    View view;
-    FloatingActionButton fab_contact;
-    TextView txt_nodata;
+    FragmentBranchCourceListBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    RecyclerView course_list_rv;
     BranchCourseList_Adapter branchCourseListFragment;
     UserModel userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Course List");
-        view = inflater.inflate(R.layout.fragment_branch_cource_list, container, false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle("Course Master");
+        binding = FragmentBranchCourceListBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        fab_contact = view.findViewById(R.id.fab_contact);
-        course_list_rv = view.findViewById(R.id.course_list_rv);
-        txt_nodata = view.findViewById(R.id.txt_nodata);
         userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
 
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 75 && !model.getPackageRightinfo().isCreatestatus()){
-                fab_contact.setVisibility(View.GONE);
+                binding.fabContact.setVisibility(View.GONE);
             }
         }
 
@@ -83,7 +78,7 @@ public class BranchCourseListFragment extends Fragment {
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
         }
 
-        fab_contact.setOnClickListener(v -> {
+        binding.fabContact.setOnClickListener(v -> {
             BranchCourseFragment orderplace = new BranchCourseFragment();
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = Objects.requireNonNull(fragmentManager).beginTransaction();
@@ -104,8 +99,7 @@ public class BranchCourseListFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-
-        return view;
+        return binding.getRoot();
     }
 
     public void GetAllCource() {
@@ -119,16 +113,16 @@ public class BranchCourseListFragment extends Fragment {
                     if (data != null && data.isCompleted()) {
                         List<BranchCourseModel.BranchCourceData> list = data.getData();
                         if (list != null && list.size() > 0) {
-                            txt_nodata.setVisibility(View.GONE);
-                            course_list_rv.setVisibility(View.VISIBLE);
+                            binding.txtNodata.setVisibility(View.GONE);
+                            binding.courseListRv.setVisibility(View.VISIBLE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            course_list_rv.setLayoutManager(linearLayoutManager);
+                            binding.courseListRv.setLayoutManager(linearLayoutManager);
                             branchCourseListFragment = new BranchCourseList_Adapter(context, data);
                             branchCourseListFragment.notifyDataSetChanged();
-                            course_list_rv.setAdapter(branchCourseListFragment);
+                            binding.courseListRv.setAdapter(branchCourseListFragment);
                         }else {
-                            txt_nodata.setVisibility(View.VISIBLE);
-                            course_list_rv.setVisibility(View.GONE);
+                            binding.txtNodata.setVisibility(View.VISIBLE);
+                            binding.courseListRv.setVisibility(View.GONE);
                         }
                     }
                     progressBarHelper.hideProgressDialog();

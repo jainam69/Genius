@@ -1,5 +1,6 @@
 package com.example.genius.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.StaffModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.StaffEntryDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.MyApplication;
@@ -51,44 +53,44 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
     @Override
     public StaffMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new StaffMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.staff_entry_deatil_list, parent, false));
+        return new ViewHolder(StaffEntryDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StaffMaster_Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StaffMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission())
         {
             if (model.getPageInfo().getPageID() == 4){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.staff_edit.setVisibility(View.GONE);
+                    holder.binding.staffEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.staff_delete.setVisibility(View.GONE);
+                    holder.binding.staffDelete.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
-                    holder.linear_actions.setVisibility(View.GONE);
+                    holder.binding.linearActions.setVisibility(View.GONE);
                 }
             }
         }
         if (staffDetails.get(position).getRowStatus().getRowStatusId()==1){
-            holder.staff_name.setText(staffDetails.get(position).getName());
-            holder.mobile_no.setText(staffDetails.get(position).getMobileNo());
-            holder.email.setText(staffDetails.get(position).getEmailID());
+            holder.binding.staffName.setText(staffDetails.get(position).getName());
+            holder.binding.mobileNo.setText(staffDetails.get(position).getMobileNo());
+            holder.binding.email.setText(staffDetails.get(position).getEmailID());
             String grnd = staffDetails.get(position).getGender();
             if (grnd.equals("1")){
-                holder.gender.setText("Male");
+                holder.binding.gender.setText("Male");
             }else {
-                holder.gender.setText("Female");
+                holder.binding.gender.setText("Female");
             }
-            holder.staff_edit.setOnClickListener(new View.OnClickListener() {
+            holder.binding.staffEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                    Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                    TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                    TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                     ImageView image = dialogView.findViewById(R.id.image);
                     TextView title = dialogView.findViewById(R.id.title);
                     title.setText("Are you sure that you want to Edit User?");
@@ -127,6 +129,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                             bundle.putLong("Branch_ID", staffDetails.get(position).getBranchInfo().getBranchID());
                             bundle.putLong("USER_ID",staffDetails.get(position).getUserID());
                             bundle.putString("USER_PASSWORD",staffDetails.get(position).getUser_Password());
+                            bundle.putString("USER_NAME",staffDetails.get(position).getUserNameNew());
                             bundle.putLong("TransactionId",staffDetails.get(position).getTransaction().getTransactionId());
                             orderplace.setArguments(bundle);
                             FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
@@ -139,15 +142,15 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
                     dialog.show();
                 }
             });
-            holder.staff_delete.setOnClickListener(new View.OnClickListener() {
+            holder.binding.staffDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                     View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
                     builder.setView(dialogView);
                     builder.setCancelable(true);
-                    Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-                    Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+                    TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+                    TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
                     TextView title = dialogView.findViewById(R.id.title);
                     ImageView image = dialogView.findViewById(R.id.image);
                     image.setImageResource(R.drawable.delete);
@@ -212,22 +215,11 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView staff_name, mobile_no, email, user_type, status,gender;
-        ImageView staff_edit, staff_delete;
-        LinearLayout linear_actions;
+        StaffEntryDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            staff_name = itemView.findViewById(R.id.staff_name);
-            mobile_no = itemView.findViewById(R.id.mobile_no);
-            email = itemView.findViewById(R.id.email);
-            user_type = itemView.findViewById(R.id.user_type);
-            status = itemView.findViewById(R.id.status);
-            staff_edit = itemView.findViewById(R.id.staff_edit);
-            staff_delete = itemView.findViewById(R.id.staff_delete);
-            gender = itemView.findViewById(R.id.gender);
-            linear_actions = itemView.findViewById(R.id.linear_actions);
+        public ViewHolder(@NonNull StaffEntryDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

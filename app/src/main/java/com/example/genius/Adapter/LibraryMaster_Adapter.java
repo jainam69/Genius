@@ -35,6 +35,7 @@ import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.LibraryModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.LibraryMasterDeatilListBinding;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
@@ -71,74 +72,74 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     @NotNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.library_master_deatil_list, parent, false));
+        return new ViewHolder(LibraryMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        holder.doc_category.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
-        holder.doc_desc.setText(libraryDetails.get(position).getDescription());
+        holder.binding.docCategory.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
+        holder.binding.docDesc.setText(libraryDetails.get(position).getDescription());
         if (libraryDetails.get(position).getLibrary_Type() == 1) {
             for (UserModel.UserPermission model : userpermission.getPermission()){
                 if (model.getPageInfo().getPageID() == 30){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.library_edit.setVisibility(View.GONE);
+                        holder.binding.libraryEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.library_delete.setVisibility(View.GONE);
+                        holder.binding.libraryDelete.setVisibility(View.GONE);
                     }
                 }
             }
-            holder.library_video_link.setVisibility(View.VISIBLE);
-            holder.image.setVisibility(View.GONE);
-            holder.library_download.setVisibility(View.GONE);
-            holder.library_video_link.setText(libraryDetails.get(position).getVideoLink());
+            holder.binding.libraryVideoLink.setVisibility(View.VISIBLE);
+            holder.binding.image.setVisibility(View.GONE);
+            holder.binding.libraryDownload.setVisibility(View.GONE);
+            holder.binding.libraryVideoLink.setText(libraryDetails.get(position).getVideoLink());
         } else {
             for (UserModel.UserPermission model : userpermission.getPermission())
             {
                 if (model.getPageInfo().getPageID() == 78){
                     if (!model.getPackageRightinfo().isCreatestatus()){
-                        holder.library_edit.setVisibility(View.GONE);
+                        holder.binding.libraryEdit.setVisibility(View.GONE);
                     }
                     if (!model.getPackageRightinfo().isDeletestatus()){
-                        holder.library_delete.setVisibility(View.GONE);
+                        holder.binding.libraryDelete.setVisibility(View.GONE);
                     }
                 }
             }
-            ViewGroup.LayoutParams params = holder.linear_video.getLayoutParams();
+            ViewGroup.LayoutParams params = holder.binding.linearVideo.getLayoutParams();
             params.height = 0;
             params.width = 0;
-            holder.linear_video.setLayoutParams(params);
-            holder.image.setVisibility(View.VISIBLE);
-            holder.library_download.setVisibility(View.VISIBLE);
-            Glide.with(context).load(libraryDetails.get(position).getThumbnailFilePath()).into(holder.image);
+            holder.binding.linearVideo.setLayoutParams(params);
+            holder.binding.image.setVisibility(View.VISIBLE);
+            holder.binding.libraryDownload.setVisibility(View.VISIBLE);
+            Glide.with(context).load(libraryDetails.get(position).getThumbnailFilePath()).into(holder.binding.image);
         }
         standard = "";
         Course = "";
         if (libraryDetails.get(position).getList().size() == 0) {
-            ViewGroup.LayoutParams params = holder.linear_standard.getLayoutParams();
+            ViewGroup.LayoutParams params = holder.binding.linearStandard.getLayoutParams();
             params.height = 0;
             params.width = 0;
-            holder.linear_standard.setLayoutParams(params);
-            holder.linear_course.setLayoutParams(params);
+            holder.binding.linearStandard.setLayoutParams(params);
+            holder.binding.linearCourse.setLayoutParams(params);
         } else {
-            holder.linear_standard.setVisibility(View.VISIBLE);
-            holder.linear_course.setVisibility(View.VISIBLE);
+            holder.binding.linearStandard.setVisibility(View.VISIBLE);
+            holder.binding.linearCourse.setVisibility(View.VISIBLE);
             for (int i = 0; i < libraryDetails.get(position).getList().size(); i++) {
                 standard += libraryDetails.get(position).getList().get(i).getStandard();
                 standard += "\n";
             }
-            holder.standard.setText(standard);
-            holder.course.setText(libraryDetails.get(position).getList().get(0).getBranchCourse().getCourse().getCourseName());
+            holder.binding.standard.setText(standard);
+            holder.binding.course.setText(libraryDetails.get(position).getList().get(0).getBranchCourse().getCourse().getCourseName());
         }
-        holder.library_edit.setOnClickListener(v -> {
+        holder.binding.libraryEdit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Edit Library?");
@@ -171,13 +172,13 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             });
             dialog.show();
         });
-        holder.library_delete.setOnClickListener(v -> {
+        holder.binding.libraryDelete.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-            Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+            TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+            TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
             TextView title = dialogView.findViewById(R.id.title);
             ImageView image = dialogView.findViewById(R.id.image);
             image.setImageResource(R.drawable.delete);
@@ -195,6 +196,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
                             CommonModel model = response.body();
                             if (model != null && model.isCompleted()) {
                                 if (model.isData()) {
+                                    Toast.makeText(context, "Library Removed Successfully.", Toast.LENGTH_SHORT).show();
                                     libraryDetails.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
@@ -206,19 +208,20 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
                     @Override
                     public void onFailure(@NotNull Call<CommonModel> call, @NotNull Throwable t) {
+                        Toast.makeText(context, t.toString(), Toast.LENGTH_SHORT).show();
                         progressBarHelper.hideProgressDialog();
                     }
                 });
             });
             dialog.show();
         });
-        holder.library_download.setOnClickListener(v -> {
+        holder.binding.libraryDownload.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Download Document?");
@@ -228,7 +231,6 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             btn_edit_yes.setOnClickListener(v16 -> {
                 dialog.dismiss();
                 String filetype = libraryDetails.get(position).getDocFilePath();
-                String filetyp = filetype.substring(filetype.lastIndexOf("."));
                 Toast.makeText(context, "Download Started..", Toast.LENGTH_SHORT).show();
                 DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                 Uri uri = Uri.parse(filetype);
@@ -260,25 +262,12 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView doc_desc, standard, library_video_link, doc_category,course;
-        ImageView image, library_edit, library_delete, library_download;
-        LinearLayout linear_standard, linear_video,linear_course;
+        LibraryMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            doc_desc = itemView.findViewById(R.id.doc_desc);
-            standard = itemView.findViewById(R.id.standard);
-            image = itemView.findViewById(R.id.image);
-            library_edit = itemView.findViewById(R.id.library_edit);
-            library_delete = itemView.findViewById(R.id.library_delete);
-            library_download = itemView.findViewById(R.id.library_download);
-            linear_standard = itemView.findViewById(R.id.linear_standard);
-            linear_video = itemView.findViewById(R.id.linear_video);
-            library_video_link = itemView.findViewById(R.id.library_video_link);
-            linear_course = itemView.findViewById(R.id.linear_course);
-            course = itemView.findViewById(R.id.course);
-            doc_category = itemView.findViewById(R.id.doc_category);
+        public ViewHolder(@NonNull LibraryMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
+            standard = binding.standard.getText().toString();
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

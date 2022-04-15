@@ -62,10 +62,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/pincodeimg"
                 android:background="@android:color/transparent"
-                android:hint="Mobile Number"
-                android:inputType="phone"
+                android:hint="User Name"
                 android:maxLines="1"
-                android:maxLength="10"
                 android:paddingLeft="12dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
@@ -77,8 +75,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
-
-                android:src="@drawable/mobile_no"
+                android:src="@drawable/user"
                 app:tint="#0074AA" />
 
         </RelativeLayout>

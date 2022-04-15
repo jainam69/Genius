@@ -22,6 +22,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.StudentModel;
 import com.example.genius.Model.UserModel;
 import com.example.genius.R;
+import com.example.genius.databinding.StudentMasterDeatilListBinding;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
@@ -51,46 +52,46 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
 
     @Override
     public StudentMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new StudentMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.student_master_deatil_list, parent, false));
+        return new ViewHolder(StudentMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull StudentMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         for (UserModel.UserPermission model : userpermission.getPermission()){
             if (model.getPageInfo().getPageID() == 8 && !model.getPackageRightinfo().isCreatestatus()){
-                holder.student_edit.setVisibility(View.GONE);
+                holder.binding.studentEdit.setVisibility(View.GONE);
             }
         }
-        holder.student_name.setText(studentDetails.get(position).getFirstName() + " " + studentDetails.get(position).getLastName());
+        holder.binding.studentName.setText(studentDetails.get(position).getFirstName() + " " + studentDetails.get(position).getLastName());
         if (studentDetails.get(position).getAdmissionDate() != null) {
             String a = studentDetails.get(position).getAdmissionDate().replace("T00:00:00", "");
             try {
                 Date d = actualdate.parse(a);
-                holder.admission_date.setText(displaydate.format(d));
+                holder.binding.admissionDate.setText(displaydate.format(d));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        holder.course.setText(""+studentDetails.get(position).getBranchCourse().getCourse().getCourseName());
-        holder.standard.setText(""+studentDetails.get(position).getBranchClass().classModel.getClassName());
+        holder.binding.course.setText(""+studentDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.binding.standard.setText(""+studentDetails.get(position).getBranchClass().classModel.getClassName());
         int a = studentDetails.get(position).getBatchInfo().getBatchTime();
         if (a == 1) {
-            holder.batch_time.setText("Morning");
+            holder.binding.batchTime.setText("Morning");
         } else if (a == 2) {
-            holder.batch_time.setText("Afternoon");
+            holder.binding.batchTime.setText("Afternoon");
         } else {
-            holder.batch_time.setText("Evening");
+            holder.binding.batchTime.setText("Evening");
         }
-        holder.contact_no.setText(studentDetails.get(position).getContactNo());
-        holder.student_edit.setOnClickListener(new View.OnClickListener() {
+        holder.binding.contactNo.setText(studentDetails.get(position).getContactNo());
+        holder.binding.studentEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
                 View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
                 builder.setView(dialogView);
                 builder.setCancelable(true);
-                Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-                Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+                TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+                TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
                 ImageView image = dialogView.findViewById(R.id.image);
                 TextView title = dialogView.findViewById(R.id.title);
                 title.setText("Are you sure that you want to Edit Student?");
@@ -138,19 +139,11 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView student_name, admission_date, standard, batch_time, contact_no,course;
-        ImageView student_edit;
+        StudentMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            student_name = itemView.findViewById(R.id.student_name);
-            admission_date = itemView.findViewById(R.id.admission_date);
-            standard = itemView.findViewById(R.id.standard);
-            batch_time = itemView.findViewById(R.id.batch_time);
-            contact_no = itemView.findViewById(R.id.contact_no);
-            student_edit = itemView.findViewById(R.id.student_edit);
-            course = itemView.findViewById(R.id.course);
+        public ViewHolder(@NonNull StudentMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

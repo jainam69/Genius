@@ -29,6 +29,7 @@ import com.example.genius.API.ApiCalling;
 import com.example.genius.Model.CommonModel;
 import com.example.genius.Model.HomeworkModel;
 import com.example.genius.Model.UserModel;
+import com.example.genius.databinding.HomeworkMasterDeatilListBinding;
 import com.example.genius.helper.Preferences;
 import com.example.genius.R;
 import com.example.genius.helper.Function;
@@ -75,7 +76,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     @NotNull
     @Override
     public HomeworkMaster_Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new HomeworkMaster_Adapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.homework_master_deatil_list, parent, false));
+        return new ViewHolder(HomeworkMasterDeatilListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false));
     }
 
     @SuppressLint("SetTextI18n")
@@ -85,10 +86,10 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
         {
             if (model.getPageInfo().getPageID() == 43){
                 if (!model.getPackageRightinfo().isCreatestatus()){
-                    holder.homework_edit.setVisibility(View.GONE);
+                    holder.binding.homeworkEdit.setVisibility(View.GONE);
                 }
                 if (!model.getPackageRightinfo().isDeletestatus()){
-                    holder.homework_delete.setVisibility(View.GONE);
+                    holder.binding.homeworkDelete.setVisibility(View.GONE);
                 }
             }
         }
@@ -96,23 +97,23 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
         try {
             Date d = actualdate.parse(a);
             if (d != null) {
-                holder.date.setText(displaydate.format(d));
+                holder.binding.date.setText(displaydate.format(d));
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.course.setText(homeworkDetails.get(position).getBranchCourse().getCourse().getCourseName());
-        holder.standard.setText(homeworkDetails.get(position).getBranchClass().getClassModel().getClassName());
-        holder.subject.setText(homeworkDetails.get(position).getBranchSubject().getSubject().getSubjectName());
-        holder.batch_time.setText(homeworkDetails.get(position).getBatchTimeText());
+        holder.binding.course.setText(homeworkDetails.get(position).getBranchCourse().getCourse().getCourseName());
+        holder.binding.standard.setText(homeworkDetails.get(position).getBranchClass().getClassModel().getClassName());
+        holder.binding.subject.setText(homeworkDetails.get(position).getBranchSubject().getSubject().getSubjectName());
+        holder.binding.batchTime.setText(homeworkDetails.get(position).getBatchTimeText());
 
-        holder.homework_edit.setOnClickListener(v -> {
+        holder.binding.homeworkEdit.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Edit Homework?");
@@ -145,13 +146,13 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             });
             dialog.show();
         });
-        holder.homework_delete.setOnClickListener(v -> {
+        holder.binding.homeworkDelete.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_delete_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
-            Button btn_delete = dialogView.findViewById(R.id.btn_delete);
+            TextView btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+            TextView btn_delete = dialogView.findViewById(R.id.btn_delete);
             TextView title = dialogView.findViewById(R.id.title);
             ImageView image = dialogView.findViewById(R.id.image);
             image.setImageResource(R.drawable.delete);
@@ -195,13 +196,13 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             });
             dialog.show();
         });
-        holder.homework_checking.setOnClickListener(v -> {
+        holder.binding.homeworkChecking.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Check Homework?");
@@ -225,13 +226,13 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
             });
             dialog.show();
         });
-        holder.homework_download.setOnClickListener(v -> {
+        holder.binding.homeworkDownload.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogStyle);
             View dialogView = ((Activity) context).getLayoutInflater().inflate(R.layout.dialog_edit_staff, null);
             builder.setView(dialogView);
             builder.setCancelable(true);
-            Button btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
-            Button btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
+            TextView btn_edit_no = dialogView.findViewById(R.id.btn_edit_no);
+            TextView btn_edit_yes = dialogView.findViewById(R.id.btn_edit_yes);
             ImageView image = dialogView.findViewById(R.id.image);
             TextView title = dialogView.findViewById(R.id.title);
             title.setText("Are you sure that you want to Download Document?");
@@ -269,21 +270,11 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView date, standard, subject, batch_time,course;
-        ImageView homework_edit, homework_delete, homework_checking, homework_download;
+        HomeworkMasterDeatilListBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            date = itemView.findViewById(R.id.date);
-            standard = itemView.findViewById(R.id.standard);
-            subject = itemView.findViewById(R.id.subject);
-            batch_time = itemView.findViewById(R.id.batch_time);
-            homework_edit = itemView.findViewById(R.id.homework_edit);
-            homework_delete = itemView.findViewById(R.id.homework_delete);
-            homework_checking = itemView.findViewById(R.id.homework_checking);
-            homework_download = itemView.findViewById(R.id.homework_download);
-            course = itemView.findViewById(R.id.course);
+        public ViewHolder(@NonNull HomeworkMasterDeatilListBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
             userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);

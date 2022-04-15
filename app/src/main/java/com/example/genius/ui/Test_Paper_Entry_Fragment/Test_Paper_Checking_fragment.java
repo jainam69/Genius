@@ -23,6 +23,7 @@ import com.example.genius.Adapter.UploadPaperChecking_Adapter;
 import com.example.genius.Model.AnswerSheetData;
 import com.example.genius.Model.AnswerSheetModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentTestPaperCheckingBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.ProgressBarHelper;
@@ -39,12 +40,11 @@ import retrofit2.Response;
 @SuppressLint("SetTextI18n")
 public class Test_Paper_Checking_fragment extends Fragment {
 
-    RecyclerView paper_checking_rv;
+    FragmentTestPaperCheckingBinding binding;
     UploadPaperChecking_Adapter uploadPaperChecking_adapter;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     Context context;
-    TextView id, txt_nodata;
     Bundle bundle;
     OnBackPressedCallback callback;
 
@@ -53,22 +53,19 @@ public class Test_Paper_Checking_fragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Test Paper Checking");
-        View root = inflater.inflate(R.layout.fragment_test_paper_checking, container, false);
+        binding = FragmentTestPaperCheckingBinding.inflate(getLayoutInflater());
         context = getActivity();
-        paper_checking_rv = root.findViewById(R.id.paper_checking_rv);
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        id = root.findViewById(R.id.id);
-        txt_nodata = root.findViewById(R.id.txt_nodata);
 
         bundle = getArguments();
         if (bundle != null) {
             if (bundle.containsKey("TestID")) {
-                id.setText("" + bundle.getLong("TestID"));
+                binding.id.setText("" + bundle.getLong("TestID"));
             }
         }
 
-        if (Function.checkNetworkConnection(context)) {
+        if (Function.isNetworkAvailable(context)) {
             if (bundle != null) {
                 progressBarHelper.showProgressDialog();
                 GetCheckingDetails();
@@ -89,11 +86,11 @@ public class Test_Paper_Checking_fragment extends Fragment {
             }
         };
         getActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetCheckingDetails() {
-        Call<AnswerSheetData> call = apiCalling.GetAllAnsSheetByTest(Long.parseLong(id.getText().toString()));
+        Call<AnswerSheetData> call = apiCalling.GetAllAnsSheetByTest(Long.parseLong(binding.id.getText().toString()));
         call.enqueue(new Callback<AnswerSheetData>() {
             @Override
             public void onResponse(@NotNull Call<AnswerSheetData> call, @NotNull Response<AnswerSheetData> response) {
@@ -102,16 +99,16 @@ public class Test_Paper_Checking_fragment extends Fragment {
                     if (data.isCompleted()) {
                         List<AnswerSheetModel> studentModelList = data.getData();
                         if (studentModelList != null && studentModelList.size() > 0) {
-                            paper_checking_rv.setVisibility(View.VISIBLE);
-                            txt_nodata.setVisibility(View.GONE);
+                            binding.paperCheckingRv.setVisibility(View.VISIBLE);
+                            binding.txtNodata.setVisibility(View.GONE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                            paper_checking_rv.setLayoutManager(linearLayoutManager);
+                            binding.paperCheckingRv.setLayoutManager(linearLayoutManager);
                             uploadPaperChecking_adapter = new UploadPaperChecking_Adapter(context, studentModelList);
                             uploadPaperChecking_adapter.notifyDataSetChanged();
-                            paper_checking_rv.setAdapter(uploadPaperChecking_adapter);
+                            binding.paperCheckingRv.setAdapter(uploadPaperChecking_adapter);
                         }else {
-                            paper_checking_rv.setVisibility(View.GONE);
-                            txt_nodata.setVisibility(View.VISIBLE);
+                            binding.paperCheckingRv.setVisibility(View.GONE);
+                            binding.txtNodata.setVisibility(View.VISIBLE);
                         }
                     }
                 }

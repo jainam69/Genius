@@ -14,6 +14,7 @@ public class StaffModel {
     String EmailID;
     String MobileNo;
     String Userrole;
+    String userNameNew;
     long UserID;
     String User_Password;
     TransactionModel Transaction;
@@ -27,7 +28,7 @@ public class StaffModel {
         StaffID = staffID;
     }
 
-    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid, String password) {
+    public StaffModel(long staffID, String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, long userid, String password,String userNameNew) {
         StaffID = staffID;
         Name = name;
         Education = education;
@@ -44,9 +45,10 @@ public class StaffModel {
         BranchInfo = branchInfo;
         UserID = userid;
         User_Password = password;
+        this.userNameNew = userNameNew;
     }
 
-    public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole,String password) {
+    public StaffModel(String name, String education, String DOB, String gender, String address, String apptDT, String joinDT, String leavingDT, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo, String Userrole,String password,String userNameNew) {
         Name = name;
         Education = education;
         this.DOB = DOB;
@@ -62,9 +64,10 @@ public class StaffModel {
         BranchInfo = branchInfo;
         Userrole = Userrole;
         User_Password = password;
+        this.userNameNew = userNameNew;
     }
 
-    public StaffModel(long staffID, long userID, String name, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo) {
+    public StaffModel(long staffID, long userID, String name, String emailID, String mobileNo, TransactionModel transaction, RowStatusModel rowStatus, BranchModel branchInfo,String userNameNew) {
         UserID = userID;
         StaffID = staffID;
         Name = name;
@@ -73,6 +76,15 @@ public class StaffModel {
         Transaction = transaction;
         RowStatus = rowStatus;
         BranchInfo = branchInfo;
+        this.userNameNew = userNameNew;
+    }
+
+    public String getUserNameNew() {
+        return userNameNew;
+    }
+
+    public void setUserNameNew(String userNameNew) {
+        this.userNameNew = userNameNew;
     }
 
     public String getUser_Password() {

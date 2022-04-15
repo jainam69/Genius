@@ -24,6 +24,7 @@ import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
 import com.example.genius.R;
+import com.example.genius.databinding.FragmentAnnouncementBinding;
 import com.example.genius.helper.Function;
 import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
@@ -42,8 +43,7 @@ import retrofit2.Response;
 
 public class Announcement_Fragment extends Fragment {
 
-    EditText announcement_description;
-    Button add_announcement;
+    FragmentAnnouncementBinding binding;
     Context context;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -54,12 +54,10 @@ public class Announcement_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Announcement Master");
-        View root = inflater.inflate(R.layout.fragment_announcement, container, false);
+        binding = FragmentAnnouncementBinding.inflate(getLayoutInflater());
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        announcement_description = root.findViewById(R.id.announcement_description);
-        add_announcement = root.findViewById(R.id.add_announcement);
 
         if (Function.isNetworkAvailable(context)) {
             progressBarHelper.showProgressDialog();
@@ -67,9 +65,9 @@ public class Announcement_Fragment extends Fragment {
         } else
             Toast.makeText(context, "Please check your internet connectivity...", Toast.LENGTH_SHORT).show();
 
-        add_announcement.setOnClickListener(v -> {
+        binding.addAnnouncement.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(context)) {
-                if (announcement_description.getText().toString().equals("")) {
+                if (binding.announcementDescription.getText().toString().equals("")) {
                     Toast.makeText(context, "Please Enter Announcement.", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBarHelper.showProgressDialog();
@@ -79,13 +77,13 @@ public class Announcement_Fragment extends Fragment {
                                 , new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))
                                 , new TransactionModel(Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME))
                                 , new RowStatusModel(1)
-                                , announcement_description.getText().toString());
+                                , binding.announcementDescription.getText().toString());
                     } else {
                         model = new AnnouncementModel.AnnouncementData(annID
                                 , new BranchModel(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID))
                                 , new TransactionModel(transaction_id, Preferences.getInstance(context).getString(Preferences.KEY_USER_NAME), 0)
                                 , new RowStatusModel(1)
-                                , announcement_description.getText().toString());
+                                , binding.announcementDescription.getText().toString());
                     }
                     Call<AnnouncementSingleModel> call = apiCalling.AnnouncementMaintenance(model);
                     call.enqueue(new Callback<AnnouncementSingleModel>() {
@@ -127,7 +125,7 @@ public class Announcement_Fragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(requireActivity(), callback);
-        return root;
+        return binding.getRoot();
     }
 
     public void GetAnnouncement() {
@@ -142,7 +140,7 @@ public class Announcement_Fragment extends Fragment {
                         if (notimodel != null && notimodel.size() > 0) {
                             annID = notimodel.get(0).AnnouncementID;
                             transaction_id = notimodel.get(0).TransactionData.getTransactionId();
-                            announcement_description.setText(notimodel.get(0).AnnouncementText);
+                            binding.announcementDescription.setText(notimodel.get(0).AnnouncementText);
                         }
                     }
                     progressBarHelper.hideProgressDialog();
