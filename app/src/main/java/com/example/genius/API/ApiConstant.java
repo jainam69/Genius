@@ -2,8 +2,8 @@ package com.example.genius.API;
 
 public class ApiConstant {
 
-    public static final String BASE_URL = "http://192.168.29.212/api/";
-    //public static final String BASE_URL = "http://43.241.39.136:86/api/";
+    //public static final String BASE_URL = "http://192.168.29.212/api/";
+    public static final String BASE_URL = "http://43.241.39.136:86/api/";
     //public static final String BASE_URL = "http://43.241.39.136:84/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";

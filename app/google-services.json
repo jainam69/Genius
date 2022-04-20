@@ -7,6 +7,59 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:903914049924:android:ba176998196e16ca998dd1",
+        "android_client_info": {
+          "package_name": "com.ashirvadstudyvadodara"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903914049924-7ptt2je2ork9jf3gqhd35jl4ot3e9sdv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ashirvadstudyvadodara",
+            "certificate_hash": "b8b34a1c4c96bbb93b05cb8e498a389a4cbf796d"
+          }
+        },
+        {
+          "client_id": "903914049924-ptcc9h0tfrme0pf62krjurlr7o0jvr7j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ashirvadstudyvadodara",
+            "certificate_hash": "1a97b6973d0a9496c9570c3b6429c5a7cd67e352"
+          }
+        },
+        {
+          "client_id": "903914049924-t2d0fpvtauit2bqpl172cdmlrlnceqe6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ashirvadstudyvadodara",
+            "certificate_hash": "600b5995b79245952f547cddca3d5c78d260b0de"
+          }
+        },
+        {
+          "client_id": "903914049924-r76ndc2g0kacrd000lcladlu356avff9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8xrLUeg2uliAzga_9juROfVeVYLw-nqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903914049924-r76ndc2g0kacrd000lcladlu356avff9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:903914049924:android:ea4a09aee8a0c2a1998dd1",
         "android_client_info": {
           "package_name": "com.example.genius"
@@ -19,6 +72,22 @@
           "android_info": {
             "package_name": "com.example.genius",
             "certificate_hash": "1a97b6973d0a9496c9570c3b6429c5a7cd67e352"
+          }
+        },
+        {
+          "client_id": "903914049924-cimg3uv2kpdohi5h9bp305j3ck53nevp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.genius",
+            "certificate_hash": "600b5995b79245952f547cddca3d5c78d260b0de"
+          }
+        },
+        {
+          "client_id": "903914049924-r49gisppvk3hqs1o8l1ahr62tmn6205v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.genius",
+            "certificate_hash": "b8b34a1c4c96bbb93b05cb8e498a389a4cbf796d"
           }
         },
         {
@@ -51,11 +120,80 @@
       },
       "oauth_client": [
         {
+          "client_id": "903914049924-2o487l358t7drjr811ak9j7g5s2ui877.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mastermind",
+            "certificate_hash": "b8b34a1c4c96bbb93b05cb8e498a389a4cbf796d"
+          }
+        },
+        {
+          "client_id": "903914049924-j7jiigrk1u1rk8seankmar26v698ov2h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mastermind",
+            "certificate_hash": "600b5995b79245952f547cddca3d5c78d260b0de"
+          }
+        },
+        {
           "client_id": "903914049924-jv43igukuioeobub6tu4mrd29boar59t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mastermind",
             "certificate_hash": "1a97b6973d0a9496c9570c3b6429c5a7cd67e352"
+          }
+        },
+        {
+          "client_id": "903914049924-r76ndc2g0kacrd000lcladlu356avff9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8xrLUeg2uliAzga_9juROfVeVYLw-nqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903914049924-r76ndc2g0kacrd000lcladlu356avff9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903914049924:android:fddefb4e9c5e8897998dd1",
+        "android_client_info": {
+          "package_name": "mastermind.org.in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903914049924-es1gfnr820vndboelbfs87guj6ocpldh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mastermind.org.in",
+            "certificate_hash": "b8b34a1c4c96bbb93b05cb8e498a389a4cbf796d"
+          }
+        },
+        {
+          "client_id": "903914049924-l5i6nq73rmplc4tdei1shsdl9nbjkkds.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mastermind.org.in",
+            "certificate_hash": "1a97b6973d0a9496c9570c3b6429c5a7cd67e352"
+          }
+        },
+        {
+          "client_id": "903914049924-mg4f5jrv5t6o12lt351jeefg67pj42np.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mastermind.org.in",
+            "certificate_hash": "600b5995b79245952f547cddca3d5c78d260b0de"
           }
         },
         {
