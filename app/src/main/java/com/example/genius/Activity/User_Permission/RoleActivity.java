@@ -96,6 +96,7 @@ public class RoleActivity extends AppCompatActivity {
                                     if (data.Completed){
                                         Toast.makeText(context, data.Message, Toast.LENGTH_SHORT).show();
                                         binding.edtRoleName.setText("");
+                                        id = 0;
                                         GetAllRoles();
                                     }else {
                                         Toast.makeText(context, data.Message, Toast.LENGTH_SHORT).show();
