@@ -30,6 +30,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.genius.API.ApiCalling;
 import com.example.genius.Activity.LoginActivity;
 import com.example.genius.Activity.MainActivity;
+import com.example.genius.Activity.User_Permission.UserPermissionSelectActivity;
 import com.example.genius.Adapter.Home_Adapter;
 import com.example.genius.Adapter.ViewPager_Adapter;
 import com.example.genius.Model.BannerData;
@@ -119,8 +120,8 @@ public class home_fragment extends Fragment {
                     PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-        pagename.add("CIRCULAR");
-        image.add(R.drawable.ic_baseline_wysiwyg_24);
+        pagename.add("CIRCULAR"); pagename.add("USER PERMISSION");
+        image.add(R.drawable.ic_baseline_wysiwyg_24); image.add(R.drawable.permission);
 
         home_rv.addOnItemTouchListener(new RecyclerTouchListener(context, home_rv, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -252,6 +253,9 @@ public class home_fragment extends Fragment {
                     fragmentTransaction.replace(R.id.nav_host_fragment, orderplace);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
+                }
+                if (pagename.get(position).equals("USER PERMISSION")){
+                    startActivity(new Intent(context, UserPermissionSelectActivity.class));
                 }
             }
 

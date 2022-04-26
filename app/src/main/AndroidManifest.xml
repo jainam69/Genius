@@ -17,6 +17,36 @@
         android:theme="@style/Theme.Genius"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".Activity.User_Permission.User_Rights.UserRightsActivity"
+            android:theme="@style/Actionbar"
+            android:parentActivityName=".Activity.User_Permission.User_Rights.UserRightsListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.User_Permission.User_Rights.UserRightsListActivity"
+            android:theme="@style/Actionbar"
+            android:parentActivityName=".Activity.User_Permission.UserPermissionSelectActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.User_Permission.Role_Rights.RoleRightsActivity"
+            android:exported="true"
+            android:parentActivityName=".Activity.User_Permission.Role_Rights.RoleRightListActivity"
+            android:theme="@style/Actionbar" />
+        <activity
+            android:name=".Activity.User_Permission.Role_Rights.RoleRightListActivity"
+            android:exported="true"
+            android:parentActivityName=".Activity.User_Permission.UserPermissionSelectActivity"
+            android:theme="@style/Actionbar" />
+        <activity
+            android:name=".Activity.User_Permission.RoleActivity"
+            android:exported="true"
+            android:parentActivityName=".Activity.User_Permission.UserPermissionSelectActivity"
+            android:theme="@style/Actionbar" />
+        <activity
+            android:name=".Activity.User_Permission.UserPermissionSelectActivity"
+            android:exported="true"
+            android:parentActivityName=".Activity.MainActivity"
+            android:theme="@style/Actionbar" />
+        <activity
             android:name=".Activity.ViewDocumentActivity"
             android:exported="true" />
 
@@ -31,7 +61,9 @@
         </provider>
 
         <activity android:name=".Activity.MainActivity" />
-        <activity android:name=".Activity.LoginActivity" android:exported="true">
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +71,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.ForgotPasswordActivity" />
-        <activity android:name=".Activity.SplashActivity"/>
+        <activity android:name=".Activity.SplashActivity" />
         <activity android:name=".Activity.VideoViewActivity" />
         <activity
             android:name=".Activity.ChangePasswordActivity"

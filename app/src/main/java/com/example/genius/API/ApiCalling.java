@@ -41,6 +41,8 @@ import com.example.genius.Model.PaperModel;
 import com.example.genius.Model.ProfileModel;
 import com.example.genius.Model.ReminderData;
 import com.example.genius.Model.ReminderModel;
+import com.example.genius.Model.RoleModel;
+import com.example.genius.Model.RoleRightsModel;
 import com.example.genius.Model.SchoolData;
 import com.example.genius.Model.SchoolModel;
 import com.example.genius.Model.StaffData;
@@ -62,7 +64,9 @@ import com.example.genius.Model.UploadPaperData;
 import com.example.genius.Model.UploadPaperModel;
 import com.example.genius.Model.UserData1;
 import com.example.genius.Model.UserModel;
-import com.example.genius.Model.UserRolesModel;
+import com.example.genius.Model.UserRightsModel;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -450,4 +454,40 @@ public interface ApiCalling {
 
     @GET(ApiConstant.CHECK_PACKAGE_STUDENT_LIMIT)
     Call<CommonModel.ResponseModel> Check_Package_Limit(@Query("branchID") long branchID);
+
+    @GET(ApiConstant.GET_ALL_ROLES)
+    Call<RoleModel.RoleData> Get_All_Role(@Query("branchID") long branchID);
+
+    @POST(ApiConstant.ROLE_MAINTENANCE)
+    Call<RoleModel.RoleResponse> Save_Role(@Body RoleModel model);
+
+    @POST(ApiConstant.REMOVE_ROLE)
+    Call<CommonModel> Remove_Role(@Query("roleId") long roleId, @Query("lastupdatedby") String lastupdatedby);
+
+    @GET(ApiConstant.GET_ALL_ROLE_RIGHTS)
+    Call<RoleRightsModel.RoleRightsData> Get_All_Role_Rights(@Query("branchID") long branchID);
+
+    @GET(ApiConstant.GET_PAGE_ROLE_RIGHT_LIST)
+    Call<RoleRightsModel.RoleRightsData> Get_Page_Role_Right_List(@Query("branchID") long branchID);
+
+    @POST(ApiConstant.ROLE_RIGHTS_MAINTENANCE)
+    Call<RoleRightsModel.RoleRightsResponse> Save_Role_Rights(@Body List<RoleRightsModel> model);
+
+    @POST(ApiConstant.REMOVE_ROLE_RIGHTS)
+    Call<CommonModel> Remove_Role_Rights(@Query("roleRightsId") long roleRightsId, @Query("lastupdatedby") String lastupdatedby);
+
+    @GET(ApiConstant.GET_USER_RIGHT_ROLE_LIST)
+    Call<UserRightsModel.UserRightsData> Get_User_Rights_Role_List(@Query("roleid") long roleid);
+
+    @POST(ApiConstant.USER_RIGHTS_MAINTENANCE)
+    Call<UserRightsModel.UserRightsResponse> Save_User_Rights(@Body UserRightsModel model);
+
+    @GET(ApiConstant.GET_ALL_USER_BY_BRANCH)
+    Call<UserData1> Get_All_User_By_Branch(@Query("branchid") long branchid);
+
+    @GET(ApiConstant.GET_ALL_USER_RIGHTS_LIST)
+    Call<UserRightsModel.UserRightsData> Get_All_User_Rights_List(@Query("branchId") long branchId);
+
+    @POST(ApiConstant.REMOVE_USER_RIGHTS)
+    Call<CommonModel> Remove_User_Rights(@Query("userRightsId") long userRightsId, @Query("lastupdatedby") String lastupdatedby);
 }

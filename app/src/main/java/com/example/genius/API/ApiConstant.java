@@ -1,9 +1,11 @@
 package com.example.genius.API;
 
+import com.example.genius.helper.MyApplication;
+
 public class ApiConstant {
 
-    //public static final String BASE_URL = "http://192.168.29.212/api/";
-    public static final String BASE_URL = "http://43.241.39.136:86/api/";
+    public static final String BASE_URL = "http://192.168.29.212:45457/api/";
+//    public static final String BASE_URL = "http://43.241.39.136:86/api/";
     //public static final String BASE_URL = "http://43.241.39.136:84/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
@@ -150,4 +152,19 @@ public class ApiConstant {
     public static final String GET_ALL_UPI_DETAILS = "user/v1/GetAllUPIs";
     public static final String UPI_MAINTENANCE = "user/v1/UPIMaintenance";
     public static final String REMOVE_UPI_DETAIL = "user/v1/RemoveUPI";
+
+    public static final String GET_ALL_ROLES = "Role/v1/GetAllRolesByBranch";
+    public static final String ROLE_MAINTENANCE = "Role/v1/RoleMaintenance";
+    public static final String REMOVE_ROLE = "Role/v1/RemoveRole";
+
+    public static final String GET_ALL_ROLE_RIGHTS = "RoleRights/v1/GetAllRightsbyBranch";
+    public static final String GET_PAGE_ROLE_RIGHT_LIST = "RoleRights/v1/GetPageListbyBranchID";
+    public static final String ROLE_RIGHTS_MAINTENANCE = "RoleRights/v1/RoleRightsMaintenance";
+    public static final String REMOVE_ROLE_RIGHTS = "RoleRights/v1/RemoveRoleRights";
+
+    public static final String GET_USER_RIGHT_ROLE_LIST = "UserRights/v1/UserRightUniqueData";
+    public static final String USER_RIGHTS_MAINTENANCE = "UserRights/v1/UserRightsMaintenance";
+    public static final String GET_ALL_USER_BY_BRANCH = "UserRights/v1/GetAllStaffUserbyBranch";
+    public static final String GET_ALL_USER_RIGHTS_LIST = "UserRights/v1/GetAllUserRightsbyBranchId";
+    public static final String REMOVE_USER_RIGHTS = "UserRights/v1/RemoveUserRights";
 }

@@ -19,6 +19,7 @@ public class UserModel {
     BranchModel BranchInfo;
     List<RolesModel> Roles;
     List<UserPermission> Permission;
+    StaffModel StaffDetail;
 
     public UserModel() {
     }
@@ -31,6 +32,14 @@ public class UserModel {
         UserID = userID;
         Transaction = transaction;
         Roles = roles;
+    }
+
+    public StaffModel getStaffDetail() {
+        return StaffDetail;
+    }
+
+    public void setStaffDetail(StaffModel staffDetail) {
+        StaffDetail = staffDetail;
     }
 
     public UserModel(long userID) {
@@ -149,8 +158,7 @@ public class UserModel {
         BranchInfo = branchInfo;
     }
 
-    public static class UserPermission
-    {
+    public static class UserPermission {
         PackageRightsEntity PackageRightinfo;
         PageInfoEntity PageInfo;
 
@@ -171,8 +179,7 @@ public class UserModel {
         }
     }
 
-    public static class PackageRightsEntity
-    {
+    public static class PackageRightsEntity {
         boolean Createstatus;
         boolean Deletestatus;
         boolean Viewstatus;
@@ -202,10 +209,24 @@ public class UserModel {
         }
     }
 
-    public static class PageInfoEntity
-    {
+    public static class PageInfoEntity {
+
         String Page;
         long PageID;
+        public Boolean Createstatus;
+        public Boolean Deletestatus;
+        public Boolean Viewstatus;
+
+        public PageInfoEntity() {
+        }
+
+        public PageInfoEntity(String page, long pageID, Boolean createstatus, Boolean deletestatus, Boolean viewstatus) {
+            Page = page;
+            PageID = pageID;
+            Createstatus = createstatus;
+            Deletestatus = deletestatus;
+            Viewstatus = viewstatus;
+        }
 
         public String getPage() {
             return Page;

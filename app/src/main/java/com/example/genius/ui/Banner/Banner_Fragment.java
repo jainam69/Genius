@@ -145,7 +145,7 @@ public class Banner_Fragment extends Fragment {
                     listentity.add(new BannerModel.BannerTypeEntity(0,1));
                 }else {
                     isAdmin = false;
-                    listentity.removeIf(x->x.getTypeID() == 2);
+                    listentity.removeIf(x->x.getTypeID() == 1);
                 }
             }
         });

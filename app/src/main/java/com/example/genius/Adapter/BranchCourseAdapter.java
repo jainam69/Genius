@@ -29,7 +29,6 @@ public class BranchCourseAdapter extends RecyclerView.Adapter<BranchCourseAdapte
 
     Context context;
     public static List<CourceModel.CourceData> CourceDataList;
-    public static List<BranchCourseModel.BranchCourceData> branchCourceData = new ArrayList<>();
 
     public BranchCourseAdapter(Context context, List<CourceModel.CourceData> courceDataList) {
         this.context = context;
