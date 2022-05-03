@@ -56,7 +56,7 @@ public class student_registration_Listfragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     StudentMaster_Adapter studentMaster_adapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     List<StudentModel> model;
 
     @Override
@@ -67,10 +67,10 @@ public class student_registration_Listfragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 8 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 8 && !model.Createstatus){
                 binding.fabContact.setVisibility(View.GONE);
             }
         }

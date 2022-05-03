@@ -55,7 +55,7 @@ public class BranchClassListFragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     BranchClassListAdapter branchCourceAdapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,11 +65,11 @@ public class BranchClassListFragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 74 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 74 && !model.Createstatus){
                 binding.fabContact.setVisibility(View.GONE);
             }
         }

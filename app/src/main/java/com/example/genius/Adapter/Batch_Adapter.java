@@ -47,7 +47,7 @@ public class Batch_Adapter extends RecyclerView.Adapter<Batch_Adapter.ViewHolder
 
     List<BatchModel> batchModels;
     Context context;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
 
@@ -64,13 +64,13 @@ public class Batch_Adapter extends RecyclerView.Adapter<Batch_Adapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 11){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 11){
+                if (!model.Createstatus){
                     holder.binding.batchEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.batchDelete.setVisibility(View.GONE);
                 }
             }
@@ -182,7 +182,7 @@ public class Batch_Adapter extends RecyclerView.Adapter<Batch_Adapter.ViewHolder
            binding = itemView;
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
         }
     }
 

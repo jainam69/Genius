@@ -32,10 +32,7 @@ import java.util.ArrayList;
 
 public class LibrarySelectorFragment extends Fragment {
 
-    LinearLayout linear_create_library, linear_show_library, linear_approve_library;
-    CardView linear_manage_library;
-    UserModel userpermission;
-    CardView linear_show_image_video_library;
+    UserModel.PageData userpermission;
     Context context;
     RecyclerView library_rv;
     Masters_Adapter masters_adapter;
@@ -59,26 +56,26 @@ public class LibrarySelectorFragment extends Fragment {
         View root = inflater.inflate(R.layout.library_selector_fragment, container, false);
         library_rv = root.findViewById(R.id.library_rv);
         context = getActivity();
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
         ArrayList<String> pagename = new ArrayList<>();
         ArrayList<Integer> image = new ArrayList<>();
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 78 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 78 && model.Viewstatus){
                 pagename.add("IMAGES/DOCUMENTS");
                 image.add(R.drawable.library);
             }
-            if (model.getPageInfo().getPageID() == 30 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 30 && model.Viewstatus){
                 pagename.add("VIDEOS");
                 image.add(R.drawable.create_library);
             }
-            if (model.getPageInfo().getPageID() == 80 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 80 && model.Viewstatus){
                 pagename.add("MANAGE LIBRARY");
                 image.add(R.drawable.course);
             }
-            if (model.getPageInfo().getPageID() == 88 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 88 && model.Viewstatus) {
                 pagename.add("SHOW BOOKS LIBRARY");
                 image.add(R.drawable.show_library);
                 pagename.add("SHOW VIDEO LIBRARY");

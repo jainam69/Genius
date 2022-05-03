@@ -9,9 +9,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -65,7 +62,7 @@ public class homework_Listfragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     List<HomeworkModel> homeworkfilter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -75,11 +72,11 @@ public class homework_Listfragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 43 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 43 && !model.Createstatus){
                 binding.fabContact.setVisibility(View.GONE);
             }
         }

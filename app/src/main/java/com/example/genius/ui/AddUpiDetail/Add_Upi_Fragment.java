@@ -59,7 +59,7 @@ public class Add_Upi_Fragment extends Fragment {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     UPIAdapter upiAdapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     long id,transactionid;
     OnBackPressedCallback callback;
 
@@ -71,11 +71,11 @@ public class Add_Upi_Fragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 17 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 17 && !model.Viewstatus){
                 binding.linearCreateUpi.setVisibility(View.GONE);
             }
         }

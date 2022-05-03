@@ -54,7 +54,7 @@ public class faculty_listfragment extends Fragment {
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     Faculty_Adapter faculty_adapter;
     List<FacultyModel>  model;
 
@@ -66,11 +66,11 @@ public class faculty_listfragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 77 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 77 && !model.Createstatus){
                 binding.fabContact.setVisibility(View.GONE);
             }
         }

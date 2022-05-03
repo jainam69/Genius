@@ -52,7 +52,7 @@ public class BranchSubjectListFragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     BranchSubjectListAapter branchSubjectListAapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,11 +62,11 @@ public class BranchSubjectListFragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 76 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 76 && !model.Createstatus){
                 binding.fabContact.setVisibility(View.GONE);
             }
         }

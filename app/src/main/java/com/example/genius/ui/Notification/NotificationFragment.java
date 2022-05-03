@@ -81,7 +81,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
     OnBackPressedCallback callback;
     String BranchID,noti_date,StandardIDs="";
     Notification_Adapter notification_adapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     private int year;
     private int month;
     private int day;
@@ -102,11 +102,11 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 10 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 10 && !model.Createstatus){
                 binding.linearCreateNotification.setVisibility(View.GONE);
             }
         }
@@ -597,7 +597,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
         List<NotificationModel> notificationDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
         String stdname;
 
         public Notification_Adapter(Context context, List<NotificationModel> notificationDetails) {
@@ -613,16 +613,16 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
 
         @Override
         public void onBindViewHolder(@NonNull Notification_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission())
+            for (UserModel.PageInfoEntity model : userpermission.Data)
             {
-                if (model.getPageInfo().getPageID() == 10){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+                if (model.getPageID() == 10){
+                    if (!model.Createstatus){
                         holder.binding.notiEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.notiDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
@@ -796,7 +796,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
             public ViewHolder(@NonNull RowLayoutNotiBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

@@ -78,7 +78,7 @@ public class LiveVideoFragment extends Fragment {
     LiveVideo_Adapter liveVideo_adapter;
     Long StandardId,courseID;
     String stdname = "";
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,11 +88,11 @@ public class LiveVideoFragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 79 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 79 && !model.Createstatus){
                 binding.linearCreateLive.setVisibility(View.GONE);
             }
         }
@@ -414,7 +414,7 @@ public class LiveVideoFragment extends Fragment {
         List<LinkModel> linkdetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
 
         public LiveVideo_Adapter(Context context, List<LinkModel> linkdetails) {
             this.context = context;
@@ -429,15 +429,15 @@ public class LiveVideoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull LiveVideo_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission()){
-                if (model.getPageInfo().getPageID() == 79){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+            for (UserModel.PageInfoEntity model : userpermission.Data){
+                if (model.getPageID() == 79){
+                    if (!model.Createstatus){
                         holder.binding.liveEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.liveDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
@@ -536,7 +536,7 @@ public class LiveVideoFragment extends Fragment {
             public ViewHolder(@NonNull LivevideoMasterDeatilListBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

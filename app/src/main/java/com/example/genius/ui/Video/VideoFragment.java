@@ -92,7 +92,7 @@ public class VideoFragment extends Fragment {
     OnBackPressedCallback callback;
     String OriginFileName,FilePath;
     VideoMaster_Adapter videoMaster_adapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,10 +102,10 @@ public class VideoFragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 85 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 85 && !model.Createstatus){
                 binding.linearCreateVideo.setVisibility(View.GONE);
             }
         }
@@ -334,7 +334,7 @@ public class VideoFragment extends Fragment {
         List<GalleryModel> galleryDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
 
         public VideoMaster_Adapter(Context context, List<GalleryModel> galleryDetails) {
             this.context = context;
@@ -350,15 +350,15 @@ public class VideoFragment extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull VideoMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission()){
-                if (model.getPageInfo().getPageID() == 85){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+            for (UserModel.PageInfoEntity model : userpermission.Data){
+                if (model.getPageID() == 85){
+                    if (!model.Createstatus){
                         holder.binding.videoEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.videoDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.videoEdit.setVisibility(View.GONE);
                         holder.binding.videoDelete.setVisibility(View.GONE);
                     }
@@ -490,7 +490,7 @@ public class VideoFragment extends Fragment {
                 binding = itemView;
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             }
         }
     }

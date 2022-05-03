@@ -77,7 +77,7 @@ public class reminder_fragment extends Fragment {
     Reminder_Adapter reminder_adapter;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -87,7 +87,7 @@ public class reminder_fragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
         Calendar cal2 = Calendar.getInstance();
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -96,8 +96,8 @@ public class reminder_fragment extends Fragment {
 
         binding.dateReminder.setText(yesterday());
 
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 40 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 40 && !model.Createstatus){
                 binding.linearCreateReminder.setVisibility(View.GONE);
             }
         }
@@ -310,7 +310,7 @@ public class reminder_fragment extends Fragment {
         List<ReminderModel> reminderModels;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
 
         public Reminder_Adapter(Context context, List<ReminderModel> reminderModels) {
             this.context = context;
@@ -325,15 +325,15 @@ public class reminder_fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Reminder_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission()){
-                if (model.getPageInfo().getPageID() == 40){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+            for (UserModel.PageInfoEntity model : userpermission.Data){
+                if (model.getPageID() == 40){
+                    if (!model.Createstatus){
                         holder.binding.reminderEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.reminderDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
@@ -448,7 +448,7 @@ public class reminder_fragment extends Fragment {
             public ViewHolder(@NonNull ReminderMasterDeatilListBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

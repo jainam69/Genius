@@ -56,9 +56,8 @@ public class TaskRegister_Adapter extends RecyclerView.Adapter<TaskRegister_Adap
     List<TodoModel> todoModels;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    String sts, Name;
+    String sts;
     int select, id;
-    long downloadID;
     byte[] imageVal;
 
     public TaskRegister_Adapter(Context context, List<TodoModel> todoModels) {

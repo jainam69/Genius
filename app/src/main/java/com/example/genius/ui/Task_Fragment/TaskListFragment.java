@@ -62,7 +62,7 @@ public class TaskListFragment extends Fragment {
     String StatusName;
     TextView no_content;
     TaskRegister_Adapter taskRegister_adapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,10 +77,10 @@ public class TaskListFragment extends Fragment {
         status = root.findViewById(R.id.status);
         task_reg_rv = root.findViewById(R.id.task_reg_rv);
         no_content = root.findViewById(R.id.no_content);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 38 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 38 && !model.Createstatus){
                 fab_task.setVisibility(View.GONE);
             }
         }

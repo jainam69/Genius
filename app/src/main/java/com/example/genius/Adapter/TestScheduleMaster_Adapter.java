@@ -63,7 +63,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     ApiCalling apiCalling;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     long downloadID;
     String Name;
 
@@ -81,15 +81,15 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull TestScheduleMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 84){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 84){
+                if (!model.Createstatus){
                     holder.binding.testscheduleEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.testscheduleDelete.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Createstatus && !model.Deletestatus){
                     holder.binding.testscheduleEdit.setVisibility(View.GONE);
                     holder.binding.testscheduleDelete.setVisibility(View.GONE);
                 }
@@ -340,7 +340,7 @@ public class TestScheduleMaster_Adapter extends RecyclerView.Adapter<TestSchedul
         public ViewHolder(@NonNull TestscheduleMasterDeatilListBinding itemView) {
             super(itemView.getRoot());
             binding = itemView;
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

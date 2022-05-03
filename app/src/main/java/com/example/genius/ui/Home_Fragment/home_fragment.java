@@ -80,7 +80,7 @@ public class home_fragment extends Fragment {
     private static int NUM_PAGE = 0;
     View root;
     Context context;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     ViewPager viewPager;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
@@ -326,22 +326,22 @@ public class home_fragment extends Fragment {
 
     public void GetUserPermission() {
         progressBarHelper.showProgressDialog();
-        Call<UserModel.UserData> call = apiCalling.Get_User_Permission(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        call.enqueue(new Callback<UserModel.UserData>() {
+        Call<UserModel.PageData> call = apiCalling.Get_Permission(Preferences.getInstance(context).getLong(Preferences.KEY_USER_ID),
+                Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
+        call.enqueue(new Callback<UserModel.PageData>() {
             @Override
-            public void onResponse(Call<UserModel.UserData> call, Response<UserModel.UserData> response) {
+            public void onResponse(Call<UserModel.PageData> call, Response<UserModel.PageData> response) {
                 if (response.isSuccessful()) {
-                    UserModel.UserData data = response.body();
-                    if (data.isCompleted()) {
-                        UserModel model = data.getData();
-                        if (model.getPermission().size() > 0) {
-                            Preferences.getInstance(context).setString(Preferences.KEY_PERMISSION_LIST, new Gson().toJson(model));
-                            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                    UserModel.PageData data = response.body();
+                    if (data.Completed) {
+                        if (data.Data.size() > 0) {
+                            Preferences.getInstance(context).setString(Preferences.KEY_PERMISSION_LIST, new Gson().toJson(data));
+                            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                         } else {
-                            Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, data.Message, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(context, data.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, data.Message, Toast.LENGTH_SHORT).show();
                     }
                     progressBarHelper.hideProgressDialog();
                 }
@@ -349,7 +349,7 @@ public class home_fragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<UserModel.UserData> call, Throwable t) {
+            public void onFailure(Call<UserModel.PageData> call, Throwable t) {
                 progressBarHelper.hideProgressDialog();
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -357,79 +357,72 @@ public class home_fragment extends Fragment {
     }
 
     public void SetUserPermission() {
-        for (UserModel.UserPermission model : userpermission.getPermission()) {
-            if ((model.getPageInfo().getPageID() == 4 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 6 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 75 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 74 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 76 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 73 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 10 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 77 && model.getPackageRightinfo().isViewstatus())) {
+        for (UserModel.PageInfoEntity model : userpermission.Data) {
+            if ((model.getPageID() == 4 && model.Viewstatus) || (model.getPageID() == 6 && model.Viewstatus) ||
+                    (model.getPageID() == 75 && model.Viewstatus) || (model.getPageID() == 74 && model.Viewstatus) ||
+                    (model.getPageID() == 76 && model.Viewstatus) || (model.getPageID() == 73 && model.Viewstatus) ||
+                    (model.getPageID() == 10 && model.Viewstatus) || (model.getPageID() == 77 && model.Viewstatus) ||
+                        model.getPageID() == 14 && model.Viewstatus) {
                 if (!pagename.contains("MASTERS")) {
                     pagename.add("MASTERS");
                     image.add(R.drawable.master);
                 }
             }
-            if (model.getPageInfo().getPageID() == 17 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 17 && model.Viewstatus) {
                 pagename.add("ADD UPI DETAILS");
                 image.add(R.drawable.subject);
             }
-            if (model.getPageInfo().getPageID() == 9 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 9 && model.Viewstatus) {
                 pagename.add("ADMISSION FORM");
                 image.add(R.drawable.students);
             }
-            if (model.getPageInfo().getPageID() == 19 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 19 && model.Viewstatus) {
                 pagename.add("ATTENDANCE");
                 image.add(R.drawable.attendance);
             }
-            if (model.getPageInfo().getPageID() == 84 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 84 && model.Viewstatus) {
                 pagename.add("TEST SCHEDULE");
                 image.add(R.drawable.schedules);
             }
-            if (model.getPageInfo().getPageID() == 82 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 82 && model.Viewstatus) {
                 pagename.add("TEST MARKS");
                 image.add(R.drawable.marks);
             }
-            if (model.getPageInfo().getPageID() == 36 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 36 && model.Viewstatus) {
                 pagename.add("PRACTICE PAPERS");
                 image.add(R.drawable.practice);
             }
-            if (model.getPageInfo().getPageID() == 43 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 43 && model.Viewstatus) {
                 pagename.add("HOMEWORKS");
                 image.add(R.drawable.homework);
             }
-            if ((model.getPageInfo().getPageID() == 83 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 85 && model.getPackageRightinfo().isViewstatus())) {
+            if ((model.getPageID() == 83 && model.Viewstatus) || (model.getPageID() == 85 && model.Viewstatus)) {
                 if (!pagename.contains("GALLERY")){
-                    pagename.add("GALLERY");
-                    image.add(R.drawable.gallery);
+                    pagename.add("GALLERY");image.add(R.drawable.gallery);
                 }
             }
-            if (model.getPageInfo().getPageID() == 86 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 86 && model.Viewstatus) {
                 pagename.add("YOU-TUBE VIDEO");
                 image.add(R.drawable.youtube);
             }
-            if (model.getPageInfo().getPageID() == 79 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 79 && model.Viewstatus) {
                 pagename.add("ONLINE CLASS");
                 image.add(R.drawable.live);
             }
-            if (model.getPageInfo().getPageID() == 39 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 39 && model.Viewstatus) {
                 pagename.add("TASK");
                 image.add(R.drawable.task);
             }
-            if (model.getPageInfo().getPageID() == 40 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 40 && model.Viewstatus) {
                 pagename.add("REMINDER");
                 image.add(R.drawable.reminder);
             }
-            if (model.getPageInfo().getPageID() == 15 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 15 && model.Viewstatus) {
                 pagename.add("FEE STRUCTURE");
                 image.add(R.drawable.branchclass);
             }
-            if ((model.getPageInfo().getPageID() == 78 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 30 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 80 && model.getPackageRightinfo().isViewstatus()) ||
-                    (model.getPageInfo().getPageID() == 88 && model.getPackageRightinfo().isViewstatus())) {
+            if ((model.getPageID() == 78 && model.Viewstatus) || (model.getPageID() == 30 && model.Viewstatus) ||
+                    (model.getPageID() == 80 && model.Viewstatus) || (model.getPageID() == 88 && model.Viewstatus)) {
                 if (!pagename.contains("LIBRARY")){
                     pagename.add("LIBRARY");
                     image.add(R.drawable.library);

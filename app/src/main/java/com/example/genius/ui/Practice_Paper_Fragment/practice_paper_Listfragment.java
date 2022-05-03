@@ -101,7 +101,7 @@ public class practice_paper_Listfragment extends Fragment {
     int flag = 0;
     Long StandardId,courseID;
     OnBackPressedCallback callback;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -112,10 +112,10 @@ public class practice_paper_Listfragment extends Fragment {
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 36 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 36 && !model.Createstatus){
                 binding.linearCreatePaper.setVisibility(View.GONE);
             }
         }
@@ -649,7 +649,7 @@ public class practice_paper_Listfragment extends Fragment {
         List<PaperModel> paperModels;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
         long downloadID;
         String Name;
 
@@ -666,15 +666,15 @@ public class practice_paper_Listfragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PracticePaperMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission()){
-                if (model.getPageInfo().getPageID() == 36){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+            for (UserModel.PageInfoEntity model : userpermission.Data){
+                if (model.getPageID() == 36){
+                    if (!model.Createstatus){
                         holder.binding.paperEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.paperDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.paperEdit.setVisibility(View.GONE);
                         holder.binding.paperDelete.setVisibility(View.GONE);
                     }
@@ -852,7 +852,7 @@ public class practice_paper_Listfragment extends Fragment {
             public ViewHolder(@NonNull PracticepaperMasterDeatilListBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

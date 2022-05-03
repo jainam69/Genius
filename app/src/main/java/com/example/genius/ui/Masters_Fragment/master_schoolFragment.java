@@ -64,7 +64,7 @@ public class master_schoolFragment extends Fragment {
     ApiCalling apiCalling;
     OnBackPressedCallback callback;
     SchoolMaster_Adapter schoolMaster_adapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -74,11 +74,11 @@ public class master_schoolFragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 6 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 6 && !model.Createstatus){
                 binding.linearCreateSchool.setVisibility(View.GONE);
             }
         }
@@ -264,7 +264,7 @@ public class master_schoolFragment extends Fragment {
         List<SchoolModel> schoolDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
 
         public SchoolMaster_Adapter(Context context, List<SchoolModel> schoolDetails) {
             this.context = context;
@@ -278,16 +278,16 @@ public class master_schoolFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull SchoolMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission())
+            for (UserModel.PageInfoEntity model : userpermission.Data)
             {
-                if (model.getPageInfo().getPageID() == 6){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+                if (model.getPageID() == 6){
+                    if (!model.Createstatus){
                         holder.binding.schoolEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.schoolDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
@@ -407,7 +407,7 @@ public class master_schoolFragment extends Fragment {
             public ViewHolder(@NonNull SchoolMasterDeatilListBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

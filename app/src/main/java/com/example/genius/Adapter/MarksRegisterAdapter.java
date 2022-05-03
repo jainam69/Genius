@@ -41,7 +41,7 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
     ApiCalling apiCalling;
     long ID,StudentID;
     String marks;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     public MarksRegisterAdapter(Context context, List<MarksModel> studentModels) {
         this.context = context;
@@ -56,8 +56,8 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
 
     @Override
     public void onBindViewHolder(@NonNull MarksRegisterAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 81 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 81 && !model.Createstatus){
                 holder.binding.edit.setVisibility(View.GONE);
             }
         }
@@ -153,7 +153,7 @@ public class MarksRegisterAdapter extends RecyclerView.Adapter<MarksRegisterAdap
         public ViewHolder(@NonNull StudentAchievemarksMasterDeatilListBinding itemView) {
             super(itemView.getRoot());
             binding = itemView;
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

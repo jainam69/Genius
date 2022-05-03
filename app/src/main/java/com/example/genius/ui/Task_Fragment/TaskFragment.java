@@ -110,7 +110,7 @@ public class TaskFragment extends Fragment {
     private int month;
     private int day;
     TodoMaster_Adapter todoMaster_adapter;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,11 +119,11 @@ public class TaskFragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
 
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 38 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 38 && !model.Createstatus){
                 binding.linearCreateTodo.setVisibility(View.GONE);
             }
         }
@@ -530,7 +530,7 @@ public class TaskFragment extends Fragment {
         DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
         long downloadID;
         String Name;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
 
         public TodoMaster_Adapter(Context context, List<TodoModel> todoModels) {
             this.context = context;
@@ -546,15 +546,15 @@ public class TaskFragment extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull TodoMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission()){
-                if (model.getPageInfo().getPageID() == 38){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+            for (UserModel.PageInfoEntity model : userpermission.Data){
+                if (model.getPageID() == 38){
+                if (!model.Createstatus){
                     holder.binding.taskEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.taskDelete.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Createstatus && !model.Deletestatus){
                     holder.binding.taskEdit.setVisibility(View.GONE);
                     holder.binding.taskDelete.setVisibility(View.GONE);
                 }
@@ -748,7 +748,7 @@ public class TaskFragment extends Fragment {
             public ViewHolder(@NonNull TaskMasterDeatilListBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

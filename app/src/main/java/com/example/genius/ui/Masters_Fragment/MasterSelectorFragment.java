@@ -45,7 +45,7 @@ public class MasterSelectorFragment extends Fragment {
     View root;
     Context context;
     OnBackPressedCallback callback;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     RecyclerView master_rv;
     Masters_Adapter masters_adapter;
 
@@ -56,50 +56,50 @@ public class MasterSelectorFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_master_selector, container, false);
         context = getActivity();
         master_rv = root.findViewById(R.id.master_rv);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
         ArrayList<String> pagename = new ArrayList<>();
         ArrayList<Integer> image = new ArrayList<>();
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 4 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 4 && model.Viewstatus){
                 pagename.add("USER MASTER");
                 image.add(R.drawable.staff);
             }
-            if (model.getPageInfo().getPageID() == 14 && model.getPackageRightinfo().isViewstatus()) {
+            if (model.getPageID() == 14 && model.Viewstatus) {
                 pagename.add("ANNOUNCEMENT MASTER");
                 image.add(R.drawable.announcement);
             }
-            if (model.getPageInfo().getPageID() == 6 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 6 && model.Viewstatus){
                 pagename.add("SCHOOL MASTER");
                 image.add(R.drawable.school);
             }
-            if (model.getPageInfo().getPageID() == 11 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 11 && model.Viewstatus){
                 pagename.add("BATCH MASTER");
                 image.add(R.drawable.date);
             }
-            if (model.getPageInfo().getPageID() == 73 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 73 && model.Viewstatus){
                 pagename.add("BANNER MASTER");
                 image.add(R.drawable.banner2);
             }
-            if (model.getPageInfo().getPageID() == 10 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 10 && model.Viewstatus){
                 pagename.add("NOTIFICATION MASTER");
                 image.add(R.drawable.noti);
             }
-            if (model.getPageInfo().getPageID() == 75 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 75 && model.Viewstatus){
                 pagename.add("COURSE MASTER");
                 image.add(R.drawable.course);
             }
-            if (model.getPageInfo().getPageID() == 74 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 74 && model.Viewstatus){
                 pagename.add("CLASS MASTER");
                 image.add(R.drawable.branchclass);
             }
-            if (model.getPageInfo().getPageID() == 76 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 76 && model.Viewstatus){
                 pagename.add("SUBJECT MASTER");
                 image.add(R.drawable.branchsubject);
             }
-            if (model.getPageInfo().getPageID() == 77 && model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 77 && model.Viewstatus){
                 pagename.add("FACULTY MASTER");
                 image.add(R.drawable.user);
             }

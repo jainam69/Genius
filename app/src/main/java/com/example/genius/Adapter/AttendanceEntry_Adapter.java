@@ -53,7 +53,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
     List<AttendanceModel> attendanceDetails;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
 
@@ -70,15 +70,15 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceEntry_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 18){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 18){
+                if (!model.Createstatus){
                     holder.binding.attenEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.attenDelete.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Createstatus && !model.Deletestatus){
                     holder.binding.linearCreateDelete.setVisibility(View.GONE);
                 }
             }
@@ -220,7 +220,7 @@ public class AttendanceEntry_Adapter extends RecyclerView.Adapter<AttendanceEntr
             binding = itemView;
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
         }
     }
 }

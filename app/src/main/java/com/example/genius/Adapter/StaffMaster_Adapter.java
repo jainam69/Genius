@@ -44,7 +44,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
     List<StaffModel> staffDetails;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     public StaffMaster_Adapter(Context context, List<StaffModel> staffDetails) {
         this.context = context;
@@ -58,16 +58,16 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
 
     @Override
     public void onBindViewHolder(@NonNull StaffMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 4){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 4){
+                if (!model.Createstatus){
                     holder.binding.staffEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.staffDelete.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Createstatus && !model.Deletestatus){
                     holder.binding.linearActions.setVisibility(View.GONE);
                 }
             }
@@ -220,7 +220,7 @@ public class StaffMaster_Adapter extends RecyclerView.Adapter<StaffMaster_Adapte
         public ViewHolder(@NonNull StaffEntryDeatilListBinding itemView) {
             super(itemView.getRoot());
             binding = itemView;
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

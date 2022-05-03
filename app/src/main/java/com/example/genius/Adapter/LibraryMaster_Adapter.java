@@ -62,7 +62,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
     String standard,Course;
     long downloadID;
     String Name;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     public LibraryMaster_Adapter(Context context, List<LibraryModel> libraryDetails) {
         this.context = context;
@@ -81,12 +81,12 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
         holder.binding.docCategory.setText(libraryDetails.get(position).getCategoryInfo().getCategory());
         holder.binding.docDesc.setText(libraryDetails.get(position).getDescription());
         if (libraryDetails.get(position).getLibrary_Type() == 1) {
-            for (UserModel.UserPermission model : userpermission.getPermission()){
-                if (model.getPageInfo().getPageID() == 30){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+            for (UserModel.PageInfoEntity model : userpermission.Data){
+                if (model.getPageID() == 30){
+                    if (!model.Createstatus){
                         holder.binding.libraryEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.libraryDelete.setVisibility(View.GONE);
                     }
                 }
@@ -96,13 +96,13 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             holder.binding.libraryDownload.setVisibility(View.GONE);
             holder.binding.libraryVideoLink.setText(libraryDetails.get(position).getVideoLink());
         } else {
-            for (UserModel.UserPermission model : userpermission.getPermission())
+            for (UserModel.PageInfoEntity model : userpermission.Data)
             {
-                if (model.getPageInfo().getPageID() == 78){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+                if (model.getPageID() == 78){
+                    if (!model.Createstatus){
                         holder.binding.libraryEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.libraryDelete.setVisibility(View.GONE);
                     }
                 }
@@ -268,7 +268,7 @@ public class LibraryMaster_Adapter extends RecyclerView.Adapter<LibraryMaster_Ad
             super(itemView.getRoot());
             binding = itemView;
             standard = binding.standard.getText().toString();
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

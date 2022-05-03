@@ -56,7 +56,7 @@ public class batch_list_fragment extends Fragment {
     ApiCalling apiCalling;
     Batch_Adapter batch_adapter;
     OnBackPressedCallback callback;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     List<BatchModel> model;
 
     @Override
@@ -67,11 +67,11 @@ public class batch_list_fragment extends Fragment {
         context = getActivity();
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 11 && !model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 11 && !model.Createstatus){
                 binding.fabContact.setVisibility(View.GONE);
             }
         }

@@ -51,7 +51,7 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
     List<FacultyModel> facultyModelList;
     ProgressBarHelper progressBarHelper;
     ApiCalling apiCalling;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     public Faculty_Adapter(Context context, List<FacultyModel> facultyModelList) {
         this.context = context;
@@ -66,16 +66,16 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull Faculty_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 77){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 77){
+                if (!model.Createstatus){
                     holder.binding.imgEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.imgDelete.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Createstatus && !model.Deletestatus){
                     holder.binding.linearActions.setVisibility(View.GONE);
                 }
             }
@@ -179,7 +179,7 @@ public class Faculty_Adapter extends RecyclerView.Adapter<Faculty_Adapter.ViewHo
         public ViewHolder(@NonNull RowFacultyListBinding itemView) {
             super(itemView.getRoot());
             binding = itemView;
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

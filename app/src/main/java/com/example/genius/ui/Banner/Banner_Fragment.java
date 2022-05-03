@@ -108,7 +108,7 @@ public class Banner_Fragment extends Fragment {
     Boolean isAdmin = false,isTeacher = false,isStudent = false;
     File instrumentFileDestination;
     OnBackPressedCallback callback;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
     List<BannerModel.BannerTypeEntity> listentity = new ArrayList<>();
 
     @Override
@@ -120,11 +120,11 @@ public class Banner_Fragment extends Fragment {
         progressBarHelper = new ProgressBarHelper(context, false);
         apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         BranchID = String.valueOf(Preferences.getInstance(context).getLong(Preferences.KEY_BRANCH_ID));
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-             if (model.getPageInfo().getPageID() == 73 && !model.getPackageRightinfo().isCreatestatus()){
+             if (model.getPageID() == 73 && !model.Createstatus){
                 binding.linearCreateBanner.setVisibility(View.GONE);
             }
         }
@@ -493,7 +493,7 @@ public class Banner_Fragment extends Fragment {
         List<BannerModel> bannerDetails;
         ProgressBarHelper progressBarHelper;
         ApiCalling apiCalling;
-        UserModel userpermission;
+        UserModel.PageData userpermission;
 
         public BannerMaster_Adapter(Context context, List<BannerModel> bannerDetails) {
             this.context = context;
@@ -508,16 +508,16 @@ public class Banner_Fragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            for (UserModel.UserPermission model : userpermission.getPermission())
+            for (UserModel.PageInfoEntity model : userpermission.Data)
             {
-                if (model.getPageInfo().getPageID() == 73){
-                    if (!model.getPackageRightinfo().isCreatestatus()){
+                if (model.getPageID() == 73){
+                    if (!model.Createstatus){
                         holder.binding.bannerEdit.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Deletestatus){
                         holder.binding.bannerDelete.setVisibility(View.GONE);
                     }
-                    if (!model.getPackageRightinfo().isCreatestatus() && !model.getPackageRightinfo().isDeletestatus()){
+                    if (!model.Createstatus && !model.Deletestatus){
                         holder.binding.linearActions.setVisibility(View.GONE);
                     }
                 }
@@ -649,7 +649,7 @@ public class Banner_Fragment extends Fragment {
             public ViewHolder(@NonNull BannerMasterDeatilListBinding itemView) {
                 super(itemView.getRoot());
                 binding = itemView;
-                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+                userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
                 progressBarHelper = new ProgressBarHelper(context, false);
                 apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
             }

@@ -23,6 +23,7 @@ import com.example.genius.Model.AnnouncementSingleModel;
 import com.example.genius.Model.BranchModel;
 import com.example.genius.Model.RowStatusModel;
 import com.example.genius.Model.TransactionModel;
+import com.example.genius.Model.UserModel;
 import com.example.genius.R;
 import com.example.genius.databinding.FragmentAnnouncementBinding;
 import com.example.genius.helper.Function;
@@ -30,6 +31,7 @@ import com.example.genius.helper.MyApplication;
 import com.example.genius.helper.Preferences;
 import com.example.genius.helper.ProgressBarHelper;
 import com.example.genius.ui.Masters_Fragment.MasterSelectorFragment;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -86,6 +86,9 @@ public interface ApiCalling {
     @GET(ApiConstant.GET_USER_PERMISSION)
     Call<UserModel.UserData> Get_User_Permission(@Query("BranchID") long BranchID);
 
+    @GET(ApiConstant.GET_PERMISSION)
+    Call<UserModel.PageData> Get_Permission(@Query("userId") long userId,@Query("BranchID") long BranchID);
+
     @GET(ApiConstant.GET_ALL_MOBILE_NOTIFICATION)
     Call<NotificationData> GetAllMobileNotificationBranch(@Query("branchID") long branchID);
 

@@ -275,4 +275,10 @@ public class UserModel {
             Data = data;
         }
     }
+
+    public static class PageData{
+        public boolean Completed;
+        public List<PageInfoEntity> Data;
+        public String Message;
+    }
 }

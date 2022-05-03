@@ -43,7 +43,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
     ApiCalling apiCalling;
     DateFormat displaydate = new SimpleDateFormat("dd/MM/yyyy");
     DateFormat actualdate = new SimpleDateFormat("yyyy-MM-dd");
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     public StudentMaster_Adapter(Context context, List<StudentModel> studentDetails) {
         this.context = context;
@@ -57,8 +57,8 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
 
     @Override
     public void onBindViewHolder(@NonNull StudentMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission()){
-            if (model.getPageInfo().getPageID() == 8 && !model.getPackageRightinfo().isCreatestatus()){
+        for (UserModel.PageInfoEntity model : userpermission.Data){
+            if (model.getPageID() == 8 && !model.Createstatus){
                 holder.binding.studentEdit.setVisibility(View.GONE);
             }
         }
@@ -144,7 +144,7 @@ public class StudentMaster_Adapter extends RecyclerView.Adapter<StudentMaster_Ad
         public ViewHolder(@NonNull StudentMasterDeatilListBinding itemView) {
             super(itemView.getRoot());
             binding = itemView;
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }

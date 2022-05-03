@@ -30,7 +30,7 @@ public class GallerySelectorFragment extends Fragment {
     CardView linear_image, linear_video;
     OnBackPressedCallback callback;
     Context context;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,14 +39,14 @@ public class GallerySelectorFragment extends Fragment {
         context = getActivity();
         linear_video = root.findViewById(R.id.linear_video);
         linear_image = root.findViewById(R.id.linear_image);
-        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+        userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
 
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 83 && !model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 83 && !model.Viewstatus){
                 linear_image.setVisibility(View.GONE);
             }
-            if (model.getPageInfo().getPageID() == 85 && !model.getPackageRightinfo().isViewstatus()){
+            if (model.getPageID() == 85 && !model.Viewstatus){
                 linear_video.setVisibility(View.GONE);
             }
         }

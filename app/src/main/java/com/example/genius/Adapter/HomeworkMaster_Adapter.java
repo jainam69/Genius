@@ -64,7 +64,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     ApiCalling apiCalling;
     long downloadID;
     String Name;
-    UserModel userpermission;
+    UserModel.PageData userpermission;
 
     public HomeworkMaster_Adapter(Context context, List<HomeworkModel> homeworkDetails) {
         this.context = context;
@@ -82,13 +82,13 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull HomeworkMaster_Adapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        for (UserModel.UserPermission model : userpermission.getPermission())
+        for (UserModel.PageInfoEntity model : userpermission.Data)
         {
-            if (model.getPageInfo().getPageID() == 43){
-                if (!model.getPackageRightinfo().isCreatestatus()){
+            if (model.getPageID() == 43){
+                if (!model.Createstatus){
                     holder.binding.homeworkEdit.setVisibility(View.GONE);
                 }
-                if (!model.getPackageRightinfo().isDeletestatus()){
+                if (!model.Deletestatus){
                     holder.binding.homeworkDelete.setVisibility(View.GONE);
                 }
             }
@@ -275,7 +275,7 @@ public class HomeworkMaster_Adapter extends RecyclerView.Adapter<HomeworkMaster_
         public ViewHolder(@NonNull HomeworkMasterDeatilListBinding itemView) {
             super(itemView.getRoot());
             binding = itemView;
-            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.class);
+            userpermission = new Gson().fromJson(Preferences.getInstance(context).getString(Preferences.KEY_PERMISSION_LIST), UserModel.PageData.class);
             progressBarHelper = new ProgressBarHelper(context, false);
             apiCalling = MyApplication.getRetrofit().create(ApiCalling.class);
         }
