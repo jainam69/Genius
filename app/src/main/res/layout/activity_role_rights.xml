@@ -72,14 +72,14 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
             <CheckBox
-                android:visibility="invisible"
-                android:layout_width="20dp"
+                android:id="@+id/ch_all_create"
+                android:layout_width="24dp"
                 android:layout_height="20dp" />
 
             <TextView
@@ -99,14 +99,14 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
             <CheckBox
-                android:visibility="invisible"
-                android:layout_width="20dp"
+                android:id="@+id/ch_all_delete"
+                android:layout_width="24dp"
                 android:layout_height="20dp" />
 
             <TextView
@@ -126,14 +126,14 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
             <CheckBox
-                android:visibility="invisible"
-                android:layout_width="20dp"
+                android:id="@+id/ch_all_view"
+                android:layout_width="24dp"
                 android:layout_height="20dp" />
 
             <TextView

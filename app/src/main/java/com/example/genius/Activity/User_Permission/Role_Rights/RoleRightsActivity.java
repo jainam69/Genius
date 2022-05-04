@@ -1,11 +1,13 @@
 package com.example.genius.Activity.User_Permission.Role_Rights;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,8 +51,9 @@ public class RoleRightsActivity extends AppCompatActivity {
     List<String> rolename = new ArrayList<>(); List<Long> roleid = new ArrayList<>();
     String[] ROLENAME; Long[] ROLEID; long rolename_id;
     List<RoleRightsModel> list;
-    RoleRightsModel adaptermodel; Intent i;
+    RoleRightsModel adaptermodel; Intent i;RoleRightsAdapter adapter;RoleRightsCheck_Adapter adapter1;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +78,16 @@ public class RoleRightsActivity extends AppCompatActivity {
                     adaptermodel.list.get(i).Createstatus = adaptermodel.list.get(i).Createstatus;
                     adaptermodel.list.get(i).Deletestatus = adaptermodel.list.get(i).Deletestatus;
                     adaptermodel.list.get(i).Viewstatus = adaptermodel.list.get(i).Viewstatus;
+                    binding.chAllCreate.setChecked(adaptermodel.list.get(i).Createstatus);
+                    binding.chAllDelete.setChecked(adaptermodel.list.get(i).Deletestatus);
+                    binding.chAllView.setChecked(adaptermodel.list.get(i).Viewstatus);
                     data.add(adaptermodel.list.get(i));
                 }
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 binding.roleRightsRv.setLayoutManager(linearLayoutManager);
-                RoleRightsCheck_Adapter adapter = new RoleRightsCheck_Adapter(context, data);
-                binding.roleRightsRv.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                adapter1 = new RoleRightsCheck_Adapter(context, data);
+                binding.roleRightsRv.setAdapter(adapter1);
+                adapter1.notifyDataSetChanged();
             }
         }else {
             if (Function.isNetworkAvailable(context)){
@@ -98,6 +104,39 @@ public class RoleRightsActivity extends AppCompatActivity {
         }else {
             Toast.makeText(context, "Please check your internet connectivity.", Toast.LENGTH_SHORT).show();
         }
+
+        binding.chAllCreate.setOnCheckedChangeListener((buttonView, isChecked) ->
+        {
+            if (adapter != null) {
+                if (binding.chAllCreate.isChecked()) { adapter.AllCreate(); }
+                else { adapter.unselectCreate(); }
+            }else if (adapter1 != null){
+                if (binding.chAllCreate.isChecked()) { adapter1.AllCreate(); }
+                else { adapter1.unselectCreate(); }
+            }
+        });
+
+        binding.chAllDelete.setOnCheckedChangeListener((buttonView, isChecked) ->
+        {
+            if (adapter != null) {
+                if (binding.chAllDelete.isChecked()) { adapter.AllDelete(); }
+                else { adapter.unselectDelete(); }
+            }else if (adapter1 != null){
+                if (binding.chAllDelete.isChecked()) { adapter1.AllDelete(); }
+                else { adapter1.unselectDelete(); }
+            }
+        });
+
+        binding.chAllView.setOnCheckedChangeListener((buttonView, isChecked) ->
+        {
+            if (adapter != null) {
+                if (binding.chAllView.isChecked()) { adapter.AllView(); }
+                else { adapter.unselectView(); }
+            }else if (adapter1 != null){
+                if (binding.chAllView.isChecked()) { adapter1.AllView(); }
+                else { adapter1.unselectView(); }
+            }
+        });
 
         binding.saveRoleRights.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,7 +268,7 @@ public class RoleRightsActivity extends AppCompatActivity {
                         if (data.Data.size() > 0){
                             LinearLayoutManager linear = new LinearLayoutManager(context);
                             binding.roleRightsRv.setLayoutManager(linear);
-                            RoleRightsAdapter adapter = new RoleRightsAdapter(context,data.Data);
+                            adapter = new RoleRightsAdapter(context,data.Data);
                             binding.roleRightsRv.setAdapter(adapter);
                         }
                     }

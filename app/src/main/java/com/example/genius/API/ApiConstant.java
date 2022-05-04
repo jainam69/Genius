@@ -76,7 +76,6 @@ public class ApiConstant {
     public static final String REMOVE_HOMEWORK = "homework/v1/RemoveHomework";
     public static final String NEW_HOMEWORK_MAINTENANCE = "homework/v1/HomeworkMaintenance";
 
-
 	public static final String REMINDER_MAINTENANCE = "reminder/v1/ReminderMaintenance";
     public static final String GET_ALL_REMINDER_BY_BRANCH_USER = "reminder/v1/GetAllReminderByBranchAndUser";
     public static final String REMOVE_REMINDER = "reminder/v1/RemoveReminder";

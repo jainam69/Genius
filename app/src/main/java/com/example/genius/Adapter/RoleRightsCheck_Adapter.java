@@ -2,12 +2,14 @@ package com.example.genius.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.genius.Model.RoleRightsModel;
@@ -20,6 +22,7 @@ public class RoleRightsCheck_Adapter extends RecyclerView.Adapter<RoleRightsChec
 
     Context context;
     public static List<RoleRightsModel> model;
+    boolean isAllCreate,isAllDelete,isAllView;
 
     public RoleRightsCheck_Adapter(Context context, List<RoleRightsModel> Model) {
         this.context = context;
@@ -82,6 +85,48 @@ public class RoleRightsCheck_Adapter extends RecyclerView.Adapter<RoleRightsChec
             super(itemView.getRoot());
             binding = itemView;
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void AllCreate() {
+        isAllCreate = true;
+        model.forEach((u) -> u.Createstatus = true);
+        notifyDataSetChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void AllDelete() {
+        isAllDelete = true;
+        model.forEach((u) -> u.Deletestatus = true);
+        notifyDataSetChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void AllView() {
+        isAllView = true;
+        model.forEach((u) -> u.Viewstatus = true);
+        notifyDataSetChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void unselectCreate() {
+        isAllCreate = false;
+        model.forEach((u) -> u.Createstatus = false);
+        notifyDataSetChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void unselectDelete() {
+        isAllDelete = false;
+        model.forEach((u) -> u.Deletestatus = false);
+        notifyDataSetChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void unselectView() {
+        isAllView = false;
+        model.forEach((u) -> u.Viewstatus = false);
+        notifyDataSetChanged();
     }
 
     @Override
