@@ -92,6 +92,7 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
     String[] STANDARDITEM,COURSEITEM;
     Integer[] STANDARDID,COURSEID;
     List<NotificationModel.NotificationStandardEntity> list = new ArrayList<>();
+    List<NotificationModel.NotificationTypeModel> typemodel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -478,7 +479,6 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
         binding.standard.setListener(this);
         binding.standard.hasNoneOption(true);
         binding.standard.setSelection(new int[]{0});
-        //long id = Long.parseLong(notification_id.getText().toString());
         if (list.size() > 0){
             List<String> lst = new ArrayList<>();
             StringBuilder sb = new StringBuilder();
@@ -697,24 +697,27 @@ public class NotificationFragment extends Fragment implements MultiSelectionSpin
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            List<NotificationModel.NotificationTypeModel> notitypelist = notificationDetails.get(position).getNotificationType();
-                            for (NotificationModel.NotificationTypeModel model : notitypelist) {
-                                if (model.getTypeID() == 1) {
+                            typemodel = new ArrayList<>();typemodel = notificationDetails.get(position).getNotificationType();
+                            for (int i = 0; i < typemodel.size(); i++){
+                                if (typemodel.get(i).getTypeID() == 1){
                                     binding.chAdmin.setChecked(true);
-                                    adminid = model.getID();
+                                    adminid = typemodel.get(i).getID();
                                 }
-                                if (model.getTypeID() == 2) {
+                                if (typemodel.get(i).getTypeID() == 2){
                                     binding.chTeacher.setChecked(true);
-                                    teacherid = model.getID();
+                                    teacherid = typemodel.get(i).getID();
                                 }
-                                if (model.getTypeID() == 3) {
+                                if (typemodel.get(i).getTypeID() == 3){
                                     binding.chStudent.setChecked(true);
-                                    studentid = model.getID();
+                                    studentid = typemodel.get(i).getID();
                                 }
                             }
                             if (notificationDetails.get(position).getList().size() > 0){
+                                binding.linearSpinner.setVisibility(View.VISIBLE);
                                 list = notificationDetails.get(position).getList();
                                 selectSpinnerValue(binding.courseName,notificationDetails.get(position).getList().get(0).BranchCourse.getCourse().getCourseName());
+                            }else {
+                                binding.linearSpinner.setVisibility(View.GONE);
                             }
                             dialog.dismiss();
                         }

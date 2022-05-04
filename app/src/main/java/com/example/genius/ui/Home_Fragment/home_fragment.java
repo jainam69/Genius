@@ -120,8 +120,12 @@ public class home_fragment extends Fragment {
                     PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-        pagename.add("CIRCULAR"); pagename.add("USER PERMISSION");
-        image.add(R.drawable.ic_baseline_wysiwyg_24); image.add(R.drawable.permission);
+        if (Preferences.getInstance(context).getInt(Preferences.KEY_USER_TYPE) == 1){
+            pagename.add("USER PERMISSION"); image.add(R.drawable.permission);
+        }
+
+        pagename.add("CIRCULAR");
+        image.add(R.drawable.ic_baseline_wysiwyg_24);
 
         home_rv.addOnItemTouchListener(new RecyclerTouchListener(context, home_rv, new RecyclerTouchListener.ClickListener() {
             @Override
