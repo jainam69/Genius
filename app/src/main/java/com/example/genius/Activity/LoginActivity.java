@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.btnLogin.setOnClickListener(v -> {
             if (Function.isNetworkAvailable(LoginActivity.this)) {
-                //if (!password.getText().toString().matches( "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$") || !password.getText().toString().matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$"))
                 if (binding.mobileNo.getText().toString().length() > 0 && binding.password.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "Please enter Password", Toast.LENGTH_LONG).show();
                 } else if (binding.mobileNo.getText().toString().length() == 0 && binding.password.getText().toString().length() > 0) {

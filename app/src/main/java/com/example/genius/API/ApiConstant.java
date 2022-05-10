@@ -3,12 +3,11 @@ package com.example.genius.API;
 public class ApiConstant {
 
     //public static final String BASE_URL = "http://192.168.29.212:45455/api/";
-//    public static final String BASE_URL = "http://43.241.39.136:86/api/";
-    public static final String BASE_URL = "http://43.241.39.136:84/api/";
+    public static final String BASE_URL = "http://43.241.39.136:86/api/";
+    //public static final String BASE_URL = "http://43.241.39.136:84/api/";
 
     public static final String VALIDATE_USER = "user/v1/ValidateUser";
     public static final String FORGOT_PASSWORD = "user/v1/CheckUserName";
-    public static final String GET_USER_PERMISSION = "user/v1/GetUserPermission";
     public static final String GET_PERMISSION = "user/v1/UserPermission";
     public static final String CHANGE_PASSWORD = "user/v1/ChangePassword";
     public static final String UPDATE_PROFILE = "profile/v1/UpdateProfile";
